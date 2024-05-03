@@ -15,7 +15,8 @@ class FileQuery:
     performing all file search operations.
     """
 
-    __slots__ = ("_directory",)
+    __slots__ = "_directory", "_recursive"
 
-    def __init__(self, directory: Path) -> None:
+    def __init__(self, directory: Path, recursive: bool = False) -> None:
         self._directory = directory
+        self._recursive = recursive

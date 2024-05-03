@@ -29,13 +29,11 @@ class FileQuery:
         to include the files present in the sub-directories.
         """
 
-        directory = Path(directory)
+        self._directory = Path(directory)
+        self._recursive = recursive
 
         # Verifies if the specified path is a directory.
-        assert Path(directory).is_dir()
-
-        self._directory = directory
-        self._recursive = recursive
+        assert Path(self._directory).is_dir()
 
         # Dictionary of file paths with their coressponding `os.stat_result` objects.
         self._stats: dict[Path, stat_result] = {

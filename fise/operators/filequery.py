@@ -6,6 +6,7 @@ This module defines the FileQuery class used for
 performing all file search related operations.
 """
 
+from os import stat_result
 from typing import Generator
 from pathlib import Path
 
@@ -16,7 +17,7 @@ class FileQuery:
     performing all file search operations.
     """
 
-    __slots__ = "_directory", "_recursive"
+    __slots__ = "_directory", "_recursive", "_stats"
 
     def __init__(self, directory: str, recursive: bool = False) -> None:
         r"""
@@ -35,6 +36,11 @@ class FileQuery:
 
         self._directory = directory
         self._recursive = recursive
+
+        # Dictionary of file paths with their coressponding `os.stat_result` objects.
+        self._stats: dict[Path, stat_result] = {
+            i: i.stat() for i in self._get_files(self._directory)
+        }
 
     def _get_files(self, directory: Path) -> Generator[Path, None, None]:
         r"""

@@ -15,5 +15,7 @@ class FileQuery:
     performing all file search operations.
     """
 
+    __slots__ = ("_directory",)
+
     def __init__(self, directory: Path) -> None:
         self._directory = directory

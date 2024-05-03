@@ -41,6 +41,9 @@ class FileQuery:
         Returns a `typing.Generator` object of all files present within the
         specified directory. Also extracts the files present within the
         sub-directories if `self._recursive` is set `True` at initialization.
+
+        #### Params:
+        - directory (pathlib.Path): Path of the directory to be processed.
         """
 
         for i in directory.glob('*'):

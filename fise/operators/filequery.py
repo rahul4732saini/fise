@@ -19,6 +19,14 @@ class FileQuery:
     __slots__ = "_directory", "_recursive"
 
     def __init__(self, directory: str, recursive: bool = False) -> None:
+        r"""
+        Creates an instance of the `FileQuery` class.
+
+        #### Params:
+        - directory (str): string representation of the directory path to be processed.
+        - recursive (bool): Boolean value to specify whether or not
+        to include the files present in the sub-directories.
+        """
 
         directory = Path(directory)
 

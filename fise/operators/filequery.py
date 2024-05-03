@@ -18,7 +18,13 @@ class FileQuery:
 
     __slots__ = "_directory", "_recursive"
 
-    def __init__(self, directory: Path, recursive: bool = False) -> None:
+    def __init__(self, directory: str, recursive: bool = False) -> None:
+
+        directory = Path(directory)
+
+        # Verifies if the specified path is a directory.
+        assert Path(directory).is_dir()
+
         self._directory = directory
         self._recursive = recursive
 

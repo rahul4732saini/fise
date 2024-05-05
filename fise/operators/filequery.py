@@ -19,7 +19,7 @@ class FileQuery:
     performing all file search operations.
     """
 
-    __slots__ = "_directory", "_recursive", "_stats"
+    __slots__ = "_directory", "_recursive", "_files"
 
     def __init__(self, directory: str, recursive: bool = False) -> None:
         r"""
@@ -38,7 +38,7 @@ class FileQuery:
         assert Path(self._directory).is_dir()
 
         # Generator object of File objects for one-time usage.
-        self._stats: Generator[File, None, None] = (
+        self._files: Generator[File, None, None] = (
             File(i) for i in self._get_files(self._directory)
         )
 

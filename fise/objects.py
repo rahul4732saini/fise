@@ -12,8 +12,8 @@ from pathlib import Path
 
 class File:
     r"""
-    File class serves as a unified class for accessing all methods related to the
-    file `pathlib.Path` and `os.stat_result` object methods and attributes.
+    File class serves as a unified class for accessing all methods and attributes
+    related to the file `pathlib.Path` and `os.stat_result` object.
     """
 
     __slots__ = "_file", "_stats"

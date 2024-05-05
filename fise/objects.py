@@ -30,3 +30,7 @@ class File:
 
         self._file = file
         self._stats = file.stat()
+
+    @property
+    def file(self) -> None:
+        return self._file

@@ -22,6 +22,7 @@ class File:
         r"""
         Creates an instance of the `File` class.
 
+        #### Params:
         file (pathlib.Path): path of the file. 
         """
 

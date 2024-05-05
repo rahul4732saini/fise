@@ -16,6 +16,8 @@ class File:
     file `pathlib.Path` and `os.stat_result` object methods and attributes.
     """
 
+    __slots__ = "_file", "_stats"
+
     def __init__(self, file: Path) -> None:
         r"""
         Creates an instance of the `File` class.

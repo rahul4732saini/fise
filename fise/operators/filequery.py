@@ -51,10 +51,10 @@ class FileQuery:
         - directory (pathlib.Path): Path of the directory to be processed.
         """
 
-        for i in directory.glob('*'):
-            if i.is_file():
-                yield i
+        for path in directory.glob('*'):
+            if path.is_file():
+                yield path
 
             # Extracts files from sub-directories.
-            elif self._recursive and i.is_dir():
-                yield from self._get_files(i)
+            elif self._recursive and path.is_dir():
+                yield from self._get_files(path)

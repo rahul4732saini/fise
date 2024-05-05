@@ -6,7 +6,6 @@ This module defines the FileQuery class used for
 performing all file search related operations.
 """
 
-from os import stat_result
 from typing import Generator
 from pathlib import Path
 

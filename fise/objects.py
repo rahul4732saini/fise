@@ -55,12 +55,12 @@ class File:
     
     @property
     def creation_time(self) -> None:
-        return datetime.fromtimestamp(self._stats.st_birthtime)
+        return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
     
     @property
     def modify_time(self) -> None:
-        return datetime.fromtimestamp(self._stats.st_mtime)
+        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
     @property
     def access_time(self) -> None:
-        return datetime.fromtimestamp(self._stats.st_atime)
+        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)

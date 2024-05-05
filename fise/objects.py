@@ -34,3 +34,27 @@ class File:
     @property
     def file(self) -> None:
         return self._file
+    
+    @property
+    def owner(self) -> None:
+        return self._file.owner()
+    
+    @property
+    def group(self) -> None:
+        return self._file.group()
+
+    @property
+    def size(self) -> None:
+        return self._stats.st_size
+    
+    @property
+    def creation_time(self) -> None:
+        return self._stats.st_birthtime
+    
+    @property
+    def modify_time(self) -> None:
+        return self._stats.st_mtime
+
+    @property
+    def access_time(self) -> None:
+        return self._stats.st_atime

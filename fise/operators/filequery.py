@@ -10,6 +10,8 @@ from os import stat_result
 from typing import Generator
 from pathlib import Path
 
+from ..objects import File
+
 
 class FileQuery:
     r"""
@@ -35,10 +37,10 @@ class FileQuery:
         # Verifies if the specified path is a directory.
         assert Path(self._directory).is_dir()
 
-        # Dictionary of file paths with their coressponding `os.stat_result` objects.
-        self._stats: dict[Path, stat_result] = {
-            i: i.stat() for i in self._get_files(self._directory)
-        }
+        # Generator object of File objects for one-time usage.
+        self._stats: Generator[File, None, None] = (
+            File(i) for i in self._get_files(self._directory)
+        )
 
     def _get_files(self, directory: Path) -> Generator[Path, None, None]:
         r"""

@@ -26,9 +26,6 @@ class File:
         file (pathlib.Path): path of the file. 
         """
 
-        # Verifies if the specified path is a file.
-        assert file.is_file()
-
         self._file = file
         self._stats = file.stat()
 

@@ -37,6 +37,10 @@ class File:
         return self._file
     
     @property
+    def parent(self) -> None:
+        return self._file.parent
+    
+    @property
     def owner(self) -> None:
         return self._file.owner()
     

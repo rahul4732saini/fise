@@ -56,5 +56,4 @@ class FileQuery:
 
             # Extracts files from sub-directories.
             elif self._recursive and i.is_dir():
-                for i in self._get_files(i):
-                    yield i
+                yield from self._get_files(i)

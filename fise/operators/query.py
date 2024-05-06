@@ -25,14 +25,18 @@ class FileQueryProcessor:
 
     __slots__ = "_directory", "_recursive", "_files"
 
-    def __init__(self, directory: str, recursive: bool = False) -> None:
+    def __init__(
+        self, directory: str, recursive: bool = False, absolute: bool = False
+    ) -> None:
         r"""
         Creates an instance of the `FileQueryProcessor` class.
 
         #### Params:
         - directory (str): string representation of the directory path to be processed.
-        - recursive (bool): Boolean value to specify whether
-        to include the files present in the subdirectories.
+        - recursive (bool): Boolean value to specify whether to include the files
+        present in the subdirectories.
+        - absolute (bool): Boolean value to specify whether to include the
+        absolute path of the files.
         """
 
         self._directory = Path(directory)
@@ -40,6 +44,9 @@ class FileQueryProcessor:
 
         # Verifies if the specified path is a directory.
         assert Path(self._directory).is_dir()
+
+        if absolute:
+            self._directory = self._directory.absolute()
 
         # Generator object of File objects for one-time usage.
         self._files: Generator[File, None, None] = (

@@ -95,3 +95,5 @@ class FileDataQueryProcessor:
     FileDataQueryProcessor defines methods used for performing
     all data (text/bytes) search operations within files.
     """
+
+    __slots__ = ()

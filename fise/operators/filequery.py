@@ -2,8 +2,9 @@ r"""
 Filequery Module
 ----------------
 
-This module defines the FileQuery class used for
-performing all file search related operations.
+This module comprises objects and methods for processing user queries and
+conducting file/directory search operations within a specified directory.
+It also includes objects for performing search operations within files.
 """
 
 from typing import Generator
@@ -14,6 +15,7 @@ import pandas as pd
 
 from .shared import File
 from ..common import constants
+
 
 class FileQuery:
     r"""

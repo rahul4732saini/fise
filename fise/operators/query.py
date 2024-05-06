@@ -91,13 +91,15 @@ class FileDataQueryProcessor:
 
     __slots__ = "_path", "_recursive", "_files"
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, recursive: bool = False) -> None:
         r"""
         Creates an instance of the FileDataQueryProcessor class.
 
         #### Params:
         - path (pathlib.Path): string representation of the
         file/directory path to be processed.
+        - recursive (bool): Boolean value to specify whether to include the files
+        present in the subdirectories if the path specified is a directory.
         """
 
         pathway: Path = Path(path)
@@ -106,4 +108,4 @@ class FileDataQueryProcessor:
             self._files = (pathway,)
 
         elif pathway.is_dir():
-            self._files = tools.get_files(pathway, getattr(self, "_recursive", False))
+            self._files = tools.get_files(pathway, recursive)

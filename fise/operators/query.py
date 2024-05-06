@@ -92,6 +92,6 @@ class FileQueryProcessor:
 
 class FileDataQueryProcessor:
     r"""
-    FileQuery defines methods used for performing all
-    data (text/bytes) search operations with files.
+    FileDataQueryProcessor defines methods used for performing
+    all data (text/bytes) search operations within files.
     """

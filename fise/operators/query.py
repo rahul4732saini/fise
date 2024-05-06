@@ -88,3 +88,10 @@ class FileQueryProcessor:
             records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
+
+
+class FileDataQueryProcessor:
+    r"""
+    FileQuery defines methods used for performing all
+    data (text/bytes) search operations with files.
+    """

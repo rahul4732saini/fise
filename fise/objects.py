@@ -30,7 +30,7 @@ class File:
         self._stats = file.stat()
 
     @property
-    def file(self) -> Path:
+    def path(self) -> Path:
         return self._file
     
     @property

@@ -1,5 +1,5 @@
 r"""
-Filequery Module
+Query Module
 ----------------
 
 This module comprises objects and methods for processing user queries and
@@ -27,7 +27,7 @@ class FileQueryProcessor:
 
     def __init__(self, directory: str, recursive: bool = False) -> None:
         r"""
-        Creates an instance of the `FileQuery` class.
+        Creates an instance of the `FileQueryProcessor` class.
 
         #### Params:
         - directory (str): string representation of the directory path to be processed.

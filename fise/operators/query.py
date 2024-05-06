@@ -31,8 +31,8 @@ class FileQueryProcessor:
 
         #### Params:
         - directory (str): string representation of the directory path to be processed.
-        - recursive (bool): Boolean value to specify whether or not
-        to include the files present in the sub-directories.
+        - recursive (bool): Boolean value to specify whether
+        to include the files present in the subdirectories.
         """
 
         self._directory = Path(directory)
@@ -50,7 +50,7 @@ class FileQueryProcessor:
         r"""
         Returns a `typing.Generator` object of all files present within the
         specified directory. Also extracts the files present within the
-        sub-directories if `self._recursive` is set `True` at initialization.
+        subdirectories if `self._recursive` is set `True` at initialization.
 
         #### Params:
         - directory (pathlib.Path): Path of the directory to be processed.
@@ -74,7 +74,7 @@ class FileQueryProcessor:
         - size_unit (str): storage size unit.
         """
         
-        records =  pd.DataFrame(
+        records = pd.DataFrame(
             ([getattr(file, field) for field in fields] for file in self._files),
             columns=fields,
         )

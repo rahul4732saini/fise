@@ -23,7 +23,7 @@ class File:
         Creates an instance of the `File` class.
 
         #### Params:
-        file (pathlib.Path): path of the file. 
+        - file (pathlib.Path): path of the file. 
         """
 
         self._file = file

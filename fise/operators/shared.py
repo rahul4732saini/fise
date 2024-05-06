@@ -59,12 +59,21 @@ class File:
     
     @property
     def access_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
+        try:
+            return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
+        except OSError:
+            ...
     
     @property
     def creation_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
+        try:
+            return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
+        except OSError:
+            ...
     
     @property
     def modify_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
+        try:
+            return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
+        except OSError:
+            ...

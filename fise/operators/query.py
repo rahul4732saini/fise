@@ -81,3 +81,29 @@ class FileQueryProcessor:
             records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
+
+
+class FileDataQueryProcessor:
+    r"""
+    FileDataQueryProcessor defines methods used for performing
+    all data (text/bytes) search operations within files.
+    """
+
+    __slots__ = "_path", "_recursive", "_files"
+
+    def __init__(self, path: str) -> None:
+        r"""
+        Creates an instance of the FileDataQueryProcessor class.
+
+        #### Params:
+        - path (pathlib.Path): string representation of the
+        file/directory path to be processed.
+        """
+
+        pathway: Path = Path(path)
+
+        if pathway.is_file():
+            self._files = (pathway,)
+
+        elif pathway.is_dir():
+            self._files = tools.get_files(pathway, getattr(self, "_recursive", False))

@@ -41,7 +41,7 @@ class FileQuery:
 
         # Generator object of File objects for one-time usage.
         self._files: Generator[File, None, None] = (
-            File(i) for i in self._get_files(self._directory)
+            File(file) for file in self._get_files(self._directory)
         )
 
     def _get_files(self, directory: Path) -> Generator[Path, None, None]:

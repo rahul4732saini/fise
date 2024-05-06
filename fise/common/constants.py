@@ -9,6 +9,14 @@ are designed to assist other functionalities present withing it.
 # Mapping of storage unit string labels mapped with coressponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {
-    "b": 0.125, "B": 1, "KB": 1e3, "KiB": 1024, "MB": 1e6, "MiB": 1024 ** 2,
-    "GB": 1e9, "GiB": 1024 ** 3, "TB": 1e12, "TiB": 1024 ** 4,
+    "b": 0.125,
+    "B": 1,
+    "KB": 1e3,
+    "KiB": 1024,
+    "MB": 1e6,
+    "MiB": 1024**2,
+    "GB": 1e9,
+    "GiB": 1024**3,
+    "TB": 1e12,
+    "TiB": 1024**4,
 }

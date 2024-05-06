@@ -30,41 +30,41 @@ class File:
         self._stats = file.stat()
 
     @property
-    def file(self) -> None:
+    def file(self) -> Path:
         return self._file
     
     @property
-    def parent(self) -> None:
+    def parent(self) -> Path:
         return self._file.parent
     
     @property
-    def name(self) -> None:
+    def name(self) -> str:
         return self._file.name
     
     @property
-    def owner(self) -> None:
+    def owner(self) -> str:
         return self._file.owner()
     
     @property
-    def group(self) -> None:
+    def group(self) -> str:
         return self._file.group()
 
     @property
-    def size(self) -> None:
+    def size(self) -> int:
         return self._stats.st_size
     
     @property
-    def permissions(self) -> None:
+    def permissions(self) -> int:
         return self._stats.st_mode
     
     @property
-    def access_time(self) -> None:
+    def access_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
     
     @property
-    def creation_time(self) -> None:
+    def creation_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
     
     @property
-    def modify_time(self) -> None:
+    def modify_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)

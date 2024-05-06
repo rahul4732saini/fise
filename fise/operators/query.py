@@ -53,24 +53,6 @@ class FileQueryProcessor:
             File(file) for file in self._get_files(self._directory)
         )
 
-    def _get_files(self, directory: Path) -> Generator[Path, None, None]:
-        r"""
-        Returns a `typing.Generator` object of all files present within the
-        specified directory. Also extracts the files present within the
-        subdirectories if `self._recursive` is set `True` at initialization.
-
-        #### Params:
-        - directory (pathlib.Path): Path of the directory to be processed.
-        """
-
-        for path in directory.glob('*'):
-            if path.is_file():
-                yield path
-
-            # Extracts files from sub-directories.
-            elif self._recursive and path.is_dir():
-                yield from self._get_files(path)
-
     def get_fields(self, fields: tuple[str], size_unit: str = "B") -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
@@ -95,12 +77,3 @@ class FileQueryProcessor:
             records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
-
-
-class FileDataQueryProcessor:
-    r"""
-    FileDataQueryProcessor defines methods used for performing
-    all data (text/bytes) search operations within files.
-    """
-
-    __slots__ = ()

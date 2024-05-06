@@ -62,15 +62,19 @@ class FileQueryProcessor:
         - fields (tuple[str]): tuple of all the desired file status fields.
         - size_unit (str): storage size unit.
         """
-        
+
         records = pd.DataFrame(
             ([getattr(file, field) for field in fields] for file in self._files),
             columns=fields,
         )
 
         if "size" in fields:
-            records["size"] = records["size"].map(
-                lambda size: round(size / constants.SIZE_CONVERSION_MAP[size_unit], 5)
+            records["size"] = (
+                records["size"].map(
+                    lambda size: round(
+                        size / constants.SIZE_CONVERSION_MAP[size_unit], 5
+                    )
+                )
             ).astype(np.float64)
 
             # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.

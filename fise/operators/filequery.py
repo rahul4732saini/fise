@@ -81,5 +81,8 @@ class FileQuery:
             records["size"] = records["size"].map(
                 lambda size: round(size / constants.SIZE_CONVERSION_MAP[size_unit], 5)
             ).astype(np.float64)
-        
+
+            # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
+            records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
+
         return records

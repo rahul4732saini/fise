@@ -9,8 +9,11 @@ performing all file search related operations.
 from typing import Generator
 from pathlib import Path
 
-from ..objects import File
+import numpy as np
+import pandas as pd
 
+from .shared import File
+from ..common import constants
 
 class FileQuery:
     r"""
@@ -58,3 +61,25 @@ class FileQuery:
             # Extracts files from sub-directories.
             elif self._recursive and path.is_dir():
                 yield from self._get_files(path)
+
+    def get_fields(self, fields: tuple[str], size_unit: str = "B") -> pd.DataFrame:
+        r"""
+        Returns a pandas DataFrame comprising the fields specified
+        of all the files present within the specified directory.
+
+        #### Params:
+        - fields (tuple[str]): tuple of all the desired file status fields.
+        - size_unit (str): storage size unit.
+        """
+        
+        records =  pd.DataFrame(
+            ([getattr(file, field) for field in fields] for file in self._files),
+            columns=fields,
+        )
+
+        if "size" in fields:
+            records["size"] = records["size"].map(
+                lambda size: round(size / constants.SIZE_CONVERSION_MAP[size_unit], 5)
+            ).astype(np.float64)
+        
+        return records

@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .shared import File
-from ..common import constants
+from ..common import tools, constants
 
 
 class FileQueryProcessor:
@@ -50,7 +50,7 @@ class FileQueryProcessor:
 
         # Generator object of File objects for one-time usage.
         self._files: Generator[File, None, None] = (
-            File(file) for file in self._get_files(self._directory)
+            File(file) for file in tools.get_files(self._directory, recursive)
         )
 
     def get_fields(self, fields: tuple[str], size_unit: str = "B") -> pd.DataFrame:

@@ -1,9 +1,9 @@
 r"""
-Objects Module
+Shared Module
 --------------
 
-This module comprises classes that serve as foundational components
-for various objects and functionalities within the project.
+This module comprises classes that serve as foundational
+components for various objects and functionalities.
 """
 
 from datetime import datetime

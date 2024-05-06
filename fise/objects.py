@@ -54,13 +54,17 @@ class File:
         return self._stats.st_size
     
     @property
+    def permissions(self) -> None:
+        return self._stats.st_mode
+    
+    @property
+    def access_time(self) -> None:
+        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
+    
+    @property
     def creation_time(self) -> None:
         return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
     
     @property
     def modify_time(self) -> None:
         return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
-
-    @property
-    def access_time(self) -> None:
-        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)

@@ -7,7 +7,7 @@ conducting file/directory search operations within a specified directory.
 It also includes objects for performing search operations within files.
 """
 
-from typing import Generator
+from typing import Generator, Literal
 from pathlib import Path
 
 import numpy as np
@@ -89,20 +89,24 @@ class FileDataQueryProcessor:
     all data (text/bytes) search operations within files.
     """
 
-    __slots__ = "_path", "_recursive", "_files"
+    __slots__ = "_path", "_recursive", "_files", "_filemode"
 
-    def __init__(self, path: str, recursive: bool = False) -> None:
+    def __init__(
+        self, path: str, filemode: constants.FILE_MODES, recursive: bool = False
+    ) -> None:
         r"""
         Creates an instance of the FileDataQueryProcessor class.
 
         #### Params:
         - path (pathlib.Path): string representation of the
         file/directory path to be processed.
+        - filemode (str): file mode to the access the file contents; must be 'text' or 'bytes'.
         - recursive (bool): Boolean value to specify whether to include the files
         present in the subdirectories if the path specified is a directory.
         """
 
         pathway: Path = Path(path)
+        self._filemode: str = constants.FILE_MODES_MAP.get(filemode)
 
         if pathway.is_file():
             self._files = (pathway,)

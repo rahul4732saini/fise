@@ -6,6 +6,8 @@ This module comprises all the constants used throughout utility and
 are designed to assist other functionalities present withing it.
 """
 
+from typing import Literal
+
 # Mapping of storage unit string labels mapped with coressponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {
@@ -20,3 +22,6 @@ SIZE_CONVERSION_MAP = {
     "TB": 1e12,
     "TiB": 1024**4,
 }
+
+FILE_MODES = Literal["text", "bytes"]
+FILE_MODES_MAP = {"text": "r", "bytes": "rb"}

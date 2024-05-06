@@ -17,9 +17,9 @@ from .shared import File
 from ..common import constants
 
 
-class FileQuery:
+class FileQueryProcessor:
     r"""
-    FileQuery defines methods used for
+    FileQueryProcessor defines methods used for
     performing all file search operations.
     """
 

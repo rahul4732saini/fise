@@ -7,7 +7,7 @@ conducting file/directory search operations within a specified directory.
 It also includes objects for performing search operations within files.
 """
 
-from typing import Generator, Literal
+from typing import Generator
 from pathlib import Path
 
 import numpy as np

@@ -7,10 +7,9 @@ conducting file/directory search operations within a specified directory.
 It also includes objects for performing search operations within files.
 """
 
-from typing import Generator, Callable, Literal
+from typing import Generator, Callable
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from .shared import File
@@ -56,7 +55,8 @@ class FileQueryProcessor:
 
         # Generator object of File objects for one-time usage.
         self._files: Generator[File, None, None] = (
-            File(file) for file in tools.get_files(self._directory, recursive)
+            File(file, size_unit)
+            for file in tools.get_files(self._directory, recursive)
         )
 
     def get_fields(

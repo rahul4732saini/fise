@@ -138,6 +138,9 @@ class FileDataQueryProcessor:
         Iterates through each file and its corresponding data-lines,
         yielding dictionaries containing metadata about the data-lines
         that meet the specified condition.
+
+        #### Params:
+        - condititon (Callable | None): function for filtering search records.
         """
 
         for file, data in self._get_filedata():

@@ -148,12 +148,7 @@ class FileDataQueryProcessor:
 
         for file, data in self._get_filedata():
             yield from (
-                {
-                    "filename": file.name,
-                    "path": file,
-                    "dataline": data[i],
-                    "lineno": i + 1,
-                }
+                {"name": file.name, "path": file, "dataline": data[i], "lineno": i + 1}
                 for i in range(len(data))
                 if condition(data[i])
             )

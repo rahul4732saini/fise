@@ -1,6 +1,6 @@
 r"""
 Query Module
-----------------
+------------
 
 This module comprises objects and methods for processing user queries and
 conducting file/directory search operations within a specified directory.

@@ -102,6 +102,7 @@ class FileDataQueryProcessor:
         path: str,
         filemode: constants.FILE_MODES = "text",
         recursive: bool = False,
+        absolute: bool = False,
     ) -> None:
         r"""
         Creates an instance of the FileDataQueryProcessor class.
@@ -112,10 +113,15 @@ class FileDataQueryProcessor:
         - filemode (str): file mode to the access the file contents; must be 'text' or 'bytes'.
         - recursive (bool): Boolean value to specify whether to include the files
         present in the subdirectories if the path specified is a directory.
+        - absolute (bool): Boolean value to specify whether to include the
+        absolute path of the files.
         """
 
         pathway: Path = Path(path)
         self._filemode: str = constants.FILE_MODES_MAP.get(filemode)
+
+        if absolute:
+            pathway = pathway.absolute()
 
         if pathway.is_file():
             self._files = (pathway,)

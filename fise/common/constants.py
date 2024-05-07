@@ -8,7 +8,7 @@ are designed to assist other functionalities present withing it.
 
 from typing import Literal
 
-# Mapping of storage unit string labels mapped with coressponding divisors
+# Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {
     "b": 0.125,
@@ -26,7 +26,7 @@ SIZE_CONVERSION_MAP = {
 FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
 
-# Mapping of file suffixes mapped with coressponding
+# Mapping of file suffixes mapped with corresponding
 # `pandas.DataFrame`  methods for exporting data.
 DATA_EXPORT_TYPES_MAP = {
     ".csv": "to_csv",

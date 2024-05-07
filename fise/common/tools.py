@@ -9,6 +9,10 @@ objects and functionalities throughout the utility.
 from pathlib import Path
 from typing import Generator
 
+import pandas as pd
+
+from . import constants
+
 
 def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     r"""
@@ -22,10 +26,33 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     present in the subdirectories.
     """
 
-    for path in directory.glob('*'):
+    for path in directory.glob("*"):
         if path.is_file():
             yield path
 
         # Extracts files from sub-directories.
         elif recursive and path.is_dir():
             yield from get_files(path, recursive)
+
+
+def export_data(data: pd.DataFrame, path: str) -> None:
+    r"""
+    Exports search data to the specified file in a suitable format.
+
+    #### Params:
+    - data (pd.DataFrame): pandas DataFrame containing search results.
+    - path (str): string representation of the file path.
+    """
+
+    file: Path = Path(path)
+
+    # Verifies the path's parent directory for existence.
+    # Also verifies if the file is non-existent.
+    assert file.parent.exists() and not file.exists()
+
+    # String representation of the export method used for exporting
+    # the pandas DataFrame comprising the search data records.
+    export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
+
+    # Exporting the search data to the specified file with a suitable method.
+    getattr(data, export_method)(file)

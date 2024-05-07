@@ -23,7 +23,7 @@ class File:
         Creates an instance of the `File` class.
 
         #### Params:
-        - file (pathlib.Path): path of the file. 
+        - file (pathlib.Path): path of the file.
         """
 
         self._file = file
@@ -32,19 +32,19 @@ class File:
     @property
     def path(self) -> Path:
         return self._file
-    
+
     @property
     def parent(self) -> Path:
         return self._file.parent
-    
+
     @property
     def name(self) -> str:
         return self._file.name
-    
+
     @property
     def owner(self) -> str:
         return self._file.owner()
-    
+
     @property
     def group(self) -> str:
         return self._file.group()
@@ -52,25 +52,27 @@ class File:
     @property
     def size(self) -> int:
         return self._stats.st_size
-    
+
     @property
     def permissions(self) -> int:
         return self._stats.st_mode
-    
+
     @property
     def access_time(self) -> datetime:
         try:
             return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
         except OSError:
             ...
-    
+
     @property
     def creation_time(self) -> datetime:
         try:
-            return datetime.fromtimestamp(self._stats.st_birthtime).replace(microsecond=0)
+            return datetime.fromtimestamp(self._stats.st_birthtime).replace(
+                microsecond=0
+            )
         except OSError:
             ...
-    
+
     @property
     def modify_time(self) -> datetime:
         try:

@@ -119,3 +119,14 @@ class FileDataQueryProcessor:
 
         elif pathway.is_dir():
             self._files = tools.get_files(pathway, recursive)
+
+    def _get_filedata(self) -> Generator[tuple[Path, list[str]], None, None]:
+        r"""
+        Yields the file `pathlib.Path` object and a list of strings
+        representing the lines of text from each file. Each string in
+        the list corresponds to an individual line of text in the file.
+        """
+
+        for i in self._files:
+            with i.open(self._filemode) as file:
+                yield i, file.readlines()

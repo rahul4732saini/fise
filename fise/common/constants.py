@@ -25,3 +25,13 @@ SIZE_CONVERSION_MAP = {
 
 FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
+
+# Mapping of file suffixes mapped with coressponding
+# `pandas.DataFrame`  methods for exporting data.
+DATA_EXPORT_TYPES_MAP = {
+    ".csv": "to_csv",
+    ".xml": "to_xml",
+    ".json": "to_json",
+    ".html": "to_html",
+    ".xlsx": "to_excel",
+}

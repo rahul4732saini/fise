@@ -130,3 +130,19 @@ class FileDataQueryProcessor:
         for i in self._files:
             with i.open(self._filemode) as file:
                 yield i, file.readlines()
+
+    def _search_datalines(
+        self, condition: Callable[[str], bool]
+    ) -> Generator[dict[str, str | int], None, None]:
+        r"""
+        Iterates through each file and its corresponding data-lines,
+        yielding dictionaries containing metadata about the data-lines
+        that meet the specified condition.
+        """
+
+        for file, data in self._get_filedata():
+            yield from (
+                {"filename": file.name, "dataline": data[i], "lineno": i + 1}
+                for i in range(len(data))
+                if condition(data[i])
+            )

@@ -26,3 +26,10 @@ class FileSearchFilter:
     @property
     def data(self) -> pd.DataFrame:
         return self._data
+
+    def by_filename(self, name: str) -> None:
+        r"""
+        Filters the search records based on the specified file name.
+        """
+        self._data = self._data[self._data["name"] == name]
+        return self

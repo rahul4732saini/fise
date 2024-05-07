@@ -38,7 +38,7 @@ class File:
         # Verifies if the size divisor is not None.
         assert size_divisor
 
-        self._size_multiplier = size_divisor
+        self._size_divisor = size_divisor
 
     @property
     def path(self) -> Path:

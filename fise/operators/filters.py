@@ -22,3 +22,7 @@ class FileSearchFilter:
         - data (pd.DataFrame): pandas DataFrame containing search results.
         """
         self._data = data
+
+    @property
+    def data(self) -> pd.DataFrame:
+        return self._data

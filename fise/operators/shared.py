@@ -61,7 +61,7 @@ class File:
         return self._file.group()
 
     @property
-    def size(self) -> int:
+    def size(self) -> float:
         return round(self._stats.st_size / self._size_divisor, 5)
 
     @property

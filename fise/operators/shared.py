@@ -62,7 +62,7 @@ class File:
 
     @property
     def size(self) -> int:
-        return self._stats.st_size
+        return round(self._stats.st_size / self._size_divisor, 5)
 
     @property
     def permissions(self) -> int:

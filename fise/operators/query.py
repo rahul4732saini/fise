@@ -7,7 +7,7 @@ conducting file/directory search operations within a specified directory.
 It also includes objects for performing search operations within files.
 """
 
-from typing import Generator
+from typing import Generator, Callable, Literal
 from pathlib import Path
 
 import numpy as np
@@ -53,18 +53,31 @@ class FileQueryProcessor:
             File(file) for file in tools.get_files(self._directory, recursive)
         )
 
-    def get_fields(self, fields: tuple[str], size_unit: str = "B") -> pd.DataFrame:
+    def get_fields(
+        self,
+        fields: tuple[str],
+        condition: Callable[[File], bool] | None = None,
+        size_unit: str = "B",
+    ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
+        - condititon (Callable | None): function for filtering search records.
         - size_unit (str): storage size unit.
         """
 
+        if condition is None:
+            condition = lambda file: True
+
         records = pd.DataFrame(
-            ([getattr(file, field) for field in fields] for file in self._files),
+            (
+                [getattr(file, field) for field in fields]
+                for file in self._files
+                if condition(file)
+            ),
             columns=fields,
         )
 

@@ -6,6 +6,7 @@ This Module is designed to facilitate objects and methods for filtration
 of search data results based on the specified user queries.
 """
 
+import re
 import pandas as pd
 
 
@@ -32,4 +33,13 @@ class FileSearchFilter:
         Filters the search records based on the specified file name.
         """
         self._data = self._data[self._data["name"] == name]
+        return self
+
+    def by_filename_pattern(self, pattern: re.Pattern) -> None:
+        r"""
+        Filters the search records based on the specified file name pattern.
+        """
+        self._data = self._data[
+            self._data["name"].apply(lambda name: bool(re.match(pattern, name)))
+        ]
         return self

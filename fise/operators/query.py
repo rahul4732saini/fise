@@ -146,3 +146,31 @@ class FileDataQueryProcessor:
                 for i in range(len(data))
                 if condition(data[i])
             )
+
+    def get_fields(
+        self, fields: tuple[str], condition: Callable[[str], bool] | None = None
+    ) -> pd.DataFrame:
+        r"""
+        Returns a pandas DataFrame comprising the fields specified
+        of all the datalines present within the specified file(s)
+        matching the specified condition.
+
+        #### Params:
+        - fields (tuple[str]): tuple of all the desired file status fields.
+        - condititon (Callable | None): function for filtering search records.
+        """
+
+        if condition is None:
+            condition = lambda data: True
+
+        # Creates a pandas DataFrame out of a Generator
+        # object comprising records of the specified fields.
+        records = pd.DataFrame(
+            (
+                [data[field] for field in fields]
+                for data in self._search_datalines(condition)
+            ),
+            columns=fields,
+        )
+
+        return records

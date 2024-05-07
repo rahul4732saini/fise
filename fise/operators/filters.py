@@ -10,6 +10,25 @@ import re
 import pandas as pd
 
 
+class BaseFilter:
+    r"""
+    Base class for all search record filter classes.
+    """
+
+    def __init__(self, data: pd.DataFrame) -> None:
+        r"""
+        Creates an instance of the FileSearchFilter class.
+
+        #### Params:
+        - data (pd.DataFrame): pandas DataFrame containing search results.
+        """
+        self._data = data
+
+    @property
+    def data(self) -> pd.DataFrame:
+        return self._data
+
+
 class FileSearchFilter:
     r"""
     FileSearchFilter class comprises methods for filtering file search results.

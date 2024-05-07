@@ -30,7 +30,6 @@ FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
 # `pandas.DataFrame`  methods for exporting data.
 DATA_EXPORT_TYPES_MAP = {
     ".csv": "to_csv",
-    ".xml": "to_xml",
     ".json": "to_json",
     ".html": "to_html",
     ".xlsx": "to_excel",

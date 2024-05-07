@@ -28,14 +28,14 @@ class FileSearchFilter:
     def data(self) -> pd.DataFrame:
         return self._data
 
-    def by_filename(self, name: str) -> None:
+    def by_filename(self, name: str):
         r"""
         Filters the search records based on the specified file name.
         """
         self._data = self._data[self._data["name"] == name]
         return self
 
-    def by_filename_pattern(self, pattern: re.Pattern) -> None:
+    def by_filename_pattern(self, pattern: re.Pattern):
         r"""
         Filters the search records based on the specified file name pattern.
         """

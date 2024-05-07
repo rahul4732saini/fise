@@ -68,7 +68,7 @@ class FileQueryProcessor:
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
-        - condititon (Callable | None): function for filtering search records.
+        - condition (Callable | None): function for filtering search records.
         """
 
         if condition is None:
@@ -149,7 +149,7 @@ class FileDataQueryProcessor:
         that meet the specified condition.
 
         #### Params:
-        - condititon (Callable | None): function for filtering search records.
+        - condition (Callable | None): function for filtering search records.
         """
 
         for file, data in self._get_filedata():
@@ -169,7 +169,7 @@ class FileDataQueryProcessor:
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
-        - condititon (Callable | None): function for filtering search records.
+        - condition (Callable | None): function for filtering search records.
         """
 
         if condition is None:

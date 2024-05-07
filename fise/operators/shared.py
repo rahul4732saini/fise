@@ -9,6 +9,8 @@ components for various objects and functionalities.
 from datetime import datetime
 from pathlib import Path
 
+from ..common import constants
+
 
 class File:
     r"""
@@ -16,18 +18,27 @@ class File:
     related to the file `pathlib.Path` and `os.stat_result` object.
     """
 
-    __slots__ = "_file", "_stats"
+    __slots__ = "_file", "_stats", "_size_divisor"
 
-    def __init__(self, file: Path) -> None:
+    def __init__(self, file: Path, size_unit: str) -> None:
         r"""
         Creates an instance of the `File` class.
 
         #### Params:
         - file (pathlib.Path): path of the file.
+        - size_unit (str): storage size unit.
         """
 
         self._file = file
         self._stats = file.stat()
+
+        # Divisor for storage size conversion.
+        size_divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(size_unit)
+
+        # Verifies if the size divisor is not None.
+        assert size_divisor
+
+        self._size_multiplier = size_divisor
 
     @property
     def path(self) -> Path:

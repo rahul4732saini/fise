@@ -144,27 +144,25 @@ class FileDataQueryProcessor:
                 yield i, file.readlines()
 
     def _search_datalines(
-        self, condition: Callable[[str], bool]
+        self, match: str
     ) -> Generator[dict[str, str | int], None, None]:
         r"""
         Iterates through each file and its corresponding data-lines,
         yielding dictionaries containing metadata about the data-lines
-        that meet the specified condition.
+        which contain the `match` sub-string.
 
         #### Params:
-        - condition (Callable | None): function for filtering search records.
+        - match (str): sub-string to be searched within the data-lines.
         """
 
         for file, data in self._get_filedata():
             yield from (
                 {"name": file.name, "path": file, "dataline": data[i], "lineno": i + 1}
                 for i in range(len(data))
-                if condition(data[i])
+                if match in data[i]
             )
 
-    def get_fields(
-        self, fields: tuple[str], condition: Callable[[str], bool] | None = None
-    ) -> pd.DataFrame:
+    def get_fields(self, fields: tuple[str], match: str) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
         of all the datalines present within the specified file(s)
@@ -172,11 +170,8 @@ class FileDataQueryProcessor:
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
-        - condition (Callable | None): function for filtering search records.
+        - match (str): sub-string to be searched within the data-lines.
         """
-
-        if condition is None:
-            condition = lambda data: True
 
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
@@ -186,7 +181,7 @@ class FileDataQueryProcessor:
                     data[constants.DATA_QUERY_FIELD_ALIAS.get(field, field)]
                     for field in fields
                 ]
-                for data in self._search_datalines(condition)
+                for data in self._search_datalines(match)
             ),
             columns=fields,
         )

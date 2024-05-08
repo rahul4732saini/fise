@@ -42,3 +42,11 @@ DATA_EXPORT_TYPES_MAP = {
     ".html": "to_html",
     ".xlsx": "to_excel",
 }
+
+# Dictionary mapping alias names to actual field names for file search queries.
+FILE_QUERY_FIELD_ALIAS = {
+    "atime": "access_time",
+    "mtime": "modify_time",
+    "ctime": "create_time",
+    "perms": "permissions",
+}

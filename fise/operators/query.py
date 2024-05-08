@@ -178,11 +178,14 @@ class FileDataQueryProcessor:
         if condition is None:
             condition = lambda data: True
 
-        # Creates a pandas DataFrame out of a Generator
-        # object comprising records of the specified fields.
+        # Creates a pandas DataFrame out of a Generator object
+        # comprising records of the specified fields.
         records = pd.DataFrame(
             (
-                [data[field] for field in fields]
+                [
+                    data[constants.DATA_QUERY_FIELD_ALIAS.get(field, field)]
+                    for field in fields
+                ]
                 for data in self._search_datalines(condition)
             ),
             columns=fields,

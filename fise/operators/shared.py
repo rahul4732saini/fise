@@ -76,7 +76,7 @@ class File:
             ...
 
     @property
-    def creation_time(self) -> datetime:
+    def create_time(self) -> datetime:
         try:
             return datetime.fromtimestamp(self._stats.st_birthtime).replace(
                 microsecond=0

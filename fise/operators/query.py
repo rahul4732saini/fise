@@ -76,7 +76,10 @@ class FileQueryProcessor:
 
         records = pd.DataFrame(
             (
-                [getattr(file, field) for field in fields]
+                [
+                    getattr(file, constants.FILE_QUERY_FIELD_ALIAS.get(field, field))
+                    for field in fields
+                ]
                 for file in self._files
                 if condition(file)
             ),

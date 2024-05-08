@@ -43,10 +43,18 @@ DATA_EXPORT_TYPES_MAP = {
     ".xlsx": "to_excel",
 }
 
-# Dictionary mapping alias names to actual field names for file search queries.
+# Dictionary mapping alias -> field names for file search queries.
 FILE_QUERY_FIELD_ALIAS = {
     "atime": "access_time",
     "mtime": "modify_time",
     "ctime": "create_time",
     "perms": "permissions",
+}
+
+# Dictionary mapping alias -> field names for file data search queries.
+DATA_QUERY_FIELD_ALIAS = {
+    "filename": "name",
+    "filepath": "path",
+    "data": "dataline",
+    "line": "dataline",
 }

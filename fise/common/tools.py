@@ -56,31 +56,3 @@ def export_data(data: pd.DataFrame, path: str) -> None:
 
     # Exporting the search data to the specified file with a suitable method.
     getattr(data, export_method)(file)
-
-
-def remove_files(directory: str, recursive: bool, skip_err: bool) -> None:
-    r"""
-    Removes all the files present within the specified directory.
-
-    #### Params:
-    - directory (pathlib.Path): Path of the directory to be processed.
-    - recursive (bool): Boolean value to specify whether to include the files
-    present in the subdirectories.
-    - skip_err (bool): Boolean value to specifiy whether to terminate deletion
-    upon encountering an error with file deletion.
-    """
-
-    path: Path = Path(directory)
-
-    # Verifies if the specified path is a directory.
-    assert path.is_dir()
-
-    for file in get_files(path, recursive):
-        try:
-            file.unlink()
-
-        except PermissionError as e:
-            if skip_err:
-                continue
-
-            raise e

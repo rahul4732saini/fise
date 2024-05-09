@@ -9,7 +9,7 @@ components for various objects and functionalities.
 from datetime import datetime
 from pathlib import Path
 
-from ..common import constants
+from .common import constants
 
 
 class File:

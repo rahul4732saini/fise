@@ -210,6 +210,8 @@ class DirectoryQueryProcessor:
     all directory search operations within files.
     """
 
+    __slots__ = "_directory", "_recursive", "_size_unit"
+
     def __init__(
         self, directory: Path, recursive: bool, absolute: bool, size_unit: str
     ) -> None:

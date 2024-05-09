@@ -114,7 +114,7 @@ class FileDataQueryProcessor:
     all data (text/bytes) search operations within files.
     """
 
-    __slots__ = "_path", "_recursive", "_files", "_filemode"
+    __slots__ = "_path", "_recursive", "_filemode"
 
     def __init__(
         self,
@@ -127,8 +127,7 @@ class FileDataQueryProcessor:
         Creates an instance of the FileDataQueryProcessor class.
 
         #### Params:
-        - path (pathlib.Path): string representation of the
-        file/directory path to be processed.
+        - path (pathlib.Path): string representation of the file/directory path to be processed.
         - filemode (str): file mode to the access the file contents; must be 'text' or 'bytes'.
         - recursive (bool): Boolean value to specify whether to include the files
         present in the subdirectories if the path specified is a directory.
@@ -136,17 +135,12 @@ class FileDataQueryProcessor:
         absolute path of the files.
         """
 
-        pathway: Path = Path(path)
+        self._path: Path = Path(path)
         self._filemode: str = constants.FILE_MODES_MAP.get(filemode)
+        self._recursive = recursive
 
         if absolute:
-            pathway = pathway.absolute()
-
-        if pathway.is_file():
-            self._files = (pathway,)
-
-        elif pathway.is_dir():
-            self._files = tools.get_files(pathway, recursive)
+            self._path = self._path.absolute()
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str]], None, None]:
         r"""
@@ -155,7 +149,16 @@ class FileDataQueryProcessor:
         the list corresponds to an individual line of text in the file.
         """
 
-        for i in self._files:
+        # Generator object of `pathlib.Path` objects of all the files present within
+        # the directory if the specified path is a directory else a tuple comprising
+        # the `pathlib.Path` object of the specified file.
+        files: tuple[Path] | Generator[Path, None, None] = (
+            (self._path,)
+            if self._path.is_file()
+            else tools.get_files(self._path, self._recursive)
+        )
+
+        for i in files:
             with i.open(self._filemode) as file:
                 yield i, file.readlines()
 

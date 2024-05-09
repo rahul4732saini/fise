@@ -50,8 +50,8 @@ class FileQueryProcessor:
     def get_fields(
         self,
         fields: tuple[str],
-        condition: Callable[[File], bool] | None = None,
-        size_unit: str = "B",
+        condition: Callable[[File], bool],
+        size_unit: str,
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
@@ -67,9 +67,6 @@ class FileQueryProcessor:
             File(file, size_unit)
             for file in tools.get_files(self._directory, self._recursive)
         )
-
-        if condition is None:
-            condition = lambda file: True
 
         records = pd.DataFrame(
             (

@@ -35,6 +35,26 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
             yield from get_files(path, recursive)
 
 
+def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
+    r"""
+    Returns a `typing.Generator` object of all sub-directories present within the
+    specified directory. Also extracts the directories present within the sub-directories
+    if `recursive` is set to `True`.
+
+    #### Params:
+    - directory (pathlib.Path): Path of the directory to be processed.
+    - recursive (bool): Boolean value to specify whether to include the files
+    present in the subdirectories.
+    """
+
+    for path in directory.glob("*"):
+        if path.is_dir():
+            if recursive:
+                yield from get_directories(path, recursive)
+
+            yield path
+
+
 def export_data(data: pd.DataFrame, path: str) -> None:
     r"""
     Exports search data to the specified file in a suitable format.

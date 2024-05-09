@@ -111,3 +111,27 @@ class Directory:
 
         self._directory = directory
         self._stats = directory.stat()
+
+    @property
+    def path(self) -> Path:
+        return self._directory
+
+    @property
+    def parent(self) -> Path:
+        return self._directory.parent
+
+    @property
+    def name(self) -> str:
+        return self._directory.name
+
+    @property
+    def owner(self) -> str:
+        return self._directory.owner()
+
+    @property
+    def group(self) -> str:
+        return self._directory.group()
+
+    @property
+    def permissions(self) -> int:
+        return self._stats.st_mode

@@ -88,6 +88,25 @@ class FileQueryProcessor:
 
         return records
 
+    def remove_files(self, skip_err: bool) -> None:
+        r"""
+        Removes all the files present within the specified directory.
+
+        #### Params:
+        - skip_err (bool): Boolean value to specifiy whether to terminate deletion
+        upon encountering an error with file deletion.
+        """
+
+        for file in tools.get_files(self._directory, self._recursive):
+            try:
+                file.unlink()
+
+            except PermissionError as e:
+                if skip_err:
+                    continue
+
+                raise e
+
 
 class FileDataQueryProcessor:
     r"""

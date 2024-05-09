@@ -22,7 +22,7 @@ class FileQueryProcessor:
     performing all file search operations.
     """
 
-    __slots__ = "_directory", "_recursive", "_files", "_size_unit"
+    __slots__ = "_directory", "_recursive", "_size_unit"
 
     def __init__(
         self,
@@ -53,12 +53,6 @@ class FileQueryProcessor:
         if absolute:
             self._directory = self._directory.absolute()
 
-        # Generator object of File objects for one-time usage.
-        self._files: Generator[File, None, None] = (
-            File(file, size_unit)
-            for file in tools.get_files(self._directory, recursive)
-        )
-
     def get_fields(
         self, fields: tuple[str], condition: Callable[[File], bool] | None = None
     ) -> pd.DataFrame:
@@ -71,6 +65,11 @@ class FileQueryProcessor:
         - condition (Callable | None): function for filtering search records.
         """
 
+        files: Generator[File, None, None] = (
+            File(file, self._size_unit)
+            for file in tools.get_files(self._directory, self._recursive)
+        )
+
         if condition is None:
             condition = lambda file: True
 
@@ -80,7 +79,7 @@ class FileQueryProcessor:
                     getattr(file, constants.FILE_QUERY_FIELD_ALIAS.get(field, field))
                     for field in fields
                 ]
-                for file in self._files
+                for file in files
                 if condition(file)
             ),
             columns=fields,

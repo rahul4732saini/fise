@@ -58,7 +58,7 @@ class FileQueryProcessor:
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
-        - condition (Callable | None): function for filtering search records.
+        - condition (Callable): function for filtering search records.
         """
 
         files: Generator[File, None, None] = (
@@ -83,16 +83,20 @@ class FileQueryProcessor:
 
         return records
 
-    def remove_files(self, skip_err: bool) -> None:
+    def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         r"""
         Removes all the files present within the specified directory.
 
         #### Params:
+        - condition (Callable): function for filtering file records.
         - skip_err (bool): Boolean value to specifiy whether to terminate deletion
         upon encountering an error with file deletion.
         """
 
         for file in tools.get_files(self._directory, self._recursive):
+            if condition(File(file, self._size_unit)) is False:
+                continue
+
             try:
                 file.unlink()
 

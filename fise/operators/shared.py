@@ -98,7 +98,9 @@ class Directory:
     related to the directory `pathlib.Path` and `os.stat_result` object.
     """
 
-    def __init__(self, directory: Path, size_unit: str) -> None:
+    __slots__ = "_file", "_stats", "_size_divisor"
+
+    def __init__(self, directory: Path) -> None:
         r"""
         Creates an instance of the `Directory` class.
 
@@ -109,11 +111,3 @@ class Directory:
 
         self._directory = directory
         self._stats = directory.stat()
-
-        # Divisor for storage size conversion.
-        size_divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(size_unit)
-
-        # Verifies if the size divisor is not None.
-        assert size_divisor
-
-        self._size_divisor = size_divisor

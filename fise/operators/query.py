@@ -13,7 +13,7 @@ import shutil
 
 import pandas as pd
 
-from .shared import File, Directory
+from ..shared import File, Directory
 from ..common import tools, constants
 
 

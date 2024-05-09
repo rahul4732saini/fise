@@ -256,7 +256,7 @@ class DirectoryQueryProcessor:
             (
                 [
                     getattr(
-                        directory, constants.FILE_QUERY_FIELD_ALIAS.get(field, field)
+                        directory, constants.DIR_QUERY_FIELD_ALIAS.get(field, field)
                     )
                     for field in fields
                 ]

@@ -90,3 +90,10 @@ class File:
             return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
         except OSError:
             ...
+
+
+class Directory:
+    r"""
+    Directory class serves as a unified class for accessing all methods and attributes
+    related to the directory `pathlib.Path` and `os.stat_result` object.
+    """

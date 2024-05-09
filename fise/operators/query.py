@@ -117,11 +117,7 @@ class FileDataQueryProcessor:
     __slots__ = "_path", "_recursive", "_filemode"
 
     def __init__(
-        self,
-        path: str,
-        filemode: constants.FILE_MODES = "text",
-        recursive: bool = False,
-        absolute: bool = False,
+        self, path: str, filemode: constants.FILE_MODES, recursive: bool, absolute: bool
     ) -> None:
         r"""
         Creates an instance of the FileDataQueryProcessor class.

@@ -202,3 +202,10 @@ class FileDataQueryProcessor:
         )
 
         return records
+
+
+class DirectoryQueryProcessor:
+    r"""
+    DirectoryQueryProcessor defines methods used for performing
+    all directory search operations within files.
+    """

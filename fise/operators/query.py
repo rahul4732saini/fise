@@ -113,13 +113,17 @@ class FileDataQueryProcessor:
     __slots__ = "_path", "_recursive", "_filemode"
 
     def __init__(
-        self, path: str, filemode: constants.FILE_MODES, recursive: bool, absolute: bool
+        self,
+        path: Path,
+        filemode: constants.FILE_MODES,
+        recursive: bool,
+        absolute: bool,
     ) -> None:
         r"""
         Creates an instance of the FileDataQueryProcessor class.
 
         #### Params:
-        - path (pathlib.Path): string representation of the file/directory path to be processed.
+        - path (pathlib.Path): file/directory path to be processed.
         - filemode (str): file mode to the access the file contents; must be 'text' or 'bytes'.
         - recursive (bool): Boolean value to specify whether to include the files
         present in the subdirectories if the path specified is a directory.
@@ -127,7 +131,7 @@ class FileDataQueryProcessor:
         absolute path of the files.
         """
 
-        self._path: Path = Path(path)
+        self._path = path
         self._filemode: str = constants.FILE_MODES_MAP.get(filemode)
         self._recursive = recursive
 

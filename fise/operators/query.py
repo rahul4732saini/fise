@@ -209,3 +209,25 @@ class DirectoryQueryProcessor:
     DirectoryQueryProcessor defines methods used for performing
     all directory search operations within files.
     """
+
+    def __init__(
+        self, directory: Path, recursive: bool, absolute: bool, size_unit: str
+    ) -> None:
+        r"""
+        Creates an instance of the `FileQueryProcessor` class.
+
+        #### Params:
+        - directory (Path): directory path to be processed.
+        - recursive (bool): Boolean value to specify whether to include the files
+        present in the subdirectories.
+        - absolute (bool): Boolean value to specify whether to include the
+        absolute path of the files.
+        - size_unit (str): storage size unit.
+        """
+
+        self._directory = directory
+        self._recursive = recursive
+        self._size_unit = size_unit
+
+        if absolute:
+            self._directory = self._directory.absolute()

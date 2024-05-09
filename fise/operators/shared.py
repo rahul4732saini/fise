@@ -97,3 +97,23 @@ class Directory:
     Directory class serves as a unified class for accessing all methods and attributes
     related to the directory `pathlib.Path` and `os.stat_result` object.
     """
+
+    def __init__(self, directory: Path, size_unit: str) -> None:
+        r"""
+        Creates an instance of the `Directory` class.
+
+        #### Params:
+        - direcotry (pathlib.Path): path of the directory.
+        - size_unit (str): storage size unit.
+        """
+
+        self._directory = directory
+        self._stats = directory.stat()
+
+        # Divisor for storage size conversion.
+        size_divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(size_unit)
+
+        # Verifies if the size divisor is not None.
+        assert size_divisor
+
+        self._size_divisor = size_divisor

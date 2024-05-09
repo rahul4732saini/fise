@@ -1,5 +1,5 @@
 r"""
-Query Module
+Operators Module
 ------------
 
 This module comprises objects and methods for processing user queries and

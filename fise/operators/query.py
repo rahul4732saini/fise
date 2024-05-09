@@ -24,9 +24,7 @@ class FileQueryProcessor:
 
     __slots__ = "_directory", "_recursive"
 
-    def __init__(
-        self, directory: str, recursive: bool = False, absolute: bool = False
-    ) -> None:
+    def __init__(self, directory: str, recursive: bool, absolute: bool) -> None:
         r"""
         Creates an instance of the `FileQueryProcessor` class.
 

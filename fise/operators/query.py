@@ -9,6 +9,7 @@ It also includes objects for performing search operations within files.
 
 from typing import Generator, Callable
 from pathlib import Path
+import shutil
 
 import pandas as pd
 
@@ -266,3 +267,29 @@ class DirectoryQueryProcessor:
         )
 
         return records
+
+    def remove_directories(
+        self, condition: Callable[[File], bool], skip_err: bool
+    ) -> None:
+        r"""
+        Removes all the sub-directories present within the
+        specified directory matching the specified condition.
+
+        #### Params:
+        - condition (Callable): function for filtering directory records.
+        - skip_err (bool): Boolean value to specifiy whether to terminate deletion
+        upon encountering an error with directory/file deletion.
+        """
+
+        for directory in tools.get_directories(self._directory, self._recursive):
+            if condition(Directory(directory)) is False:
+                continue
+
+            try:
+                shutil.rmtree(directory)
+
+            except PermissionError as e:
+                if skip_err:
+                    continue
+
+                raise e

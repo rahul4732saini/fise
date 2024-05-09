@@ -58,3 +58,6 @@ DATA_QUERY_FIELD_ALIAS = {
     "data": "dataline",
     "line": "dataline",
 }
+
+# Dictionary mapping alias -> field names for file directory search queries.
+DIR_QUERY_FIELD_ALIAS = {"perms": "permissions"}

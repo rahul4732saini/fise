@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .shared import File
+from .shared import File, Directory
 from ..common import tools, constants
 
 
@@ -233,3 +233,36 @@ class DirectoryQueryProcessor:
 
         if absolute:
             self._directory = self._directory.absolute()
+
+    def get_fields(
+        self, fields: tuple[str], condition: Callable[[Directory], bool]
+    ) -> pd.DataFrame:
+        r"""
+        Returns a pandas DataFrame comprising the fields specified of all
+        the sub-directories present within the specified directory.
+
+        #### Params:
+        - fields (tuple[str]): tuple of all the desired directory status fields.
+        - condition (Callable): function for filtering search records.
+        """
+
+        directories: Generator[Directory, None, None] = (
+            Directory(directory)
+            for directory in tools.get_directories(self._directory, self._recursive)
+        )
+
+        records = pd.DataFrame(
+            (
+                [
+                    getattr(
+                        directory, constants.FILE_QUERY_FIELD_ALIAS.get(field, field)
+                    )
+                    for field in fields
+                ]
+                for directory in directories
+                if condition(directory)
+            ),
+            columns=fields,
+        )
+
+        return records

@@ -98,7 +98,7 @@ class Directory:
     related to the directory `pathlib.Path` and `os.stat_result` object.
     """
 
-    __slots__ = "_file", "_stats", "_size_divisor"
+    __slots__ = "_directory", "_stats", "_size_divisor"
 
     def __init__(self, directory: Path) -> None:
         r"""

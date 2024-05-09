@@ -22,14 +22,10 @@ class FileQueryProcessor:
     performing all file search operations.
     """
 
-    __slots__ = "_directory", "_recursive", "_size_unit"
+    __slots__ = "_directory", "_recursive"
 
     def __init__(
-        self,
-        directory: str,
-        recursive: bool = False,
-        absolute: bool = False,
-        size_unit: str = "B",
+        self, directory: str, recursive: bool = False, absolute: bool = False
     ) -> None:
         r"""
         Creates an instance of the `FileQueryProcessor` class.
@@ -40,12 +36,10 @@ class FileQueryProcessor:
         present in the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
-        - size_unit (str): storage size unit.
         """
 
         self._directory = Path(directory)
         self._recursive = recursive
-        self._size_unit = size_unit
 
         # Verifies if the specified path is a directory.
         assert Path(self._directory).is_dir()
@@ -54,7 +48,10 @@ class FileQueryProcessor:
             self._directory = self._directory.absolute()
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[File], bool] | None = None
+        self,
+        fields: tuple[str],
+        condition: Callable[[File], bool] | None = None,
+        size_unit: str = "B",
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
@@ -63,10 +60,11 @@ class FileQueryProcessor:
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
         - condition (Callable | None): function for filtering search records.
+        - size_unit (str): storage size unit.
         """
 
         files: Generator[File, None, None] = (
-            File(file, self._size_unit)
+            File(file, size_unit)
             for file in tools.get_files(self._directory, self._recursive)
         )
 
@@ -86,7 +84,7 @@ class FileQueryProcessor:
         )
 
         # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
-        records.rename(columns={"size": f"size({self._size_unit})"}, inplace=True)
+        records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
 

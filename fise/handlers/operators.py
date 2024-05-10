@@ -17,9 +17,9 @@ from ..shared import File, Directory
 from ..common import tools, constants
 
 
-class FileQueryProcessor:
+class FileQueryOperator:
     r"""
-    FileQueryProcessor defines methods used for
+    FileQueryOperator defines methods used for
     performing all file search operations.
     """
 
@@ -29,7 +29,7 @@ class FileQueryProcessor:
         self, directory: Path, recursive: bool, absolute: bool, size_unit: str
     ) -> None:
         r"""
-        Creates an instance of the `FileQueryProcessor` class.
+        Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
         - directory (Path): directory path to be processed.

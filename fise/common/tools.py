@@ -3,7 +3,7 @@ Tools module
 ------------
 
 This module comprises functions and tools supporting other
-objects and functionalities throughout the utility.
+objects and functions throughout the FiSE project.
 """
 
 from pathlib import Path

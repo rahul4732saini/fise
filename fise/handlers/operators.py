@@ -205,9 +205,9 @@ class FileDataQueryOperator:
         return records
 
 
-class DirectoryQueryProcessor:
+class DirectoryQueryOperator:
     r"""
-    DirectoryQueryProcessor defines methods used for performing
+    DirectoryQueryOperator defines methods used for performing
     all directory search operations within files.
     """
 
@@ -217,7 +217,7 @@ class DirectoryQueryProcessor:
         self, directory: Path, recursive: bool, absolute: bool, size_unit: str
     ) -> None:
         r"""
-        Creates an instance of the `FileQueryProcessor` class.
+        Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
         - directory (Path): directory path to be processed.

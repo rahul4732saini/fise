@@ -146,6 +146,7 @@ class BaseQuery:
     """
 
     path: Path
+    path_type: str
     condition: Callable[[File | Directory], bool]
 
 

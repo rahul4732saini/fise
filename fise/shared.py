@@ -147,3 +147,13 @@ class BaseQuery:
 
     path: Path
     condition: Callable[[File | Directory], bool]
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class SelectQuery(BaseQuery):
+    r"""
+    SelectQuery class serves as a data classes for
+    storing attributes related to search queries.
+    """
+
+    fields: list[str]

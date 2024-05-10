@@ -6,7 +6,9 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
+from dataclasses import dataclass
 from datetime import datetime
+from typing import Callable
 from pathlib import Path
 
 from .common import constants
@@ -135,3 +137,13 @@ class Directory:
     @property
     def permissions(self) -> int:
         return self._stats.st_mode
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class BaseQuery:
+    r"""
+    Base class for all query data classes.
+    """
+
+    path: Path
+    condition: Callable[[File | Directory], bool]

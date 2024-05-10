@@ -105,9 +105,9 @@ class FileQueryOperator:
                 raise e
 
 
-class FileDataQueryProcessor:
+class FileDataQueryOperator:
     r"""
-    FileDataQueryProcessor defines methods used for performing
+    FileDataQueryOperator defines methods used for performing
     all data (text/bytes) search operations within files.
     """
 
@@ -121,7 +121,7 @@ class FileDataQueryProcessor:
         absolute: bool,
     ) -> None:
         r"""
-        Creates an instance of the FileDataQueryProcessor class.
+        Creates an instance of the FileDataQueryOperator class.
 
         #### Params:
         - path (pathlib.Path): file/directory path to be processed.

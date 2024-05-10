@@ -61,3 +61,5 @@ DATA_QUERY_FIELD_ALIAS = {
 
 # Dictionary mapping alias -> field names for file directory search queries.
 DIR_QUERY_FIELD_ALIAS = {"perms": "permissions"}
+
+PATH_TYPES = {"absolute", "relative"}

@@ -2,8 +2,8 @@ r"""
 Constants Module
 ----------------
 
-This module comprises all the constants used throughout utility and
-are designed to assist other functionalities present withing it.
+This module comprises constants designed to assist various
+objects and functions present within the FiSE project.
 """
 
 from typing import Literal

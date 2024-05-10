@@ -15,6 +15,8 @@ class FileQueryParser:
     file search/manipulation operation queries.
     """
 
+    __slots__ = "_query", "_operation"
+
     def __init__(
         self, query: list[str], operation: Literal["select", "remove"]
     ) -> None:

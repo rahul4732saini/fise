@@ -6,10 +6,10 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable
 from pathlib import Path
+from dataclasses import dataclass
 
 from .common import constants
 

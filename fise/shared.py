@@ -157,3 +157,11 @@ class SelectQuery(BaseQuery):
     """
 
     fields: list[str]
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class DeleteQuery(BaseQuery):
+    r"""
+    DeleteQuery class serves as a data class for storing
+    attributes related to file/directory deletion queries.
+    """

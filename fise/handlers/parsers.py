@@ -7,6 +7,10 @@ queries extracting relavent data for further processing.
 """
 
 from typing import Literal
+from pathlib import Path
+
+from ..common import constants
+from ..shared import DeleteQuery
 
 
 class FileQueryParser:
@@ -29,3 +33,24 @@ class FileQueryParser:
         """
         self._query = query
         self._operation = operation
+
+    def _parse_remove_query(self) -> DeleteQuery:
+        r"""
+        Parses the file deletion query.
+        """
+
+        assert self._query[0].lower() == "from"
+
+        if self._query[1] in constants.PATH_TYPES:
+            path_type: str = self._query[1]
+            path: Path = Path(self._query[2])
+
+        else:
+            path_type: str = "relative"
+            path: Path = Path(self._query[1])
+
+        assert path.is_dir()
+
+        # TODO: condition parsing.
+
+        return DeleteQuery(path, path_type, lambda metadata: True)

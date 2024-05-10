@@ -10,7 +10,7 @@ from typing import Literal
 from pathlib import Path
 
 from ..common import constants
-from ..shared import DeleteQuery
+from ..shared import DeleteQuery, SelectQuery
 
 
 class FileQueryParser:
@@ -33,6 +33,19 @@ class FileQueryParser:
         """
         self._query = query
         self._operation = operation
+
+    def _get_from_keyword_index(self) -> int:
+        r"""
+        Returns the index of the 'from' keyword in the query.
+        """
+
+        match = {"from", "FROM"}
+
+        for i in range(len(self._query)):
+            if self._query[i] in match:
+                return i
+
+        # TODO: Exception handling
 
     def _parse_remove_query(self) -> DeleteQuery:
         r"""

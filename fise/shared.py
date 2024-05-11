@@ -151,9 +151,9 @@ class BaseQuery:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class SelectQuery(BaseQuery):
+class SearchQuery(BaseQuery):
     r"""
-    SelectQuery class serves as a data classes for
+    SearchQuery class serves as a data classes for
     storing attributes related to search queries.
     """
 

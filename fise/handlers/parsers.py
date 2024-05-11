@@ -275,7 +275,7 @@ class DirectoryQueryParser(FileQueryParser):
         return fields
 
     @override
-    def _parse_search_query(self) -> FileSearchQuery:
+    def _parse_search_query(self) -> SearchQuery:
         r"""
         Parses the file search query.
         """

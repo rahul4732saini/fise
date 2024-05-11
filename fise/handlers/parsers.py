@@ -271,3 +271,15 @@ class DirectoryQueryParser:
         # TODO: Custom exceptional handling
 
         return fields
+
+    @staticmethod
+    def _parse_directory(subquery: list[str]) -> tuple[Path, str]:
+        r"""
+        Parses the directory path and its type from the specified sub-query.
+        """
+        path, type_ = _parse_path(subquery)
+
+        # Asserts if the path is a directory.
+        assert path.is_dir()
+
+        return path, type_

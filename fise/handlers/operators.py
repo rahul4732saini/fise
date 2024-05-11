@@ -13,8 +13,8 @@ import shutil
 
 import pandas as pd
 
-from ..shared import File, Directory
 from ..common import tools, constants
+from ..shared import File, Directory, DataLine
 
 
 class FileQueryOperator:
@@ -159,13 +159,11 @@ class FileDataQueryOperator:
             with i.open(self._filemode) as file:
                 yield i, file.readlines()
 
-    def _search_datalines(
-        self, match: str
-    ) -> Generator[dict[str, str | int], None, None]:
+    def _search_datalines(self, match: str) -> Generator[DataLine, None, None]:
         r"""
         Iterates through each file and its corresponding data-lines,
-        yielding dictionaries containing metadata about the data-lines
-        which contain the `match` sub-string.
+        yielding `DataLine` objects comprising the metadata of the
+        data-lines which contain the `match` sub-string.
 
         #### Params:
         - match (str): sub-string to be searched within the data-lines.
@@ -173,9 +171,9 @@ class FileDataQueryOperator:
 
         for file, data in self._get_filedata():
             yield from (
-                {"name": file.name, "path": file, "dataline": data[i], "lineno": i + 1}
-                for i in range(len(data))
-                if match in data[i]
+                DataLine(file, line, index)
+                for index, line in enumerate(data)
+                if match in line
             )
 
     def get_fields(self, fields: tuple[str], match: str) -> pd.DataFrame:

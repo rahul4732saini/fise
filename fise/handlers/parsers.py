@@ -296,3 +296,17 @@ class DirectoryQueryParser:
         return DeleteQuery(
             *self._parse_directory(self._query[1:]), lambda metadata: True
         )
+
+    def _parse_search_query(self) -> FileSearchQuery:
+        r"""
+        Parses the file search query.
+        """
+
+        from_index: int = _get_from_keyword_index(self._query)
+
+        fields: list[str] = self._parse_fields(self._query[:from_index])
+        directory, path_type = self._parse_directory(self._query[from_index + 1 :])
+
+        # TODO: condition parsing
+
+        return SearchQuery(directory, path_type, lambda metadata: True, fields)

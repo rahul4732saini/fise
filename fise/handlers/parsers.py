@@ -233,6 +233,8 @@ class DirectoryQueryParser:
     directory search/manipulation operation queries.
     """
 
+    __slots__ = "_query", "_operation"
+
     def __init__(
         self, query: str | list[str], operation: Literal["select", "delete"]
     ) -> None:

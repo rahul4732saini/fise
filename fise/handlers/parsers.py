@@ -57,6 +57,25 @@ class FileQueryParser:
 
         return fields
 
+    @staticmethod
+    def _parse_directory(subquery: list[str]) -> tuple[Path, str]:
+        r"""
+        Parses the directory path and its type from the specified sub-query.
+        """
+
+        if subquery[0].lower() in constants.PATH_TYPES:
+            path_type: str = subquery[0].lower()
+            path: Path = Path(subquery[1])
+
+        else:
+            path_type: str = "relative"
+            path: Path = Path(subquery[0])
+
+        # Asserts if the path is a directory.
+        assert path.is_dir()
+
+        return path, path_type
+
     def _get_from_keyword_index(self) -> int:
         r"""
         Returns the index of the 'from' keyword in the query.

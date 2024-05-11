@@ -67,7 +67,7 @@ class FileQueryOperator:
         records = pd.DataFrame(
             (
                 [
-                    getattr(file, constants.FILE_QUERY_FIELD_ALIAS.get(field, field))
+                    getattr(file, constants.FILE_FIELD_ALIASES.get(field, field))
                     for field in fields
                 ]
                 for file in files
@@ -253,9 +253,7 @@ class DirectoryQueryOperator:
         records = pd.DataFrame(
             (
                 [
-                    getattr(
-                        directory, constants.DIR_QUERY_FIELD_ALIAS.get(field, field)
-                    )
+                    getattr(directory, constants.DIR_FIELD_ALIASES.get(field, field))
                     for field in fields
                 ]
                 for directory in directories

@@ -34,6 +34,29 @@ class FileQueryParser:
         self._query = query
         self._operation = operation
 
+    @staticmethod
+    def _parse_fields(attrs: list[str] | str) -> list[str]:
+        r"""
+        Parses the select query fields.
+        """
+
+        if type(attrs) is list:
+            attrs = "".join(attrs)
+
+        # Replaces the `*` field with a string representation of all
+        # the fields and splits the string into a list of fields.
+        fields: list[str] = attrs.replace("*", ",".join(constants.FILE_FIELDS)).split(
+            ","
+        )
+
+        # Verifies all the file search fields.
+        assert all(
+            i in constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
+            for i in fields
+        )
+
+        return fields
+
     def _get_from_keyword_index(self) -> int:
         r"""
         Returns the index of the 'from' keyword in the query.

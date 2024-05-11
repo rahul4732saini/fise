@@ -72,3 +72,6 @@ DATA_FIELD_ALIASES = {
 DIR_FIELD_ALIASES = {"perms": "permissions"}
 
 PATH_TYPES = {"absolute", "relative"}
+
+# Supported databases for data export.
+DATABASES = Literal["postgresql", "mysql", "sqlite"]

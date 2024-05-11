@@ -163,3 +163,29 @@ class FileDataQueryParser:
         - query (list[str]): query to be parsed.
         """
         self._query = query
+
+    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+        r"""
+        Parses the data search query fields.
+        """
+
+        if type(attrs) is list:
+            attrs = "".join(attrs)
+
+        fields = []
+
+        file_fields: set[str] = (
+            constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
+        )
+
+        for field in attrs.split(","):
+            if field == "*":
+                fields.extend(constants.DATA_FIELDS)
+
+            else:
+                assert field in file_fields
+                fields.append(field)
+
+        # TODO: Custom exceptional handling
+
+        return fields

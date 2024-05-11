@@ -7,7 +7,7 @@ queries extracting relavent data for further processing.
 """
 
 import re
-from typing import Literal
+from typing import Literal, override
 from pathlib import Path
 
 from ..common import constants
@@ -227,7 +227,7 @@ class FileDataQueryParser:
         return SearchQuery(path, path_type, lambda metadata: True, fields)
 
 
-class DirectoryQueryParser:
+class DirectoryQueryParser(FileQueryParser):
     r"""
     DirectoryQueryParser defines methods for parsing
     directory search/manipulation operation queries.
@@ -235,6 +235,7 @@ class DirectoryQueryParser:
 
     __slots__ = "_query", "_operation"
 
+    @override
     def __init__(
         self, query: str | list[str], operation: Literal["select", "delete"]
     ) -> None:
@@ -248,6 +249,7 @@ class DirectoryQueryParser:
         self._query = query
         self._operation = operation
 
+    @override
     def _parse_fields(self, attrs: list[str] | str) -> list[str]:
         r"""
         Parses the directory search query fields.
@@ -272,31 +274,7 @@ class DirectoryQueryParser:
 
         return fields
 
-    @staticmethod
-    def _parse_directory(subquery: list[str]) -> tuple[Path, str]:
-        r"""
-        Parses the directory path and its type from the specified sub-query.
-        """
-        path, type_ = _parse_path(subquery)
-
-        # Asserts if the path is a directory.
-        assert path.is_dir()
-
-        return path, type_
-
-    def _parse_remove_query(self) -> DeleteQuery:
-        r"""
-        Parses the file deletion query.
-        """
-
-        assert self._query[0].lower() == "from"
-
-        # TODO: condition parsing.
-
-        return DeleteQuery(
-            *self._parse_directory(self._query[1:]), lambda metadata: True
-        )
-
+    @override
     def _parse_search_query(self) -> FileSearchQuery:
         r"""
         Parses the file search query.
@@ -310,13 +288,3 @@ class DirectoryQueryParser:
         # TODO: condition parsing
 
         return SearchQuery(directory, path_type, lambda metadata: True, fields)
-
-    def parse_query(self) -> FileSearchQuery | DeleteQuery:
-        r"""
-        Parses the file search/deletion query.
-        """
-        return (
-            self._parse_search_query()
-            if self._operation == "search"
-            else self._parse_remove_query()
-        )

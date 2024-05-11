@@ -57,14 +57,14 @@ class FileQueryParser:
     )
 
     def __init__(
-        self, query: list[str], operation: Literal["select", "remove"]
+        self, query: list[str], operation: Literal["select", "delete"]
     ) -> None:
         r"""
         Creates an instance of `FileQueryParser` class.
 
         #### Params:
         - query (list[str]): query to be parsed.
-        - operation ['select' | 'remove']: the operation to be performed upon the query.
+        - operation ['select' | 'delete']: the operation to be performed upon the query.
         """
         self._query = query
         self._operation = operation

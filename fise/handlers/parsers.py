@@ -96,16 +96,8 @@ class FileQueryParser:
 
         assert self._query[0].lower() == "from"
 
-        if self._query[1] in constants.PATH_TYPES:
-            path_type: str = self._query[1]
-            path: Path = Path(self._query[2])
-
-        else:
-            path_type: str = "relative"
-            path: Path = Path(self._query[1])
-
-        assert path.is_dir()
-
         # TODO: condition parsing.
 
-        return DeleteQuery(path, path_type, lambda metadata: True)
+        return DeleteQuery(
+            *self._parse_directory(self._query[1:]), lambda metadata: True
+        )

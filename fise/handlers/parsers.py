@@ -135,3 +135,13 @@ class FileQueryParser:
         return FileSearchQuery(
             directory, path_type, lambda metadata: True, fields, self._size_unit
         )
+
+    def parse_query(self) -> FileSearchQuery | DeleteQuery:
+        r"""
+        Parses the file search/deletion query.
+        """
+        return (
+            self._parse_search_query()
+            if self._operation == "search"
+            else self._parse_remove_query()
+        )

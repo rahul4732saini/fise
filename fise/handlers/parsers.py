@@ -225,3 +225,10 @@ class FileDataQueryParser:
         # TODO: condition parsing
 
         return SearchQuery(path, path_type, lambda metadata: True, fields)
+
+
+class DirectoryQueryParser:
+    r"""
+    DirectoryQueryParser defines methods for parsing
+    directory search/manipulation operation queries.
+    """

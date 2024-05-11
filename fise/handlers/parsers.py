@@ -232,3 +232,16 @@ class DirectoryQueryParser:
     DirectoryQueryParser defines methods for parsing
     directory search/manipulation operation queries.
     """
+
+    def __init__(
+        self, query: str | list[str], operation: Literal["select", "delete"]
+    ) -> None:
+        r"""
+        Creates an instance of the `DirectoryQueryParser` class.
+
+        #### Params:
+        - query (list[str]): query to be parsed.
+        - operation ['select' | 'delete']: the operation to be performed upon the query.
+        """
+        self._query = query
+        self._operation = operation

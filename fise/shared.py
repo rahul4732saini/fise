@@ -94,6 +94,45 @@ class File:
             ...
 
 
+class DataLine:
+    r"""
+    DataLine class serves as a unified class for accessing
+    all attributes related to the metadata of the dataline.
+    """
+
+    __slots__ = "_file", "_data", "_lineno"
+
+    def __init__(self, file: Path, data: str, lineno: int) -> None:
+        r"""
+        Creates an instance of the `DataLine` class.
+
+        #### Params:
+        - file (pathlib.Path): path to the file.
+        - data (str): dataline to be stored.
+        - lineno (int): line number of the dataline.
+        """
+
+        self._file = file
+        self._data = data
+        self._lineno = lineno
+
+    @property
+    def path(self) -> Path:
+        return self._file
+
+    @property
+    def name(self) -> str:
+        return self._file.name
+
+    @property
+    def dataline(self) -> str:
+        return self._data
+
+    @property
+    def lineno(self) -> int:
+        return self._lineno
+
+
 class Directory:
     r"""
     Directory class serves as a unified class for accessing all methods and attributes

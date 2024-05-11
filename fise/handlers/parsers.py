@@ -152,3 +152,12 @@ class FileDataQueryParser:
     FileDataQueryParser defines methods for
     parsing file data search operation queries.
     """
+
+    def __init__(self, query: str) -> None:
+        r"""
+        Creates an instance of the `FileDataQueryParser` class.
+
+        #### Params:
+        - query (list[str]): query to be parsed.
+        """
+        self._query = query

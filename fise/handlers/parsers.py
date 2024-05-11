@@ -174,7 +174,8 @@ class FileDataQueryParser:
         """
         self._query = query
 
-    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+    @staticmethod
+    def _parse_fields(attrs: list[str] | str) -> list[str]:
         r"""
         Parses the data search query fields.
         """

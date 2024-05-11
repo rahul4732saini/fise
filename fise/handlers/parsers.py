@@ -184,7 +184,7 @@ class FileDataQueryParser:
 
         fields = []
 
-        file_fields: set[str] = (
+        data_fields: set[str] = (
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
@@ -193,7 +193,7 @@ class FileDataQueryParser:
                 fields.extend(constants.DATA_FIELDS)
 
             else:
-                assert field in file_fields
+                assert field in data_fields
                 fields.append(field)
 
         # TODO: Custom exceptional handling

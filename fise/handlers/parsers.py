@@ -283,3 +283,16 @@ class DirectoryQueryParser:
         assert path.is_dir()
 
         return path, type_
+
+    def _parse_remove_query(self) -> DeleteQuery:
+        r"""
+        Parses the file deletion query.
+        """
+
+        assert self._query[0].lower() == "from"
+
+        # TODO: condition parsing.
+
+        return DeleteQuery(
+            *self._parse_directory(self._query[1:]), lambda metadata: True
+        )

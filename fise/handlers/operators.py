@@ -192,7 +192,7 @@ class FileDataQueryOperator:
         records = pd.DataFrame(
             (
                 [
-                    data[constants.DATA_QUERY_FIELD_ALIAS.get(field, field)]
+                    getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
                     for field in fields
                 ]
                 for data in self._search_datalines(match)

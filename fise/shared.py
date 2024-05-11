@@ -166,3 +166,13 @@ class DeleteQuery(BaseQuery):
     DeleteQuery class serves as a data class for storing
     attributes related to file/directory deletion queries.
     """
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class FileSearchQuery(SearchQuery):
+    r"""
+    SearchQuery class serves as a data classes for storing
+    attributes related to file search queries.
+    """
+
+    size_unit: str

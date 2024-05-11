@@ -265,7 +265,7 @@ class DirectoryQueryOperator:
         return records
 
     def remove_directories(
-        self, condition: Callable[[File], bool], skip_err: bool
+        self, condition: Callable[[Directory], bool], skip_err: bool
     ) -> None:
         r"""
         Removes all the subdirectories present within the

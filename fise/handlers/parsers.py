@@ -247,3 +247,27 @@ class DirectoryQueryParser:
         """
         self._query = query
         self._operation = operation
+
+    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+        r"""
+        Parses the directory search query fields.
+        """
+
+        if type(attrs) is list:
+            attrs = "".join(attrs)
+
+        fields = []
+
+        dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
+
+        for field in attrs.split(","):
+            if field == "*":
+                fields.extend(constants.FILE_FIELDS)
+
+            else:
+                assert field in dir_fields
+                fields.append(field)
+
+        # TODO: Custom exceptional handling
+
+        return fields

@@ -6,6 +6,7 @@ This modules comprises objects and methods for parsing user
 queries extracting relavent data for further processing.
 """
 
+import re
 from typing import Literal
 from pathlib import Path
 
@@ -19,7 +20,11 @@ class FileQueryParser:
     file search/manipulation operation queries.
     """
 
-    __slots__ = "_query", "_operation"
+    __slots__ = "_query", "_operation", "_size_unit"
+
+    _size_pattern = re.compile(
+        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
+    )
 
     def __init__(
         self, query: list[str], operation: Literal["select", "remove"]
@@ -34,26 +39,39 @@ class FileQueryParser:
         self._query = query
         self._operation = operation
 
-    @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> list[str]:
+        self._size_unit = "B"
+
+    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
         r"""
-        Parses the select query fields.
+        Parses the search query fields.
         """
 
         if type(attrs) is list:
             attrs = "".join(attrs)
 
-        # Replaces the `*` field with a string representation of all
-        # the fields and splits the string into a list of fields.
-        fields: list[str] = attrs.replace("*", ",".join(constants.FILE_FIELDS)).split(
-            ","
+        fields = []
+
+        file_fields: set[str] = (
+            constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
-        # Verifies all the file search fields.
-        assert all(
-            i in constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
-            for i in fields
-        )
+        for field in attrs.split(","):
+            if field == "*":
+                fields.extend(constants.FILE_FIELDS)
+
+            elif field.startswith("size"):
+                assert self._size_pattern.match(field)
+
+                if field[5:-1]:
+                    self._size_unit = field[5:-1]
+
+                fields.append("size")
+
+            else:
+                assert field in file_fields
+                fields.append(field)
+
+        # TODO: Custom exceptional handling
 
         return fields
 

@@ -55,7 +55,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
             yield path
 
 
-def export_data(data: pd.DataFrame, path: str) -> None:
+def export_to_file(data: pd.DataFrame, path: str) -> None:
     r"""
     Exports search data to the specified file in a suitable format.
 

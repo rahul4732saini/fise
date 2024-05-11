@@ -87,7 +87,7 @@ class FileQueryOperator:
 
         #### Params:
         - condition (Callable): function for filtering file records.
-        - skip_err (bool): Boolean value to specifiy whether to terminate deletion
+        - skip_err (bool): Boolean value to specify whether to terminate deletion
         upon encountering an error with file deletion.
         """
 
@@ -238,7 +238,7 @@ class DirectoryQueryOperator:
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified of all
-        the sub-directories present within the specified directory.
+        the subdirectories present within the specified directory.
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired directory status fields.
@@ -268,12 +268,12 @@ class DirectoryQueryOperator:
         self, condition: Callable[[File], bool], skip_err: bool
     ) -> None:
         r"""
-        Removes all the sub-directories present within the
+        Removes all the subdirectories present within the
         specified directory matching the specified condition.
 
         #### Params:
         - condition (Callable): function for filtering directory records.
-        - skip_err (bool): Boolean value to specifiy whether to terminate deletion
+        - skip_err (bool): Boolean value to specify whether to terminate deletion
         upon encountering an error with directory/file deletion.
         """
 

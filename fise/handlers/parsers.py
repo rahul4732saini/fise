@@ -153,6 +153,8 @@ class FileDataQueryParser:
     parsing file data search operation queries.
     """
 
+    __slots__ = ("_query",)
+
     def __init__(self, query: str) -> None:
         r"""
         Creates an instance of the `FileDataQueryParser` class.

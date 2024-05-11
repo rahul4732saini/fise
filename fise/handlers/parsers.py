@@ -11,7 +11,7 @@ from typing import Literal
 from pathlib import Path
 
 from ..common import constants
-from ..shared import DeleteQuery, SelectQuery
+from ..shared import DeleteQuery, FileSearchQuery
 
 
 class FileQueryParser:
@@ -101,8 +101,8 @@ class FileQueryParser:
 
         match = {"from", "FROM"}
 
-        for i in range(len(self._query)):
-            if self._query[i] in match:
+        for i, kw in enumerate(self._query):
+            if kw in match:
                 return i
 
         # TODO: Exception handling

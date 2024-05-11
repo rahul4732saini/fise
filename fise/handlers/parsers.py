@@ -16,7 +16,7 @@ from ..shared import DeleteQuery, FileSearchQuery
 
 class FileQueryParser:
     r"""
-    FileQueryParsers defined methods for parsing
+    FileQueryParser defines methods for parsing
     file search/manipulation operation queries.
     """
 
@@ -145,3 +145,10 @@ class FileQueryParser:
             if self._operation == "search"
             else self._parse_remove_query()
         )
+
+
+class FileDataQueryParser:
+    r"""
+    FileDataQueryParser defines methods for
+    parsing file data search operation queries.
+    """

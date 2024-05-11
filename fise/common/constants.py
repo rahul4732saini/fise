@@ -44,7 +44,7 @@ DATA_EXPORT_TYPES_MAP = {
 }
 
 # Dictionary mapping alias -> field names for file search queries.
-FILE_QUERY_FIELD_ALIAS = {
+FILE_FIELD_ALIASES = {
     "atime": "access_time",
     "mtime": "modify_time",
     "ctime": "create_time",
@@ -52,7 +52,7 @@ FILE_QUERY_FIELD_ALIAS = {
 }
 
 # Dictionary mapping alias -> field names for file data search queries.
-DATA_QUERY_FIELD_ALIAS = {
+DATA_FIELD_ALIASES = {
     "filename": "name",
     "filepath": "path",
     "data": "dataline",
@@ -60,6 +60,6 @@ DATA_QUERY_FIELD_ALIAS = {
 }
 
 # Dictionary mapping alias -> field names for file directory search queries.
-DIR_QUERY_FIELD_ALIAS = {"perms": "permissions"}
+DIR_FIELD_ALIASES = {"perms": "permissions"}
 
 PATH_TYPES = {"absolute", "relative"}

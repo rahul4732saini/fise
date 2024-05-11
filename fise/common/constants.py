@@ -8,6 +8,15 @@ objects and functions present within the FiSE project.
 
 from typing import Literal
 
+DIR_FIELDS = {"path", "parent", "name", "owner", "group", "permissions"}
+DATA_FIELDS = {"name", "path", "dataline", "lineno"}
+FILE_FIELDS = DIR_FIELDS | {
+    "size",
+    "access_time",
+    "create_time",
+    "modify_time",
+}
+
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {

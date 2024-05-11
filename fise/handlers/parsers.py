@@ -30,6 +30,20 @@ def _parse_path(subquery: list[str]) -> tuple[Path, str]:
     return path, path_type
 
 
+def _get_from_keyword_index(query: list[str]) -> int:
+    r"""
+    Returns the index of the 'from' keyword in the query.
+    """
+
+    match = {"from", "FROM"}
+
+    for i, kw in enumerate(query):
+        if kw in match:
+            return i
+
+    # TODO: Exception handling
+
+
 class FileQueryParser:
     r"""
     FileQueryParser defines methods for parsing
@@ -103,19 +117,6 @@ class FileQueryParser:
 
         return path, type_
 
-    def _get_from_keyword_index(self) -> int:
-        r"""
-        Returns the index of the 'from' keyword in the query.
-        """
-
-        match = {"from", "FROM"}
-
-        for i, kw in enumerate(self._query):
-            if kw in match:
-                return i
-
-        # TODO: Exception handling
-
     def _parse_remove_query(self) -> DeleteQuery:
         r"""
         Parses the file deletion query.
@@ -134,7 +135,7 @@ class FileQueryParser:
         Parses the file search query.
         """
 
-        from_index: int = self._get_from_keyword_index()
+        from_index: int = _get_from_keyword_index(self._query)
 
         fields: list[str] = self._parse_fields(self._query[:from_index])
         directory, path_type = self._parse_directory(self._query[from_index + 1 :])

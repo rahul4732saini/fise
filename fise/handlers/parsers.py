@@ -11,7 +11,7 @@ from typing import Literal
 from pathlib import Path
 
 from ..common import constants
-from ..shared import DeleteQuery, FileSearchQuery
+from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 
 
 def _parse_path(subquery: list[str]) -> tuple[Path, str]:
@@ -211,3 +211,17 @@ class FileDataQueryParser:
         assert path.is_dir() or path.is_file()
 
         return path, type_
+
+    def parse_query(self) -> SearchQuery:
+        r"""
+        Parses the file data search query.
+        """
+
+        from_index: int = _get_from_keyword_index(self._query)
+
+        fields: list[str] = self._parse_fields(self._query[:from_index])
+        path, path_type = self._parse_path(self._query[from_index + 1 :])
+
+        # TODO: condition parsing
+
+        return SearchQuery(path, path_type, lambda metadata: True, fields)

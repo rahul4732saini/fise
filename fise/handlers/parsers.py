@@ -201,7 +201,9 @@ class FileDataQueryParser:
                 fields.extend(constants.DATA_FIELDS)
 
             else:
-                assert field in data_fields
+                assert field in data_fields, QueryParseError(
+                    f"Found an invalid field {field} in the search query."
+                )
                 fields.append(field)
 
         # TODO: Custom exceptional handling
@@ -216,7 +218,9 @@ class FileDataQueryParser:
         path, type_ = _parse_path(subquery)
 
         # Asserts if the path is a file or directory.
-        assert path.is_dir() or path.is_file()
+        assert path.is_dir() or path.is_file(), QueryParseError(
+            "The specified path for lookup must be a file or directory."
+        )
 
         return path, type_
 

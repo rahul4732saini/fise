@@ -19,6 +19,7 @@ FILE_FIELDS = DIR_FIELDS | {
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = ("file", "data", "dir")
+OPERATION_ALIASES = {"select": "search", "delete": "remove"}
 
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.

@@ -108,3 +108,42 @@ def _connect_database(database: str) -> sqlalchemy.Engine:
     return sqlalchemy.create_engine(
         f"{constants.DATABASE_URL_DIALECTS[database]}{user}:{passkey}@{host}:{port}/{db}"
     )
+
+
+def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
+    r"""
+    Exports search data to the specified database.
+
+    #### Params:
+    - data (pd.DataFrame): pandas DataFrame containing search results.
+    - database (str): database name to export data.
+    """
+
+    conn: sqlalchemy.Engine = (
+        _connect_sqlite() if database == "sqlite" else _connect_database(database)
+    )
+
+    table: str = input("Table name: ")
+
+    metadata = sqlalchemy.MetaData()
+
+    try:
+        metadata.reflect(bind=conn)
+        conn.connect()
+
+    except OperationalError:
+        ...
+
+    # TODO: Exception handling
+
+    else:
+        if table in metadata:
+            force: str = input(
+                "The specified table already exist, would you like to alter it? (Y/N) "
+            )
+
+            if force != "Y":
+                print("Export cancelled!")
+                return
+
+        data.to_sql(table, conn, if_exists="replace", index=False)

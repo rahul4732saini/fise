@@ -12,6 +12,7 @@ from pathlib import Path
 
 from ..common import constants
 from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
+from ..errors import QueryParseError
 
 
 def _parse_path(subquery: list[str]) -> tuple[Path, str]:
@@ -40,8 +41,8 @@ def _get_from_keyword_index(query: list[str]) -> int:
     for i, kw in enumerate(query):
         if kw in match:
             return i
-
-    # TODO: Exception handling
+    else:
+        QueryParseError("Cannot find 'FROM' keyword in the query.")
 
 
 class FileQueryParser:

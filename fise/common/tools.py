@@ -6,6 +6,7 @@ This module comprises functions and tools supporting other
 objects and functions throughout the FiSE project.
 """
 
+import sys
 import getpass
 from pathlib import Path
 from typing import Generator
@@ -132,9 +133,8 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
         conn.connect()
 
     except OperationalError:
-        ...
-
-    # TODO: Exception handling
+        print(f"Unable to connect to {database} database.")
+        sys.exit(1)
 
     else:
         if table in metadata:

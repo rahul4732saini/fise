@@ -236,6 +236,6 @@ class QueryInitials:
     """
 
     operation: constants.OPERATIONS
-    op_target: Literal["file", "data", "dir"]
+    operand: Literal["file", "data", "dir"]
     recursive: bool
     export: ExportData | None = None

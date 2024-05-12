@@ -225,7 +225,7 @@ class ExportData:
     """
 
     type_: Literal["file", "database"]
-    target: str
+    target: str | Path
 
 
 @dataclass(slots=True, frozen=True, eq=False)

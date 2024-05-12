@@ -9,6 +9,18 @@ utility to handle various exceptional scenarios.
 import sys
 
 
+class BaseError:
+    r"""
+    BaseError class serves as a base class for all error classes.
+    """
+
+    _error: str
+
+    def __init__(self, description: str) -> None:
+        print(self._error, f"Description: {description}", sep="\n")
+        sys.exit(1)
+
+
 class QueryParseError:
     r"""
     Exception raised when there is an error parsing the query.

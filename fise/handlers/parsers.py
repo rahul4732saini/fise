@@ -91,7 +91,9 @@ class FileQueryParser:
                 fields.extend(constants.FILE_FIELDS)
 
             elif field.startswith("size"):
-                assert self._size_pattern.match(field)
+                assert self._size_pattern.match(field), QueryParseError(
+                    f"Found an invalid field {field} in the search query."
+                )
 
                 if field[5:-1]:
                     self._size_unit = field[5:-1]
@@ -99,10 +101,10 @@ class FileQueryParser:
                 fields.append("size")
 
             else:
-                assert field in file_fields
+                assert field in file_fields, QueryParseError(
+                    f"Found an invalid field {field} in the search query."
+                )
                 fields.append(field)
-
-        # TODO: Custom exceptional handling
 
         return fields
 
@@ -114,7 +116,9 @@ class FileQueryParser:
         path, type_ = _parse_path(subquery)
 
         # Asserts if the path is a directory.
-        assert path.is_dir()
+        assert path.is_dir(), QueryParseError(
+            "The specified path for lookup must be a directory."
+        )
 
         return path, type_
 
@@ -123,7 +127,9 @@ class FileQueryParser:
         Parses the file deletion query.
         """
 
-        assert self._query[0].lower() == "from"
+        assert self._query[0].lower() == "from", QueryParseError(
+            "Cannot find 'FROM' keyword in the query."
+        )
 
         # TODO: condition parsing.
 

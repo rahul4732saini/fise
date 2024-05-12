@@ -91,20 +91,21 @@ class FileQueryParser:
                 fields.extend(constants.FILE_FIELDS)
 
             elif field.startswith("size"):
-                assert self._size_pattern.match(field), QueryParseError(
-                    f"Found an invalid field {field} in the search query."
-                )
+                if not self._size_pattern.match(field):
+                    QueryParseError(
+                        f"Found an invalid field {field} in the search query."
+                    )
 
                 if field[5:-1]:
                     self._size_unit = field[5:-1]
 
                 fields.append("size")
 
-            else:
-                assert field in file_fields, QueryParseError(
-                    f"Found an invalid field {field} in the search query."
-                )
+            elif field in file_fields:
                 fields.append(field)
+
+            else:
+                QueryParseError(f"Found an invalid field {field} in the search query.")
 
         return fields
 
@@ -115,10 +116,8 @@ class FileQueryParser:
         """
         path, type_ = _parse_path(subquery)
 
-        # Asserts if the path is a directory.
-        assert path.is_dir(), QueryParseError(
-            "The specified path for lookup must be a directory."
-        )
+        if not path.is_dir():
+            QueryParseError("The specified path for lookup must be a directory.")
 
         return path, type_
 
@@ -127,9 +126,8 @@ class FileQueryParser:
         Parses the file deletion query.
         """
 
-        assert self._query[0].lower() == "from", QueryParseError(
-            "Cannot find 'FROM' keyword in the query."
-        )
+        if self._query[0].lower() != "from":
+            QueryParseError("Cannot find 'FROM' keyword in the query.")
 
         # TODO: condition parsing.
 
@@ -200,13 +198,11 @@ class FileDataQueryParser:
             if field == "*":
                 fields.extend(constants.DATA_FIELDS)
 
-            else:
-                assert field in data_fields, QueryParseError(
-                    f"Found an invalid field {field} in the search query."
-                )
+            elif field in data_fields:
                 fields.append(field)
 
-        # TODO: Custom exceptional handling
+            else:
+                QueryParseError(f"Found an invalid field {field} in the search query.")
 
         return fields
 
@@ -217,10 +213,10 @@ class FileDataQueryParser:
         """
         path, type_ = _parse_path(subquery)
 
-        # Asserts if the path is a file or directory.
-        assert path.is_dir() or path.is_file(), QueryParseError(
-            "The specified path for lookup must be a file or directory."
-        )
+        if path.is_dir() or path.is_file() is False:
+            QueryParseError(
+                "The specified path for lookup must be a file or directory."
+            )
 
         return path, type_
 
@@ -278,13 +274,11 @@ class DirectoryQueryParser(FileQueryParser):
             if field == "*":
                 fields.extend(constants.FILE_FIELDS)
 
-            else:
-                assert field in dir_fields, QueryParseError(
-                    f"Found an invalid field {field} in the search query."
-                )
+            elif field in dir_fields:
                 fields.append(field)
 
-        # TODO: Custom exceptional handling
+            else:
+                QueryParseError(f"Found an invalid field {field} in the search query.")
 
         return fields
 

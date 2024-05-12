@@ -6,13 +6,13 @@ This module comprises objects and methods for parsing user
 queries extracting relevant data for further processing.
 """
 
-import re
 from typing import Literal, override
 from pathlib import Path
+import re
 
 from ..common import constants
-from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 from ..errors import QueryParseError
+from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 
 
 def _parse_path(subquery: list[str]) -> tuple[Path, str]:

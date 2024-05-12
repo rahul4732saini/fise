@@ -21,3 +21,15 @@ class QueryParseError:
             sep="\n",
         )
         sys.exit(1)
+
+
+class OperationError:
+    r"""
+    Exception raised when there is an error in processing the query.
+    """
+
+    _error = "OperationError: There was an error in processing the query."
+
+    def __init__(self, description: str) -> None:
+        print(self._error, f"Desctiption: {description}", sep="\n")
+        sys.exit(1)

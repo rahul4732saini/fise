@@ -19,16 +19,11 @@ def _parse_path(subquery: list[str]) -> tuple[Path, str]:
     r"""
     Parses the file/directory path and its type from the specified sub-query.
     """
-
-    if subquery[0].lower() in constants.PATH_TYPES:
-        path_type: str = subquery[0].lower()
-        path: Path = Path(subquery[1])
-
-    else:
-        path_type: str = "relative"
-        path: Path = Path(subquery[0])
-
-    return path, path_type
+    return (
+        (subquery[0].lower(), Path(subquery[1]))
+        if subquery[0].lower() in constants.PATH_TYPES
+        else ("relative", Path(subquery[0]))
+    )
 
 
 def _get_from_keyword_index(query: list[str]) -> int:

@@ -226,3 +226,16 @@ class ExportData:
 
     type_: Literal["file", "database"]
     target: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class QueryInitials:
+    r"""
+    QueryInitials class serves as a data class for
+    storing attribute related to query initials.
+    """
+
+    operation: constants.OPERATIONS
+    op_target: Literal["file", "data", "dir"]
+    recursive: bool
+    export: ExportData | None = None

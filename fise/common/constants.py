@@ -17,7 +17,7 @@ FILE_FIELDS = DIR_FIELDS | {
     "modify_time",
 }
 
-OPERATIONS = Literal["search", "delete"]
+OPERATIONS = Literal["search", "remove"]
 OPERANDS = ("file", "data", "dir")
 
 # Mapping of storage unit string labels mapped with corresponding divisors

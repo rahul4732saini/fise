@@ -14,12 +14,10 @@ class QueryParseError:
     Exception raised when there is an error parsing the query.
     """
 
+    _error = "QueryParseError: There was an error in parsing the query."
+
     def __init__(self, description: str) -> None:
-        print(
-            "Error: Unable to parse the query.",
-            f"Description: {description}",
-            sep="\n",
-        )
+        print(self._error, f"Description: {description}", sep="\n")
         sys.exit(1)
 
 

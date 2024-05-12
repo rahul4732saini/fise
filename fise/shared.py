@@ -11,7 +11,7 @@ from typing import Callable
 from pathlib import Path
 from dataclasses import dataclass
 
-from common import constants
+from .common import constants
 
 
 class File:

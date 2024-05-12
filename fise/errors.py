@@ -16,7 +16,7 @@ class QueryParseError:
 
     def __init__(self, description: str) -> None:
         print(
-            "QueryParseError: Unable to parse the query.",
+            "Error: Unable to parse the query.",
             f"Description: {description}",
             sep="\n",
         )

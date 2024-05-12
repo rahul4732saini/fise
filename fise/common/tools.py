@@ -6,10 +6,13 @@ This module comprises functions and tools supporting other
 objects and functions throughout the FiSE project.
 """
 
+import getpass
 from pathlib import Path
 from typing import Generator
 
 import pandas as pd
+from sqlalchemy.exc import OperationalError
+import sqlalchemy
 
 from . import constants
 
@@ -37,8 +40,8 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     r"""
-    Returns a `typing.Generator` object of all sub-directories present within the
-    specified directory. Also extracts the directories present within the sub-directories
+    Returns a `typing.Generator` object of all subdirectories present within the
+    specified directory. Also extracts the directories present within the subdirectories
     if `recursive` is set to `True`.
 
     #### Params:
@@ -76,3 +79,12 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
     # Exporting the search data to the specified file with a suitable method.
     getattr(data, export_method)(file)
+
+
+def _connect_sqlite() -> sqlalchemy.Engine:
+    r"""
+    Connects to a SQLite database file.
+    """
+
+    database: Path = Path(input("Enter the path to database file: "))
+    return sqlalchemy.create_engine(f"sqlite:///{database}")

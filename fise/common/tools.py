@@ -88,3 +88,23 @@ def _connect_sqlite() -> sqlalchemy.Engine:
 
     database: Path = Path(input("Enter the path to database file: "))
     return sqlalchemy.create_engine(f"sqlite:///{database}")
+
+
+def _connect_database(database: str) -> sqlalchemy.Engine:
+    r"""
+    Connects to specified SQL database server.
+
+    #### Params:
+    - database (str): database name to export data.
+    """
+
+    # Inputs database credentials.
+    user: str = input("Username: ")
+    passkey: str = getpass.getpass("Password: ")
+    host: str = input("Host[localhost]: ") or "localhost"
+    port: str = input("Port: ")
+    db: str = input("Database: ")
+
+    return sqlalchemy.create_engine(
+        f"{constants.DATABASE_URL_DIALECTS[database]}{user}:{passkey}@{host}:{port}/{db}"
+    )

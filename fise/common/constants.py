@@ -17,6 +17,8 @@ FILE_FIELDS = DIR_FIELDS | {
     "modify_time",
 }
 
+OPERATIONS = Literal["search", "delete"]
+
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {

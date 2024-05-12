@@ -6,7 +6,7 @@ This module comprises objects and methods for parsing user
 queries extracting relevant data for further processing.
 """
 
-from typing import Literal, override
+from typing import override
 from pathlib import Path
 import re
 
@@ -52,9 +52,7 @@ class FileQueryParser:
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
     )
 
-    def __init__(
-        self, query: list[str], operation: Literal["search", "delete"]
-    ) -> None:
+    def __init__(self, query: list[str], operation: constants.OPERATIONS) -> None:
         r"""
         Creates an instance of `FileQueryParser` class.
 
@@ -239,9 +237,7 @@ class DirectoryQueryParser(FileQueryParser):
     __slots__ = "_query", "_operation"
 
     @override
-    def __init__(
-        self, query: str | list[str], operation: Literal["select", "delete"]
-    ) -> None:
+    def __init__(self, query: str | list[str], operation: constants.OPERATIONS) -> None:
         r"""
         Creates an instance of the `DirectoryQueryParser` class.
 

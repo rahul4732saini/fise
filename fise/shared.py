@@ -6,8 +6,8 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
+from typing import Callable, Literal
 from datetime import datetime
-from typing import Callable
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -215,3 +215,14 @@ class FileSearchQuery(SearchQuery):
     """
 
     size_unit: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class ExportData:
+    r"""
+    ExportData class serves as a data class for
+    storing export data related attributes.
+    """
+
+    type_: Literal["file", "database"]
+    target: str

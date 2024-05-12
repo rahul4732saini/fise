@@ -30,7 +30,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     present in the subdirectories.
     """
 
-    for path in directory.glob("*"):
+    for path in directory.iterdir():
         if path.is_file():
             yield path
 
@@ -51,7 +51,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
     present in the subdirectories.
     """
 
-    for path in directory.glob("*"):
+    for path in directory.iterdir():
         if path.is_dir():
             if recursive:
                 yield from get_directories(path, recursive)

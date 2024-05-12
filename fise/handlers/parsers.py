@@ -279,7 +279,9 @@ class DirectoryQueryParser(FileQueryParser):
                 fields.extend(constants.FILE_FIELDS)
 
             else:
-                assert field in dir_fields
+                assert field in dir_fields, QueryParseError(
+                    f"Found an invalid field {field} in the search query."
+                )
                 fields.append(field)
 
         # TODO: Custom exceptional handling

@@ -16,6 +16,8 @@ class QueryHandler:
     processing user-specified search and manipulation queries.
     """
 
+    __slots__ = ("_query",)
+
     def __init__(self, query: list[str]) -> None:
         r"""
         Creates an instance of the `QueryHandler` class.

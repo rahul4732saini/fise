@@ -21,25 +21,17 @@ class BaseError:
         sys.exit(1)
 
 
-class QueryParseError:
+class QueryParseError(BaseError):
     r"""
     Exception raised when there is an error parsing the query.
     """
 
     _error = "QueryParseError: There was an error in parsing the query."
 
-    def __init__(self, description: str) -> None:
-        print(self._error, f"Description: {description}", sep="\n")
-        sys.exit(1)
 
-
-class OperationError:
+class OperationError(BaseError):
     r"""
     Exception raised when there is an error in processing the query.
     """
 
     _error = "OperationError: There was an error in processing the query."
-
-    def __init__(self, description: str) -> None:
-        print(self._error, f"Desctiption: {description}", sep="\n")
-        sys.exit(1)

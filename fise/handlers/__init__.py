@@ -15,3 +15,9 @@ class QueryHandler:
     QueryHandler defines methods for handling, parsing and
     processing user-specified search and manipulation queries.
     """
+
+    def __init__(self, query: list[str]) -> None:
+        r"""
+        Creates an instance of the `QueryHandler` class.
+        """
+        self._query = query

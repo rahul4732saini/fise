@@ -18,6 +18,7 @@ FILE_FIELDS = DIR_FIELDS | {
 }
 
 OPERATIONS = Literal["search", "delete"]
+OPERANDS = ("file", "data", "dir")
 
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.

@@ -106,7 +106,7 @@ class QueryHandler:
             query.path, "text", initials.recursive, query.path_type
         )
 
-        return operator.get_fields(query.fields)
+        return operator.get_fields(query.fields, query.condition)
 
     def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         r"""

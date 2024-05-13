@@ -91,7 +91,7 @@ class QueryHandler:
             return
         
         if query[1].lower().startswith("sql"):
-            if not re.match(rf"^SQL\[({"|".join(constants.DATABASES)})\]$", query[1]):
+            if not self._export_subquery_pattern.match(query[1].lower()):
                 QueryParseError(
                     "Unable to parse SQL database name."
                 )
@@ -101,9 +101,9 @@ class QueryHandler:
         else:
             path: Path = Path(query[1])
 
-            if not path.is_file():
+            if path.is_file():
                 QueryParseError(
-                    "The path specified for exporting search records must be an existing file."
+                    "The path specified for exporting search records must not be an existing file."
                 )
 
             return ExportData("file", path)

@@ -15,12 +15,12 @@ from ..errors import QueryParseError
 from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 
 
-def _parse_path(subquery: list[str]) -> tuple[str, Path]:
+def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
     r"""
     Parses the file/directory path and its type from the specified sub-query.
     """
     return (
-        (subquery[0].lower(), Path(subquery[1]))
+        (True if subquery[0].lower() == "absolute" else False, Path(subquery[1]))
         if subquery[0].lower() in constants.PATH_TYPES
         else ("relative", Path(subquery[0]))
     )

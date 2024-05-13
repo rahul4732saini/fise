@@ -22,7 +22,7 @@ class File:
 
     __slots__ = "_file", "_stats", "_size_divisor"
 
-    def __init__(self, file: Path, size_unit: str) -> None:
+    def __init__(self, file: Path, size_unit: str = "B") -> None:
         r"""
         Creates an instance of the `File` class.
 

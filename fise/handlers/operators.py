@@ -3,8 +3,8 @@ Operators Module
 ------------
 
 This module comprises objects and methods for processing user queries and
-conducting file/directory search operations within a specified directory.
-It also includes objects for performing search operations within files.
+conducting file/directory search/delete operations within a specified directory.
+It also comprises objects for performing search operations within files.
 """
 
 from typing import Generator, Callable
@@ -20,51 +20,49 @@ from ..shared import File, Directory, DataLine
 
 class FileQueryOperator:
     r"""
-    FileQueryOperator defines methods used for
-    performing all file search operations.
+    FileQueryOperator defines methods for performing file search/delete operations.
     """
 
-    __slots__ = "_directory", "_recursive", "_size_unit"
+    __slots__ = "_directory", "_recursive"
 
-    def __init__(
-        self, directory: Path, recursive: bool, absolute: bool, size_unit: str
-    ) -> None:
+    def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
         r"""
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
-        - directory (Path): directory path to be processed.
+        - directory (Path): Path of the directory to be processed.
         - recursive (bool): Boolean value to specify whether to include the files
-        present in the subdirectories.
+        present within the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
-        - size_unit (str): storage size unit.
         """
 
         self._directory = directory
         self._recursive = recursive
-        self._size_unit = size_unit
 
         if absolute:
             self._directory = self._directory.absolute()
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[File], bool]
+        self, fields: tuple[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired file status fields.
+        - fields (tuple[str]): tuple of all the desired file metadata fields.
         - condition (Callable): function for filtering search records.
+        - size_unit (str): storage size unit.
         """
 
         files: Generator[File, None, None] = (
-            File(file, self._size_unit)
+            File(file, size_unit)
             for file in tools.get_files(self._directory, self._recursive)
         )
 
+        # Creates a pandas DataFrame out of a Generator object
+        # comprising records of the specified fields.
         records = pd.DataFrame(
             (
                 [
@@ -78,7 +76,7 @@ class FileQueryOperator:
         )
 
         # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
-        records.rename(columns={"size": f"size({self._size_unit})"}, inplace=True)
+        records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
 
@@ -87,11 +85,11 @@ class FileQueryOperator:
         Removes all the files present within the specified directory.
 
         #### Params:
-        - condition (Callable): function for filtering file records.
+        - condition (Callable): function for filtering search records.
         """
 
         for file in tools.get_files(self._directory, self._recursive):
-            if condition(File(file, self._size_unit)) is False:
+            if not condition(File(file)):
                 continue
 
             try:
@@ -103,25 +101,20 @@ class FileQueryOperator:
 
 class FileDataQueryOperator:
     r"""
-    FileDataQueryOperator defines methods used for performing
-    all text data search operations within files.
+    FileDataQueryOperator defines methods for performing
+    text data search operations within files.
     """
 
     __slots__ = "_path", "_recursive"
 
-    def __init__(
-        self,
-        path: Path,
-        recursive: bool,
-        absolute: bool,
-    ) -> None:
+    def __init__(self, path: Path, recursive: bool, absolute: bool) -> None:
         r"""
-        Creates an instance of the FileDataQueryOperator class.
+        Creates an instance of the `FileDataQueryOperator` class.
 
         #### Params:
-        - path (pathlib.Path): file/directory path to be processed.
+        - path (pathlib.Path): Path of the file/directory to be processed.
         - recursive (bool): Boolean value to specify whether to include the files
-        present in the subdirectories if the path specified is a directory.
+        present within the subdirectories if the specified path is a directory.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
         """
@@ -166,12 +159,12 @@ class FileDataQueryOperator:
         self, fields: tuple[str], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
         r"""
-        Returns a pandas DataFrame comprising the fields specified
+        Returns a pandas DataFrame comprising the specified fields
         of all the datalines present within the specified file(s)
         matching the specified condition.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired file status fields.
+        - fields (tuple[str]): tuple of all the desired file metadata fields.
         - condition (Callable): function for filtering search records.
         """
 
@@ -194,8 +187,8 @@ class FileDataQueryOperator:
 
 class DirectoryQueryOperator:
     r"""
-    DirectoryQueryOperator defines methods used for performing
-    all directory search operations within files.
+    DirectoryQueryOperator defines methods for performing
+    directory search/delete operations within files.
     """
 
     __slots__ = "_directory", "_recursive"
@@ -205,9 +198,9 @@ class DirectoryQueryOperator:
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
-        - directory (Path): directory path to be processed.
-        - recursive (bool): Boolean value to specify whether to include the files
-        present in the subdirectories.
+        - directory (Path): Path of the directory to be processed.
+        - recursive (bool): Boolean value to specify whether to include the
+        files present withinin the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
         """
@@ -222,11 +215,11 @@ class DirectoryQueryOperator:
         self, fields: tuple[str], condition: Callable[[Directory], bool]
     ) -> pd.DataFrame:
         r"""
-        Returns a pandas DataFrame comprising the fields specified of all
-        the subdirectories present within the specified directory.
+        Returns a pandas DataFrame comprising the specified metadata fields
+        of all the subdirectories present within the specified directory.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired directory status fields.
+        - fields (tuple[str]): tuple of all the desired directory metadata fields.
         - condition (Callable): function for filtering search records.
         """
 
@@ -235,6 +228,8 @@ class DirectoryQueryOperator:
             for directory in tools.get_directories(self._directory, self._recursive)
         )
 
+        # Creates a pandas DataFrame out of a Generator object
+        # comprising records of the specified fields.
         records = pd.DataFrame(
             (
                 [

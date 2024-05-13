@@ -191,11 +191,9 @@ class DirectoryQueryOperator:
     directory search/delete operations within files.
     """
 
-    __slots__ = "_directory", "_recursive", "_size_unit"
+    __slots__ = "_directory", "_recursive"
 
-    def __init__(
-        self, directory: Path, recursive: bool, absolute: bool, size_unit: str
-    ) -> None:
+    def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
         r"""
         Creates an instance of the `FileQueryOperator` class.
 
@@ -205,12 +203,10 @@ class DirectoryQueryOperator:
         files present withinin the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
-        - size_unit (str): storage size unit.
         """
 
         self._directory = directory
         self._recursive = recursive
-        self._size_unit = size_unit
 
         if absolute:
             self._directory = self._directory.absolute()

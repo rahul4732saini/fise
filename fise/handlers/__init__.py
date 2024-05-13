@@ -38,14 +38,51 @@ class QueryHandler:
 
     __slots__ = ("_query",)
 
+    _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
+
+    _search_subquery_pattern = re.compile(rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\])")
+    _delete_subquery_pattern = re.compile(rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\])")
+
     def __init__(self, query: list[str]) -> None:
         r"""
         Creates an instance of the `QueryHandler` class.
         """
         self._query = query
 
-    @staticmethod
-    def _parse_export_data(query: list[str]) -> ExportData | None:
+    def _parse_initials(self) -> QueryInitials:
+        r"""
+        Parses the query initials.
+        """
+
+        recursive: bool = False
+        export: ExportData | None = self._parse_export_data(self._query)
+
+        if export:
+            self._query = self._query[2:]
+
+        if self._query[0].lower() in ("r", "recursive"):
+            recursive = True
+            self._query = self._query[1:]
+
+        if not (
+            self._search_subquery_pattern.match(self._query[0].lower())
+            or self._delete_subquery_pattern.match(self._query[0].lower())
+        ):
+            QueryParseError(
+                "Unable to parse query operation."
+            )
+
+        operation: str = constants.OPERATION_ALIASES[self._query[0][:6].lower()]
+        operand: str = self._query[0][7:-1] or "file"
+
+        if operation == "remove" and export:
+            QueryParseError(
+                "Cannot export data with delete operation."
+            )
+
+        return QueryInitials(operation, operand, recursive, export)
+
+    def _parse_export_data(self, query: list[str]) -> ExportData | None:
         r"""
         Parses export data from the query if specified else returns `None`.
         """

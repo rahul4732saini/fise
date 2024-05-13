@@ -82,6 +82,12 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
     # the pandas DataFrame comprising the search data records.
     export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
 
+    if not export_method:
+        print(
+            f"Error: {file.suffix} file type is not supported for search records export."
+        )
+        sys.exit(1)
+
     # Exporting the search data to the specified file with a suitable method.
     getattr(data, export_method)(file)
 

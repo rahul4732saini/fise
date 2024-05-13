@@ -27,7 +27,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     #### Params:
     - directory (pathlib.Path): Path of the directory to be processed.
     - recursive (bool): Boolean value to specify whether to include the files
-    present in the subdirectories.
+    present within the subdirectories.
     """
 
     for path in directory.iterdir():
@@ -41,14 +41,14 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     r"""
-    Returns a `typing.Generator` object of all subdirectories present within the
-    specified directory. Also extracts the directories present within the subdirectories
-    if `recursive` is set to `True`.
+    Returns a `typing.Generator` object of all subdirectories present within
+    the specified directory. Also extracts the directories present within the
+    subdirectories if `recursive` is set to `True`.
 
     #### Params:
     - directory (pathlib.Path): Path of the directory to be processed.
     - recursive (bool): Boolean value to specify whether to include the files
-    present in the subdirectories.
+    present within the subdirectories.
     """
 
     for path in directory.iterdir():
@@ -64,7 +64,7 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
     Exports search data to the specified file in a suitable format.
 
     #### Params:
-    - data (pd.DataFrame): pandas DataFrame containing search results.
+    - data (pd.DataFrame): pandas DataFrame comprising search records.
     - path (str): string representation of the file path.
     """
 
@@ -90,7 +90,6 @@ def _connect_sqlite() -> sqlalchemy.Engine:
     r"""
     Connects to a SQLite database file.
     """
-
     database: Path = Path(input("Enter the path to database file: "))
     return sqlalchemy.create_engine(f"sqlite:///{database}")
 
@@ -120,7 +119,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     Exports search data to the specified database.
 
     #### Params:
-    - data (pd.DataFrame): pandas DataFrame containing search results.
+    - data (pd.DataFrame): pandas DataFrame comprising search records.
     - database (str): database name to export data.
     """
 
@@ -129,7 +128,6 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     )
 
     table: str = input("Table name: ")
-
     metadata = sqlalchemy.MetaData()
 
     try:

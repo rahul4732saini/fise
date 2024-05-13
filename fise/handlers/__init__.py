@@ -66,6 +66,23 @@ class QueryHandler:
         
         operator.remove_files(query.condition)
 
+    def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
+        r"""
+        Parses and processes the specified directory search/deletion query.
+        """
+
+        parser = DirectoryQueryParser(self._query, initials.operation)
+        query: SearchQuery | DeleteQuery = parser.parse_query()
+
+        operator = DirectoryQueryOperator(
+            query.path, initials.recursive, query.path_type, query.size_unit
+        )
+
+        if initials.operation == "search":
+            return operator.get_fields(query.fields, query.condition)
+        
+        operator.remove_directories(query.condition) 
+
     def _parse_initials(self) -> QueryInitials:
         r"""
         Parses the query initials.

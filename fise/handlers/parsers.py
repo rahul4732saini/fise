@@ -206,7 +206,7 @@ class FileDataQueryParser:
         """
         type_, path = _parse_path(subquery)
 
-        if path.is_dir() or path.is_file() is False:
+        if (path.is_dir() or path.is_file()) is False:
             QueryParseError(
                 "The specified path for lookup must be a file or directory."
             )

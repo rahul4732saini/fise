@@ -23,11 +23,9 @@ class FileQueryOperator:
     FileQueryOperator defines methods for performing file search/delete operations.
     """
 
-    __slots__ = "_directory", "_recursive", "_size_unit"
+    __slots__ = "_directory", "_recursive"
 
-    def __init__(
-        self, directory: Path, recursive: bool, absolute: bool, size_unit: str
-    ) -> None:
+    def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
         r"""
         Creates an instance of the `FileQueryOperator` class.
 
@@ -37,18 +35,16 @@ class FileQueryOperator:
         present within the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
-        - size_unit (str): storage size unit.
         """
 
         self._directory = directory
         self._recursive = recursive
-        self._size_unit = size_unit
 
         if absolute:
             self._directory = self._directory.absolute()
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[File], bool]
+        self, fields: tuple[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
@@ -57,10 +53,11 @@ class FileQueryOperator:
         #### Params:
         - fields (tuple[str]): tuple of all the desired file metadata fields.
         - condition (Callable): function for filtering search records.
+        - size_unit (str): storage size unit.
         """
 
         files: Generator[File, None, None] = (
-            File(file, self._size_unit)
+            File(file, size_unit)
             for file in tools.get_files(self._directory, self._recursive)
         )
 
@@ -79,7 +76,7 @@ class FileQueryOperator:
         )
 
         # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
-        records.rename(columns={"size": f"size({self._size_unit})"}, inplace=True)
+        records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
 
         return records
 

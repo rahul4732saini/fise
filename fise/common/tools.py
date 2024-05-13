@@ -74,7 +74,8 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
     # Also verifies if the file is non-existent.
     if not (file.parent.exists() and not file.is_file()):
         print(
-            "Error: The path specified for export search data must be an existing file."
+            "Error: The specified path for exporting search"
+            "records must not direct to an existing file."
         )
         sys.exit(1)
 
@@ -84,7 +85,8 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
     if not export_method:
         print(
-            f"Error: {file.suffix} file type is not supported for search records export."
+            f"Error: {file.suffix} file type is not"
+            "supported for search records export."
         )
         sys.exit(1)
 

@@ -8,14 +8,26 @@ parsing and processing user-specified search and manipulation queries.
 
 import re
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 
-from ..common import constants
 from ..errors import QueryParseError
+from ..common import constants, tools
 from ..shared import QueryInitials, ExportData
-from .parsers import FileQueryParser, FileDataQueryParser, DirectoryQueryParser
-from .operators import FileQueryOperator, FileDataQueryOperator, DirectoryQueryOperator
+from .operators import (
+    FileQueryOperator,
+    FileDataQueryOperator,
+    DirectoryQueryOperator,
+)
+from .parsers import (
+    FileQueryParser,
+    DirectoryQueryParser,
+    FileDataQueryParser,
+    FileSearchQuery,
+    DeleteQuery,
+    SearchQuery,
+)
 
 
 class QueryHandler:

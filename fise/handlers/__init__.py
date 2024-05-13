@@ -103,7 +103,7 @@ class QueryHandler:
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
-            query.path, "text", initials.recursive, query.path_type
+            query.path, initials.recursive, query.path_type
         )
 
         return operator.get_fields(query.fields, query.condition)

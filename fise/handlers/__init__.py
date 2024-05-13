@@ -86,11 +86,11 @@ class QueryHandler:
         query: FileSearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(
-            query.path, initials.recursive, query.is_absolute, query.size_unit
+            query.path, initials.recursive, query.is_absolute
         )
 
         if initials.operation == "search":
-            return operator.get_fields(query.fields, query.condition)
+            return operator.get_fields(query.fields, query.condition, query.size_unit)
         
         operator.remove_files(query.condition)
 
@@ -117,7 +117,7 @@ class QueryHandler:
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = DirectoryQueryOperator(
-            query.path, initials.recursive, query.is_absolute, query.size_unit
+            query.path, initials.recursive, query.is_absolute
         )
 
         if initials.operation == "search":

@@ -117,7 +117,7 @@ class QueryHandler:
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = DirectoryQueryOperator(
-            query.path, initials.recursive, query.is_absolute, query.size_unit
+            query.path, initials.recursive, query.is_absolute
         )
 
         if initials.operation == "search":

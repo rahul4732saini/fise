@@ -49,6 +49,23 @@ class QueryHandler:
         """
         self._query = query
 
+    def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
+        r"""
+        Parses and processes the specified file search/deletion query.
+        """
+
+        parser = FileQueryParser(self._query, initials.operation)
+        query: FileSearchQuery | DeleteQuery = parser.parse_query()
+
+        operator = FileQueryOperator(
+            query.path, initials.recursive, query.path_type, query.size_unit
+        )
+
+        if initials.operation == "search":
+            return operator.get_fields(query.fields, query.condition)
+        
+        operator.remove_files(query.condition)
+
     def _parse_initials(self) -> QueryInitials:
         r"""
         Parses the query initials.

@@ -15,7 +15,7 @@ from ..errors import QueryParseError
 from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 
 
-def _parse_path(subquery: list[str]) -> tuple[Path, str]:
+def _parse_path(subquery: list[str]) -> tuple[str, Path]:
     r"""
     Parses the file/directory path and its type from the specified sub-query.
     """
@@ -107,7 +107,7 @@ class FileQueryParser:
         r"""
         Parses the directory path and its type from the specified sub-query.
         """
-        path, type_ = _parse_path(subquery)
+        type_, path = _parse_path(subquery)
 
         if not path.is_dir():
             QueryParseError("The specified path for lookup must be a directory.")

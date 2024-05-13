@@ -40,14 +40,42 @@ class QueryHandler:
 
     _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
 
-    _search_subquery_pattern = re.compile(rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\])")
-    _delete_subquery_pattern = re.compile(rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\])")
+    _search_subquery_pattern = re.compile(rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\]|)")
+    _delete_subquery_pattern = re.compile(rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\]|)")
 
     def __init__(self, query: list[str]) -> None:
         r"""
         Creates an instance of the `QueryHandler` class.
         """
         self._query = query
+
+    def handle(self) -> pd.DataFrame:
+        r"""
+        Parses and processes the specified search/deletion query.
+        """
+
+        try:
+            initials: QueryInitials = self._parse_initials()
+
+        except IndexError:
+            QueryParseError("Invalid query syntax.")
+
+        handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
+            "file": self._handle_file_query,
+            "dir": self._handle_dir_query,
+            "data": self._handle_data_query,
+        }
+
+        data: pd.DataFrame | None = handler_map[initials.operand](initials)
+
+        if not initials.export or initials.operation == "remove":
+            return data
+                
+        if initials.export.type_ == "file":
+            tools.export_to_file(data, initials.export.target)
+
+        else:
+            tools.export_to_sql(data, initials.export.target)
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         r"""
@@ -122,6 +150,8 @@ class QueryHandler:
 
         operation: str = constants.OPERATION_ALIASES[self._query[0][:6].lower()]
         operand: str = self._query[0][7:-1] or "file"
+
+        self._query = self._query[1:]
 
         if operation == "remove" and export:
             QueryParseError(

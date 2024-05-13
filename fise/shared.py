@@ -185,7 +185,7 @@ class BaseQuery:
     """
 
     path: Path
-    path_type: str
+    is_absolute: bool
     condition: Callable[[File | Directory], bool]
 
 

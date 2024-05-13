@@ -81,14 +81,12 @@ class FileQueryOperator:
 
         return records
 
-    def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
+    def remove_files(self, condition: Callable[[File], bool]) -> None:
         r"""
         Removes all the files present within the specified directory.
 
         #### Params:
         - condition (Callable): function for filtering file records.
-        - skip_err (bool): Boolean value to specify whether to terminate deletion
-        upon encountering an error with file deletion.
         """
 
         for file in tools.get_files(self._directory, self._recursive):
@@ -98,11 +96,10 @@ class FileQueryOperator:
             try:
                 file.unlink()
 
-            except PermissionError as e:
-                if skip_err:
-                    continue
+            except PermissionError:
+                ...
 
-                raise e
+            # TODO: Exception handling
 
 
 class FileDataQueryOperator:
@@ -264,17 +261,13 @@ class DirectoryQueryOperator:
 
         return records
 
-    def remove_directories(
-        self, condition: Callable[[Directory], bool], skip_err: bool
-    ) -> None:
+    def remove_directories(self, condition: Callable[[Directory], bool]) -> None:
         r"""
         Removes all the subdirectories present within the
         specified directory matching the specified condition.
 
         #### Params:
         - condition (Callable): function for filtering directory records.
-        - skip_err (bool): Boolean value to specify whether to terminate deletion
-        upon encountering an error with directory/file deletion.
         """
 
         for directory in tools.get_directories(self._directory, self._recursive):
@@ -285,7 +278,6 @@ class DirectoryQueryOperator:
                 shutil.rmtree(directory)
 
             except PermissionError as e:
-                if skip_err:
-                    continue
+                ...
 
-                raise e
+            # TODO: Exception handling

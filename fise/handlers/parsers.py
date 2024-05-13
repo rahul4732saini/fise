@@ -204,7 +204,7 @@ class FileDataQueryParser:
         r"""
         Parses the file/directory path and its type from the specified sub-query.
         """
-        path, type_ = _parse_path(subquery)
+        type_, path = _parse_path(subquery)
 
         if path.is_dir() or path.is_file() is False:
             QueryParseError(

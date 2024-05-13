@@ -105,15 +105,14 @@ class FileQueryOperator:
 class FileDataQueryOperator:
     r"""
     FileDataQueryOperator defines methods used for performing
-    all data (text/bytes) search operations within files.
+    all text data search operations within files.
     """
 
-    __slots__ = "_path", "_recursive", "_filemode"
+    __slots__ = "_path", "_recursive"
 
     def __init__(
         self,
         path: Path,
-        filemode: constants.FILE_MODES,
         recursive: bool,
         absolute: bool,
     ) -> None:
@@ -122,7 +121,6 @@ class FileDataQueryOperator:
 
         #### Params:
         - path (pathlib.Path): file/directory path to be processed.
-        - filemode (str): file mode to the access the file contents; must be 'text' or 'bytes'.
         - recursive (bool): Boolean value to specify whether to include the files
         present in the subdirectories if the path specified is a directory.
         - absolute (bool): Boolean value to specify whether to include the
@@ -130,7 +128,6 @@ class FileDataQueryOperator:
         """
 
         self._path = path
-        self._filemode: str = constants.FILE_MODES_MAP.get(filemode)
         self._recursive = recursive
 
         if absolute:
@@ -153,7 +150,7 @@ class FileDataQueryOperator:
         )
 
         for i in files:
-            with i.open(self._filemode) as file:
+            with i.open("r") as file:
                 yield i, file.readlines()
 
     def _search_datalines(self, match: str) -> Generator[DataLine, None, None]:

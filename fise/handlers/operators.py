@@ -153,24 +153,19 @@ class FileDataQueryOperator:
             with i.open("r") as file:
                 yield i, file.readlines()
 
-    def _search_datalines(self, match: str) -> Generator[DataLine, None, None]:
+    def _search_datalines(self) -> Generator[DataLine, None, None]:
         r"""
         Iterates through each file and its corresponding data-lines,
         yielding `DataLine` objects comprising the metadata of the
-        data-lines which contain the `match` sub-string.
-
-        #### Params:
-        - match (str): sub-string to be searched within the data-lines.
+        data-lines.
         """
 
         for file, data in self._get_filedata():
-            yield from (
-                DataLine(file, line, index)
-                for index, line in enumerate(data)
-                if match in line
-            )
+            yield from (DataLine(file, line, index) for index, line in enumerate(data))
 
-    def get_fields(self, fields: tuple[str], match: str) -> pd.DataFrame:
+    def get_fields(
+        self, fields: tuple[str], condition: Callable[[DataLine], bool]
+    ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
         of all the datalines present within the specified file(s)
@@ -178,7 +173,7 @@ class FileDataQueryOperator:
 
         #### Params:
         - fields (tuple[str]): tuple of all the desired file status fields.
-        - match (str): sub-string to be searched within the data-lines.
+        - condition (Callable): function for filtering search records.
         """
 
         # Creates a pandas DataFrame out of a Generator object
@@ -188,8 +183,9 @@ class FileDataQueryOperator:
                 [
                     getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
                     for field in fields
+                    if condition(data)
                 ]
-                for data in self._search_datalines(match)
+                for data in self._search_datalines()
             ),
             columns=fields,
         )

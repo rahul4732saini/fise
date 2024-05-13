@@ -13,6 +13,7 @@ import shutil
 
 import pandas as pd
 
+from ..errors import OperationError
 from ..common import tools, constants
 from ..shared import File, Directory, DataLine
 
@@ -97,9 +98,7 @@ class FileQueryOperator:
                 file.unlink()
 
             except PermissionError:
-                ...
-
-            # TODO: Exception handling
+                OperationError(f"Not enough permissions to delete {file.absolute()}.")
 
 
 class FileDataQueryOperator:
@@ -270,7 +269,7 @@ class DirectoryQueryOperator:
             try:
                 shutil.rmtree(directory)
 
-            except PermissionError as e:
-                ...
-
-            # TODO: Exception handling
+            except PermissionError:
+                OperationError(
+                    f"Not enough permissions to delete {directory.absolute()}."
+                )

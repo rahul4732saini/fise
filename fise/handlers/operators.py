@@ -92,7 +92,7 @@ class FileQueryOperator:
         """
 
         for file in tools.get_files(self._directory, self._recursive):
-            if condition(File(file, self._size_unit)) is False:
+            if not condition(File(file)):
                 continue
 
             try:

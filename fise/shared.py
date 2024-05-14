@@ -229,6 +229,23 @@ class ExportData:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
+class OperationData:
+    r"""
+    OperationData class serves as a data class for
+    storing attributes related to the query operation.
+    """
+
+    operation: constants.OPERATIONS
+    operand: Literal["file", "data", "dir"]
+
+    # The following attributes are optional and are only used for some specific
+    # operations. `filemode` attribute is only used with a data search operation
+    # and `skip_err` attribute is only used in file/directory deletion operation.
+    filemode: constants.FILE_MODES = "text"
+    skip_err: bool = False
+
+
+@dataclass(slots=True, frozen=True, eq=False)
 class QueryInitials:
     r"""
     QueryInitials class serves as a data class for

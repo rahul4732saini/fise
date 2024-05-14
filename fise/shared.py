@@ -190,9 +190,9 @@ class BaseQuery:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class SearchQuery(BaseQuery):
+class DirSearchQuery(BaseQuery):
     r"""
-    SearchQuery class serves as a data classes for
+    DirSearchQuery class serves as a data classes for
     storing attributes related to search queries.
     """
 

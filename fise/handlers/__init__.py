@@ -38,10 +38,10 @@ class QueryHandler:
 
     __slots__ = ("_query",)
 
+    # Regular expression patterns for parsing subqueries.
     _export_subquery_pattern = re.compile(
         rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$"
     )
-
     _search_subquery_pattern = re.compile(
         rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\]|)"
     )
@@ -72,6 +72,8 @@ class QueryHandler:
             "data": self._handle_data_query,
         }
 
+        # Calls the coressponding handler method and extracts, and stores the
+        # search records if search operation is specified else stores `None`.
         data: pd.DataFrame | None = handler_map[initials.operand](initials)
 
         if not initials.export or initials.operation == "remove":
@@ -146,13 +148,12 @@ class QueryHandler:
             recursive = True
             self._query = self._query[1:]
 
+        # Raises `QueryParseError` if the subquery does not match the specified patterns.
         if not (
             self._search_subquery_pattern.match(self._query[0].lower())
             or self._delete_subquery_pattern.match(self._query[0].lower())
         ):
-            QueryParseError(
-                "Unable to parse query operation."
-            )
+            QueryParseError("Unable to parse query operation.")
 
         operation: str = constants.OPERATION_ALIASES[self._query[0][:6].lower()]
         operand: str = self._query[0][7:-1] or "file"

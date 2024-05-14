@@ -61,7 +61,7 @@ class FileQueryParser:
 
         #### Params:
         - query (list[str]): query to be parsed.
-        - operation ['search' | 'delete']: the operation to be performed upon the query.
+        - operation ['search' | 'remove']: the operation to be performed upon the query.
         """
         self._query = query
         self._operation = operation
@@ -246,7 +246,7 @@ class DirectoryQueryParser(FileQueryParser):
 
         #### Params:
         - query (list[str]): query to be parsed.
-        - operation ['select' | 'delete']: the operation to be performed upon the query.
+        - operation ['select' | 'remove']: the operation to be performed upon the query.
         """
         self._query = query
         self._operation = operation

@@ -38,10 +38,16 @@ class QueryHandler:
 
     __slots__ = ("_query",)
 
-    _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
+    _export_subquery_pattern = re.compile(
+        rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$"
+    )
 
-    _search_subquery_pattern = re.compile(rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\]|)")
-    _delete_subquery_pattern = re.compile(rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\]|)")
+    _search_subquery_pattern = re.compile(
+        rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\]|)"
+    )
+    _delete_subquery_pattern = re.compile(
+        rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\]|)"
+    )
 
     def __init__(self, query: list[str]) -> None:
         r"""

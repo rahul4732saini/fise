@@ -87,7 +87,7 @@ class FileQueryParser:
                 fields.extend(constants.FILE_FIELDS)
 
             elif field.startswith("size"):
-                if not self._size_pattern.match(field):
+                if not self._size_field_pattern.match(field):
                     QueryParseError(
                         f"Found an invalid field {field} in the search query."
                     )
@@ -101,7 +101,9 @@ class FileQueryParser:
                 fields.append(field)
 
             else:
-                QueryParseError(f"Found an invalid field {field} in the search query.")
+                QueryParseError(
+                    f"Found an invalid field '{field}' in the search query."
+                )
 
         return fields
 

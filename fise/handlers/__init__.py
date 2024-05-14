@@ -253,6 +253,22 @@ class QueryHandler:
 
         return OperationData("remove", operand, skip_err=skip_err)
 
+    def _parse_operation(self) -> OperationData:
+        r"""
+        Parses the query operation data.
+        """
+
+        parser_map: dict[str, Callable[[], OperationData]] = {
+            "select": self._parse_search_operation, "delete": self._parse_delete_operation
+        }
+
+        operation: str = self._query[0][:6].lower()
+        data: OperationData | None = parser_map.get(operation)()
+
+        if data is None:
+            QueryParseError(f"Invalid operation specified: '{operation}'")
+
+        return data
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:
         r"""

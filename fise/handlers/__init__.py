@@ -211,6 +211,47 @@ class QueryHandler:
             )
 
         return OperationData("search", operand, filemode)
+    
+    def _parse_delete_operation(self):
+        r"""
+        Parses the delete operation subquery.
+        """
+
+        operand: str = "file"
+        skip_err: bool = False
+
+        # Verifying operation parameters syntax.
+        if not self._operation_params_pattern.match(self._query[0][6:]):
+            QueryParseError(f"Invalid query syntax around {self._query[0]!r}.")
+
+        # Generator of operation parameters.
+        params: Generator[str, None, None] = (
+            # Lowers and splits the parameters subquery about commas, and iterates
+            # through it striping whitespaces from individual parameters.
+            i.strip() for i in self._query[0][7:-1].lower().split(",")
+        )
+
+        # Iterates through the parameters and parses them.
+        for param in params:
+            param = param.split(" ")
+
+            if len(param) != 2:
+                QueryParseError(f"Invalid query syntax around {self._query[0]!r}")
+
+            if param[0] == "type":
+                if param[1] not in constants.DELETE_QUERY_OPERANDS:
+                    QueryParseError(
+                        f"Invalid value {param[1]!r} for 'type' parameter."
+                    )
+
+                operand = param[1]
+
+            elif param[0] == "skip_err":
+                skip_err = True
+            else:
+                QueryParseError(f"Invalid parameter {param[0]!r} for search operation.")
+
+        return OperationData("remove", operand, skip_err=skip_err)
 
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:

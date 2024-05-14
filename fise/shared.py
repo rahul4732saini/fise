@@ -221,12 +221,13 @@ class DeleteQuery(BaseQuery):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class FileSearchQuery(SearchQuery):
+class FileSearchQuery(BaseQuery):
     r"""
     SearchQuery class serves as a data classes for storing
     attributes related to file search queries.
     """
 
+    fields: list[str]
     size_unit: str
 
 

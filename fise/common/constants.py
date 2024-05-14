@@ -22,6 +22,8 @@ SEARCH_QUERY_OPERANDS = ("file", "data", "dir")
 DELETE_QUERY_OPERANDS = ("file", "dir")
 OPERATION_ALIASES = {"select": "search", "delete": "remove"}
 
+FILE_MODES = Literal["text", "bytes"]
+
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {

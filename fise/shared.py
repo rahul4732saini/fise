@@ -200,6 +200,17 @@ class SearchQuery(BaseQuery):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
+class DataSearchQuery(BaseQuery):
+    r"""
+    DataSearchQuery class serves as a data classes for storing
+    attributes related to text/binary data search queries.
+    """
+
+    fields: list[str]
+    filemode: constants.FILE_MODES
+
+
+@dataclass(slots=True, frozen=True, eq=False)
 class DeleteQuery(BaseQuery):
     r"""
     DeleteQuery class serves as a data class for storing

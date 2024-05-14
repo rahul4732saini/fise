@@ -65,9 +65,9 @@ class QueryHandler:
             "data": self._handle_data_query,
         }
 
-        # Calls the coressponding handler method and extracts, and stores the
+        # Calls the coressponding handler method, extracts, and stores the
         # search records if search operation is specified else stores `None`.
-        data: pd.DataFrame | None = handler_map[initials.operand](initials)
+        data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
 
         if not initials.export or initials.operation == "remove":
             return data
@@ -83,17 +83,17 @@ class QueryHandler:
         Parses and processes the specified file search/deletion query.
         """
 
-        parser = FileQueryParser(self._query, initials.operation)
+        parser = FileQueryParser(self._query, initials.operation.operation)
         query: FileSearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(
             query.path, initials.recursive, query.is_absolute
         )
 
-        if initials.operation == "search":
+        if initials.operation.operation == "search":
             return operator.get_fields(query.fields, query.condition, query.size_unit)
 
-        operator.remove_files(query.condition)
+        operator.remove_files(query.condition, initials.operation.skip_err)
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
         r"""
@@ -104,7 +104,10 @@ class QueryHandler:
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
-            query.path, initials.recursive, query.is_absolute
+            query.path,
+            initials.recursive,
+            query.is_absolute,
+            initials.operation.filemode,
         )
 
         return operator.get_fields(query.fields, query.condition)
@@ -114,17 +117,17 @@ class QueryHandler:
         Parses and processes the specified directory search/deletion query.
         """
 
-        parser = DirectoryQueryParser(self._query, initials.operation)
+        parser = DirectoryQueryParser(self._query, initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = DirectoryQueryOperator(
             query.path, initials.recursive, query.is_absolute
         )
 
-        if initials.operation == "search":
+        if initials.operation.operation == "search":
             return operator.get_fields(query.fields, query.condition)
 
-        operator.remove_directories(query.condition)
+        operator.remove_directories(query.condition, initials.operation.skip_err)
 
     def _parse_initials(self) -> QueryInitials:
         r"""
@@ -141,16 +144,7 @@ class QueryHandler:
             recursive = True
             self._query = self._query[1:]
 
-        # Raises `QueryParseError` if the subquery does not match the specified patterns.
-        if not (
-            self._search_subquery_pattern.match(self._query[0].lower())
-            or self._delete_subquery_pattern.match(self._query[0].lower())
-        ):
-            QueryParseError("Unable to parse query operation.")
-
-        operation: str = constants.OPERATION_ALIASES[self._query[0][:6].lower()]
-        operand: str = self._query[0][7:-1] or "file"
-
+        operation: OperationData = self._parse_operation()
         self._query = self._query[1:]
 
         if operation == "remove" and export:
@@ -158,7 +152,7 @@ class QueryHandler:
                 "Cannot export data with delete operation."
             )
 
-        return QueryInitials(operation, operand, recursive, export)
+        return QueryInitials(operation, recursive, export)
 
     def _parse_search_operation(self):
         r"""

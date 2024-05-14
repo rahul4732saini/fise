@@ -257,13 +257,17 @@ class DirectoryQueryOperator:
 
         return records
 
-    def remove_directories(self, condition: Callable[[Directory], bool]) -> None:
+    def remove_directories(
+        self, condition: Callable[[Directory], bool], skip_err: bool
+    ) -> None:
         r"""
         Removes all the subdirectories present within the
         specified directory matching the specified condition.
 
         #### Params:
         - condition (Callable): function for filtering directory records.
+        - skip_err (bool): Boolean value to specify whether to supress
+        permission errors while removing files.
         """
 
         for directory in tools.get_directories(self._directory, self._recursive):
@@ -274,6 +278,9 @@ class DirectoryQueryOperator:
                 shutil.rmtree(directory)
 
             except PermissionError:
+                if skip_err:
+                    continue
+
                 OperationError(
                     f"Not enough permissions to delete {directory.absolute()}."
                 )

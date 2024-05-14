@@ -44,14 +44,14 @@ class FileQueryOperator:
             self._directory = self._directory.absolute()
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[File], bool], size_unit: str
+        self, fields: list[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired file metadata fields.
+        - fields (lsit[str]): list of desired file metadata fields.
         - condition (Callable): function for filtering search records.
         - size_unit (str): storage size unit.
         """
@@ -156,7 +156,7 @@ class FileDataQueryOperator:
             yield from (DataLine(file, line, index) for index, line in enumerate(data))
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[DataLine], bool]
+        self, fields: list[str], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the specified fields
@@ -164,7 +164,7 @@ class FileDataQueryOperator:
         matching the specified condition.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired file metadata fields.
+        - fields (list[str]): list of desired file metadata fields.
         - condition (Callable): function for filtering search records.
         """
 
@@ -212,14 +212,14 @@ class DirectoryQueryOperator:
             self._directory = self._directory.absolute()
 
     def get_fields(
-        self, fields: tuple[str], condition: Callable[[Directory], bool]
+        self, fields: list[str], condition: Callable[[Directory], bool]
     ) -> pd.DataFrame:
         r"""
         Returns a pandas DataFrame comprising the specified metadata fields
         of all the subdirectories present within the specified directory.
 
         #### Params:
-        - fields (tuple[str]): tuple of all the desired directory metadata fields.
+        - fields (list[str]): list of desired directory metadata fields.
         - condition (Callable): function for filtering search records.
         """
 

@@ -31,10 +31,10 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
 
 def _get_from_keyword_index(query: list[str]) -> int:
     r"""
-    Returns the index of the 'from' keyword in the query.
+    Returns the index of the 'from' keyword in the file query.
     """
 
-    match = {"from", "FROM"}
+    match: str[str] = {"from", "FROM"}
 
     for i, kw in enumerate(query):
         if kw in match:

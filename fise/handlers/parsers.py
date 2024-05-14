@@ -22,7 +22,7 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
     return (
         (True if subquery[0].lower() == "absolute" else False, Path(subquery[1]))
         if subquery[0].lower() in constants.PATH_TYPES
-        else ("relative", Path(subquery[0]))
+        else (False, Path(subquery[0]))
     )
 
 

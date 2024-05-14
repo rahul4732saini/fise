@@ -8,13 +8,13 @@ parsing and processing user-specified search and manipulation queries.
 
 import re
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Generator
 
 import pandas as pd
 
-from ..errors import QueryParseError
+from ..shared import QueryInitials, ExportData, OperationData
 from ..common import constants, tools
-from ..shared import QueryInitials, ExportData
+from ..errors import QueryParseError
 from .operators import (
     FileQueryOperator,
     FileDataQueryOperator,
@@ -39,15 +39,8 @@ class QueryHandler:
     __slots__ = ("_query",)
 
     # Regular expression patterns for parsing subqueries.
-    _export_subquery_pattern = re.compile(
-        rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$"
-    )
-    _search_subquery_pattern = re.compile(
-        rf"^select(\[({"|".join(constants.SEARCH_QUERY_OPERANDS)})\]|)"
-    )
-    _delete_subquery_pattern = re.compile(
-        rf"^delete(\[({"|".join(constants.DELETE_QUERY_OPERANDS)})\]|)"
-    )
+    _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
+    _operation_params_pattern = re.compile(r"^\[.*\]$")
 
     def __init__(self, query: list[str]) -> None:
         r"""
@@ -166,6 +159,59 @@ class QueryHandler:
             )
 
         return QueryInitials(operation, operand, recursive, export)
+
+    def _parse_search_operation(self):
+        r"""
+        Parses the search operation subquery.
+        """
+
+        operand: str = "file"
+        filemode: str | None = None
+
+        # Verifying operation parameters syntax.
+        if not self._operation_params_pattern.match(self._query[0][6:]):
+            QueryParseError(f"Invalid query syntax around {self._query[0]!r}.")
+
+        # Generator of operation parameters.
+        params: Generator[str, None, None] = (
+            # Lowers and splits the parameters subquery about commas, and iterates
+            # through it striping whitespaces from individual parameters.
+            i.strip() for i in self._query[0][7:-1].lower().split(",")
+        )
+
+        # Iterates through the parameters and parses them.
+        for param in params:
+            param = param.split(" ")
+
+            if len(param) != 2:
+                QueryParseError(f"Invalid query syntax around {self._query[0]!r}")
+
+            if param[0] == "type":
+                if param[1] not in constants.SEARCH_QUERY_OPERANDS:
+                    QueryParseError(
+                        f"Invalid value {param[1]!r} for 'type' parameter."
+                    )
+
+                operand = param[1]
+
+            elif param[0] == "mode":
+                if param[1] not in constants.FILE_MODES_MAP:
+                    QueryParseError(
+                        f"Invalid value {param[1]!r} for 'mode' parameter."
+                    )
+
+                filemode = param[1]
+
+            else:
+                QueryParseError(f"Invalid parameter {param[0]!r} for search operation.")
+
+        if filemode and operand != "data":
+            QueryParseError(
+                "The 'mode' parameter is only valid for filedata search operations."
+            )
+
+        return OperationData("search", operand, filemode)
+
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:
         r"""

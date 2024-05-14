@@ -78,7 +78,7 @@ class QueryHandler:
 
         if not initials.export or initials.operation == "remove":
             return data
-                
+      
         if initials.export.type_ == "file":
             tools.export_to_file(data, initials.export.target)
 
@@ -99,7 +99,7 @@ class QueryHandler:
 
         if initials.operation == "search":
             return operator.get_fields(query.fields, query.condition, query.size_unit)
-        
+
         operator.remove_files(query.condition)
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
@@ -130,8 +130,8 @@ class QueryHandler:
 
         if initials.operation == "search":
             return operator.get_fields(query.fields, query.condition)
-        
-        operator.remove_directories(query.condition) 
+
+        operator.remove_directories(query.condition)
 
     def _parse_initials(self) -> QueryInitials:
         r"""
@@ -174,7 +174,7 @@ class QueryHandler:
 
         if query[0].lower() != "export":
             return
-        
+
         if query[1].lower().startswith("sql"):
             if not self._export_subquery_pattern.match(query[1].lower()):
                 QueryParseError(
@@ -182,7 +182,7 @@ class QueryHandler:
                 )
 
             return ExportData("database", query[1][4:-1])
-        
+
         else:
             path: Path = Path(query[1])
 

@@ -252,7 +252,7 @@ class QueryInitials:
     storing attribute related to query initials.
     """
 
-    operation: constants.OPERATIONS
+    operation: OperationData
     operand: Literal["file", "data", "dir"]
     recursive: bool
     export: ExportData | None = None

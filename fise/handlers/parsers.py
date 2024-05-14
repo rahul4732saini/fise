@@ -51,7 +51,7 @@ class FileQueryParser:
 
     __slots__ = "_query", "_operation", "_size_unit"
 
-    _size_pattern = re.compile(
+    _size_field_pattern = re.compile(
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
     )
 

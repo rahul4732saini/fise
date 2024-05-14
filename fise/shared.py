@@ -256,6 +256,5 @@ class QueryInitials:
     """
 
     operation: OperationData
-    operand: Literal["file", "data", "dir"]
     recursive: bool
     export: ExportData | None = None

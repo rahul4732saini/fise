@@ -190,9 +190,9 @@ class BaseQuery:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class DirSearchQuery(BaseQuery):
+class SearchQuery(BaseQuery):
     r"""
-    DirSearchQuery class serves as a data classes for
+    SearchQuery class serves as a data classes for
     storing attributes related to search queries.
     """
 
@@ -200,28 +200,7 @@ class DirSearchQuery(BaseQuery):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class DataSearchQuery(BaseQuery):
-    r"""
-    DataSearchQuery class serves as a data classes for storing
-    attributes related to text/binary data search queries.
-    """
-
-    fields: list[str]
-    filemode: constants.FILE_MODES
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class DeleteQuery(BaseQuery):
-    r"""
-    DeleteQuery class serves as a data class for storing
-    attributes related to file/directory deletion queries.
-    """
-
-    skip_err: bool
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class FileSearchQuery(BaseQuery):
+class FileSearchQuery(SearchQuery):
     r"""
     SearchQuery class serves as a data classes for storing
     attributes related to file search queries.

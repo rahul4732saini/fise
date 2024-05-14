@@ -80,12 +80,14 @@ class FileQueryOperator:
 
         return records
 
-    def remove_files(self, condition: Callable[[File], bool]) -> None:
+    def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         r"""
         Removes all the files present within the specified directory.
 
         #### Params:
         - condition (Callable): function for filtering search records.
+        - skip_err (bool): Boolean value to specify whether to supress
+        permission errors while removing files.
         """
 
         for file in tools.get_files(self._directory, self._recursive):
@@ -96,6 +98,9 @@ class FileQueryOperator:
                 file.unlink()
 
             except PermissionError:
+                if skip_err:
+                    continue
+
                 OperationError(f"Not enough permissions to delete {file.absolute()}.")
 
 

@@ -200,7 +200,9 @@ class FileDataQueryParser:
                 fields.append(field)
 
             else:
-                QueryParseError(f"Found an invalid field {field} in the search query.")
+                QueryParseError(
+                    f"Found an invalid field '{field}' in the search query."
+                )
 
         return fields
 
@@ -274,7 +276,9 @@ class DirectoryQueryParser(FileQueryParser):
                 fields.append(field)
 
             else:
-                QueryParseError(f"Found an invalid field {field} in the search query.")
+                QueryParseError(
+                    f"Found an invalid field '{field}' in the search query."
+                )
 
         return fields
 

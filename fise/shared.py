@@ -244,7 +244,7 @@ class OperationData:
     # The following attributes are optional and are only used for some specific
     # operations. `filemode` attribute is only used with a data search operation
     # and `skip_err` attribute is only used in file/directory deletion operation.
-    filemode: constants.FILE_MODES = "text"
+    filemode: constants.FILE_MODES | None = None
     skip_err: bool = False
 
 

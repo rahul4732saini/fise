@@ -206,6 +206,8 @@ class DeleteQuery(BaseQuery):
     attributes related to file/directory deletion queries.
     """
 
+    skip_err: bool
+
 
 @dataclass(slots=True, frozen=True, eq=False)
 class FileSearchQuery(SearchQuery):

@@ -18,6 +18,51 @@ import sqlalchemy
 from . import constants
 
 
+def parse_query(query: str) -> list[str]:
+    r"""
+    Parses the specified raw string query and converts
+    into a list of tokens for further parsing.
+
+    ####
+    - query (str): Query to be parsed.
+    """
+
+    start_brackets, end_brackets = {"[", "("}, {"]", ")"}
+
+    tokens: list = []
+
+    token: str = ""
+    in_brackets: bool = False
+
+    for char in query:
+        if char in start_brackets:
+            in_brackets = True
+            token += char
+
+        # Adds the token to list at the ending brackets.
+        elif char in end_brackets:
+            in_brackets = False
+            tokens.append(token + char)
+            token = ""
+
+        # Adds to list if the character is a whitespace and not
+        # inside brackets  and `token` is not an empty string.
+        elif char.isspace() and not in_brackets:
+            if token:
+                tokens.append(token)
+                token = ""
+
+        # For all other characters.
+        else:
+            token += char
+
+    # Adds the ending token of the query to `tokens` list.
+    if token:
+        tokens.append(token)
+
+    return tokens
+
+
 def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     r"""
     Returns a `typing.Generator` object of all files present within the specified

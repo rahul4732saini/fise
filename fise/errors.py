@@ -9,6 +9,12 @@ FiSE project to handle various exceptional scenarios.
 import sys
 
 
+class QueryHandleError(Exception):
+    """
+    Exception raised when there is an error handling the query.
+    """
+
+
 class BaseError:
     """
     BaseError class serves as a base class for all error classes.

@@ -18,6 +18,7 @@ FILE_FIELDS = DIR_FIELDS | {
 }
 
 OPERATIONS = Literal["search", "remove"]
+OPERANDS = Literal["file", "data", "dir"]
 SEARCH_QUERY_OPERANDS = ("file", "data", "dir")
 DELETE_QUERY_OPERANDS = ("file", "dir")
 OPERATION_ALIASES = {"select": "search", "delete": "remove"}

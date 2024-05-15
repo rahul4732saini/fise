@@ -151,7 +151,7 @@ class QueryHandler:
         operation: OperationData = self._parse_operation()
         self._query = self._query[1:]
 
-        if operation == "remove" and export:
+        if operation.operation == "remove" and export:
             QueryParseError(
                 "Cannot export data with delete operation."
             )

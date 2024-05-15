@@ -71,14 +71,14 @@ class File:
         return self._stats.st_mode
 
     @property
-    def access_time(self) -> datetime:
+    def access_time(self) -> datetime | None:
         try:
             return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
         except OSError:
             ...
 
     @property
-    def create_time(self) -> datetime:
+    def create_time(self) -> datetime | None:
         try:
             return datetime.fromtimestamp(self._stats.st_birthtime).replace(
                 microsecond=0
@@ -87,7 +87,7 @@ class File:
             ...
 
     @property
-    def modify_time(self) -> datetime:
+    def modify_time(self) -> datetime | None:
         try:
             return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
         except OSError:

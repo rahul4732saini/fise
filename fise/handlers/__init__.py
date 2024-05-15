@@ -217,10 +217,13 @@ class QueryHandler:
             else:
                 QueryParseError(f"Invalid parameter {param[0]!r} for search operation.")
 
-        if filemode and operand != "data":
+        if operand != "data" and filemode:
             QueryParseError(
                 "The 'mode' parameter is only valid for filedata search operations."
             )
+
+        elif operand == "data" and not filemode:
+            filemode = "text"
 
         return OperationData("search", operand, filemode)
     

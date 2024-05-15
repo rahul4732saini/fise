@@ -12,9 +12,9 @@ from typing import Callable, Generator
 
 import pandas as pd
 
-from ..shared import QueryInitials, ExportData, OperationData
-from ..common import constants, tools
-from ..errors import QueryParseError
+from shared import QueryInitials, ExportData, OperationData
+from common import constants, tools
+from errors import QueryParseError
 from .operators import (
     FileQueryOperator,
     FileDataQueryOperator,

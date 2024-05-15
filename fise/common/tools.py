@@ -181,6 +181,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     - database (str): database name to export data.
     """
 
+    # Creates an `Engine` object of the specified SQL database.
     conn: sqlalchemy.Engine = (
         _connect_sqlite() if database == "sqlite" else _connect_database(database)
     )
@@ -197,6 +198,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
         sys.exit(1)
 
     else:
+        # Prompts for data replacement if the specified table already exists in the database.
         if table in metadata:
             force: str = input(
                 "The specified table already exist, would you like to alter it? (Y/N) "

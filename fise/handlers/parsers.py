@@ -6,13 +6,20 @@ This module comprises objects and methods for parsing user
 queries extracting relevant data for further processing.
 """
 
-from typing import Literal, override
+from typing import Callable, override
 from pathlib import Path
 import re
 
 from ..common import constants
 from ..errors import QueryParseError
-from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
+from ..shared import (
+    FileSearchQuery,
+    DeleteQuery,
+    SearchQuery,
+    Directory,
+    DataLine,
+    File,
+)
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
@@ -49,16 +56,17 @@ class ConditionParser:
     query conditions for search/delete operations.
     """
 
-    __slots__ = ("_query",)
+    __slots__ = "_query", "_operand"
 
-    def __init__(self, subquery: list[str]) -> None:
-        r"""
+    def __init__(self, subquery: list[str], operand: constants.OPERANDS) -> None:
+        """
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
         - subquery (list[str]): subquery to be parsed.
         """
         self._query = subquery
+        self._operand = operand
 
 
 class FileQueryParser:

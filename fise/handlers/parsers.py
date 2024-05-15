@@ -49,6 +49,8 @@ class ConditionParser:
     query conditions for search/delete operations.
     """
 
+    __slots__ = ("_query",)
+
     def __init__(self, subquery: list[str]) -> None:
         r"""
         Creates an instance of the `ConditionParser` class.

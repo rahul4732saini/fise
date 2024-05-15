@@ -3,7 +3,7 @@ Errors Module
 -------------
 
 This module defines error classes used throughout the
-utility to handle various exceptional scenarios.
+FiSE project to handle various exceptional scenarios.
 """
 
 import sys
@@ -23,7 +23,7 @@ class BaseError:
 
 class QueryParseError(BaseError):
     """
-    Exception raised when there is an error parsing the query.
+    Exception raised when there is an error in parsing the query.
     """
 
     _error = "QueryParseError: There was an error in parsing the query."

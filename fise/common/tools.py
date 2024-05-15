@@ -154,7 +154,7 @@ def _connect_sqlite() -> sqlalchemy.Engine:
 
 def _connect_database(database: str) -> sqlalchemy.Engine:
     """
-    Connects to specified SQL database server.
+    Connects to the specified SQL database server.
 
     #### Params:
     - database (str): database name to export data.
@@ -174,7 +174,7 @@ def _connect_database(database: str) -> sqlalchemy.Engine:
 
 def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     """
-    Exports search data to the specified database.
+    Exports search records data to the specified database.
 
     #### Params:
     - data (pd.DataFrame): pandas DataFrame comprising search records.

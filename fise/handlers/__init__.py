@@ -62,24 +62,25 @@ class QueryHandler:
         except IndexError:
             QueryParseError("Invalid query syntax.")
 
-        handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
-            "file": self._handle_file_query,
-            "dir": self._handle_dir_query,
-            "data": self._handle_data_query,
-        }
-
-        # Calls the coressponding handler method, extracts, and stores the
-        # search records if search operation is specified else stores `None`.
-        data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
-
-        if not initials.export or initials.operation == "remove":
-            return data
-      
-        if initials.export.type_ == "file":
-            tools.export_to_file(data, initials.export.target)
-
         else:
-            tools.export_to_sql(data, initials.export.target)
+            handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
+                "file": self._handle_file_query,
+                "dir": self._handle_dir_query,
+                "data": self._handle_data_query,
+            }
+
+            # Calls the coressponding handler method, extracts, and stores the
+            # search records if search operation is specified else stores `None`.
+            data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
+
+            if not initials.export or initials.operation == "remove":
+                return data
+            
+            if initials.export.type_ == "file":
+                tools.export_to_file(data, initials.export.target)
+
+            else:
+                tools.export_to_sql(data, initials.export.target)
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """

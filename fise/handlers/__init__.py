@@ -40,7 +40,7 @@ class QueryHandler:
 
     # Regular expression patterns for parsing subqueries.
     _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
-    _operation_params_pattern = re.compile(r"^\[.*\]$")
+    _operation_params_pattern = re.compile(r"^(\[.*\]|)$")
 
     def __init__(self, query: str) -> None:
         """

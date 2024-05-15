@@ -42,11 +42,14 @@ class QueryHandler:
     _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
     _operation_params_pattern = re.compile(r"^\[.*\]$")
 
-    def __init__(self, query: list[str]) -> None:
+    def __init__(self, query: str) -> None:
         """
         Creates an instance of the `QueryHandler` class.
+
+        #### Params:
+        - query (str): Query to be parsed and processed.
         """
-        self._query = query
+        self._query = tools.parse_query(query)
 
     def handle(self) -> pd.DataFrame:
         """

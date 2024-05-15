@@ -57,7 +57,6 @@ DATA_EXPORT_TYPES_MAP = {
     ".xlsx": "to_excel",
 }
 
-# Dictionary mapping alias -> field names for file search queries.
 FILE_FIELD_ALIASES = {
     "atime": "access_time",
     "mtime": "modify_time",
@@ -65,7 +64,6 @@ FILE_FIELD_ALIASES = {
     "perms": "permissions",
 }
 
-# Dictionary mapping alias -> field names for file data search queries.
 DATA_FIELD_ALIASES = {
     "filename": "name",
     "filepath": "path",
@@ -73,7 +71,6 @@ DATA_FIELD_ALIASES = {
     "line": "dataline",
 }
 
-# Dictionary mapping alias -> field names for file directory search queries.
 DIR_FIELD_ALIASES = {"perms": "permissions"}
 
 PATH_TYPES = {"absolute", "relative"}

@@ -258,15 +258,22 @@ class DirectoryQueryParser(FileQueryParser):
     __slots__ = "_query", "_operation"
 
     @override
-    def __init__(self, query: str | list[str], operation: constants.OPERATIONS) -> None:
+    def __init__(
+        self, subquery: str | list[str], operation: constants.OPERATIONS
+    ) -> None:
         """
         Creates an instance of the `DirectoryQueryParser` class.
 
         #### Params:
-        - query (list[str]): query to be parsed.
-        - operation ['select' | 'remove']: the operation to be performed upon the query.
+        - subquery (list[str]): query to be parsed.
+        - operation (constants.OPERATIONS): the operation to be performed upon the query.
         """
-        self._query = query
+
+        # This parser object accepts the subquery and parses only the fields, directory/file
+        # and conditions defined within the query. The initials are parsed before-hand and
+        # the remaining is handed and parsed here.
+
+        self._query = subquery
         self._operation = operation
 
     @override

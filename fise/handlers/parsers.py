@@ -176,7 +176,7 @@ class FileDataQueryParser:
 
     __slots__ = ("_query",)
 
-    def __init__(self, query: str | list[str]) -> None:
+    def __init__(self, query: list[str]) -> None:
         """
         Creates an instance of the `FileDataQueryParser` class.
 

@@ -10,12 +10,7 @@ from typing import Literal
 
 DIR_FIELDS = {"path", "parent", "name", "owner", "group", "permissions"}
 DATA_FIELDS = {"name", "path", "dataline", "lineno"}
-FILE_FIELDS = DIR_FIELDS | {
-    "size",
-    "access_time",
-    "create_time",
-    "modify_time",
-}
+FILE_FIELDS = DIR_FIELDS | {"size", "access_time", "create_time", "modify_time"}
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = Literal["file", "data", "dir"]
@@ -25,6 +20,8 @@ OPERATION_ALIASES = {"select": "search", "delete": "remove"}
 
 FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
+
+CONDITION_SEPERATORS = {"and", "or"}
 
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.

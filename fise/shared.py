@@ -256,3 +256,15 @@ class QueryInitials:
     operation: OperationData
     recursive: bool
     export: ExportData | None = None
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class Condition:
+    """
+    Condition class serves as a data class for
+    storing individual query conditions.
+    """
+
+    field1: str
+    operation: str
+    field2: str

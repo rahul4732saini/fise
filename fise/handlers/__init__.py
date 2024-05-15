@@ -268,11 +268,11 @@ class QueryHandler:
         }
 
         operation: str = self._query[0][:6].lower()
-        data: OperationData | None = parser_map.get(operation)()
 
-        if data is None:
-            QueryParseError(f"Invalid operation specified: '{operation}'")
+        if operation not in constants.OPERATION_ALIASES:
+            QueryParseError(f"Invalid operation specified: {operation!r}")
 
+        data: OperationData = parser_map[operation]()
         return data
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:

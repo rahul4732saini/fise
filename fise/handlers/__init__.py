@@ -51,7 +51,7 @@ class QueryHandler:
         """
         self._query = tools.parse_query(query)
 
-    def handle(self) -> pd.DataFrame:
+    def handle(self) -> pd.DataFrame | None:
         """
         Parses and processes the specified search/deletion query.
         """

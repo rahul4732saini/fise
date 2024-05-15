@@ -237,7 +237,7 @@ class OperationData:
     """
 
     operation: constants.OPERATIONS
-    operand: Literal["file", "data", "dir"]
+    operand: constants.OPERANDS
 
     # The following attributes are optional and are only used for some specific
     # operations. `filemode` attribute is only used with a data search operation

@@ -176,14 +176,19 @@ class FileDataQueryParser:
 
     __slots__ = ("_query",)
 
-    def __init__(self, query: list[str]) -> None:
+    def __init__(self, subquery: list[str]) -> None:
         """
         Creates an instance of the `FileDataQueryParser` class.
 
         #### Params:
-        - query (list[str]): query to be parsed.
+        - subquery (list[str]): query to be parsed.
         """
-        self._query = query
+
+        # This parser object accepts the subquery and parses only the fields, directory/file
+        # and conditions defined within the query. The initials are parsed before-hand and
+        # the remaining is handed and parsed here.
+
+        self._query = subquery
 
     @staticmethod
     def _parse_fields(attrs: list[str] | str) -> list[str]:

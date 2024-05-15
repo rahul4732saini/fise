@@ -188,7 +188,7 @@ class QueryHandler:
         params: Generator[str, None, None] = (
             # Lowers and splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
-            i.strip() for i in self._current_query[0][7:-1].lower().split(",")
+            i.strip() for i in self._current_query[0][7:-1].lower().split(",") if i
         )
 
         # Iterates through the parameters and parses them.

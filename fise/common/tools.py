@@ -115,12 +115,17 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
     file: Path = Path(path)
 
-    # Verifies the path's parent directory for existence.
-    # Also verifies if the file is non-existent.
-    if not (file.parent.exists() and not file.is_file()):
+    if file.is_file():
         print(
             "Error: The specified path for exporting search"
             "records must not direct to an existing file."
+        )
+        sys.exit(1)
+
+    elif not file.parent.exists():
+        print(
+            f"Error: The specified directory {file.parent!r}"
+            "for exporting search records cannot be found."
         )
         sys.exit(1)
 

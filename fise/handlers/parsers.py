@@ -46,7 +46,7 @@ def _get_from_keyword_index(query: list[str]) -> int:
 class FileQueryParser:
     """
     FileQueryParser defines methods for parsing
-    file search/manipulation operation queries.
+    file search/delete operation queries.
     """
 
     __slots__ = "_query", "_operation", "_size_unit"
@@ -66,6 +66,7 @@ class FileQueryParser:
         self._query = query
         self._operation = operation
 
+        # Default size unit for file search queries.
         self._size_unit = "B"
 
     def _parse_fields(self, attrs: list[str] | str) -> list[str]:
@@ -82,6 +83,7 @@ class FileQueryParser:
             constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
+        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
         for field in attrs.split(","):
             if field == "*":
                 fields.extend(constants.FILE_FIELDS)
@@ -92,6 +94,7 @@ class FileQueryParser:
                         f"Found an invalid field {field} in the search query."
                     )
 
+                # Parses the size unit.
                 if field[5:-1]:
                     self._size_unit = field[5:-1]
 
@@ -102,7 +105,7 @@ class FileQueryParser:
 
             else:
                 QueryParseError(
-                    f"Found an invalid field '{field}' in the search query."
+                    f"Found an invalid field {field!r} in the search query."
                 )
 
         return fields
@@ -201,7 +204,7 @@ class FileDataQueryParser:
 
             else:
                 QueryParseError(
-                    f"Found an invalid field '{field}' in the search query."
+                    f"Found an invalid field {field!r} in the search query."
                 )
 
         return fields
@@ -277,7 +280,7 @@ class DirectoryQueryParser(FileQueryParser):
 
             else:
                 QueryParseError(
-                    f"Found an invalid field '{field}' in the search query."
+                    f"Found an invalid field {field!r} in the search query."
                 )
 
         return fields

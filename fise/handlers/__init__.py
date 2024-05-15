@@ -156,6 +156,13 @@ class QueryHandler:
                 "Cannot export data with delete operation."
             )
 
+        elif (
+            operation.operand == "data"
+            and operation.filemode == "bytes"
+            and export.type_ == "database"
+        ):
+            QueryParseError("Exporting binary data to SQL databases is currently unsupported.")
+
         return QueryInitials(operation, recursive, export)
 
     def _parse_search_operation(self):

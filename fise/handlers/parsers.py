@@ -70,13 +70,13 @@ class ConditionParser:
         self._query = subquery
         self._operand = operand
 
-    def parse_file_condition(self) -> Callable[[File], bool]:
+    def _parse_file_condition(self) -> Callable[[File], bool]:
         """Parses the file search/delete query conditions."""
 
-    def parse_filedata_condition(self) -> Callable[[DataLine], bool]:
+    def _parse_filedata_condition(self) -> Callable[[DataLine], bool]:
         """Parses the file search/delete query conditions."""
 
-    def parse_dir_condition(self) -> Callable[[Directory], bool]:
+    def _parse_dir_condition(self) -> Callable[[Directory], bool]:
         """Parses the file search/delete query conditions."""
 
 

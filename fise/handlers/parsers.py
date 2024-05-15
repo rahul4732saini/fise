@@ -205,6 +205,7 @@ class FileDataQueryParser:
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
+        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
         for field in attrs.split(","):
             if field == "*":
                 fields.extend(constants.DATA_FIELDS)
@@ -281,6 +282,7 @@ class DirectoryQueryParser(FileQueryParser):
 
         dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
+        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
         for field in attrs.split(","):
             if field == "*":
                 fields.extend(constants.FILE_FIELDS)

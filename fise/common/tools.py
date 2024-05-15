@@ -1,4 +1,4 @@
-r"""
+"""
 Tools module
 ------------
 
@@ -19,7 +19,7 @@ from . import constants
 
 
 def parse_query(query: str) -> list[str]:
-    r"""
+    """
     Parses the specified raw string query and converts
     into a list of tokens for further parsing.
 
@@ -64,7 +64,7 @@ def parse_query(query: str) -> list[str]:
 
 
 def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
-    r"""
+    """
     Returns a `typing.Generator` object of all files present within the specified
     directory. Also extracts the files present within the subdirectories if
     `recursive` is set to `True`.
@@ -85,7 +85,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
-    r"""
+    """
     Returns a `typing.Generator` object of all subdirectories present within
     the specified directory. Also extracts the directories present within the
     subdirectories if `recursive` is set to `True`.
@@ -105,7 +105,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
 
 
 def export_to_file(data: pd.DataFrame, path: str) -> None:
-    r"""
+    """
     Exports search data to the specified file in a suitable format.
 
     #### Params:
@@ -140,7 +140,7 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
 
 def _connect_sqlite() -> sqlalchemy.Engine:
-    r"""
+    """
     Connects to a SQLite database file.
     """
     database: Path = Path(input("Enter the path to database file: "))
@@ -148,7 +148,7 @@ def _connect_sqlite() -> sqlalchemy.Engine:
 
 
 def _connect_database(database: str) -> sqlalchemy.Engine:
-    r"""
+    """
     Connects to specified SQL database server.
 
     #### Params:
@@ -168,7 +168,7 @@ def _connect_database(database: str) -> sqlalchemy.Engine:
 
 
 def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
-    r"""
+    """
     Exports search data to the specified database.
 
     #### Params:

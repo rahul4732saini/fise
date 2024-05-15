@@ -1,4 +1,4 @@
-r"""
+"""
 Shared Module
 --------------
 
@@ -15,7 +15,7 @@ from .common import constants
 
 
 class File:
-    r"""
+    """
     File class serves as a unified class for accessing all methods and attributes
     related to the file `pathlib.Path` and `os.stat_result` object.
     """
@@ -23,7 +23,7 @@ class File:
     __slots__ = "_file", "_stats", "_size_divisor"
 
     def __init__(self, file: Path, size_unit: str = "B") -> None:
-        r"""
+        """
         Creates an instance of the `File` class.
 
         #### Params:
@@ -95,7 +95,7 @@ class File:
 
 
 class DataLine:
-    r"""
+    """
     DataLine class serves as a unified class for accessing
     all attributes related to the metadata of the dataline.
     """
@@ -103,7 +103,7 @@ class DataLine:
     __slots__ = "_file", "_data", "_lineno"
 
     def __init__(self, file: Path, data: str, lineno: int) -> None:
-        r"""
+        """
         Creates an instance of the `DataLine` class.
 
         #### Params:
@@ -134,7 +134,7 @@ class DataLine:
 
 
 class Directory:
-    r"""
+    """
     Directory class serves as a unified class for accessing all methods and attributes
     related to the directory `pathlib.Path` and `os.stat_result` object.
     """
@@ -142,7 +142,7 @@ class Directory:
     __slots__ = "_directory", "_stats", "_size_divisor"
 
     def __init__(self, directory: Path) -> None:
-        r"""
+        """
         Creates an instance of the `Directory` class.
 
         #### Params:
@@ -180,7 +180,7 @@ class Directory:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class BaseQuery:
-    r"""
+    """
     Base class for all query data classes.
     """
 
@@ -191,7 +191,7 @@ class BaseQuery:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class SearchQuery(BaseQuery):
-    r"""
+    """
     SearchQuery class serves as a data classes for
     storing attributes related to search queries.
     """
@@ -201,7 +201,7 @@ class SearchQuery(BaseQuery):
 
 @dataclass(slots=True, frozen=True, eq=False)
 class DeleteQuery(BaseQuery):
-    r"""
+    """
     DeleteQuery class serves as a data class for storing
     attributes related to file/directory deletion queries.
     """
@@ -211,7 +211,7 @@ class DeleteQuery(BaseQuery):
 
 @dataclass(slots=True, frozen=True, eq=False)
 class FileSearchQuery(SearchQuery):
-    r"""
+    """
     SearchQuery class serves as a data classes for storing
     attributes related to file search queries.
     """
@@ -222,7 +222,7 @@ class FileSearchQuery(SearchQuery):
 
 @dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
-    r"""
+    """
     ExportData class serves as a data class for
     storing export data related attributes.
     """
@@ -233,7 +233,7 @@ class ExportData:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class OperationData:
-    r"""
+    """
     OperationData class serves as a data class for
     storing attributes related to the query operation.
     """
@@ -250,7 +250,7 @@ class OperationData:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class QueryInitials:
-    r"""
+    """
     QueryInitials class serves as a data class for
     storing attribute related to query initials.
     """

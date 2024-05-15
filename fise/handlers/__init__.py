@@ -1,4 +1,4 @@
-r"""
+"""
 Handlers Package
 ----------------
 
@@ -31,7 +31,7 @@ from .parsers import (
 
 
 class QueryHandler:
-    r"""
+    """
     QueryHandler defines methods for handling, parsing and
     processing user-specified search and manipulation queries.
     """
@@ -43,13 +43,13 @@ class QueryHandler:
     _operation_params_pattern = re.compile(r"^\[.*\]$")
 
     def __init__(self, query: list[str]) -> None:
-        r"""
+        """
         Creates an instance of the `QueryHandler` class.
         """
         self._query = query
 
     def handle(self) -> pd.DataFrame:
-        r"""
+        """
         Parses and processes the specified search/deletion query.
         """
 
@@ -79,7 +79,7 @@ class QueryHandler:
             tools.export_to_sql(data, initials.export.target)
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
-        r"""
+        """
         Parses and processes the specified file search/deletion query.
         """
 
@@ -96,7 +96,7 @@ class QueryHandler:
         operator.remove_files(query.condition, initials.operation.skip_err)
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
-        r"""
+        """
         Parses and processes the specified file data search query.
         """
 
@@ -113,7 +113,7 @@ class QueryHandler:
         return operator.get_fields(query.fields, query.condition)
 
     def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
-        r"""
+        """
         Parses and processes the specified directory search/deletion query.
         """
 
@@ -130,7 +130,7 @@ class QueryHandler:
         operator.remove_directories(query.condition, initials.operation.skip_err)
 
     def _parse_initials(self) -> QueryInitials:
-        r"""
+        """
         Parses the query initials.
         """
 
@@ -155,7 +155,7 @@ class QueryHandler:
         return QueryInitials(operation, recursive, export)
 
     def _parse_search_operation(self):
-        r"""
+        """
         Parses the search operation subquery.
         """
 
@@ -207,7 +207,7 @@ class QueryHandler:
         return OperationData("search", operand, filemode)
     
     def _parse_delete_operation(self):
-        r"""
+        """
         Parses the delete operation subquery.
         """
 
@@ -248,7 +248,7 @@ class QueryHandler:
         return OperationData("remove", operand, skip_err=skip_err)
 
     def _parse_operation(self) -> OperationData:
-        r"""
+        """
         Parses the query operation data.
         """
 
@@ -265,7 +265,7 @@ class QueryHandler:
         return data
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:
-        r"""
+        """
         Parses export data from the query if specified else returns `None`.
         """
 

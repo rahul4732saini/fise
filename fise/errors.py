@@ -1,4 +1,4 @@
-r"""
+"""
 Errors Module
 -------------
 
@@ -10,7 +10,7 @@ import sys
 
 
 class BaseError:
-    r"""
+    """
     BaseError class serves as a base class for all error classes.
     """
 
@@ -22,7 +22,7 @@ class BaseError:
 
 
 class QueryParseError(BaseError):
-    r"""
+    """
     Exception raised when there is an error parsing the query.
     """
 
@@ -30,7 +30,7 @@ class QueryParseError(BaseError):
 
 
 class OperationError(BaseError):
-    r"""
+    """
     Exception raised when there is an error in processing the query.
     """
 

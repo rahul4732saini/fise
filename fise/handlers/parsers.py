@@ -1,4 +1,4 @@
-r"""
+"""
 Parsers Module
 --------------
 
@@ -16,7 +16,7 @@ from ..shared import DeleteQuery, SearchQuery, FileSearchQuery
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
-    r"""
+    """
     Parses the file/directory path and its type from the specified sub-query.
     """
 
@@ -30,7 +30,7 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path]:
 
 
 def _get_from_keyword_index(query: list[str]) -> int:
-    r"""
+    """
     Returns the index of the 'from' keyword in the file query.
     """
 
@@ -44,7 +44,7 @@ def _get_from_keyword_index(query: list[str]) -> int:
 
 
 class FileQueryParser:
-    r"""
+    """
     FileQueryParser defines methods for parsing
     file search/manipulation operation queries.
     """
@@ -56,7 +56,7 @@ class FileQueryParser:
     )
 
     def __init__(self, query: list[str], operation: constants.OPERATIONS) -> None:
-        r"""
+        """
         Creates an instance of `FileQueryParser` class.
 
         #### Params:
@@ -69,7 +69,7 @@ class FileQueryParser:
         self._size_unit = "B"
 
     def _parse_fields(self, attrs: list[str] | str) -> list[str]:
-        r"""
+        """
         Parses the search query fields.
         """
 
@@ -109,7 +109,7 @@ class FileQueryParser:
 
     @staticmethod
     def _parse_directory(subquery: list[str]) -> tuple[Path, str]:
-        r"""
+        """
         Parses the directory path and its type from the specified sub-query.
         """
         type_, path = _parse_path(subquery)
@@ -120,7 +120,7 @@ class FileQueryParser:
         return path, type_
 
     def _parse_remove_query(self) -> DeleteQuery:
-        r"""
+        """
         Parses the file deletion query.
         """
 
@@ -134,7 +134,7 @@ class FileQueryParser:
         )
 
     def _parse_search_query(self) -> FileSearchQuery:
-        r"""
+        """
         Parses the file search query.
         """
 
@@ -150,7 +150,7 @@ class FileQueryParser:
         )
 
     def parse_query(self) -> FileSearchQuery | DeleteQuery:
-        r"""
+        """
         Parses the file search/deletion query.
         """
         return (
@@ -161,7 +161,7 @@ class FileQueryParser:
 
 
 class FileDataQueryParser:
-    r"""
+    """
     FileDataQueryParser defines methods for
     parsing file data search operation queries.
     """
@@ -169,7 +169,7 @@ class FileDataQueryParser:
     __slots__ = ("_query",)
 
     def __init__(self, query: str | list[str]) -> None:
-        r"""
+        """
         Creates an instance of the `FileDataQueryParser` class.
 
         #### Params:
@@ -179,7 +179,7 @@ class FileDataQueryParser:
 
     @staticmethod
     def _parse_fields(attrs: list[str] | str) -> list[str]:
-        r"""
+        """
         Parses the data search query fields.
         """
 
@@ -208,7 +208,7 @@ class FileDataQueryParser:
 
     @staticmethod
     def _parse_path(subquery: list[str]) -> tuple[Path, str]:
-        r"""
+        """
         Parses the file/directory path and its type from the specified sub-query.
         """
         type_, path = _parse_path(subquery)
@@ -221,7 +221,7 @@ class FileDataQueryParser:
         return path, type_
 
     def parse_query(self) -> SearchQuery:
-        r"""
+        """
         Parses the file data search query.
         """
 
@@ -236,7 +236,7 @@ class FileDataQueryParser:
 
 
 class DirectoryQueryParser(FileQueryParser):
-    r"""
+    """
     DirectoryQueryParser defines methods for parsing
     directory search/manipulation operation queries.
     """
@@ -245,7 +245,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     @override
     def __init__(self, query: str | list[str], operation: constants.OPERATIONS) -> None:
-        r"""
+        """
         Creates an instance of the `DirectoryQueryParser` class.
 
         #### Params:
@@ -257,7 +257,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     @override
     def _parse_fields(self, attrs: list[str] | str) -> list[str]:
-        r"""
+        """
         Parses the directory search query fields.
         """
 
@@ -284,7 +284,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     @override
     def _parse_search_query(self) -> SearchQuery:
-        r"""
+        """
         Parses the file search query.
         """
 

@@ -1,4 +1,4 @@
-r"""
+"""
 Operators Module
 ------------
 
@@ -19,14 +19,14 @@ from ..shared import File, Directory, DataLine
 
 
 class FileQueryOperator:
-    r"""
+    """
     FileQueryOperator defines methods for performing file search/delete operations.
     """
 
     __slots__ = "_directory", "_recursive"
 
     def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
-        r"""
+        """
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
@@ -46,7 +46,7 @@ class FileQueryOperator:
     def get_fields(
         self, fields: list[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
-        r"""
+        """
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
@@ -81,7 +81,7 @@ class FileQueryOperator:
         return records
 
     def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
-        r"""
+        """
         Removes all the files present within the specified directory.
 
         #### Params:
@@ -105,7 +105,7 @@ class FileQueryOperator:
 
 
 class FileDataQueryOperator:
-    r"""
+    """
     FileDataQueryOperator defines methods for performing
     text data search operations within files.
     """
@@ -119,7 +119,7 @@ class FileDataQueryOperator:
         absolute: bool,
         filemode: constants.FILE_MODES,
     ) -> None:
-        r"""
+        """
         Creates an instance of the `FileDataQueryOperator` class.
 
         #### Params:
@@ -139,7 +139,7 @@ class FileDataQueryOperator:
             self._path = self._path.absolute()
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str]], None, None]:
-        r"""
+        """
         Yields the file `pathlib.Path` object and a list of strings
         representing the lines of text from each file. Each string in
         the list corresponds to an individual line of text in the file.
@@ -159,7 +159,7 @@ class FileDataQueryOperator:
                 yield i, file.readlines()
 
     def _search_datalines(self) -> Generator[DataLine, None, None]:
-        r"""
+        """
         Iterates through each file and its corresponding data-lines,
         yielding `DataLine` objects comprising the metadata of the
         data-lines.
@@ -171,7 +171,7 @@ class FileDataQueryOperator:
     def get_fields(
         self, fields: list[str], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
-        r"""
+        """
         Returns a pandas DataFrame comprising the specified fields
         of all the datalines present within the specified file(s)
         matching the specified condition.
@@ -199,7 +199,7 @@ class FileDataQueryOperator:
 
 
 class DirectoryQueryOperator:
-    r"""
+    """
     DirectoryQueryOperator defines methods for performing
     directory search/delete operations within files.
     """
@@ -207,7 +207,7 @@ class DirectoryQueryOperator:
     __slots__ = "_directory", "_recursive"
 
     def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
-        r"""
+        """
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
@@ -227,7 +227,7 @@ class DirectoryQueryOperator:
     def get_fields(
         self, fields: list[str], condition: Callable[[Directory], bool]
     ) -> pd.DataFrame:
-        r"""
+        """
         Returns a pandas DataFrame comprising the specified metadata fields
         of all the subdirectories present within the specified directory.
 
@@ -260,7 +260,7 @@ class DirectoryQueryOperator:
     def remove_directories(
         self, condition: Callable[[Directory], bool], skip_err: bool
     ) -> None:
-        r"""
+        """
         Removes all the subdirectories present within the
         specified directory matching the specified condition.
 

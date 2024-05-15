@@ -74,6 +74,9 @@ class ConditionParser:
     def parse_filedata_condition(self) -> Callable[[DataLine], bool]:
         """Parses the file search/delete query conditions."""
 
+    def parse_dir_condition(self) -> Callable[[Directory], bool]:
+        """Parses the file search/delete query conditions."""
+
 
 class FileQueryParser:
     """

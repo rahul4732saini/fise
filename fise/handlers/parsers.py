@@ -58,6 +58,8 @@ class ConditionParser:
 
     __slots__ = "_query", "_operand"
 
+    _condition_pattern = re.compile(r"(\S+)\s*(>|<|>=|<=|=|!=|in|between|like)\s*(|S+)")
+
     def __init__(self, subquery: list[str], operand: constants.OPERANDS) -> None:
         """
         Creates an instance of the `ConditionParser` class.

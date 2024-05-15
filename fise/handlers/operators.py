@@ -101,7 +101,7 @@ class FileQueryOperator:
                 if skip_err:
                     continue
 
-                OperationError(f"Not enough permissions to delete {file.absolute()}.")
+                OperationError(f"Not enough permissions to delete '{file.absolute()}'.")
 
 
 class FileDataQueryOperator:
@@ -282,5 +282,5 @@ class DirectoryQueryOperator:
                     continue
 
                 OperationError(
-                    f"Not enough permissions to delete {directory.absolute()}."
+                    f"Not enough permissions to delete '{directory.absolute()}'."
                 )

@@ -124,7 +124,7 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
     elif not file.parent.exists():
         print(
-            f"Error: The specified directory {file.parent!r}"
+            f"Error: The specified directory '{file.parent}'"
             "for exporting search records cannot be found."
         )
         sys.exit(1)
@@ -135,7 +135,7 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
 
     if not export_method:
         print(
-            f"Error: {file.suffix} file type is not"
+            f"Error: {file.suffix!r} file type is not"
             "supported for search records export."
         )
         sys.exit(1)

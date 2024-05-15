@@ -68,6 +68,9 @@ class ConditionParser:
         self._query = subquery
         self._operand = operand
 
+    def parse_file_condition(self) -> Callable[[File], bool]:
+        """Parses the file search/delete query conditions."""
+
 
 class FileQueryParser:
     """

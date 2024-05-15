@@ -55,15 +55,20 @@ class FileQueryParser:
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
     )
 
-    def __init__(self, query: list[str], operation: constants.OPERATIONS) -> None:
+    def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         """
         Creates an instance of `FileQueryParser` class.
 
         #### Params:
-        - query (list[str]): query to be parsed.
-        - operation ['search' | 'remove']: the operation to be performed upon the query.
+        - subquery (list[str]): subquery to be parsed.
+        - operation (constants.OPERATIONS): the operation to be performed upon the query.
         """
-        self._query = query
+
+        # This parser object accepts the subquery and parses only the fields, directory/file
+        # and conditions defined within the query. The initials are parsed before-hand and
+        # the remaining is handed and parsed here.
+
+        self._query = subquery
         self._operation = operation
 
         # Default size unit for file search queries.

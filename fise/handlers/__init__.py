@@ -148,20 +148,25 @@ class QueryHandler:
             recursive = True
             self._query = self._query[1:]
 
+        # Parses the query operation
         operation: OperationData = self._parse_operation()
         self._query = self._query[1:]
 
-        if operation.operation == "remove" and export:
-            QueryParseError(
-                "Cannot export data with delete operation."
-            )
+        # Verify semantic aspects of the query for further processing
+        if export:
+            if operation.operation == "remove":
+                QueryParseError(
+                    "Cannot export data with delete operation."
+                )
 
-        elif (
-            operation.operand == "data"
-            and operation.filemode == "bytes"
-            and export.type_ == "database"
-        ):
-            QueryParseError("Exporting binary data to SQL databases is currently unsupported.")
+            elif (
+                operation.operand == "data"
+                and operation.filemode == "bytes"
+                and export.type_ == "database"
+            ):
+                QueryParseError(
+                    "Exporting binary data to SQL databases is currently unsupported."
+                ) 
 
         return QueryInitials(operation, recursive, export)
 

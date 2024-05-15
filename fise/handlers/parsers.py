@@ -6,7 +6,7 @@ This module comprises objects and methods for parsing user
 queries extracting relevant data for further processing.
 """
 
-from typing import override
+from typing import Literal, override
 from pathlib import Path
 import re
 
@@ -48,6 +48,15 @@ class ConditionParser:
     ConditionParser defines methods for parsing
     query conditions for search/delete operations.
     """
+
+    def __init__(self, subquery: list[str]) -> None:
+        r"""
+        Creates an instance of the `ConditionParser` class.
+
+        #### Params:
+        - subquery (list[str]): subquery to be parsed.
+        """
+        self._query = subquery
 
 
 class FileQueryParser:

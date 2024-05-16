@@ -150,6 +150,31 @@ class ConditionParser:
 
         return Condition(field1, operator, field2)
 
+    def _parse_conditions(self) -> Generator[Condition | str, None, None]:
+        """
+        Parses the query conditions and returns a `typing.Generator` object of the
+        parsed conditions as `Condition` objects also including the condition
+        seperators `and` and `or` as string objects.
+        """
+
+        # Stores individual conditions during iteration.
+        condition = []
+
+        for token in self._query:
+            if token in constants.CONDITION_SEPERATORS:
+                yield self._parse_condition(condition)
+                yield token
+
+                condition.clear()
+
+                continue
+
+            condition.append(token)
+
+        # Parses the last condition specified in the query.
+        if condition:
+            yield self._parse_condition(condition)
+
 
 class FileQueryParser:
     """

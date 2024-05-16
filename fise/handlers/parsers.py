@@ -72,14 +72,25 @@ class ConditionParser:
         self._query = subquery
         self._operand = operand
 
-    def _parse_file_condition(self) -> Callable[[File], bool]:
-        """Parses the file search/delete query conditions."""
+    def _parse_comparison_operand(self, field: str) -> Field | str | float | int:
+        """
+        Parses individual operands specified within a comparison
+        expression for appropriate data type conversion.
+        """
 
-    def _parse_filedata_condition(self) -> Callable[[DataLine], bool]:
-        """Parses the file search/delete query conditions."""
+        if self._string_pattern.match(field):
+            # Strips the leading and trailing quotes and returns the string.
+            return field[1:-1]
 
-    def _parse_dir_condition(self) -> Callable[[Directory], bool]:
-        """Parses the file search/delete query conditions."""
+        elif self._float_pattern.match(field):
+            return float(field)
+
+        elif field.isdigit():
+            return int(field)
+
+        # If none of the above conditions are matched, the field is
+        # assumed to be a query field and returns as a `Field` object.
+        return Field(field)
 
 
 class FileQueryParser:

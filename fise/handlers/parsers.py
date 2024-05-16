@@ -57,7 +57,10 @@ class ConditionParser:
 
     __slots__ = "_query", "_operand", "_conditions"
 
-    _condition_pattern = re.compile(r"(\S+)\s*(>|<|>=|<=|=|!=|in|between|like)\s*(|S+)")
+    # Regular expression patterns for matching fields in query conditions.
+    _string_pattern = re.compile(r"^('|\").*('|\")$")
+    _float_pattern = re.compile(r"^-?\d+(\.)\d+$")
+    _tuple_pattern = re.compile(r"^\(.*\)$")
 
     def __init__(self, subquery: list[str], operand: constants.OPERANDS) -> None:
         """

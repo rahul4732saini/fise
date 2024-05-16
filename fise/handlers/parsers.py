@@ -7,6 +7,7 @@ queries extracting relevant data for further processing.
 """
 
 import re
+import re
 from pathlib import Path
 from datetime import datetime
 from typing import Generator, override

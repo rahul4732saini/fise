@@ -6,19 +6,18 @@ This module comprises objects and methods for parsing user
 queries extracting relevant data for further processing.
 """
 
-from typing import Callable, override
-from pathlib import Path
 import re
+from pathlib import Path
+from typing import Generator, override
 
-from ..common import constants
-from ..errors import QueryParseError
-from ..shared import (
+from errors import QueryParseError
+from common import constants
+from shared import (
     FileSearchQuery,
     DeleteQuery,
     SearchQuery,
-    Directory,
-    DataLine,
-    File,
+    Condition,
+    Field,
 )
 
 

@@ -260,9 +260,9 @@ class Condition:
     Condition class for storing individual query conditions.
     """
 
-    field1: str
+    operand1: str
     operation: str
-    field2: str
+    operand2: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)

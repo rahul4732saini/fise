@@ -7,10 +7,9 @@ queries extracting relevant data for further processing.
 """
 
 import re
-import re
 from pathlib import Path
 from datetime import datetime
-from typing import Generator, override
+from typing import Generator, override, Any
 
 from errors import QueryParseError
 from common import constants
@@ -177,6 +176,46 @@ class ConditionParser:
         # Parses the last condition specified in the query.
         if condition:
             yield self._parse_condition(condition)
+
+    @staticmethod
+    def _evaluate_and(x: bool, y: bool, /) -> bool:
+        return x and y
+
+    @staticmethod
+    def _evaluate_or(x: bool, y: bool, /) -> bool:
+        return x or y
+
+    @staticmethod
+    def _gt(x: Any, y: Any, /) -> bool:
+        return x > y
+
+    @staticmethod
+    def _ge(x: Any, y: Any, /) -> bool:
+        return x >= y
+
+    @staticmethod
+    def _lt(x: Any, y: Any, /) -> bool:
+        return x < y
+
+    @staticmethod
+    def _le(x: Any, y: Any, /) -> bool:
+        return x <= y
+
+    @staticmethod
+    def _eq(x: Any, y: Any, /) -> bool:
+        return x == y
+
+    @staticmethod
+    def _ne(x: Any, y: Any, /) -> bool:
+        return x != y
+
+    @staticmethod
+    def _contains(x: Any, y: list[Any], /) -> bool:
+        return x in y
+
+    @staticmethod
+    def _like(pattern: re.Pattern, string: str) -> bool:
+        return pattern.match(string)
 
 
 class FileQueryParser:

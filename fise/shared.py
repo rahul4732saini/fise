@@ -261,7 +261,7 @@ class Condition:
     """
 
     operand1: str
-    operation: str
+    operator: str
     operand2: str
 
 

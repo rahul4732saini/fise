@@ -8,6 +8,7 @@ queries extracting relevant data for further processing.
 
 import re
 from pathlib import Path
+from datetime import datetime
 from typing import Generator, override
 
 from errors import QueryParseError
@@ -91,6 +92,39 @@ class ConditionParser:
         # If none of the above conditions are matched, the field is
         # assumed to be a query field and returns as a `Field` object.
         return Field(field)
+
+    def _parse_conditional_operand(
+        self, field: str, operator: str
+    ) -> tuple | re.Pattern:
+        """
+        Parses individual operands specified within a conditional expression.
+        """
+
+        if operator == "like":
+            return re.compile(field[1:-1])
+
+        # In case of a `IN` or `BETWEEN` operation, tuples are defined as
+        # second operands. The below mechanism parses and creates a list
+        # out of the string formatted tuple.
+        else:
+            if not self._tuple_pattern.match(field):
+                QueryParseError(
+                    f"Invalid query pattern around {" ".join(self._query)!r}"
+                )
+
+            # Parses and creates a list of individual
+            # operands present within specified tuple.
+            field: list[str] = [
+                self._parse_comparison_operand(i) for i in field[1:-1].split(",")
+            ]
+
+            if operator == "between" and len(field) != 2:
+                QueryParseError(
+                    "The tuple specified for `BETWEEN` conditional"
+                    "operation must only comprises two elements."
+                )
+
+        return field
 
 
 class FileQueryParser:

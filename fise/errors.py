@@ -21,7 +21,7 @@ class BaseError:
     _error: str
 
     def __init__(self, description: str) -> None:
-        print(self._error, f"Description: {description}", sep="\n")
+        print(f"\033[91m{self._error}\nDescription: {description}\033[0m")
 
         # Raises an exception to terminate the process. To be handled
         # by another module to start a new query handling process.

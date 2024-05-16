@@ -22,6 +22,8 @@ FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
 
 CONDITION_SEPERATORS = {"and", "or"}
+COMPARISON_OPERATORS = {"<", ">", "<=", ">=", "!=", "="}
+CONDITIONAL_OPERATORS = {"in", "between", "like"}
 
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.

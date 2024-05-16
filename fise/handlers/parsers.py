@@ -126,6 +126,30 @@ class ConditionParser:
 
         return field
 
+    def _parse_condition(self, condition: list[str]) -> Condition:
+        """
+        Parses individual query conditions.
+        """
+
+        if len(condition) < 3:
+            QueryParseError(f"Invalid query syntax around {" ".join(condition)}")
+
+        for i in constants.COMPARISON_OPERATORS | constants.SUBSET_OPERATORS:
+            if condition[1] == i:
+                operator: str = i
+                break
+        else:
+            QueryParseError(f"Invalid query syntax around {" ".join(self._query)!r}")
+
+        field1 = self._parse_comparison_operand(condition[0])
+        field2 = (
+            self._parse_comparison_operand(condition[2])
+            if operator in constants.COMPARISON_OPERATORS
+            else self._parse_conditional_operand("".join(condition[2:]), operator)
+        )
+
+        return Condition(field1, operator, field2)
+
 
 class FileQueryParser:
     """

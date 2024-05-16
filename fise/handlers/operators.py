@@ -13,9 +13,9 @@ import shutil
 
 import pandas as pd
 
-from ..errors import OperationError
-from ..common import tools, constants
-from ..shared import File, Directory, DataLine
+from errors import OperationError
+from common import tools, constants
+from shared import File, Directory, DataLine
 
 
 class FileQueryOperator:

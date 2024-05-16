@@ -136,7 +136,7 @@ class ConditionParser:
         if len(condition) < 3:
             QueryParseError(f"Invalid query syntax around {" ".join(condition)}")
 
-        for i in constants.COMPARISON_OPERATORS | constants.SUBSET_OPERATORS:
+        for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
             if condition[1] == i:
                 operator: str = i
                 break

@@ -192,8 +192,8 @@ class BaseQuery:
 @dataclass(slots=True, frozen=True, eq=False)
 class SearchQuery(BaseQuery):
     """
-    SearchQuery class serves as a data classes for
-    storing attributes related to search queries.
+    SearchQuery class for storing attributes
+    related to search queries.
     """
 
     fields: list[str]
@@ -202,16 +202,15 @@ class SearchQuery(BaseQuery):
 @dataclass(slots=True, frozen=True, eq=False)
 class DeleteQuery(BaseQuery):
     """
-    DeleteQuery class serves as a data class for storing
-    attributes related to file/directory deletion queries.
+    DeleteQuery classs for storing attributes related
+    to file/directory deletion queries.
     """
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class FileSearchQuery(SearchQuery):
     """
-    SearchQuery class serves as a data classes for storing
-    attributes related to file search queries.
+    SearchQuery class for storing attributes related to file search queries.
     """
 
     fields: list[str]
@@ -221,8 +220,7 @@ class FileSearchQuery(SearchQuery):
 @dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
     """
-    ExportData class serves as a data class for
-    storing export data related attributes.
+    ExportData class for storing export data related attributes.
     """
 
     type_: Literal["file", "database"]
@@ -232,8 +230,7 @@ class ExportData:
 @dataclass(slots=True, frozen=True, eq=False)
 class OperationData:
     """
-    OperationData class serves as a data class for
-    storing attributes related to the query operation.
+    OperationData class for storing attributes related to the query operation.
     """
 
     operation: constants.OPERATIONS
@@ -249,8 +246,7 @@ class OperationData:
 @dataclass(slots=True, frozen=True, eq=False)
 class QueryInitials:
     """
-    QueryInitials class serves as a data class for
-    storing attribute related to query initials.
+    QueryInitials class serves for storing attribute related to query initials.
     """
 
     operation: OperationData
@@ -261,8 +257,7 @@ class QueryInitials:
 @dataclass(slots=True, frozen=True, eq=False)
 class Condition:
     """
-    Condition class serves as a data class for
-    storing individual query conditions.
+    Condition class for storing individual query conditions.
     """
 
     field1: str

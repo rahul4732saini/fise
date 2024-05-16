@@ -268,3 +268,12 @@ class Condition:
     field1: str
     operation: str
     field2: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class Field:
+    """
+    Field class for storing callable individual query condition fields.
+    """
+
+    field: str

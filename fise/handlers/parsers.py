@@ -17,8 +17,11 @@ from shared import (
     FileSearchQuery,
     DeleteQuery,
     SearchQuery,
+    Directory,
     Condition,
+    DataLine,
     Field,
+    File,
 )
 
 
@@ -56,7 +59,7 @@ class ConditionParser:
     query conditions for search/delete operations.
     """
 
-    __slots__ = "_query", "_operand", "_conditions"
+    __slots__ = "_query", "_operand", "_conditions", "_method_map"
 
     # Regular expression patterns for matching fields in query conditions.
     _string_pattern = re.compile(r"^('|\").*('|\")$")
@@ -72,6 +75,19 @@ class ConditionParser:
         """
         self._query = subquery
         self._operand = operand
+
+        # Maps operator names with coresponding evaluation methods.
+        self._method_map: dict = {
+            ">=": self._ge,
+            "<=": self._le,
+            "<": self._lt,
+            ">": self._gt,
+            "=": self._eq,
+            "!=": self._ne,
+            "like": self._like,
+            "in": self._contains,
+            "between": self._between,
+        }
 
         self._conditions = list(self._parse_conditions())
 

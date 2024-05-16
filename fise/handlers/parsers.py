@@ -55,7 +55,7 @@ class ConditionParser:
     query conditions for search/delete operations.
     """
 
-    __slots__ = "_query", "_current_query", "_operand"
+    __slots__ = "_query", "_operand", "_conditions"
 
     _condition_pattern = re.compile(r"(\S+)\s*(>|<|>=|<=|=|!=|in|between|like)\s*(|S+)")
 
@@ -66,7 +66,7 @@ class ConditionParser:
         #### Params:
         - subquery (list[str]): subquery to be parsed.
         """
-        self._query = self._current_query = subquery
+        self._query = subquery
         self._operand = operand
 
     def _parse_file_condition(self) -> Callable[[File], bool]:

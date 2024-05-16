@@ -73,6 +73,8 @@ class ConditionParser:
         self._query = subquery
         self._operand = operand
 
+        self._conditions = list(self._parse_conditions())
+
     def _parse_comparison_operand(self, field: str) -> Field | str | float | int:
         """
         Parses individual operands specified within a comparison
@@ -120,7 +122,7 @@ class ConditionParser:
 
             if operator == "between" and len(field) != 2:
                 QueryParseError(
-                    "The tuple specified for `BETWEEN` conditional"
+                    "The tuple specified for `BETWEEN` conditional "
                     "operation must only comprises two elements."
                 )
 

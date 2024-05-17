@@ -9,7 +9,7 @@ queries extracting relevant data for further processing.
 import re
 from pathlib import Path
 from datetime import datetime
-from typing import Generator, override, Any
+from typing import Generator, Callable, override, Any
 
 from errors import QueryParseError
 from common import constants
@@ -77,7 +77,7 @@ class ConditionParser:
         self._operand = operand
 
         # Maps operator names with coresponding evaluation methods.
-        self._method_map: dict = {
+        self._method_map: dict[str, Callable[[Any, Any], bool]] = {
             ">=": self._ge,
             "<=": self._le,
             "<": self._lt,

@@ -248,6 +248,30 @@ class ConditionParser:
 
         return response
 
+    def _eval_condition_segments(
+        self, segment: list[Condition | str], obj: File | DataLine | Directory
+    ) -> bool:
+        r"""
+        Evaluates the specified condition segment.
+
+        #### Params:
+        - segment (list): query condition segment to be evaluated.
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+
+        # Evalautes individual conditions if not done yet.
+        if isinstance(segment[0], Condition):
+            segment[0] = self._evaluate_condition(segment[0], obj)
+
+        if isinstance(segment[2], Condition):
+            segment[2] = self._evaluate_condition(segment[2], obj)
+
+        return (
+            segment[0] and segment[2]
+            if segment[1] == "and"
+            else segment[0] or segment[2]
+        )
+
     @staticmethod
     def _evaluate_and(x: bool, y: bool, /) -> bool:
         return x and y

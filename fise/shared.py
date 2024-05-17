@@ -6,7 +6,7 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
-from typing import Callable, Literal
+from typing import Callable, Literal, Any
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass
@@ -260,9 +260,9 @@ class Condition:
     Condition class for storing individual query conditions.
     """
 
-    operand1: str
+    operand1: Any
     operator: str
-    operand2: str
+    operand2: Any
 
 
 @dataclass(slots=True, frozen=True, eq=False)

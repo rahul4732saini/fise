@@ -313,14 +313,6 @@ class ConditionParser:
         return result
 
     @staticmethod
-    def _evaluate_and(x: bool, y: bool, /) -> bool:
-        return x and y
-
-    @staticmethod
-    def _evaluate_or(x: bool, y: bool, /) -> bool:
-        return x or y
-
-    @staticmethod
     def _gt(x: Any, y: Any, /) -> bool:
         return x > y
 

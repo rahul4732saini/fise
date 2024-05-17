@@ -223,6 +223,31 @@ class ConditionParser:
 
         return operand
 
+    def _evaluate_condition(
+        self, condition: Condition, obj: File | DataLine | Directory
+    ) -> bool:
+        r"""
+        Evaluates the specified condition.
+
+        #### Params:
+        - condition (Condition): condition to be processed.
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+
+        # Evaluates the condition operands.
+        operand1, operand2 = self._evaluate_operand(
+            condition.operand1, obj
+        ), self._evaluate_operand(condition.operand2, obj)
+
+        try:
+            # Process the operation with a method coressponding to the name
+            # of the operator in the `_method_map` instance attribute.
+            response: bool = self._method_map[condition.operator](operand1, operand2)
+        except (TypeError, ValueError):
+            OperationError("Unable to process the query conditions.")
+
+        return response
+
     @staticmethod
     def _evaluate_and(x: bool, y: bool, /) -> bool:
         return x and y

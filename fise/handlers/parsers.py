@@ -272,6 +272,46 @@ class ConditionParser:
             else segment[0] or segment[2]
         )
 
+    def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
+        r"""
+        Evaluates the query conditions.
+
+        #### Params:
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+
+        # Creates a local copy of the `_conditions` attribute to
+        # keep it untouched while the copy is modified for evaluation.
+        conditions: list[Condition | str] = self._conditions
+        ctr: int = 0
+
+        # Evaluates conditions seperated by `and` operator.
+        for _ in range(len(conditions) // 2):
+            segment: list[Condition | str] = conditions[ctr : ctr + 3]
+
+            if segment[1] == "or":
+                # Increments the counter by 1 to skip the
+                # conditions seperated by the `or` operator.
+                ctr += 1
+
+            else:
+                # Replaces the conditions with the evaluated boolean value.
+                conditions[ctr : ctr + 3] = [
+                    self._eval_condition_segments(segment, obj)
+                ]
+
+        # Evaluates conditions seperated by `or` operator.
+        for _ in range(len(conditions) // 2):
+            # Replaces the conditions with the evaluated boolean value.
+            conditions[0 : 0 + 3] = [
+                self._eval_condition_segments(conditions[0 : 0 + 3], obj)
+            ]
+
+        # Extracts the singemost boolean value from the list and returns it.
+        (result,) = conditions
+
+        return result
+
     @staticmethod
     def _evaluate_and(x: bool, y: bool, /) -> bool:
         return x and y

@@ -59,14 +59,14 @@ class ConditionHandler:
     query conditions for search/delete operations.
     """
 
-    __slots__ = "_query", "_operand", "_conditions", "_method_map", "_aliases"
+    __slots__ = "_query", "_conditions", "_method_map", "_aliases"
 
     # Regular expression patterns for matching fields in query conditions.
     _string_pattern = re.compile(r"^('|\").*('|\")$")
     _float_pattern = re.compile(r"^-?\d+(\.)\d+$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
 
-    def __init__(self, subquery: list[str], operand: constants.OPERANDS) -> None:
+    def __init__(self, subquery: list[str]) -> None:
         """
         Creates an instance of the `ConditionParser` class.
 
@@ -74,7 +74,6 @@ class ConditionHandler:
         - subquery (list[str]): subquery to be parsed.
         """
         self._query = subquery
-        self._operand = operand
 
         self._aliases = (
             constants.FILE_FIELD_ALIASES

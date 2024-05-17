@@ -199,7 +199,7 @@ class ConditionParser:
         if condition:
             yield self._parse_condition(condition)
 
-    def _evaluate_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
+    def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         r"""
         Evaluates the specified condition operand.
 
@@ -235,9 +235,9 @@ class ConditionParser:
         """
 
         # Evaluates the condition operands.
-        operand1, operand2 = self._evaluate_operand(
+        operand1, operand2 = self._eval_operand(
             condition.operand1, obj
-        ), self._evaluate_operand(condition.operand2, obj)
+        ), self._eval_operand(condition.operand2, obj)
 
         try:
             # Process the operation with a method coressponding to the name

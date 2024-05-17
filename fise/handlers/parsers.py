@@ -236,6 +236,10 @@ class ConditionParser:
         return x in y
 
     @staticmethod
+    def _between(x: Any, y: tuple[Any, Any], /) -> bool:
+        return y[0] <= x <= y[1]
+
+    @staticmethod
     def _like(pattern: re.Pattern, string: str) -> bool:
         return pattern.match(string)
 

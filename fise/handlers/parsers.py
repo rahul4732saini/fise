@@ -361,7 +361,7 @@ class FileQueryParser:
     file search/delete operation queries.
     """
 
-    __slots__ = "_query", "_operation", "_size_unit"
+    __slots__ = "_query", "_operation", "_size_unit", "_from_index"
 
     _size_field_pattern = re.compile(
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
@@ -382,6 +382,7 @@ class FileQueryParser:
 
         self._query = subquery
         self._operation = operation
+        self._from_index = _get_from_keyword_index(subquery)
 
         # Default size unit for file search queries.
         self._size_unit = "B"
@@ -444,7 +445,7 @@ class FileQueryParser:
         Parses the file deletion query.
         """
 
-        if self._query[0].lower() != "from":
+        if self._from_index != 0:
             QueryParseError("Cannot find 'FROM' keyword in the query.")
 
         # TODO: condition parsing.
@@ -458,10 +459,10 @@ class FileQueryParser:
         Parses the file search query.
         """
 
-        from_index: int = _get_from_keyword_index(self._query)
-
-        fields: list[str] = self._parse_fields(self._query[:from_index])
-        directory, path_type = self._parse_directory(self._query[from_index + 1 :])
+        fields: list[str] = self._parse_fields(self._query[: self._from_index])
+        directory, path_type = self._parse_directory(
+            self._query[self._from_index + 1 :]
+        )
 
         # TODO: condition parsing
 

@@ -223,7 +223,7 @@ class ConditionParser:
 
         return operand
 
-    def _evaluate_condition(
+    def _eval_condition(
         self, condition: Condition, obj: File | DataLine | Directory
     ) -> bool:
         r"""
@@ -261,10 +261,10 @@ class ConditionParser:
 
         # Evalautes individual conditions if not done yet.
         if isinstance(segment[0], Condition):
-            segment[0] = self._evaluate_condition(segment[0], obj)
+            segment[0] = self._eval_condition(segment[0], obj)
 
         if isinstance(segment[2], Condition):
-            segment[2] = self._evaluate_condition(segment[2], obj)
+            segment[2] = self._eval_condition(segment[2], obj)
 
         return (
             segment[0] and segment[2]

@@ -11,7 +11,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Generator, Callable, override, Any
 
-from errors import QueryParseError
+from errors import QueryParseError, OperationError
 from common import constants
 from shared import (
     FileSearchQuery,
@@ -59,7 +59,7 @@ class ConditionParser:
     query conditions for search/delete operations.
     """
 
-    __slots__ = "_query", "_operand", "_conditions", "_method_map"
+    __slots__ = "_query", "_operand", "_conditions", "_method_map", "_aliases"
 
     # Regular expression patterns for matching fields in query conditions.
     _string_pattern = re.compile(r"^('|\").*('|\")$")
@@ -75,6 +75,12 @@ class ConditionParser:
         """
         self._query = subquery
         self._operand = operand
+
+        self._aliases = (
+            constants.FILE_FIELD_ALIASES
+            | constants.DATA_FIELD_ALIASES
+            | constants.DIR_FIELD_ALIASES
+        )
 
         # Maps operator names with coresponding evaluation methods.
         self._method_map: dict[str, Callable[[Any, Any], bool]] = {

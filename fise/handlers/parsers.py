@@ -199,6 +199,30 @@ class ConditionParser:
         if condition:
             yield self._parse_condition(condition)
 
+    def _evaluate_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
+        r"""
+        Evaluates the specified condition operand.
+
+        #### Params:
+        - operand (Any): operand to be processed.
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+
+        if isinstance(operand, Field):
+            try:
+                field: str = operand.field
+                operand = getattr(obj, self._aliases.get(field, field))
+
+            except AttributeError:
+                QueryParseError(
+                    f"Invalid field {operand.field!r} specified in query conditions."
+                )
+
+            if isinstance(operand, Path):
+                operand = str(operand)
+
+        return operand
+
     @staticmethod
     def _evaluate_and(x: bool, y: bool, /) -> bool:
         return x and y

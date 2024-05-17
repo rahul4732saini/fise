@@ -95,64 +95,71 @@ class ConditionParser:
             "between": self._between,
         }
 
+        # Parses the conditions and stores them in a list.
         self._conditions = list(self._parse_conditions())
 
-    def _parse_comparison_operand(self, field: str) -> Field | str | float | int:
+    def _parse_comparison_operand(self, operand: str) -> Field | str | float | int:
         """
         Parses individual operands specified within a comparison
         expression for appropriate data type conversion.
+
+        #### Params:
+        - operand (str): operand to be parsed.
         """
 
-        if self._string_pattern.match(field):
+        if self._string_pattern.match(operand):
             # Strips the leading and trailing quotes and returns the string.
-            return field[1:-1]
+            return operand[1:-1]
 
-        elif self._float_pattern.match(field):
-            return float(field)
+        elif self._float_pattern.match(operand):
+            return float(operand)
 
-        elif field.isdigit():
-            return int(field)
+        elif operand.isdigit():
+            return int(operand)
 
-        # If none of the above conditions are matched, the field is
-        # assumed to be a query field and returns as a `Field` object.
-        return Field(field)
+        # If none of the above conditions are matched, the operand is
+        # assumed to be a query field and returned as a `Field` object.
+        return Field(operand)
 
     def _parse_conditional_operand(
-        self, field: str, operator: str
+        self, operand: str, operator: str
     ) -> tuple | re.Pattern:
         """
         Parses individual operands specified within a conditional expression.
         """
 
         if operator == "like":
-            return re.compile(field[1:-1])
+            return re.compile(operand[1:-1])
 
         # In case of a `IN` or `BETWEEN` operation, tuples are defined as
         # second operands. The below mechanism parses and creates a list
         # out of the string formatted tuple.
         else:
-            if not self._tuple_pattern.match(field):
+            if not self._tuple_pattern.match(operand):
                 QueryParseError(
                     f"Invalid query pattern around {" ".join(self._query)!r}"
                 )
 
             # Parses and creates a list of individual
             # operands present within specified tuple.
-            field: list[str] = [
-                self._parse_comparison_operand(i) for i in field[1:-1].split(",")
+            operand: list[str] = [
+                self._parse_comparison_operand(i) for i in operand[1:-1].split(",")
             ]
 
-            if operator == "between" and len(field) != 2:
+            if operator == "between" and len(operand) != 2:
                 QueryParseError(
                     "The tuple specified for `BETWEEN` conditional "
                     "operation must only comprises two elements."
                 )
 
-        return field
+        return operand
 
     def _parse_condition(self, condition: list[str]) -> Condition:
         """
         Parses individual query conditions.
+
+        #### Params:
+        - condition (list[str]): condition to be parsed.
         """
 
         if len(condition) < 3:
@@ -165,14 +172,14 @@ class ConditionParser:
         else:
             QueryParseError(f"Invalid query syntax around {" ".join(self._query)!r}")
 
-        field1 = self._parse_comparison_operand(condition[0])
-        field2 = (
+        operand1 = self._parse_comparison_operand(condition[0])
+        operand2 = (
             self._parse_comparison_operand(condition[2])
             if operator in constants.COMPARISON_OPERATORS
             else self._parse_conditional_operand("".join(condition[2:]), operator)
         )
 
-        return Condition(field1, operator, field2)
+        return Condition(operand1, operator, operand2)
 
     def _parse_conditions(self) -> Generator[Condition | str, None, None]:
         """
@@ -200,7 +207,7 @@ class ConditionParser:
             yield self._parse_condition(condition)
 
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
-        r"""
+        """
         Evaluates the specified condition operand.
 
         #### Params:
@@ -226,7 +233,7 @@ class ConditionParser:
     def _eval_condition(
         self, condition: Condition, obj: File | DataLine | Directory
     ) -> bool:
-        r"""
+        """
         Evaluates the specified condition.
 
         #### Params:
@@ -251,7 +258,7 @@ class ConditionParser:
     def _eval_condition_segments(
         self, segment: list[Condition | str], obj: File | DataLine | Directory
     ) -> bool:
-        r"""
+        """
         Evaluates the specified condition segment.
 
         #### Params:
@@ -273,7 +280,7 @@ class ConditionParser:
         )
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
-        r"""
+        """
         Evaluates the query conditions.
 
         #### Params:

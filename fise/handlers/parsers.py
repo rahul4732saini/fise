@@ -53,9 +53,9 @@ def _get_from_keyword_index(query: list[str]) -> int:
         QueryParseError("Cannot find 'FROM' keyword in the query.")
 
 
-class ConditionParser:
+class ConditionHandler:
     """
-    ConditionParser defines methods for parsing
+    ConditionHandler defines methods for parsing and evaluating
     query conditions for search/delete operations.
     """
 

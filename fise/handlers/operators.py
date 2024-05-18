@@ -274,6 +274,27 @@ class DirectoryQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
+    def _get_records(
+        self,
+        fields: list[str],
+        directories: Generator[Directory, None, None],
+        condition: Callable[[Directory], bool],
+    ) -> Generator[list[str], None, None]:
+        """
+        Yields a list of individual records comprising the
+        specified fields meeting the specified condition.
+        """
+
+        for directory in directories:
+            if not condition(directory):
+                continue
+
+            # Yields a list of the specified fields.
+            yield [
+                getattr(directory, constants.DIR_FIELD_ALIASES.get(field, field))
+                for field in fields
+            ]
+
     def get_fields(
         self, fields: list[str], condition: Callable[[Directory], bool]
     ) -> pd.DataFrame:
@@ -294,14 +315,7 @@ class DirectoryQueryOperator:
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            (
-                [
-                    getattr(directory, constants.DIR_FIELD_ALIASES.get(field, field))
-                    for field in fields
-                ]
-                for directory in directories
-                if condition(directory)
-            ),
+            self._get_records(fields, directories, condition),
             columns=fields,
         )
 

@@ -29,6 +29,8 @@ from .parsers import (
     SearchQuery,
 )
 
+__all__ = ("QueryHandler",)
+
 
 class QueryHandler:
     """

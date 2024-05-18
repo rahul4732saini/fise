@@ -173,15 +173,15 @@ class FileQueryParser:
         """
 
         fields: list[str] = self._parse_fields(self._query[: self._from_index])
-        directory, path_type = self._parse_directory(
+        path, is_absolute, index = self._parse_directory(
             self._query[self._from_index + 1 :]
         )
 
-        # TODO: condition parsing
-
-        return FileSearchQuery(
-            directory, path_type, lambda metadata: True, fields, self._size_unit
+        condition: Callable[[File], bool] = _get_condition_handler(
+            self._query[self._from_index + index + 2 :]
         )
+
+        return FileSearchQuery(path, is_absolute, condition, fields, self._size_unit)
 
     def parse_query(self) -> FileSearchQuery | DeleteQuery:
         """

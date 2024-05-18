@@ -141,16 +141,16 @@ class FileQueryParser:
         return fields
 
     @staticmethod
-    def _parse_directory(subquery: list[str]) -> tuple[Path, str]:
+    def _parse_directory(subquery: list[str]) -> tuple[Path, bool, int]:
         """
         Parses the directory path and its type from the specified sub-query.
         """
-        type_, path = _parse_path(subquery)
+        is_absolute, path, index = _parse_path(subquery)
 
         if not path.is_dir():
             QueryParseError("The specified path for lookup must be a directory.")
 
-        return path, type_
+        return path, is_absolute, index
 
     def _parse_remove_query(self) -> DeleteQuery:
         """

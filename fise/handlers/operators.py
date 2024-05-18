@@ -43,6 +43,27 @@ class FileQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
+    def _get_records(
+        self,
+        fields: list[str],
+        files: Generator[File, None, None],
+        condition: Callable[[File], bool],
+    ) -> Generator[list[str], None, None]:
+        """
+        Yields a list of individual records comprising the
+        specified fields meeting the specified condition.
+        """
+
+        for file in files:
+            if not condition(file):
+                continue
+
+            # Yields a list of the specified fields.
+            yield [
+                getattr(file, constants.FILE_FIELD_ALIASES.get(field, field))
+                for field in fields
+            ]
+
     def get_fields(
         self, fields: list[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
@@ -64,15 +85,7 @@ class FileQueryOperator:
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            (
-                [
-                    getattr(file, constants.FILE_FIELD_ALIASES.get(field, field))
-                    for field in fields
-                ]
-                for file in files
-                if condition(file)
-            ),
-            columns=fields,
+            self._get_records(fields, files, condition), columns=fields
         )
 
         # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.

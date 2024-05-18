@@ -186,7 +186,7 @@ class BaseQuery:
 
     path: Path
     is_absolute: bool
-    condition: Callable[[File | Directory], bool]
+    condition: Callable[[File | DataLine | Directory], bool]
 
 
 @dataclass(slots=True, frozen=True, eq=False)

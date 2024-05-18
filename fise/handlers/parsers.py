@@ -248,18 +248,18 @@ class FileDataQueryParser:
         return fields
 
     @staticmethod
-    def _parse_path(subquery: list[str]) -> tuple[Path, str]:
+    def _parse_path(subquery: list[str]) -> tuple[Path, bool, int]:
         """
-        Parses the file/directory path and its type from the specified sub-query.
+        Parses the file/directory path, its type, and index from the specified sub-query.
         """
-        type_, path = _parse_path(subquery)
+        is_absolute, path, index = _parse_path(subquery)
 
         if (path.is_dir() or path.is_file()) is False:
             QueryParseError(
                 "The specified path for lookup must be a file or directory."
             )
 
-        return path, type_
+        return path, is_absolute, index
 
     def parse_query(self) -> SearchQuery:
         """

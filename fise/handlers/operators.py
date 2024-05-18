@@ -206,6 +206,27 @@ class FileDataQueryOperator:
         for file, data in self._get_filedata():
             yield from (DataLine(file, line, index) for index, line in enumerate(data))
 
+    def _get_records(
+        self,
+        fields: list[str],
+        datalines: Generator[DataLine, None, None],
+        condition: Callable[[DataLine], bool],
+    ) -> Generator[list[str], None, None]:
+        """
+        Yields a list of individual records comprising the
+        specified fields meeting the specified condition.
+        """
+
+        for data in datalines:
+            if not condition(data):
+                continue
+
+            # Yields a list of the specified fields.
+            yield [
+                getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
+                for field in fields
+            ]
+
     def get_fields(
         self, fields: list[str], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
@@ -219,21 +240,12 @@ class FileDataQueryOperator:
         - condition (Callable): function for filtering search records.
         """
 
-        # Creates a pandas DataFrame out of a Generator object
+        # Returns a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
-        records = pd.DataFrame(
-            (
-                [
-                    getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
-                    for field in fields
-                ]
-                for data in self._search_datalines()
-                if condition(data)
-            ),
+        return pd.DataFrame(
+            self._get_records(fields, self._search_datalines(), condition),
             columns=fields,
         )
-
-        return records
 
 
 class DirectoryQueryOperator:

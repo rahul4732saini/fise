@@ -110,12 +110,26 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
     present within the subdirectories.
     """
 
-    for path in directory.iterdir():
-        if path.is_dir():
+    try:
+        for path in directory.iterdir():
+            if path.is_file():
+                continue
+
             if recursive:
                 yield from get_directories(path, recursive)
 
             yield path
+
+    except PermissionError:
+        print(
+            constants.COLOR_YELLOW
+            % (f"Permission Error: Skipping directory {directory}")
+        )
+
+        # Returns a tuple to not disrupt the proper functioning of
+        # the function if the  `yield from` statement is to be
+        # executed in case the function is executed recursively.
+        return ()
 
 
 def export_to_file(data: pd.DataFrame, path: str) -> None:

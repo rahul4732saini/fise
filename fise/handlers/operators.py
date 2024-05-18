@@ -90,6 +90,12 @@ class FileQueryOperator:
         permission errors while removing files.
         """
 
+        # `ctr` counts the number of files removed.
+        # `skipped` counts the number of skipped files if `skip_err` set to `True`.
+        ctr = 0
+        skipped = 0
+
+        # Iterates through the files and removes them is the condition is met.
         for file in tools.get_files(self._directory, self._recursive):
             if not condition(File(file)):
                 continue
@@ -99,9 +105,28 @@ class FileQueryOperator:
 
             except PermissionError:
                 if skip_err:
+                    skipped += 1
                     continue
 
                 OperationError(f"Not enough permissions to delete '{file.absolute()}'.")
+
+            else:
+                ctr += 1
+
+        # Extracts the absolute path to the directory and stores it locally.
+        directory: Path = self._directory.absolute()
+
+        print(
+            constants.COLOR_GREEN
+            % f"Successfully removed {ctr} files from {directory}."
+        )
+
+        # Prints the skipped files message only is `skipped` is not 0.
+        if skipped:
+            print(
+                constants.COLOR_YELLOW
+                % f"Skipped {skipped} files from {directory} due to permission errors."
+            )
 
 
 class FileDataQueryOperator:

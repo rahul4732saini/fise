@@ -318,7 +318,7 @@ class DirectoryQueryParser(FileQueryParser):
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
         for field in attrs.split(","):
             if field == "*":
-                fields.extend(constants.FILE_FIELDS)
+                fields.extend(constants.DIR_FIELDS)
 
             elif field in dir_fields:
                 fields.append(field)

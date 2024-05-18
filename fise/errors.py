@@ -6,6 +6,9 @@ This module defines error classes used throughout the
 FiSE project to handle various exceptional scenarios.
 """
 
+import sys
+from common import constants
+
 
 class QueryHandleError(Exception):
     """
@@ -21,7 +24,10 @@ class BaseError:
     _error: str
 
     def __init__(self, description: str) -> None:
-        print(f"\033[91m{self._error}\nDescription: {description}\033[0m")
+        print(
+            constants.COLOR_RED % f"{self._error}\nDescription: {description}",
+            file=sys.stderr,
+        )
 
         # Raises an exception to terminate the process. To be handled
         # by another module to start a new query handling process.

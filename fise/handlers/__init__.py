@@ -252,9 +252,6 @@ class QueryHandler:
         for param in params:
             param = param.split(" ")
 
-            if len(param) != 2:
-                QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}")
-
             if param[0] == "type":
                 if param[1] not in constants.DELETE_QUERY_OPERANDS:
                     QueryParseError(
@@ -284,8 +281,14 @@ class QueryHandler:
         if operation not in constants.OPERATION_ALIASES:
             QueryParseError(f"Invalid operation specified: {operation!r}")
 
-        data: OperationData = parser_map[operation]()
-        return data
+        try:
+            data: OperationData = parser_map[operation]()
+
+        except IndexError:
+            QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}")
+        
+        else:
+            return data
 
     def _parse_export_data(self, query: list[str]) -> ExportData | None:
         """

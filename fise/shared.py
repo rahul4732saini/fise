@@ -6,17 +6,18 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
-from typing import Callable, Literal, Any
+import sys
 from datetime import datetime
-from pathlib import Path
+from typing import Callable, Literal, Any
 from dataclasses import dataclass
+from pathlib import Path
 
 from common import constants
 
 
-class File:
+class BaseFile:
     """
-    File class serves as a unified class for accessing all methods and attributes
+    BaseFile class serves as the base class for accessing all methods and attributes
     related to the file `pathlib.Path` and `os.stat_result` object.
     """
 
@@ -55,14 +56,6 @@ class File:
         return self._file.name
 
     @property
-    def owner(self) -> str:
-        return self._file.owner()
-
-    @property
-    def group(self) -> str:
-        return self._file.group()
-
-    @property
     def size(self) -> float:
         return round(self._stats.st_size / self._size_divisor, 5)
 
@@ -92,6 +85,46 @@ class File:
             return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
         except OSError:
             ...
+
+
+class WindowsFile(BaseFile):
+    """
+    WindowsFile class serves as a unified class for accessing all methods and
+    attributes related to a windows file `pathlib.Path` and `os.stat_result` object.
+    """
+
+
+class PosixFile(BaseFile):
+    """
+    PosixFile class serves as a unified class for accessing all methods and
+    attributes related to a poxis file `pathlib.Path` and `os.stat_result` object.
+    """
+
+    @property
+    def owner(self) -> str:
+        return self._file.owner()
+
+    @property
+    def group(self) -> str:
+        return self._file.group()
+
+
+class File:
+    """
+    File class serves as a unified class for accessing all methods and
+    attributes related to a file `pathlib.Path` and `os.stat_result` object.
+    """
+
+    def __new__(cls, file: Path, size_unit: str = "B") -> WindowsFile | PosixFile:
+        """
+        Returns an instance of `WindowsFile` if the platform of operation is windows
+        else returns an instance of `PosixPath` for mac or linux platforms.
+        """
+
+        if sys.platform == "win32":
+            return WindowsFile(file, size_unit)
+
+        return PosixFile(file, size_unit)
 
 
 class DataLine:

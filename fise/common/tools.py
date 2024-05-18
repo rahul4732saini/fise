@@ -27,7 +27,7 @@ def parse_query(query: str) -> list[str]:
     - query (str): Query to be parsed.
     """
 
-    start_brackets, end_brackets = {"[", "("}, {"]", ")"}
+    start_brackets, end_brackets = {"[", "(", '"', "'"}, {"]", ")", '"', "'"}
 
     tokens: list = []
 

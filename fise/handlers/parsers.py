@@ -160,11 +160,12 @@ class FileQueryParser:
         if self._from_index != 0:
             QueryParseError("Cannot find 'FROM' keyword in the query.")
 
-        # TODO: condition parsing.
-
-        return DeleteQuery(
-            *self._parse_directory(self._query[1:]), lambda metadata: True
+        path, is_absolute, index = self._parse_directory(self._query[1:])
+        condition: Callable[[File], bool] = _get_condition_handler(
+            self._query[self._from_index + index + 2 :]
         )
+
+        return DeleteQuery(path, is_absolute, condition)
 
     def _parse_search_query(self) -> FileSearchQuery:
         """

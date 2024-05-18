@@ -36,10 +36,8 @@ def _get_from_keyword_index(query: list[str]) -> int:
     Returns the index of the 'from' keyword in the file query.
     """
 
-    match: str[str] = {"from", "FROM"}
-
     for i, kw in enumerate(query):
-        if kw in match:
+        if kw.lower() == "from":
             return i
     else:
         QueryParseError("Cannot find 'FROM' keyword in the query.")

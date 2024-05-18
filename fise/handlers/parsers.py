@@ -25,10 +25,10 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
     if subquery[0].lower() in constants.PATH_TYPES:
         is_absolute: bool = subquery[0].lower() == "absolute"
 
-        return is_absolute, Path(subquery[1]), 1
+        return is_absolute, Path(subquery[1].strip("'\"")), 1
 
     # Returns `False` for a relative path type if not specified in query.
-    return False, Path(subquery[0]), 0
+    return False, Path(subquery[0].strip("'\"")), 0
 
 
 def _get_from_keyword_index(query: list[str]) -> int:

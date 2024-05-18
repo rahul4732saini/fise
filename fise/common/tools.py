@@ -35,7 +35,9 @@ def parse_query(query: str) -> list[str]:
     in_brackets: bool = False
 
     for char in query:
-        if char in start_brackets:
+        # Only executes the conditional block if the character is in
+        # the `start_brackets` set and is not already in a bracket.
+        if char in start_brackets and not in_brackets:
             in_brackets = True
             token += char
 

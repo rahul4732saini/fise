@@ -282,7 +282,7 @@ class DirectoryQueryParser(FileQueryParser):
     directory search/manipulation operation queries.
     """
 
-    __slots__ = "_query", "_operation"
+    __slots__ = "_query", "_operation", "_from_index"
 
     @override
     def __init__(
@@ -302,6 +302,7 @@ class DirectoryQueryParser(FileQueryParser):
 
         self._query = subquery
         self._operation = operation
+        self._from_index = _get_from_keyword_index(subquery)
 
     @override
     def _parse_fields(self, attrs: list[str] | str) -> list[str]:

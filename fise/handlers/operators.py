@@ -188,9 +188,9 @@ class FileDataQueryOperator:
                 [
                     getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
                     for field in fields
-                    if condition(data)
                 ]
                 for data in self._search_datalines()
+                if condition(data)
             ),
             columns=fields,
         )

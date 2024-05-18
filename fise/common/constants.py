@@ -8,6 +8,11 @@ objects and functions present within the FiSE project.
 
 from typing import Literal
 
+# Templates for colored strings.
+COLOR_RED = "\033[31m%s\033[0m"
+COLOR_YELLOW = "\033[33m%s\033[0m"
+COLOR_GREEN = "\033[32m%s\033[0m"
+
 DIR_FIELDS = {"path", "parent", "name", "owner", "group", "permissions"}
 DATA_FIELDS = {"name", "path", "dataline", "lineno"}
 FILE_FIELDS = DIR_FIELDS | {"size", "access_time", "create_time", "modify_time"}

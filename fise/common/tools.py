@@ -77,13 +77,25 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     present within the subdirectories.
     """
 
-    for path in directory.iterdir():
-        if path.is_file():
-            yield path
+    try:
+        for path in directory.iterdir():
+            if path.is_file():
+                yield path
 
-        # Extracts files from sub-directories.
-        elif recursive and path.is_dir():
-            yield from get_files(path, recursive)
+            # Extracts files from sub-directories.
+            elif recursive and path.is_dir():
+                yield from get_files(path, recursive)
+
+    except PermissionError:
+        print(
+            constants.COLOR_YELLOW
+            % (f"Permission Error: Skipping directory {directory}")
+        )
+
+        # Returns a tuple to not disrupt the proper functioning of
+        # the function if the  `yield from` statement is to be
+        # executed in case the function is executed recursively.
+        return ()
 
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:

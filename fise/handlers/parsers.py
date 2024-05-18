@@ -335,14 +335,16 @@ class DirectoryQueryParser(FileQueryParser):
     @override
     def _parse_search_query(self) -> SearchQuery:
         """
-        Parses the file search query.
+        Parses the directory search query.
         """
 
         from_index: int = _get_from_keyword_index(self._query)
 
         fields: list[str] = self._parse_fields(self._query[:from_index])
-        directory, path_type = self._parse_directory(self._query[from_index + 1 :])
+        path, is_absolute, index = self._parse_directory(self._query[from_index + 1 :])
 
-        # TODO: condition parsing
+        condition: Callable[[Directory], bool] = _get_condition_handler(
+            self._query[self._from_index + index + 2 :]
+        )
 
-        return SearchQuery(directory, path_type, lambda metadata: True, fields)
+        return SearchQuery(path, is_absolute, condition, fields)

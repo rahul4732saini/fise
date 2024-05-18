@@ -200,7 +200,7 @@ class FileDataQueryParser:
     parsing file data search operation queries.
     """
 
-    __slots__ = ("_query",)
+    __slots__ = "_query", "_from_index"
 
     def __init__(self, subquery: list[str]) -> None:
         """
@@ -215,6 +215,7 @@ class FileDataQueryParser:
         # the remaining is handed and parsed here.
 
         self._query = subquery
+        self._from_index = _get_from_keyword_index(subquery)
 
     @staticmethod
     def _parse_fields(attrs: list[str] | str) -> list[str]:

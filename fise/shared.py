@@ -6,13 +6,15 @@ This module comprises classes that serve as foundational
 components for various objects and functionalities.
 """
 
+import re
 import sys
 from datetime import datetime
-from typing import Callable, Literal, Any
+from typing import ClassVar, Callable, Literal, Any
 from dataclasses import dataclass
 from pathlib import Path
 
 from common import constants
+from errors import QueryParseError
 
 
 class BaseFile:
@@ -214,6 +216,42 @@ class Directory:
     @property
     def permissions(self) -> int:
         return self._stats.st_mode
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class Size:
+    """
+    Size class to store the size unit of the size field.
+    """
+
+    _size_field_pattern: ClassVar[re.Pattern] = re.compile(
+        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
+    )
+
+    unit: constants.SIZE_UNITS
+
+    @classmethod
+    def from_string(cls, field: str):
+        """
+        Parses the string and creates an instance of `Size`
+        object from the specified size field.
+        """
+
+        if not cls._size_field_pattern.match(field):
+            QueryParseError(f"Found an invalid field {field} in the query.")
+
+        # Initializes with "B" -> bytes unit if not explicitly specified.
+        return cls(field[5:-1] or "B")
+
+    def get_relative_size_divisor(self, unit: constants.SIZE_UNITS) -> float:
+        """
+        Returns the relative divisor for data from the
+        specified unit into the encapsulated unit.
+        """
+        return (
+            constants.SIZE_CONVERSION_MAP[self.unit]
+            / constants.SIZE_CONVERSION_MAP[unit]
+        )
 
 
 @dataclass(slots=True, frozen=True, eq=False)

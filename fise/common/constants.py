@@ -34,6 +34,11 @@ CONDITION_SEPERATORS = {"and", "or"}
 COMPARISON_OPERATORS = {"<", ">", "<=", ">=", "!=", "="}
 CONDITIONAL_OPERATORS = {"in", "between", "like"}
 
+SIZE_UNITS = Literal[
+    "b", "B", "Kb", "KB", "Kib", "KiB", "Mb", "MB", "Mib",
+    "MiB", "Gb", "GB", "Gib", "GiB", "Tb", "TB", "Tib", "TiB"
+]
+
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.
 SIZE_CONVERSION_MAP = {

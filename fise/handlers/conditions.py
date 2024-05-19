@@ -64,7 +64,7 @@ class ConditionHandler:
         }
 
         # Parses the conditions and stores them in a list.
-        self._conditions = list(self._parse_conditions())
+        self._conditions = list(self._parse_conditions(subquery))
 
     def _parse_comparison_operand(self, operand: str) -> Field | str | float | int:
         """
@@ -173,7 +173,9 @@ class ConditionHandler:
 
         return Condition(operand1, operator, operand2)
 
-    def _parse_conditions(self) -> Generator[Condition | str, None, None]:
+    def _parse_conditions(
+        self, subquery: list[str]
+    ) -> Generator[Condition | str, None, None]:
         """
         Parses the query conditions and returns a `typing.Generator` object of the
         parsed conditions as `Condition` objects also including the condition
@@ -183,7 +185,7 @@ class ConditionHandler:
         # Stores individual conditions during iteration.
         condition = []
 
-        for token in self._query:
+        for token in subquery:
             if token in constants.CONDITION_SEPERATORS:
                 yield self._parse_condition(condition)
                 yield token

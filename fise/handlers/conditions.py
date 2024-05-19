@@ -8,6 +8,7 @@ query conditions for filtering file/data/directory records.
 
 import re
 from pathlib import Path
+from datetime import datetime
 from typing import Generator, Callable, Any
 
 from errors import QueryParseError, OperationError
@@ -73,6 +74,24 @@ class ConditionHandler:
         #### Params:
         - operand (str): operand to be parsed.
         """
+
+        if self._datetime_pattern.match(operand):
+            # Strips the leading and trailing quotes in the string.
+            operand = operand[1:-1]
+
+            try:
+                return datetime.strptime(operand, r"%Y-%m-%d %H:%M:%S")
+
+            except ValueError:
+                # Passes without raising an error in case
+                # the the operand matches the date format.
+                try:
+                    return datetime.strptime(operand, r"%Y-%m-%d")
+
+                except ValueError:
+                    QueryParseError(
+                        f"Invalid datetime format around {''.join(self._query)}"
+                    )
 
         if self._string_pattern.match(operand):
             # Strips the leading and trailing quotes and returns the string.

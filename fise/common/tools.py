@@ -16,6 +16,7 @@ from sqlalchemy.exc import OperationalError
 import sqlalchemy
 
 from . import constants
+from errors import QueryParseError
 
 
 def parse_query(query: str) -> list[str]:
@@ -27,29 +28,39 @@ def parse_query(query: str) -> list[str]:
     - query (str): Query to be parsed.
     """
 
-    start_brackets, end_brackets = {"[", "(", '"', "'"}, {"]", ")", '"', "'"}
-
+    delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
+    conflicting: set[str] = {"'", '"'}
     tokens: list = []
 
-    token: str = ""
-    in_brackets: bool = False
+    # `token` temporarily stores the current token and `cur` stores the current delimiter.
+    token = cur = ""
+
+    # Level indicates the level of nesting of the current character during iteration.
+    level: int = 0
 
     for char in query:
-        # Only executes the conditional block if the character is in
-        # the `start_brackets` set and is not already in a bracket.
-        if char in start_brackets and not in_brackets:
-            in_brackets = True
+        # Only executes the conditional block if the character is a starting
+        # delimiter and not nested inside or in the conflicting delimiters.
+        if char in delimiters and (not level or char not in conflicting):
+            level += 1
+            cur = char
             token += char
 
-        # Adds the token to list at the ending brackets.
-        elif char in end_brackets:
-            in_brackets = False
-            tokens.append(token + char)
-            token = ""
+        # Adds the token to list if the current character is
+        # not nested inside  and is a terminating delimiter.
+        elif level and char == delimiters.get(cur):
+            level -= 1
 
-        # Adds to list if the character is a whitespace and not
-        # inside brackets  and `token` is not an empty string.
-        elif char.isspace() and not in_brackets:
+            if not level:
+                tokens.append(token + char)
+                token = ""
+                continue
+
+            token += char
+
+        # Adds to list if the character is a whitespace
+        # and `token` is not an empty or enclosed string.
+        elif not level and char.isspace():
             if token:
                 tokens.append(token)
                 token = ""
@@ -57,6 +68,9 @@ def parse_query(query: str) -> list[str]:
         # For all other characters.
         else:
             token += char
+
+    if level:
+        QueryParseError(f"Invalid query syntax around {query}")
 
     # Adds the ending token of the query to `tokens` list.
     if token:

@@ -13,7 +13,7 @@ from typing import Generator, Callable, Any
 
 from errors import QueryParseError, OperationError
 from common import constants
-from shared import File, DataLine, Directory, Field, Condition
+from shared import File, DataLine, Directory, Field, Condition, Size
 
 
 class ConditionHandler:
@@ -103,8 +103,13 @@ class ConditionHandler:
         elif operand.isdigit():
             return int(operand)
 
-        # If none of the above conditions are matched, the operand is
-        # assumed to be a query field and returned as a `Field` object.
+        # If none of the above conditions are matched, the operand is assumed to
+        # be a query field and returned as a `Field` object or explicitly as a
+        # `Size` object if the field starts with the word 'size'.
+
+        elif operand.startswith("size"):
+            return Size.from_string(operand)
+
         return Field(operand)
 
     def _parse_conditional_operand(

@@ -228,6 +228,13 @@ class ConditionHandler:
             elif isinstance(operand, bytes):
                 operand = str(operand)[2:-1]
 
+        elif isinstance(operand, Size):
+            size = getattr(obj, "size")
+            size_unit: str = obj.size_unit
+
+            # Converts the size into the specified unit.
+            operand = size / operand.get_relative_size_divisor(size_unit)
+
         return operand
 
     def _eval_condition(

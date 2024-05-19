@@ -325,4 +325,4 @@ class ConditionHandler:
 
     @staticmethod
     def _like(string: str, pattern: re.Pattern) -> bool:
-        return pattern.match(string)
+        return bool(pattern.match(string))

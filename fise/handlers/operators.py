@@ -341,7 +341,7 @@ class DirectoryQueryOperator:
 
         # Iterates through the directories and removes them is the condition is met.
         for directory in tools.get_directories(self._directory, self._recursive):
-            if condition(Directory(directory)) is False:
+            if not condition(Directory(directory)):
                 continue
 
             try:

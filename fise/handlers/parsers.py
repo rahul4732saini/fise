@@ -10,10 +10,18 @@ import re
 from pathlib import Path
 from typing import Callable, override
 
+from .conditions import ConditionHandler
 from errors import QueryParseError
 from common import constants
-from .conditions import ConditionHandler
-from shared import FileSearchQuery, DeleteQuery, SearchQuery, Directory, DataLine, File
+from shared import (
+    FileSearchQuery,
+    DeleteQuery,
+    SearchQuery,
+    Directory,
+    DataLine,
+    File,
+    Size,
+)
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
@@ -117,15 +125,10 @@ class FileQueryParser:
                 fields.extend(constants.FILE_FIELDS)
 
             elif field.startswith("size"):
-                if not self._size_field_pattern.match(field):
-                    QueryParseError(
-                        f"Found an invalid field {field} in the search query."
-                    )
+                # Parses the size unit from the string.
+                size: Size = Size.from_string(field)
 
-                # Parses the size unit.
-                if field[5:-1]:
-                    self._size_unit = field[5:-1]
-
+                self._size_unit = size.unit
                 fields.append("size")
 
             elif field in file_fields:

@@ -45,6 +45,10 @@ class BaseFile:
         self._size_divisor = size_divisor
 
     @property
+    def size_unit(self) -> str:
+        return self._size_unit
+
+    @property
     def path(self) -> Path:
         return self._file
 

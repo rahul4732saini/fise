@@ -7,12 +7,12 @@ query conditions for filtering file/data/directory records.
 """
 
 import re
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Generator, Callable, Any
 
 from errors import QueryParseError, OperationError
-from common import constants
+from common import constants, tools
 from shared import File, DataLine, Directory, Field, Condition, Size
 
 
@@ -154,7 +154,13 @@ class ConditionHandler:
         - condition (list[str]): condition to be parsed.
         """
 
-        if len(condition) < 3:
+        # Evaluates and returns the conditions if nested.
+        if (length := len(condition)) == 1 and self._tuple_pattern.match(condition[0]):
+            return list(
+                self._parse_conditions(tools.parse_query(condition[0][1:-1])),
+            )
+
+        elif length < 3:
             QueryParseError(f"Invalid query syntax around {" ".join(condition)}")
 
         for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
@@ -240,7 +246,7 @@ class ConditionHandler:
         return operand
 
     def _eval_condition(
-        self, condition: Condition, obj: File | DataLine | Directory
+        self, condition: tuple | Condition, obj: File | DataLine | Directory
     ) -> bool:
         """
         Evaluates the specified condition.
@@ -249,6 +255,10 @@ class ConditionHandler:
         - condition (Condition): condition to be processed.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
+
+        # Recursively evaluates if the condtion is nested.
+        if isinstance(condition, list):
+            return self._eval_all_conditions(condition, obj)
 
         # Evaluates the condition operands.
         operand1, operand2 = self._eval_operand(
@@ -276,10 +286,10 @@ class ConditionHandler:
         """
 
         # Evalautes individual conditions if not done yet.
-        if isinstance(segment[0], Condition):
+        if isinstance(segment[0], list | Condition):
             segment[0] = self._eval_condition(segment[0], obj)
 
-        if isinstance(segment[2], Condition):
+        if isinstance(segment[2], list | Condition):
             segment[2] = self._eval_condition(segment[2], obj)
 
         return (
@@ -288,19 +298,18 @@ class ConditionHandler:
             else segment[0] or segment[2]
         )
 
-    def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
+    def _eval_all_conditions(
+        self,
+        conditions: list[str | list | Condition],
+        obj: File | DataLine | Directory,
+    ) -> bool:
         """
-        Evaluates the query conditions.
-
-        #### Params:
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        Evaluates all the query conditions.
         """
 
-        # Creates a local copy of the `_conditions` attribute to
-        # keep it untouched while the copy is modified for evaluation.
-        # Also added a `True and` condition at the beginning of the conditions
-        # list to avoid defining mechanism for evaluating single conditions.
-        conditions: list[Condition | str] = ["True", "and"] + self._conditions
+        # Adds a `True and` condition at the beginning of the conditions list
+        # to avoid defining mechanism for evaluating single conditions.
+        conditions = ["True", "and"] + conditions
         ctr: int = 0
 
         # Evaluates conditions seperated by `and` operator.
@@ -329,6 +338,15 @@ class ConditionHandler:
         (result,) = conditions
 
         return result
+
+    def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
+        """
+        Evaluates the query conditions.
+
+        #### Params:
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+        return self._eval_all_conditions(self._conditions, obj)
 
     @staticmethod
     def _gt(x: Any, y: Any, /) -> bool:

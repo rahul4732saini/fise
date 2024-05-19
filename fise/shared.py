@@ -21,7 +21,7 @@ class BaseFile:
     related to the file `pathlib.Path` and `os.stat_result` object.
     """
 
-    __slots__ = "_file", "_stats", "_size_divisor"
+    __slots__ = "_file", "_stats", "_size_unit", "_size_divisor"
 
     def __init__(self, file: Path, size_unit: str = "B") -> None:
         """
@@ -34,6 +34,7 @@ class BaseFile:
 
         self._file = file
         self._stats = file.stat()
+        self._size_unit = size_unit
 
         # Divisor for storage size conversion.
         size_divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(size_unit)

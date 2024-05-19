@@ -232,7 +232,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
                 "The specified table already exist, would you like to alter it? (Y/N) "
             )
 
-            if force.lower() != "Y":
+            if force.lower() != "y":
                 print("Export cancelled!")
                 return
 

@@ -28,6 +28,12 @@ class ConditionHandler:
     _float_pattern = re.compile(r"^-?\d+(\.)\d+$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
 
+    # The following regex pattern only matches date and datetime formats, and
+    # doesn't explicitly verifies the validity of the date and time values.
+    _datetime_pattern = re.compile(
+        r"('|\")\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?('|\")$"
+    )
+
     def __init__(self, subquery: list[str]) -> None:
         """
         Creates an instance of the `ConditionParser` class.

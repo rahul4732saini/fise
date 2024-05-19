@@ -187,8 +187,16 @@ class ConditionHandler:
                     f"Invalid field {operand.field!r} specified in query conditions."
                 )
 
+            # Converts `bytes` and `pathlib.Path` objects into strings
+            # for better compatibility in comparsion operations.
+
             if isinstance(operand, Path):
                 operand = str(operand)
+
+            # Strips out the leading binary notation and
+            # quotes only extracting the required data.
+            elif isinstance(operand, bytes):
+                operand = str(operand)[2:-1]
 
         return operand
 

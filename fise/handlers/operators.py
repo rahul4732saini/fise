@@ -212,29 +212,24 @@ class FileDataQueryOperator:
         for file, data in self._get_filedata():
             yield from (DataLine(file, line, index) for index, line in enumerate(data))
 
-    def _get_records(
-        self,
-        fields: list[str],
-        datalines: Generator[DataLine, None, None],
-        condition: Callable[[DataLine], bool],
-    ) -> Generator[list[str], None, None]:
+    @staticmethod
+    def _get_field(field: Field, data: DataLine) -> Any:
         """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
+        Extracts individual fields from the specified `DataLine` object.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - data (DataLine): `DataLine` object to extract data from.
         """
 
-        for data in datalines:
-            if not condition(data):
-                continue
-
-            # Yields a list of the specified fields.
-            yield [
-                getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
+        # TODO: Extend the functionality to support custom query functions evaluation.
+        return getattr(data, field.field)
 
     def get_fields(
-        self, fields: list[str], condition: Callable[[DataLine], bool]
+        self,
+        fields: list[Field],
+        columns: list[str],
+        condition: Callable[[DataLine], bool],
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the specified fields
@@ -249,8 +244,12 @@ class FileDataQueryOperator:
         # Returns a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         return pd.DataFrame(
-            self._get_records(fields, self._search_datalines(), condition),
-            columns=fields,
+            (
+                [self._get_field(field, data) for field in fields]
+                for data in self._search_datalines()
+                if condition(data)
+            ),
+            columns=columns,
         )
 
 

@@ -11,17 +11,9 @@ from pathlib import Path
 from typing import Callable, override
 
 from .conditions import ConditionHandler
-from errors import QueryParseError
 from common import constants
-from shared import (
-    FileSearchQuery,
-    DeleteQuery,
-    SearchQuery,
-    Directory,
-    DataLine,
-    File,
-    Size,
-)
+from errors import QueryParseError
+from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
@@ -79,7 +71,7 @@ class FileQueryParser:
     file search/delete operation queries.
     """
 
-    __slots__ = "_query", "_operation", "_size_unit", "_from_index"
+    __slots__ = "_query", "_operation", "_from_index"
 
     _size_field_pattern = re.compile(
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
@@ -102,44 +94,42 @@ class FileQueryParser:
         self._operation = operation
         self._from_index = _get_from_keyword_index(subquery)
 
-        # Default size unit for file search queries.
-        self._size_unit = "B"
-
-    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+    def _parse_fields(self, attrs: str | list[str]) -> list[Field, str]:
         """
-        Parses the search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         file_fields: set[str] = (
             constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.FILE_FIELDS)
+                fields += (Field(i) for i in constants.FILE_FIELDS)
+                columns += constants.FILE_FIELDS
 
             elif field.startswith("size"):
-                # Parses the size unit from the string.
+                # Parses size from the string.
                 size: Size = Size.from_string(field)
 
-                self._size_unit = size.unit
-                fields.append("size")
+                fields.append(Field(size))
+                columns.append(field)
 
             elif field in file_fields:
-                fields.append(field)
+                fields.append(Field(constants.FILE_FIELD_ALIASES.get(field, field)))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @staticmethod
     def _parse_directory(subquery: list[str]) -> tuple[Path, bool, int]:
@@ -168,12 +158,12 @@ class FileQueryParser:
 
         return DeleteQuery(path, is_absolute, condition)
 
-    def _parse_search_query(self) -> FileSearchQuery:
+    def _parse_search_query(self) -> SearchQuery:
         """
         Parses the file search query.
         """
 
-        fields: list[str] = self._parse_fields(self._query[: self._from_index])
+        fields, columns = self._parse_fields(self._query[: self._from_index])
         path, is_absolute, index = self._parse_directory(
             self._query[self._from_index + 1 :]
         )
@@ -182,9 +172,9 @@ class FileQueryParser:
             self._query[self._from_index + index + 2 :]
         )
 
-        return FileSearchQuery(path, is_absolute, condition, fields, self._size_unit)
+        return SearchQuery(path, is_absolute, condition, fields, columns)
 
-    def parse_query(self) -> FileSearchQuery | DeleteQuery:
+    def parse_query(self) -> SearchQuery | DeleteQuery:
         """
         Parses the file search/deletion query.
         """
@@ -219,34 +209,35 @@ class FileDataQueryParser:
         self._from_index = _get_from_keyword_index(subquery)
 
     @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> list[str]:
+    def _parse_fields(attrs: list[str] | str) -> list[Field, str]:
         """
-        Parses the data search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         data_fields: set[str] = (
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.DATA_FIELDS)
+                fields += (Field(i) for i in constants.DATA_FIELDS)
+                columns += constants.DATA_FIELDS
 
             elif field in data_fields:
-                fields.append(field)
+                fields.append(Field(constants.DATA_FIELD_ALIASES.get(field, field)))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @staticmethod
     def _parse_path(subquery: list[str]) -> tuple[Path, bool, int]:
@@ -267,14 +258,14 @@ class FileDataQueryParser:
         Parses the file data search query.
         """
 
-        fields: list[str] = self._parse_fields(self._query[: self._from_index])
+        fields, columns = self._parse_fields(self._query[: self._from_index])
         path, is_absolute, index = self._parse_path(self._query[self._from_index + 1 :])
 
         condition: Callable[[DataLine], bool] = _get_condition_handler(
             self._query[self._from_index + index + 2 :]
         )
 
-        return SearchQuery(path, is_absolute, condition, fields)
+        return SearchQuery(path, is_absolute, condition, fields, columns)
 
 
 class DirectoryQueryParser(FileQueryParser):
@@ -306,32 +297,33 @@ class DirectoryQueryParser(FileQueryParser):
         self._from_index = _get_from_keyword_index(subquery)
 
     @override
-    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+    def _parse_fields(self, attrs: list[str] | str) -> list[Field, str]:
         """
-        Parses the directory search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.DIR_FIELDS)
+                fields += (Field(i) for i in constants.DIR_FIELDS)
+                columns += constants.DIR_FIELDS
 
             elif field in dir_fields:
-                fields.append(field)
+                fields.append(Field(field))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @override
     def _parse_search_query(self) -> SearchQuery:
@@ -341,11 +333,11 @@ class DirectoryQueryParser(FileQueryParser):
 
         from_index: int = _get_from_keyword_index(self._query)
 
-        fields: list[str] = self._parse_fields(self._query[:from_index])
+        fields, columns = self._parse_fields(self._query[:from_index])
         path, is_absolute, index = self._parse_directory(self._query[from_index + 1 :])
 
         condition: Callable[[Directory], bool] = _get_condition_handler(
             self._query[self._from_index + index + 2 :]
         )
 
-        return SearchQuery(path, is_absolute, condition, fields)
+        return SearchQuery(path, is_absolute, condition, fields, columns)

@@ -238,10 +238,9 @@ class ConditionHandler:
 
         elif isinstance(operand, Size):
             size = getattr(obj, "size")
-            size_unit: str = obj.size_unit
 
             # Converts the size into the specified unit.
-            operand = size / operand.get_relative_size_divisor(size_unit)
+            operand = size / constants.SIZE_CONVERSION_MAP[operand.unit]
 
         return operand
 

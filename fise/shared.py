@@ -23,32 +23,18 @@ class BaseFile:
     related to the file `pathlib.Path` and `os.stat_result` object.
     """
 
-    __slots__ = "_file", "_stats", "_size_unit", "_size_divisor"
+    __slots__ = "_file", "_stats"
 
-    def __init__(self, file: Path, size_unit: str = "B") -> None:
+    def __init__(self, file: Path) -> None:
         """
         Creates an instance of the `File` class.
 
         #### Params:
         - file (pathlib.Path): path of the file.
-        - size_unit (str): storage size unit.
         """
 
         self._file = file
         self._stats = file.stat()
-        self._size_unit = size_unit
-
-        # Divisor for storage size conversion.
-        size_divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(size_unit)
-
-        # Verifies if the size divisor is not None.
-        assert size_divisor
-
-        self._size_divisor = size_divisor
-
-    @property
-    def size_unit(self) -> str:
-        return self._size_unit
 
     @property
     def path(self) -> Path:
@@ -63,8 +49,8 @@ class BaseFile:
         return self._file.name
 
     @property
-    def size(self) -> float:
-        return round(self._stats.st_size / self._size_divisor, 5)
+    def size(self) -> int | float:
+        return self._stats.st_size
 
     @property
     def permissions(self) -> int:
@@ -122,16 +108,16 @@ class File:
     attributes related to a file `pathlib.Path` and `os.stat_result` object.
     """
 
-    def __new__(cls, file: Path, size_unit: str = "B") -> WindowsFile | PosixFile:
+    def __new__(cls, file: Path) -> WindowsFile | PosixFile:
         """
         Returns an instance of `WindowsFile` if the platform of operation is windows
         else returns an instance of `PosixPath` for mac or linux platforms.
         """
 
         if sys.platform == "win32":
-            return WindowsFile(file, size_unit)
+            return WindowsFile(file)
 
-        return PosixFile(file, size_unit)
+        return PosixFile(file)
 
 
 class DataLine:
@@ -255,6 +241,15 @@ class Size:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
+class Field:
+    """
+    Field class for storing callable individual query condition fields.
+    """
+
+    field: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
 class BaseQuery:
     """
     Base class for all query data classes.
@@ -272,7 +267,8 @@ class SearchQuery(BaseQuery):
     related to search queries.
     """
 
-    fields: list[str]
+    fields: list[Field]
+    columns: list[str]
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -281,16 +277,6 @@ class DeleteQuery(BaseQuery):
     DeleteQuery classs for storing attributes related
     to file/directory deletion queries.
     """
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class FileSearchQuery(SearchQuery):
-    """
-    SearchQuery class for storing attributes related to file search queries.
-    """
-
-    fields: list[str]
-    size_unit: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -339,12 +325,3 @@ class Condition:
     operand1: Any
     operator: str
     operand2: Any
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class Field:
-    """
-    Field class for storing callable individual query condition fields.
-    """
-
-    field: str

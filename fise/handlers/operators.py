@@ -7,7 +7,7 @@ conducting file/directory search/delete operations within a specified directory.
 It also comprises objects for performing search operations within files.
 """
 
-from typing import Generator, Callable
+from typing import Generator, Callable, Any
 from pathlib import Path
 import shutil
 
@@ -15,7 +15,7 @@ import pandas as pd
 
 from errors import OperationError
 from common import tools, constants
-from shared import File, Directory, DataLine
+from shared import File, Directory, DataLine, Field, Size
 
 
 class FileQueryOperator:
@@ -43,53 +43,59 @@ class FileQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
-    def _get_records(
+    @staticmethod
+    def _get_field(field: Field, file: File) -> Any:
+        """
+        Extracts individual fields from the specified `File` object.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - file (File): `File` object to extract data from.
+        """
+
+        if isinstance(field.field, Size):
+            # Extracts the size in bytes and converts into the parsed size unit.
+            return getattr(file, "size") / constants.SIZE_CONVERSION_MAP.get(
+                field.field.unit
+            )
+
+        else:
+            return getattr(file, field.field)
+
+    def get_dataframe(
         self,
-        fields: list[str],
-        files: Generator[File, None, None],
+        fields: list[Field],
+        columns: list[str],
         condition: Callable[[File], bool],
-    ) -> Generator[list[str], None, None]:
-        """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
-        """
-
-        for file in files:
-            if not condition(file):
-                continue
-
-            # Yields a list of the specified fields.
-            yield [
-                getattr(file, constants.FILE_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
-
-    def get_fields(
-        self, fields: list[str], condition: Callable[[File], bool], size_unit: str
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
         #### Params:
-        - fields (lsit[str]): list of desired file metadata fields.
+        - fields (list[Field]): list of desired file metadata `Field` objects.
+        - columns (list[str]): list of columns to be used in records dataframe.
         - condition (Callable): function for filtering search records.
-        - size_unit (str): storage size unit.
         """
 
         files: Generator[File, None, None] = (
-            File(file, size_unit)
-            for file in tools.get_files(self._directory, self._recursive)
+            File(file) for file in tools.get_files(self._directory, self._recursive)
         )
 
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            self._get_records(fields, files, condition), columns=fields
+            (
+                [self._get_field(field, file) for field in fields]
+                for file in files
+                if condition(file)
+            ),
+            columns=columns,
         )
 
-        # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
-        records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
+        # Renames the column `size` -> `size[<size_unit>]` to
+        # also include the storage unit if not done explicitly.
+        records.rename(columns={"size": f"size[B]"}, inplace=True)
 
         return records
 
@@ -206,29 +212,24 @@ class FileDataQueryOperator:
         for file, data in self._get_filedata():
             yield from (DataLine(file, line, index) for index, line in enumerate(data))
 
-    def _get_records(
+    @staticmethod
+    def _get_field(field: Field, data: DataLine) -> Any:
+        """
+        Extracts individual fields from the specified `DataLine` object.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - data (DataLine): `DataLine` object to extract data from.
+        """
+
+        # TODO: Extend the functionality to support custom query functions evaluation.
+        return getattr(data, field.field)
+
+    def get_dataframe(
         self,
-        fields: list[str],
-        datalines: Generator[DataLine, None, None],
+        fields: list[Field],
+        columns: list[str],
         condition: Callable[[DataLine], bool],
-    ) -> Generator[list[str], None, None]:
-        """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
-        """
-
-        for data in datalines:
-            if not condition(data):
-                continue
-
-            # Yields a list of the specified fields.
-            yield [
-                getattr(data, constants.DATA_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
-
-    def get_fields(
-        self, fields: list[str], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the specified fields
@@ -243,8 +244,12 @@ class FileDataQueryOperator:
         # Returns a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         return pd.DataFrame(
-            self._get_records(fields, self._search_datalines(), condition),
-            columns=fields,
+            (
+                [self._get_field(field, data) for field in fields]
+                for data in self._search_datalines()
+                if condition(data)
+            ),
+            columns=columns,
         )
 
 
@@ -274,29 +279,24 @@ class DirectoryQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
-    def _get_records(
+    @staticmethod
+    def _get_field(field: Field, directory: Directory) -> Any:
+        """
+        Extracts individual fields from the specified `Directory` object.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - directory (Directory): `Directory` object to extract data from.
+        """
+
+        # TODO: Extend the functionality to support custom query functions evaluation.
+        return getattr(directory, field.field)
+
+    def get_dataframe(
         self,
-        fields: list[str],
-        directories: Generator[Directory, None, None],
+        fields: list[Field],
+        columns: list[str],
         condition: Callable[[Directory], bool],
-    ) -> Generator[list[str], None, None]:
-        """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
-        """
-
-        for directory in directories:
-            if not condition(directory):
-                continue
-
-            # Yields a list of the specified fields.
-            yield [
-                getattr(directory, constants.DIR_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
-
-    def get_fields(
-        self, fields: list[str], condition: Callable[[Directory], bool]
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the specified metadata fields
@@ -315,8 +315,12 @@ class DirectoryQueryOperator:
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            self._get_records(fields, directories, condition),
-            columns=fields,
+            (
+                [self._get_field(field, directory) for field in fields]
+                for directory in directories
+                if condition(directory)
+            ),
+            columns=columns,
         )
 
         return records

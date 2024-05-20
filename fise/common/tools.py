@@ -17,7 +17,6 @@ from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
 from . import constants
-from errors import QueryParseError
 
 
 def parse_query(query: str) -> list[str]:
@@ -69,9 +68,6 @@ def parse_query(query: str) -> list[str]:
         # For all other characters.
         else:
             token += char
-
-    if level:
-        QueryParseError(f"Invalid query syntax around {query}")
 
     # Adds the ending token of the query to `tokens` list.
     if token:

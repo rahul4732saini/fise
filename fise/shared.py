@@ -294,16 +294,6 @@ class DeleteQuery(BaseQuery):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class FileSearchQuery(SearchQuery):
-    """
-    SearchQuery class for storing attributes related to file search queries.
-    """
-
-    fields: list[str]
-    size_unit: str
-
-
-@dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
     """
     ExportData class for storing export data related attributes.

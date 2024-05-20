@@ -62,7 +62,7 @@ class FileQueryOperator:
         else:
             return getattr(file, field.field)
 
-    def get_fields(
+    def get_dataframe(
         self,
         fields: list[Field],
         columns: list[str],

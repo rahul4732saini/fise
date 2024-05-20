@@ -47,7 +47,7 @@ def _get_condition_handler(
     subquery: list[str],
 ) -> Callable[[File | DataLine | Directory], bool]:
     """
-    Parses the query conditions subquery and returns a function for filitering records.
+    Parses the query conditions subquery and returns a function for filtering records.
     """
 
     # Returns a lambda function returning `True` by default if no conditions
@@ -87,7 +87,7 @@ class FileQueryParser:
         """
 
         # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed before-hand and
+        # and conditions defined within the query. The initials are parsed beforehand and
         # the remaining is handed and parsed here.
 
         self._query = subquery
@@ -107,7 +107,7 @@ class FileQueryParser:
             constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
-        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
+        # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.FILE_FIELDS)
@@ -202,7 +202,7 @@ class FileDataQueryParser:
         """
 
         # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed before-hand and
+        # and conditions defined within the query. The initials are parsed beforehand and
         # the remaining is handed and parsed here.
 
         self._query = subquery
@@ -222,7 +222,7 @@ class FileDataQueryParser:
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
-        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
+        # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.DATA_FIELDS)
@@ -289,7 +289,7 @@ class DirectoryQueryParser(FileQueryParser):
         """
 
         # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed before-hand and
+        # and conditions defined within the query. The initials are parsed beforehand and
         # the remaining is handed and parsed here.
 
         self._query = subquery
@@ -308,7 +308,7 @@ class DirectoryQueryParser(FileQueryParser):
         fields, columns = [], []
         dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
-        # Iteratres through the specified tokens, parses and stores them in the `fields` list.
+        # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.DIR_FIELDS)

@@ -30,7 +30,7 @@ class ConditionHandler:
     _tuple_pattern = re.compile(r"^\(.*\)$")
 
     # The following regex pattern only matches date and datetime formats, and
-    # doesn't explicitly verifies the validity of the date and time values.
+    # doesn't explicitly verify the validity of the date and time values.
     _datetime_pattern = re.compile(
         r"('|\")\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?('|\")$"
     )
@@ -50,7 +50,7 @@ class ConditionHandler:
             | constants.DIR_FIELD_ALIASES
         )
 
-        # Maps operator names with coresponding evaluation methods.
+        # Maps operator names with corresponding evaluation methods.
         self._method_map: dict[str, Callable[[Any, Any], bool]] = {
             ">=": self._ge,
             "<=": self._le,
@@ -84,7 +84,7 @@ class ConditionHandler:
 
             except ValueError:
                 # Passes without raising an error in case
-                # the the operand matches the date format.
+                # the operand matches the date format.
                 try:
                     return datetime.strptime(operand, r"%Y-%m-%d")
 
@@ -185,7 +185,7 @@ class ConditionHandler:
         """
         Parses the query conditions and returns a `typing.Generator` object of the
         parsed conditions as `Condition` objects also including the condition
-        seperators `and` and `or` as string objects.
+        separators `and` and `or` as string objects.
         """
 
         # Stores individual conditions during iteration.
@@ -226,7 +226,7 @@ class ConditionHandler:
                 )
 
             # Converts `bytes` and `pathlib.Path` objects into strings
-            # for better compatibility in comparsion operations.
+            # for better compatibility in comparison operations.
 
             if isinstance(operand, Path):
                 operand = str(operand)
@@ -255,7 +255,7 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        # Recursively evaluates if the condtion is nested.
+        # Recursively evaluates if the condition is nested.
         if isinstance(condition, list):
             return self._eval_all_conditions(condition, obj)
 
@@ -265,7 +265,7 @@ class ConditionHandler:
         ), self._eval_operand(condition.operand2, obj)
 
         try:
-            # Process the operation with a method coressponding to the name
+            # Process the operation with a method corresponding to the name
             # of the operator in the `_method_map` instance attribute.
             response: bool = self._method_map[condition.operator](operand1, operand2)
         except (TypeError, ValueError):
@@ -284,7 +284,7 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        # Evalautes individual conditions if not done yet.
+        # Evaluates individual conditions if not done yet.
         if isinstance(segment[0], list | Condition):
             segment[0] = self._eval_condition(segment[0], obj)
 
@@ -311,13 +311,13 @@ class ConditionHandler:
         conditions = ["True", "and"] + conditions
         ctr: int = 0
 
-        # Evaluates conditions seperated by `and` operator.
+        # Evaluates conditions separated by `and` operator.
         for _ in range(len(conditions) // 2):
             segment: list[Condition | str] = conditions[ctr : ctr + 3]
 
             if segment[1] == "or":
                 # Increments the counter by 1 to skip the
-                # conditions seperated by the `or` operator.
+                # conditions separated by the `or` operator.
                 ctr += 1
 
             else:
@@ -326,14 +326,14 @@ class ConditionHandler:
                     self._eval_condition_segments(segment, obj)
                 ]
 
-        # Evaluates conditions seperated by `or` operator.
+        # Evaluates conditions separated by `or` operator.
         for _ in range(len(conditions) // 2):
             # Replaces the conditions with the evaluated boolean value.
             conditions[0 : 0 + 3] = [
                 self._eval_condition_segments(conditions[0 : 0 + 3], obj)
             ]
 
-        # Extracts the singemost boolean value from the list and returns it.
+        # Extracts the singe-most boolean value from the list and returns it.
         (result,) = conditions
 
         return result

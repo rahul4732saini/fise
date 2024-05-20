@@ -210,7 +210,9 @@ class FileDataQueryOperator:
         """
 
         for file, data in self._get_filedata():
-            yield from (DataLine(file, line, index) for index, line in enumerate(data))
+            yield from (
+                DataLine(file, line, index + 1) for index, line in enumerate(data)
+            )
 
     @staticmethod
     def _get_field(field: Field, data: DataLine) -> Any:
@@ -268,7 +270,7 @@ class DirectoryQueryOperator:
         #### Params:
         - directory (Path): Path of the directory to be processed.
         - recursive (bool): Boolean value to specify whether to include the
-        files present withinin the subdirectories.
+        files present within the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
         absolute path of the files.
         """

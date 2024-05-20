@@ -74,7 +74,7 @@ class FileQueryParser:
     __slots__ = "_query", "_operation", "_from_index"
 
     _size_field_pattern = re.compile(
-        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
+        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]|)$"
     )
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
@@ -94,7 +94,7 @@ class FileQueryParser:
         self._operation = operation
         self._from_index = _get_from_keyword_index(subquery)
 
-    def _parse_fields(self, attrs: str | list[str]) -> list[Field, str]:
+    def _parse_fields(self, attrs: str | list[str]) -> tuple[Field, list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -209,7 +209,7 @@ class FileDataQueryParser:
         self._from_index = _get_from_keyword_index(subquery)
 
     @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> list[Field, str]:
+    def _parse_fields(attrs: list[str] | str) -> tuple[Field, list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -297,7 +297,7 @@ class DirectoryQueryParser(FileQueryParser):
         self._from_index = _get_from_keyword_index(subquery)
 
     @override
-    def _parse_fields(self, attrs: list[str] | str) -> list[Field, str]:
+    def _parse_fields(self, attrs: list[str] | str) -> tuple[Field, list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 

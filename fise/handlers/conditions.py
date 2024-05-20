@@ -114,7 +114,7 @@ class ConditionHandler:
 
     def _parse_conditional_operand(
         self, operand: str, operator: str
-    ) -> tuple | re.Pattern:
+    ) -> list[str] | re.Pattern:
         """
         Parses individual operands specified within a conditional expression.
         """
@@ -271,7 +271,8 @@ class ConditionHandler:
         except (TypeError, ValueError):
             OperationError("Unable to process the query conditions.")
 
-        return response
+        else:
+            return response
 
     def _eval_condition_segments(
         self, segment: list[Condition | str], obj: File | DataLine | Directory

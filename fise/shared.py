@@ -83,14 +83,14 @@ class BaseFile:
 class WindowsFile(BaseFile):
     """
     WindowsFile class serves as a unified class for accessing all methods and
-    attributes related to a windows file `pathlib.Path` and `os.stat_result` object.
+    attributes related to a Windows file `pathlib.Path` and `os.stat_result` object.
     """
 
 
 class PosixFile(BaseFile):
     """
     PosixFile class serves as a unified class for accessing all methods and
-    attributes related to a poxis file `pathlib.Path` and `os.stat_result` object.
+    attributes related to a Posix file `pathlib.Path` and `os.stat_result` object.
     """
 
     @property
@@ -211,7 +211,7 @@ class Size:
     """
 
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(
-        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
+        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]|)$"
     )
 
     unit: constants.SIZE_UNITS
@@ -274,7 +274,7 @@ class SearchQuery(BaseQuery):
 @dataclass(slots=True, frozen=True, eq=False)
 class DeleteQuery(BaseQuery):
     """
-    DeleteQuery classs for storing attributes related
+    DeleteQuery class for storing attributes related
     to file/directory deletion queries.
     """
 

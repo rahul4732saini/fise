@@ -281,7 +281,8 @@ class SearchQuery(BaseQuery):
     related to search queries.
     """
 
-    fields: list[str]
+    fields: list[Field]
+    columns: list[str]
 
 
 @dataclass(slots=True, frozen=True, eq=False)

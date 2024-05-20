@@ -30,7 +30,7 @@ OPERATION_ALIASES = {"select": "search", "delete": "remove"}
 FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
 
-CONDITION_SEPERATORS = {"and", "or"}
+CONDITION_SEPARATORS = {"and", "or"}
 COMPARISON_OPERATORS = {"<", ">", "<=", ">=", "!=", "="}
 CONDITIONAL_OPERATORS = {"in", "between", "like"}
 

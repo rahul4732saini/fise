@@ -192,7 +192,7 @@ class ConditionHandler:
         condition = []
 
         for token in subquery:
-            if token in constants.CONDITION_SEPERATORS:
+            if token in constants.CONDITION_SEPARATORS:
                 yield self._parse_condition(condition)
                 yield token
 

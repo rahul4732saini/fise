@@ -24,7 +24,6 @@ from .parsers import (
     FileQueryParser,
     DirectoryQueryParser,
     FileDataQueryParser,
-    FileSearchQuery,
     DeleteQuery,
     SearchQuery,
 )
@@ -92,14 +91,14 @@ class QueryHandler:
         """
 
         parser = FileQueryParser(self._current_query, initials.operation.operation)
-        query: FileSearchQuery | DeleteQuery = parser.parse_query()
+        query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(
             query.path, initials.recursive, query.is_absolute
         )
 
         if initials.operation.operation == "search":
-            return operator.get_fields(query.fields, query.condition, query.size_unit)
+            return operator.get_dataframe(query.fields, query.columns, query.condition)
 
         operator.remove_files(query.condition, initials.operation.skip_err)
 
@@ -118,7 +117,7 @@ class QueryHandler:
             initials.operation.filemode,
         )
 
-        return operator.get_fields(query.fields, query.condition)
+        return operator.get_dataframe(query.fields, query.columns, query.condition)
 
     def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """
@@ -133,7 +132,7 @@ class QueryHandler:
         )
 
         if initials.operation.operation == "search":
-            return operator.get_fields(query.fields, query.condition)
+            return operator.get_dataframe(query.fields, query.columns, query.condition)
 
         operator.remove_directories(query.condition, initials.operation.skip_err)
 

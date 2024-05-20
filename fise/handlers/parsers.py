@@ -276,7 +276,6 @@ class DirectoryQueryParser(FileQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    @override
     def __init__(
         self, subquery: str | list[str], operation: constants.OPERATIONS
     ) -> None:
@@ -291,10 +290,7 @@ class DirectoryQueryParser(FileQueryParser):
         # This parser object accepts the subquery and parses only the fields, directory/file
         # and conditions defined within the query. The initials are parsed beforehand and
         # the remaining is handed and parsed here.
-
-        self._query = subquery
-        self._operation = operation
-        self._from_index = _get_from_keyword_index(subquery)
+        super().__init__(subquery, operation)
 
     @override
     def _parse_fields(self, attrs: list[str] | str) -> tuple[Field, list[str]]:

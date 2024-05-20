@@ -41,7 +41,7 @@ def parse_query(query: str) -> list[str]:
     for char in query:
         # Only executes the conditional block if the character is a starting
         # delimiter and not nested inside or in the conflicting delimiters.
-        if char in delimiters and (not level or char not in conflicting):
+        if char == cur and (not level or char not in conflicting):
             level += 1
             cur = char
             token += char

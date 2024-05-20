@@ -105,41 +105,42 @@ class FileQueryParser:
         # Default size unit for file search queries.
         self._size_unit = "B"
 
-    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+    def _parse_fields(self, attrs: str | list[str]) -> list[Field, str]:
         """
-        Parses the search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         file_fields: set[str] = (
             constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.FILE_FIELDS)
+                fields += (Field(i) for i in constants.FILE_FIELDS)
+                columns += constants.FILE_FIELDS
 
             elif field.startswith("size"):
-                # Parses the size unit from the string.
+                # Parses size from the string.
                 size: Size = Size.from_string(field)
 
-                self._size_unit = size.unit
-                fields.append("size")
+                fields.append(Field(size))
+                columns.append(field)
 
             elif field in file_fields:
-                fields.append(field)
+                fields.append(Field(constants.FILE_FIELD_ALIASES.get(field, field)))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @staticmethod
     def _parse_directory(subquery: list[str]) -> tuple[Path, bool, int]:

@@ -63,8 +63,8 @@ class BaseFile:
         return self._file.name
 
     @property
-    def size(self) -> float:
-        return round(self._stats.st_size / self._size_divisor, 5)
+    def size(self) -> int | float:
+        return self._stats.st_size
 
     @property
     def permissions(self) -> int:

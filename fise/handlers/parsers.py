@@ -11,17 +11,9 @@ from pathlib import Path
 from typing import Callable, override
 
 from .conditions import ConditionHandler
-from errors import QueryParseError
 from common import constants
-from shared import (
-    FileSearchQuery,
-    DeleteQuery,
-    SearchQuery,
-    Directory,
-    DataLine,
-    File,
-    Size,
-)
+from errors import QueryParseError
+from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
@@ -182,7 +174,7 @@ class FileQueryParser:
 
         return SearchQuery(path, is_absolute, condition, fields, columns)
 
-    def parse_query(self) -> FileSearchQuery | DeleteQuery:
+    def parse_query(self) -> SearchQuery | DeleteQuery:
         """
         Parses the file search/deletion query.
         """

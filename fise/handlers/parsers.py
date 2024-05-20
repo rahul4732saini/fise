@@ -333,11 +333,11 @@ class DirectoryQueryParser(FileQueryParser):
 
         from_index: int = _get_from_keyword_index(self._query)
 
-        fields: list[str] = self._parse_fields(self._query[:from_index])
+        fields, columns = self._parse_fields(self._query[:from_index])
         path, is_absolute, index = self._parse_directory(self._query[from_index + 1 :])
 
         condition: Callable[[Directory], bool] = _get_condition_handler(
             self._query[self._from_index + index + 2 :]
         )
 
-        return SearchQuery(path, is_absolute, condition, fields)
+        return SearchQuery(path, is_absolute, condition, fields, columns)

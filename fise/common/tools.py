@@ -102,14 +102,13 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
     except PermissionError:
         print(
-            constants.COLOR_YELLOW
-            % (f"Permission Error: Skipping directory {directory}")
+            constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
         )
 
         # Returns a tuple to not disrupt the proper functioning of
         # the function if the  `yield from` statement is to be
         # executed in case the function is executed recursively.
-        return ()
+        yield from ()
 
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
@@ -136,14 +135,13 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
 
     except PermissionError:
         print(
-            constants.COLOR_YELLOW
-            % (f"Permission Error: Skipping directory {directory}")
+            constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
         )
 
         # Returns a tuple to not disrupt the proper functioning of
         # the function if the  `yield from` statement is to be
         # executed in case the function is executed recursively.
-        return ()
+        yield from ()
 
 
 def export_to_file(data: pd.DataFrame, path: str) -> None:

@@ -39,9 +39,9 @@ class QueryHandler:
 
     __slots__ = "_query", "_current_query"
 
-    # Regular expression patterns for parsing subqueries.
-    _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})\]|)$")
-    _operation_params_pattern = re.compile(r"^(\[.*\]|)$")
+    # Regular expression patterns for parsing sub-queries.
+    _export_subquery_pattern = re.compile(rf"^sql(\[({"|".join(constants.DATABASES)})]|)$")
+    _operation_params_pattern = re.compile(r"^(\[.*]|)$")
 
     def __init__(self, query: str) -> None:
         """
@@ -72,7 +72,7 @@ class QueryHandler:
                 "data": self._handle_data_query,
             }
 
-            # Calls the coressponding handler method, extracts, and stores the
+            # Calls the corresponding handler method, extracts, and stores the
             # search records if search operation is specified else stores `None`.
             data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
 

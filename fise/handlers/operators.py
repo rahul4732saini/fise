@@ -225,7 +225,7 @@ class FileDataQueryOperator:
         # TODO: Extend the functionality to support custom query functions evaluation.
         return getattr(data, field.field)
 
-    def get_fields(
+    def get_dataframe(
         self,
         fields: list[Field],
         columns: list[str],

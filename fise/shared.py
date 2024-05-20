@@ -108,16 +108,16 @@ class File:
     attributes related to a file `pathlib.Path` and `os.stat_result` object.
     """
 
-    def __new__(cls, file: Path, size_unit: str = "B") -> WindowsFile | PosixFile:
+    def __new__(cls, file: Path) -> WindowsFile | PosixFile:
         """
         Returns an instance of `WindowsFile` if the platform of operation is windows
         else returns an instance of `PosixPath` for mac or linux platforms.
         """
 
         if sys.platform == "win32":
-            return WindowsFile(file, size_unit)
+            return WindowsFile(file)
 
-        return PosixFile(file, size_unit)
+        return PosixFile(file)
 
 
 class DataLine:

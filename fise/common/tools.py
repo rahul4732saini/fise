@@ -13,6 +13,7 @@ from typing import Generator
 
 import pandas as pd
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
 from . import constants
@@ -184,7 +185,7 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
     getattr(data, export_method)(file)
 
 
-def _connect_sqlite() -> sqlalchemy.Engine:
+def _connect_sqlite() -> Engine:
     """
     Connects to a SQLite database file.
     """
@@ -192,7 +193,7 @@ def _connect_sqlite() -> sqlalchemy.Engine:
     return sqlalchemy.create_engine(f"sqlite:///{database}")
 
 
-def _connect_database(database: str) -> sqlalchemy.Engine:
+def _connect_database(database: str) -> Engine:
     """
     Connects to the specified SQL database server.
 
@@ -221,8 +222,8 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     - database (str): database name to export data.
     """
 
-    # Creates an `Engine` object of the specified SQL database.
-    conn: sqlalchemy.Engine = (
+    # Creates an `sqlalchemy.Engine` object of the specified SQL database.
+    conn: Engine = (
         _connect_sqlite() if database == "sqlite" else _connect_database(database)
     )
 

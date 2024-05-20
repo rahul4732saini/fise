@@ -166,12 +166,12 @@ class FileQueryParser:
 
         return DeleteQuery(path, is_absolute, condition)
 
-    def _parse_search_query(self) -> FileSearchQuery:
+    def _parse_search_query(self) -> SearchQuery:
         """
         Parses the file search query.
         """
 
-        fields: list[str] = self._parse_fields(self._query[: self._from_index])
+        fields, columns = self._parse_fields(self._query[: self._from_index])
         path, is_absolute, index = self._parse_directory(
             self._query[self._from_index + 1 :]
         )
@@ -180,7 +180,7 @@ class FileQueryParser:
             self._query[self._from_index + index + 2 :]
         )
 
-        return FileSearchQuery(path, is_absolute, condition, fields, self._size_unit)
+        return SearchQuery(path, is_absolute, condition, fields, columns)
 
     def parse_query(self) -> FileSearchQuery | DeleteQuery:
         """

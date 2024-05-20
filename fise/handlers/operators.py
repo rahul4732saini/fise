@@ -46,7 +46,7 @@ class FileQueryOperator:
     @staticmethod
     def _get_field(field: Field, file: File) -> Any:
         """
-        Extracts individual fields from the specified file.
+        Extracts individual fields from the specified `File` object.
 
         #### Params:
         - field (Field): `Field` object comprising the field to be extracted.
@@ -279,29 +279,24 @@ class DirectoryQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
-    def _get_records(
-        self,
-        fields: list[str],
-        directories: Generator[Directory, None, None],
-        condition: Callable[[Directory], bool],
-    ) -> Generator[list[str], None, None]:
+    @staticmethod
+    def _get_field(field: Field, directory: Directory) -> Any:
         """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
+        Extracts individual fields from the specified `Directory` object.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - directory (Directory): `Directory` object to extract data from.
         """
 
-        for directory in directories:
-            if not condition(directory):
-                continue
-
-            # Yields a list of the specified fields.
-            yield [
-                getattr(directory, constants.DIR_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
+        # TODO: Extend the functionality to support custom query functions evaluation.
+        return getattr(directory, field.field)
 
     def get_fields(
-        self, fields: list[str], condition: Callable[[Directory], bool]
+        self,
+        fields: list[Field],
+        columns: list[str],
+        condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the specified metadata fields
@@ -320,8 +315,12 @@ class DirectoryQueryOperator:
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            self._get_records(fields, directories, condition),
-            columns=fields,
+            (
+                [self._get_field(field, directory) for field in fields]
+                for directory in directories
+                if condition(directory)
+            ),
+            columns=columns,
         )
 
         return records

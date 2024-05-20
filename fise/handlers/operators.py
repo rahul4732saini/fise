@@ -7,7 +7,7 @@ conducting file/directory search/delete operations within a specified directory.
 It also comprises objects for performing search operations within files.
 """
 
-from typing import Generator, Callable
+from typing import Generator, Callable, Any
 from pathlib import Path
 import shutil
 
@@ -15,7 +15,7 @@ import pandas as pd
 
 from errors import OperationError
 from common import tools, constants
-from shared import File, Directory, DataLine
+from shared import File, Directory, DataLine, Field, Size
 
 
 class FileQueryOperator:
@@ -43,53 +43,59 @@ class FileQueryOperator:
         if absolute:
             self._directory = self._directory.absolute()
 
-    def _get_records(
-        self,
-        fields: list[str],
-        files: Generator[File, None, None],
-        condition: Callable[[File], bool],
-    ) -> Generator[list[str], None, None]:
+    @staticmethod
+    def _get_field(field: Field, file: File) -> Any:
         """
-        Yields a list of individual records comprising the
-        specified fields meeting the specified condition.
+        Extracts individual fields from the specified file.
+
+        #### Params:
+        - field (Field): `Field` object comprising the field to be extracted.
+        - file (File): `File` object to extract data from.
         """
 
-        for file in files:
-            if not condition(file):
-                continue
+        if isinstance(field.field, Size):
+            # Extracts the size in bytes and converts into the parsed size unit.
+            return getattr(file, "size") / constants.SIZE_CONVERSION_MAP.get(
+                field.field.unit
+            )
 
-            # Yields a list of the specified fields.
-            yield [
-                getattr(file, constants.FILE_FIELD_ALIASES.get(field, field))
-                for field in fields
-            ]
+        else:
+            return getattr(file, field.field)
 
     def get_fields(
-        self, fields: list[str], condition: Callable[[File], bool], size_unit: str
+        self,
+        fields: list[Field],
+        columns: list[str],
+        condition: Callable[[File], bool],
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising the fields specified
         of all the files present within the specified directory.
 
         #### Params:
-        - fields (lsit[str]): list of desired file metadata fields.
+        - fields (list[Field]): list of desired file metadata `Field` objects.
+        - columns (list[str]): list of columns to be used in records dataframe.
         - condition (Callable): function for filtering search records.
-        - size_unit (str): storage size unit.
         """
 
         files: Generator[File, None, None] = (
-            File(file, size_unit)
-            for file in tools.get_files(self._directory, self._recursive)
+            File(file) for file in tools.get_files(self._directory, self._recursive)
         )
 
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
         records = pd.DataFrame(
-            self._get_records(fields, files, condition), columns=fields
+            (
+                [self._get_field(field, file) for field in fields]
+                for file in files
+                if condition(file)
+            ),
+            columns=columns,
         )
 
-        # Renames the column `size` -> `size(<size_unit>)` to also include the storage unit.
-        records.rename(columns={"size": f"size({size_unit})"}, inplace=True)
+        # Renames the column `size` -> `size[<size_unit>]` to
+        # also include the storage unit if not done explicitly.
+        records.rename(columns={"size": f"size[B]"}, inplace=True)
 
         return records
 

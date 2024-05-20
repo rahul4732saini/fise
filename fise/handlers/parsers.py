@@ -8,7 +8,7 @@ queries extracting relevant data for further processing.
 
 import re
 from pathlib import Path
-from typing import Callable, override
+from typing import Callable
 
 from .conditions import ConditionHandler
 from common import constants
@@ -56,7 +56,7 @@ def _get_condition_handler(
         return lambda _: True
 
     if subquery[0].lower() != "where":
-        QueryParseError(f"Invalid query syntax around {" ".join(subquery)!r}")
+        QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
     conditions: list[str] = subquery[1:]
     handler = ConditionHandler(conditions)
@@ -292,7 +292,6 @@ class DirectoryQueryParser(FileQueryParser):
         # the remaining is handed and parsed here.
         super().__init__(subquery, operation)
 
-    @override
     def _parse_fields(self, attrs: list[str] | str) -> tuple[Field, list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
@@ -321,7 +320,6 @@ class DirectoryQueryParser(FileQueryParser):
 
         return fields, columns
 
-    @override
     def _parse_search_query(self) -> SearchQuery:
         """
         Parses the directory search query.

@@ -128,7 +128,7 @@ class ConditionHandler:
         else:
             if not self._tuple_pattern.match(operand):
                 QueryParseError(
-                    f"Invalid query pattern around {" ".join(self._query)!r}"
+                    f"Invalid query pattern around {' '.join(self._query)!r}"
                 )
 
             # Parses and creates a list of individual
@@ -161,14 +161,14 @@ class ConditionHandler:
             )
 
         elif length < 3:
-            QueryParseError(f"Invalid query syntax around {" ".join(condition)}")
+            QueryParseError(f"Invalid query syntax around {' '.join(condition)}")
 
         for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
             if condition[1] == i:
                 operator: str = i
                 break
         else:
-            QueryParseError(f"Invalid query syntax around {" ".join(self._query)!r}")
+            QueryParseError(f"Invalid query syntax around {' '.join(self._query)!r}")
 
         operand1 = self._parse_comparison_operand(condition[0])
         operand2 = (

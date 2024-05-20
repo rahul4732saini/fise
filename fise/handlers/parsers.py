@@ -79,7 +79,7 @@ class FileQueryParser:
     file search/delete operation queries.
     """
 
-    __slots__ = "_query", "_operation", "_size_unit", "_from_index"
+    __slots__ = "_query", "_operation", "_from_index"
 
     _size_field_pattern = re.compile(
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})\]|)$"
@@ -101,9 +101,6 @@ class FileQueryParser:
         self._query = subquery
         self._operation = operation
         self._from_index = _get_from_keyword_index(subquery)
-
-        # Default size unit for file search queries.
-        self._size_unit = "B"
 
     def _parse_fields(self, attrs: str | list[str]) -> list[Field, str]:
         """

@@ -297,32 +297,33 @@ class DirectoryQueryParser(FileQueryParser):
         self._from_index = _get_from_keyword_index(subquery)
 
     @override
-    def _parse_fields(self, attrs: list[str] | str) -> list[str]:
+    def _parse_fields(self, attrs: list[str] | str) -> list[Field, str]:
         """
-        Parses the directory search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.DIR_FIELDS)
+                fields += (Field(i) for i in constants.DIR_FIELDS)
+                columns += constants.DIR_FIELDS
 
             elif field in dir_fields:
-                fields.append(field)
+                fields.append(Field(field))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @override
     def _parse_search_query(self) -> SearchQuery:

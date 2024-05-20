@@ -258,14 +258,14 @@ class FileDataQueryParser:
         Parses the file data search query.
         """
 
-        fields: list[str] = self._parse_fields(self._query[: self._from_index])
+        fields, columns = self._parse_fields(self._query[: self._from_index])
         path, is_absolute, index = self._parse_path(self._query[self._from_index + 1 :])
 
         condition: Callable[[DataLine], bool] = _get_condition_handler(
             self._query[self._from_index + index + 2 :]
         )
 
-        return SearchQuery(path, is_absolute, condition, fields)
+        return SearchQuery(path, is_absolute, condition, fields, columns)
 
 
 class DirectoryQueryParser(FileQueryParser):

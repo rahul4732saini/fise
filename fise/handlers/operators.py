@@ -292,7 +292,7 @@ class DirectoryQueryOperator:
         # TODO: Extend the functionality to support custom query functions evaluation.
         return getattr(directory, field.field)
 
-    def get_fields(
+    def get_dataframe(
         self,
         fields: list[Field],
         columns: list[str],

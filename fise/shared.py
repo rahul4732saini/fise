@@ -255,6 +255,15 @@ class Size:
 
 
 @dataclass(slots=True, frozen=True, eq=False)
+class Field:
+    """
+    Field class for storing callable individual query condition fields.
+    """
+
+    field: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
 class BaseQuery:
     """
     Base class for all query data classes.
@@ -339,12 +348,3 @@ class Condition:
     operand1: Any
     operator: str
     operand2: Any
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class Field:
-    """
-    Field class for storing callable individual query condition fields.
-    """
-
-    field: str

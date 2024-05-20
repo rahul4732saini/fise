@@ -209,34 +209,35 @@ class FileDataQueryParser:
         self._from_index = _get_from_keyword_index(subquery)
 
     @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> list[str]:
+    def _parse_fields(attrs: list[str] | str) -> list[Field, str]:
         """
-        Parses the data search query fields.
+        Parses the search query fields and returns an array of parsed fields and columns.
+
+        #### Params:
+        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        if type(attrs) is list:
-            attrs = "".join(attrs)
-
-        fields = []
-
+        fields, columns = [], []
         data_fields: set[str] = (
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
         # Iteratres through the specified tokens, parses and stores them in the `fields` list.
-        for field in attrs.split(","):
+        for field in "".join(attrs).split(","):
             if field == "*":
-                fields.extend(constants.DATA_FIELDS)
+                fields += (Field(i) for i in constants.DATA_FIELDS)
+                columns += constants.DATA_FIELDS
 
             elif field in data_fields:
-                fields.append(field)
+                fields.append(Field(constants.DATA_FIELD_ALIASES.get(field, field)))
+                columns.append(field)
 
             else:
                 QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
-        return fields
+        return fields, columns
 
     @staticmethod
     def _parse_path(subquery: list[str]) -> tuple[Path, bool, int]:

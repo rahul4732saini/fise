@@ -66,9 +66,7 @@ class BaseFile:
     @property
     def create_time(self) -> datetime | None:
         try:
-            return datetime.fromtimestamp(self._stats.st_birthtime).replace(
-                microsecond=0
-            )
+            return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
         except OSError:
             ...
 

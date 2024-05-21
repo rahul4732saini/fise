@@ -18,6 +18,7 @@ from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
 from . import constants
+from errors import OperationError
 
 
 def parse_query(query: str) -> list[str]:
@@ -238,8 +239,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
         conn.connect()
 
     except OperationalError:
-        print(f"Unable to connect to {database} database.")
-        sys.exit(1)
+        OperationError(f"Unable to connect to {database} database.")
 
     else:
         # Prompts for data replacement if the specified table already exists in the database.

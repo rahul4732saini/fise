@@ -64,6 +64,10 @@ def main() -> None:
         except QueryHandleError:
             ...
 
+        except Exception as e:
+            print(e)
+            # TODO: Unexpected exceptions handling.
+
 
 if __name__ == "__main__":
 

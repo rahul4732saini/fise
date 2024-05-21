@@ -16,45 +16,21 @@ from pathlib import Path
 from common import constants
 from errors import QueryParseError
 
+if sys.platform == "win32":
+    from ospecs import WindowsEntity as Entity
+else:
+    from ospecs import PosixEntity as Entity
 
-class BaseFile:
+
+class File(Entity):
     """
-    BaseFile class serves as the base class for accessing all methods and attributes
-    related to the file `pathlib.Path` and `os.stat_result` object.
+    File class serves as a unified class for accessing all methods and
+    attributes related to a file `pathlib.Path` and `os.stat_result` object.
     """
-
-    __slots__ = "_file", "_stats"
-
-    def __init__(self, file: Path) -> None:
-        """
-        Creates an instance of the `File` class.
-
-        #### Params:
-        - file (pathlib.Path): path of the file.
-        """
-
-        self._file = file
-        self._stats = file.stat()
-
-    @property
-    def path(self) -> Path:
-        return self._file
-
-    @property
-    def parent(self) -> Path:
-        return self._file.parent
-
-    @property
-    def name(self) -> str:
-        return self._file.name
 
     @property
     def size(self) -> int | float:
         return self._stats.st_size
-
-    @property
-    def permissions(self) -> int:
-        return self._stats.st_mode
 
     @property
     def access_time(self) -> datetime | None:
@@ -76,46 +52,6 @@ class BaseFile:
             return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
         except OSError:
             ...
-
-
-class WindowsFile(BaseFile):
-    """
-    WindowsFile class serves as a unified class for accessing all methods and
-    attributes related to a Windows file `pathlib.Path` and `os.stat_result` object.
-    """
-
-
-class PosixFile(BaseFile):
-    """
-    PosixFile class serves as a unified class for accessing all methods and
-    attributes related to a Posix file `pathlib.Path` and `os.stat_result` object.
-    """
-
-    @property
-    def owner(self) -> str:
-        return self._file.owner()
-
-    @property
-    def group(self) -> str:
-        return self._file.group()
-
-
-class File:
-    """
-    File class serves as a unified class for accessing all methods and
-    attributes related to a file `pathlib.Path` and `os.stat_result` object.
-    """
-
-    def __new__(cls, file: Path) -> WindowsFile | PosixFile:
-        """
-        Returns an instance of `WindowsFile` if the platform of operation is windows
-        else returns an instance of `PosixPath` for mac or linux platforms.
-        """
-
-        if sys.platform == "win32":
-            return WindowsFile(file)
-
-        return PosixFile(file)
 
 
 class DataLine:
@@ -157,49 +93,13 @@ class DataLine:
         return self._lineno
 
 
-class Directory:
+class Directory(Entity):
     """
-    Directory class serves as a unified class for accessing all methods and attributes
-    related to the directory `pathlib.Path` and `os.stat_result` object.
+    Directory class serves as a unified class for accessing all methods and
+    attributes related to a directory `pathlib.Path` and `os.stat_result` object.
     """
 
-    __slots__ = "_directory", "_stats", "_size_divisor"
-
-    def __init__(self, directory: Path) -> None:
-        """
-        Creates an instance of the `Directory` class.
-
-        #### Params:
-        - direcotry (pathlib.Path): path of the directory.
-        - size_unit (str): storage size unit.
-        """
-
-        self._directory = directory
-        self._stats = directory.stat()
-
-    @property
-    def path(self) -> Path:
-        return self._directory
-
-    @property
-    def parent(self) -> Path:
-        return self._directory.parent
-
-    @property
-    def name(self) -> str:
-        return self._directory.name
-
-    @property
-    def owner(self) -> str:
-        return self._directory.owner()
-
-    @property
-    def group(self) -> str:
-        return self._directory.group()
-
-    @property
-    def permissions(self) -> int:
-        return self._stats.st_mode
+    __slots__ = "_path", "_stats"
 
 
 @dataclass(slots=True, frozen=True, eq=False)

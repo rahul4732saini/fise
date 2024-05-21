@@ -11,6 +11,7 @@ import getpass
 from pathlib import Path
 from typing import Generator
 
+import numpy as np
 import pandas as pd
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.engine.base import Engine
@@ -169,6 +170,12 @@ def export_to_file(data: pd.DataFrame, path: str) -> None:
     # String representation of the export method used for exporting
     # the pandas DataFrame comprising the search data records.
     export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
+
+    # Converts datetime objects in datetime column into string
+    # objects for better representation in excel files.
+    if export_method == "to_excel":
+        for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
+            data[col] = data[col].map(lambda dt: str(dt))
 
     if not export_method:
         print(

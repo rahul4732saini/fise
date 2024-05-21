@@ -127,16 +127,6 @@ class Size:
         # Initializes with "B" -> bytes unit if not explicitly specified.
         return cls(field[5:-1] or "B")
 
-    def get_relative_size_divisor(self, unit: constants.SIZE_UNITS) -> float:
-        """
-        Returns the relative divisor for data from the
-        specified unit into the encapsulated unit.
-        """
-        return (
-            constants.SIZE_CONVERSION_MAP[self.unit]
-            / constants.SIZE_CONVERSION_MAP[unit]
-        )
-
 
 @dataclass(slots=True, frozen=True, eq=False)
 class Field:

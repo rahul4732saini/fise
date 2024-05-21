@@ -39,12 +39,22 @@ def evaluate_query() -> None:
     elif query.lower() in (r"\c", "clear"):
         return print("\033c", end="")
 
-    else:
-        handler = QueryHandler(query)
-        data: pd.DataFrame | None = handler.handle()
+    # If none of the above are matched, the input is
+    # assumed to be a query and evaluated accordingly.
 
-        if data is not None:
-            print(data if not data.empty else "Empty Dataset")
+    handler = QueryHandler(query)
+    data: pd.DataFrame | None = handler.handle()
+
+    if data is not None:
+
+        if data.shape[0] > 30:
+            print(
+                constants.COLOR_YELLOW
+                % "Displaying a compressed output of the dataset. "
+                "Export the records for a more detailed view."
+            )
+
+        print(data if not data.empty else "Empty Dataset")
 
     elapsed: float = time.perf_counter() - start_time
     print(constants.COLOR_GREEN % f"Completed in {elapsed:.2f} seconds")
@@ -70,6 +80,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+
+    # Sets an upper limit for max rows to be displayed in the dataframe.
+    pd.options.display.max_rows = 30
 
     print(
         f"Welcome to FiSE(v{version})",

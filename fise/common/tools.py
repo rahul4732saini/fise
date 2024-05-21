@@ -33,25 +33,25 @@ def parse_query(query: str) -> list[str]:
     tokens: list = []
 
     # `token` temporarily stores the current token and `cur` stores the current delimiter.
-    token = cur = ""
+    token = ""
 
-    # Level indicates the level of nesting of the current character during iteration.
-    level: int = 0
+    # `cur` stores an array of current starting delimiters which have
+    # not yet terminated during iteration in the specified query.
+    cur: list = []
 
     for char in query:
         # Only executes the conditional block if the character is a starting
         # delimiter and not nested inside or in the conflicting delimiters.
-        if char == cur and (not level or char not in conflicting):
-            level += 1
-            cur = char
+        if char in delimiters and (not cur or char not in conflicting):
+            cur.append(char)
             token += char
 
         # Adds the token to list if the current character is
         # not nested inside  and is a terminating delimiter.
-        elif level and char == delimiters.get(cur):
-            level -= 1
+        elif cur and char == delimiters.get(cur[-1]):
+            cur.pop()
 
-            if not level:
+            if not cur:
                 tokens.append(token + char)
                 token = ""
                 continue
@@ -60,7 +60,7 @@ def parse_query(query: str) -> list[str]:
 
         # Adds to list if the character is a whitespace
         # and `token` is not an empty or enclosed string.
-        elif not level and char.isspace():
+        elif not cur and char.isspace():
             if token:
                 tokens.append(token)
                 token = ""

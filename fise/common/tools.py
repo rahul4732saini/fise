@@ -18,7 +18,7 @@ from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
 from . import constants
-from errors import OperationError
+from errors import OperationError, QueryHandleError
 
 
 def parse_query(query: str) -> list[str]:
@@ -250,6 +250,9 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
 
             if force.lower() != "y":
                 print("Export cancelled!")
-                return
+
+                # Raises `QueryHandleError` without any message
+                # to terminate the current query.
+                raise QueryHandleError
 
         data.to_sql(table, conn, if_exists="replace", index=False)

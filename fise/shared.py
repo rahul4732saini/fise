@@ -2,8 +2,8 @@
 Shared Module
 --------------
 
-This module comprises classes that serve as foundational
-components for various objects and functionalities.
+This module comprises classes shared across the project
+assisting various classes and functions defined within it.
 """
 
 import re
@@ -24,8 +24,8 @@ else:
 
 class File(Entity):
     """
-    File class serves as a unified class for accessing all methods and
-    attributes related to a file `pathlib.Path` and `os.stat_result` object.
+    File class serves as a unified class for accessing all attributes
+    related to a file `pathlib.Path` and `os.stat_result` object.
     """
 
     @property
@@ -45,18 +45,18 @@ class File(Entity):
         return self._get_datetime(self._stats.st_mtime)
 
     @staticmethod
-    def _get_datetime(timestamp: int) -> datetime:
+    def _get_datetime(timestamp: float) -> datetime | None:
         """Creates a `datetime.datetime` object from the specified timestamp."""
         try:
             return datetime.fromtimestamp(timestamp).replace(microsecond=0)
         except OSError:
-            ...
+            return None
 
 
 class DataLine:
     """
     DataLine class serves as a unified class for accessing
-    all attributes related to the metadata of the dataline.
+    all attributes related to the metadata of a dataline.
     """
 
     __slots__ = "_file", "_data", "_lineno"
@@ -70,7 +70,6 @@ class DataLine:
         - data (str): dataline to be stored.
         - lineno (int): line number of the dataline.
         """
-
         self._file = file
         self._data = data
         self._lineno = lineno
@@ -94,8 +93,8 @@ class DataLine:
 
 class Directory(Entity):
     """
-    Directory class serves as a unified class for accessing all methods and
-    attributes related to a directory `pathlib.Path` and `os.stat_result` object.
+    Directory class serves as a unified class for accessing all attributes
+    related to a directory `pathlib.Path` and `os.stat_result` object.
     """
 
     __slots__ = "_path", "_stats"
@@ -104,24 +103,25 @@ class Directory(Entity):
 @dataclass(slots=True, frozen=True, eq=False)
 class Size:
     """
-    Size class to store the size unit of the size field.
+    Size class stores the size unit of the size field
+    and also defines a mechanism for parsing the field.
     """
 
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(
         rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]|)$"
     )
 
-    unit: constants.SIZE_UNITS
+    unit: str
 
     @classmethod
     def from_string(cls, field: str):
         """
-        Parses the string and creates an instance of `Size`
-        object from the specified size field.
+        Parses the string and creates an instance of
+        `Size` object from the specified size field.
         """
 
         if not cls._size_field_pattern.match(field):
-            QueryParseError(f"Found an invalid field {field} in the query.")
+            raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
         # Initializes with "B" -> bytes unit if not explicitly specified.
         return cls(field[5:-1] or "B")
@@ -130,7 +130,7 @@ class Size:
 @dataclass(slots=True, frozen=True, eq=False)
 class Field:
     """
-    Field class for storing callable individual query condition fields.
+    Field class stores individual query condition fields.
     """
 
     field: str
@@ -150,26 +150,23 @@ class BaseQuery:
 @dataclass(slots=True, frozen=True, eq=False)
 class SearchQuery(BaseQuery):
     """
-    SearchQuery class for storing attributes
-    related to search queries.
+    SearchQuery class stores attributes related to search queries.
     """
 
     fields: list[Field]
     columns: list[str]
 
 
-@dataclass(slots=True, frozen=True, eq=False)
 class DeleteQuery(BaseQuery):
     """
-    DeleteQuery class for storing attributes related
-    to file/directory deletion queries.
+    DeleteQuery class stores attributes related to file/directory deletion queries.
     """
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
     """
-    ExportData class for storing export data related attributes.
+    ExportData class stores export data related attributes.
     """
 
     type_: Literal["file", "database"]
@@ -179,7 +176,7 @@ class ExportData:
 @dataclass(slots=True, frozen=True, eq=False)
 class OperationData:
     """
-    OperationData class for storing attributes related to the query operation.
+    OperationData class stores attributes related to the query operation.
     """
 
     operation: constants.OPERATIONS
@@ -195,7 +192,7 @@ class OperationData:
 @dataclass(slots=True, frozen=True, eq=False)
 class QueryInitials:
     """
-    QueryInitials class serves for storing attribute related to query initials.
+    QueryInitials class stores attributes related to query initials.
     """
 
     operation: OperationData
@@ -206,7 +203,7 @@ class QueryInitials:
 @dataclass(slots=True, frozen=True, eq=False)
 class Condition:
     """
-    Condition class for storing individual query conditions.
+    Condition class stores attributes related to individual query conditions.
     """
 
     operand1: Any

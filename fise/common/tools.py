@@ -2,11 +2,10 @@
 Tools module
 ------------
 
-This module comprises functions and tools supporting other
-objects and functions throughout the FiSE project.
+This module comprises utility functions supporting
+other classes and functions throughout the project.
 """
 
-import sys
 import getpass
 from pathlib import Path
 from typing import Generator
@@ -23,10 +22,10 @@ from errors import OperationError, QueryHandleError
 
 def parse_query(query: str) -> list[str]:
     """
-    Parses the specified raw string query and converts
-    into a list of tokens for further parsing.
+    Parses the specified raw string query and converts into
+    a list of tokens for further parsing and evaluation.
 
-    ####
+    #### Params:
     - query (str): Query to be parsed.
     """
 
@@ -34,14 +33,16 @@ def parse_query(query: str) -> list[str]:
     conflicting: set[str] = {"'", '"'}
     tokens: list = []
 
-    # `token` temporarily stores the current token and `cur` stores the current delimiter.
+    # Temporarily stores the current token.
     token = ""
 
-    # `cur` stores an array of current starting delimiters which have
+    # Stores an array of current starting delimiters which have
     # not yet terminated during iteration in the specified query.
     cur: list = []
 
-    for char in query:
+    # Adding a whitespace at the end of the query
+    # to avoid parsing it separately after iteration.
+    for char in query + " ":
         # Only executes the conditional block if the character is a starting
         # delimiter and not nested inside or in the conflicting delimiters.
         if char in delimiters and (not cur or char not in conflicting):
@@ -49,7 +50,7 @@ def parse_query(query: str) -> list[str]:
             token += char
 
         # Adds the token to list if the current character is
-        # not nested inside  and is a terminating delimiter.
+        # not nested inside and is a terminating delimiter.
         elif cur and char == delimiters.get(cur[-1]):
             cur.pop()
 
@@ -60,7 +61,7 @@ def parse_query(query: str) -> list[str]:
 
             token += char
 
-        # Adds to list if the character is a whitespace
+        # Adds to list if the character is a top-level whitespace
         # and `token` is not an empty or enclosed string.
         elif not cur and char.isspace():
             if token:
@@ -70,10 +71,6 @@ def parse_query(query: str) -> list[str]:
         # For all other characters.
         else:
             token += char
-
-    # Adds the ending token of the query to `tokens` list.
-    if token:
-        tokens.append(token)
 
     return tokens
 
@@ -85,7 +82,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     `recursive` is set to `True`.
 
     #### Params:
-    - directory (pathlib.Path): Path of the directory to be processed.
+    - directory (pathlib.Path): Path to the directory.
     - recursive (bool): Boolean value to specify whether to include the files
     present within the subdirectories.
     """
@@ -104,9 +101,9 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
             constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
         )
 
-        # Returns a tuple to not disrupt the proper functioning of
-        # the function if the  `yield from` statement is to be
-        # executed in case the function is executed recursively.
+        # Yields from a tuple to not disrupt the proper functioning of
+        # the function if the `yield from get_files(...)` statement is
+        # to be executed in case the function is executed recursively.
         yield from ()
 
 
@@ -117,7 +114,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
     subdirectories if `recursive` is set to `True`.
 
     #### Params:
-    - directory (pathlib.Path): Path of the directory to be processed.
+    - directory (pathlib.Path): Path to the directory.
     - recursive (bool): Boolean value to specify whether to include the files
     present within the subdirectories.
     """
@@ -137,53 +134,47 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
             constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
         )
 
-        # Returns a tuple to not disrupt the proper functioning of
-        # the function if the  `yield from` statement is to be
-        # executed in case the function is executed recursively.
+        # Yields from a tuple to not disrupt the proper functioning of the
+        # function if the `yield from get_directories(...)` statement is
+        # to be executed in case the function is executed recursively.
         yield from ()
 
 
-def export_to_file(data: pd.DataFrame, path: str) -> None:
+def export_to_file(data: pd.DataFrame, file: Path) -> None:
     """
     Exports search data to the specified file in a suitable format.
 
     #### Params:
     - data (pd.DataFrame): pandas DataFrame comprising search records.
-    - path (str): string representation of the file path.
+    - file (Path): Path to the file.
     """
 
-    file: Path = Path(path)
-
     if file.is_file():
-        print(
-            "Error: The specified path for exporting search"
+        raise OperationError(
+            "The specified path for exporting search "
             "records must not direct to an existing file."
         )
-        sys.exit(1)
 
     elif not file.parent.exists():
-        print(
-            f"Error: The specified directory '{file.parent}'"
+        raise OperationError(
+            f"The specified directory '{file.parent}' "
             "for exporting search records cannot be found."
         )
-        sys.exit(1)
 
-    # String representation of the export method used for exporting
+    # String representation of the export method used exporting
     # the pandas DataFrame comprising the search data records.
     export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
 
-    # Converts datetime objects in datetime column into string
-    # objects for better representation in excel files.
+    if not export_method:
+        raise OperationError(
+            f"{file.suffix!r} file type is not supported for exporting search records."
+        )
+
+    # Converts datetime objects in datetime columns into string
+    # objects for better representation in Excel files.
     if export_method == "to_excel":
         for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
             data[col] = data[col].map(lambda dt: str(dt))
-
-    if not export_method:
-        print(
-            f"Error: {file.suffix!r} file type is not"
-            "supported for search records export."
-        )
-        sys.exit(1)
 
     # Exporting the search data to the specified file with a suitable method.
     getattr(data, export_method)(file)
@@ -239,7 +230,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
         conn.connect()
 
     except OperationalError:
-        OperationError(f"Unable to connect to {database} database.")
+        raise OperationError(f"Unable to connect to {database!r} database.")
 
     else:
         # Prompts for data replacement if the specified table already exists in the database.

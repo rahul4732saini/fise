@@ -15,26 +15,23 @@ class QueryHandleError(Exception):
     Exception raised when there is an error handling the query.
     """
 
-
-class BaseError:
-    """
-    BaseError class serves as a base class for all error classes.
-    """
-
     _error: str
 
-    def __init__(self, description: str) -> None:
+    def __init__(self, description: str = "") -> None:
+
+        # Only prints the error description if specified
+        # explicitly else prints any empty string.
+        if description:
+            description = "\nDescription: " + description
+
         print(
-            constants.COLOR_RED % f"{self._error}\nDescription: {description}",
+            constants.COLOR_RED % f"{self._error}{description}",
             file=sys.stderr,
         )
-
-        # Raises an exception to terminate the process. To be handled
-        # by another module to start a new query handling process.
-        raise QueryHandleError
+        super().__init__()
 
 
-class QueryParseError(BaseError):
+class QueryParseError(QueryHandleError):
     """
     Exception raised when there is an error in parsing the query.
     """
@@ -42,7 +39,7 @@ class QueryParseError(BaseError):
     _error = "QueryParseError: There was an error in parsing the query."
 
 
-class OperationError(BaseError):
+class OperationError(QueryHandleError):
     """
     Exception raised when there is an error in processing the query.
     """

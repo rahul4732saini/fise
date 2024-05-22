@@ -34,22 +34,21 @@ class File(Entity):
 
     @property
     def access_time(self) -> datetime | None:
-        try:
-            return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
-        except OSError:
-            ...
+        return self._get_datetime(self._stats.st_atime)
 
     @property
     def create_time(self) -> datetime | None:
-        try:
-            return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
-        except OSError:
-            ...
+        return self._get_datetime(self._stats.st_ctime)
 
     @property
     def modify_time(self) -> datetime | None:
+        return self._get_datetime(self._stats.st_mtime)
+
+    @staticmethod
+    def _get_datetime(timestamp: int) -> datetime:
+        """Creates a `datetime.datetime` object from the specified timestamp."""
         try:
-            return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
+            return datetime.fromtimestamp(timestamp).replace(microsecond=0)
         except OSError:
             ...
 

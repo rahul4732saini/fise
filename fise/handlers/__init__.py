@@ -40,7 +40,7 @@ class QueryHandler:
     __slots__ = "_query", "_current_query"
 
     # Regular expression patterns for parsing sub-queries.
-    _export_subquery_pattern = re.compile(rf"^sql(\[({'|'.join(constants.DATABASES)})]|)$")
+    _export_subquery_pattern = re.compile(rf"^sql(\[(mysql|postgresql|sqlite)]|)$")
     _operation_params_pattern = re.compile(r"^(\[.*]|)$")
 
     def __init__(self, query: str) -> None:

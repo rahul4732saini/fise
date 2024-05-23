@@ -20,7 +20,9 @@ POSIX_FIELDS = set() if sys.platform == "win32" else {"owner", "group"}
 # Search query fields for various query types.
 DIR_FIELDS = POSIX_FIELDS | {"path", "parent", "name", "permissions"}
 DATA_FIELDS = {"name", "path", "dataline", "lineno"}
-FILE_FIELDS = DIR_FIELDS | {"size", "access_time", "create_time", "modify_time"}
+FILE_FIELDS = DIR_FIELDS | {
+    "size", "access_time", "create_time", "modify_time", "filetype"
+}
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = Literal["file", "data", "dir"]

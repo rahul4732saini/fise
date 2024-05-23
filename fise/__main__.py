@@ -10,7 +10,7 @@ import pandas as pd
 from version import version
 from common import constants
 from handlers import QueryHandler
-from errors import QueryHandleError
+from errors import QueryHandleError, Alert
 
 
 def enable_readline() -> None:
@@ -48,9 +48,8 @@ def evaluate_query() -> None:
     if data is not None:
 
         if data.shape[0] > 30:
-            print(
-                constants.COLOR_YELLOW
-                % "Displaying a compressed output of the dataset. "
+            Alert(
+                "Displaying a compressed output of the dataset. "
                 "Export the records for a more detailed view."
             )
 

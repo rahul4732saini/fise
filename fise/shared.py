@@ -28,6 +28,8 @@ class File(Entity):
     related to a file `pathlib.Path` and `os.stat_result` object.
     """
 
+    __slots__ = "_path", "_stats"
+
     @property
     def size(self) -> int | float:
         return self._stats.st_size

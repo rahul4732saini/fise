@@ -17,7 +17,7 @@ from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
 from . import constants
-from errors import OperationError, QueryHandleError
+from errors import OperationError, QueryHandleError, Alert
 
 
 def parse_query(query: str) -> list[str]:
@@ -97,9 +97,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
                 yield from get_files(path, recursive)
 
     except PermissionError:
-        print(
-            constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
-        )
+        Alert(f"Permission Error: Skipping directory {directory}")
 
         # Yields from a tuple to not disrupt the proper functioning of
         # the function if the `yield from get_files(...)` statement is
@@ -130,9 +128,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
             yield path
 
     except PermissionError:
-        print(
-            constants.COLOR_YELLOW % f"Permission Error: Skipping directory {directory}"
-        )
+        Alert(f"Permission Error: Skipping directory {directory}")
 
         # Yields from a tuple to not disrupt the proper functioning of the
         # function if the `yield from get_directories(...)` statement is

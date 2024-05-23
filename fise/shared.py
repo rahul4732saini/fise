@@ -29,6 +29,10 @@ class File(Entity):
     """
 
     __slots__ = "_path", "_stats"
+    
+    @property
+    def filetype(self) -> str:
+        return self._path.suffix
 
     @property
     def size(self) -> int | float:

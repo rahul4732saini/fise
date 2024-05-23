@@ -74,11 +74,13 @@ class QueryHandler:
 
             # Calls the corresponding handler method, extracts, and stores the
             # search records if search operation is specified else stores `None`.
-            data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
+            data: pd.DataFrame | None = handler_map[initials.operation.operand](
+                initials
+            )
 
             if not initials.export or initials.operation == "remove":
                 return data
-            
+
             if initials.export.type_ == "file":
                 tools.export_to_file(data, initials.export.target)
 
@@ -93,9 +95,7 @@ class QueryHandler:
         parser = FileQueryParser(self._current_query, initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
-        operator = FileQueryOperator(
-            query.path, initials.recursive, query.is_absolute
-        )
+        operator = FileQueryOperator(query.path, initials.recursive, query.is_absolute)
 
         if initials.operation.operation == "search":
             return operator.get_dataframe(query.fields, query.columns, query.condition)
@@ -158,9 +158,7 @@ class QueryHandler:
         # Verify semantic aspects of the query for further processing
         if export:
             if operation.operation == "remove":
-                QueryParseError(
-                    "Cannot export data with delete operation."
-                )
+                QueryParseError("Cannot export data with delete operation.")
 
             elif (
                 operation.operand == "data"
@@ -169,7 +167,7 @@ class QueryHandler:
             ):
                 QueryParseError(
                     "Exporting binary data to SQL databases is currently unsupported."
-                ) 
+                )
 
         return QueryInitials(operation, recursive, export)
 
@@ -189,7 +187,9 @@ class QueryHandler:
         params: Generator[str, None, None] = (
             # Lowers and splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
-            i.strip() for i in self._current_query[0][7:-1].lower().split(",") if i
+            i.strip()
+            for i in self._current_query[0][7:-1].lower().split(",")
+            if i
         )
 
         # Iterates through the parameters and parses them.
@@ -197,21 +197,19 @@ class QueryHandler:
             param = param.split(" ")
 
             if len(param) != 2:
-                QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}")
+                QueryParseError(
+                    f"Invalid query syntax around {self._current_query[0]!r}"
+                )
 
             if param[0] == "type":
                 if param[1] not in constants.SEARCH_QUERY_OPERANDS:
-                    QueryParseError(
-                        f"Invalid value {param[1]!r} for 'type' parameter."
-                    )
+                    QueryParseError(f"Invalid value {param[1]!r} for 'type' parameter.")
 
                 operand = param[1]
 
             elif param[0] == "mode":
                 if param[1] not in constants.FILE_MODES_MAP:
-                    QueryParseError(
-                        f"Invalid value {param[1]!r} for 'mode' parameter."
-                    )
+                    QueryParseError(f"Invalid value {param[1]!r} for 'mode' parameter.")
 
                 filemode = param[1]
 
@@ -227,7 +225,7 @@ class QueryHandler:
             filemode = "text"
 
         return OperationData("search", operand, filemode)
-    
+
     def _parse_delete_operation(self):
         """
         Parses the delete operation subquery.
@@ -244,7 +242,9 @@ class QueryHandler:
         params: Generator[str, None, None] = (
             # Lowers and splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
-            i.strip() for i in self._current_query[0][7:-1].lower().split(",") if i
+            i.strip()
+            for i in self._current_query[0][7:-1].lower().split(",")
+            if i
         )
 
         # Iterates through the parameters and parses them.
@@ -253,9 +253,7 @@ class QueryHandler:
 
             if param[0] == "type":
                 if param[1] not in constants.DELETE_QUERY_OPERANDS:
-                    QueryParseError(
-                        f"Invalid value {param[1]!r} for 'type' parameter."
-                    )
+                    QueryParseError(f"Invalid value {param[1]!r} for 'type' parameter.")
 
                 operand = param[1]
 
@@ -272,7 +270,8 @@ class QueryHandler:
         """
 
         parser_map: dict[str, Callable[[], OperationData]] = {
-            "select": self._parse_search_operation, "delete": self._parse_delete_operation
+            "select": self._parse_search_operation,
+            "delete": self._parse_delete_operation,
         }
 
         operation: str = self._current_query[0][:6].lower()
@@ -285,7 +284,7 @@ class QueryHandler:
 
         except IndexError:
             QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}")
-        
+
         else:
             return data
 
@@ -299,18 +298,11 @@ class QueryHandler:
 
         if query[1].lower().startswith("sql"):
             if not self._export_subquery_pattern.match(query[1].lower()):
-                QueryParseError(
-                    "Unable to parse SQL database name."
-                )
+                QueryParseError("Unable to parse SQL database name.")
 
             return ExportData("database", query[1][4:-1])
 
+        # The export is assumed to be directing to
+        # a file if none of the above are matched.
         else:
-            path: Path = Path(query[1])
-
-            if path.is_file():
-                QueryParseError(
-                    "The path specified for exporting search records must not be an existing file."
-                )
-
-            return ExportData("file", path)
+            return ExportData("file", Path(query[1]))

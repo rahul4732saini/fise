@@ -64,6 +64,7 @@ FILE_FIELD_ALIASES = {
     "mtime": "modify_time",
     "ctime": "create_time",
     "perms": "permissions",
+    "type": "filetype",
 }
 
 DATA_FIELD_ALIASES = {

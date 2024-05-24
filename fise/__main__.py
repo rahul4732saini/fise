@@ -13,9 +13,13 @@ from handlers import QueryHandler
 from errors import QueryHandleError, Alert
 
 
+EXIT = {"exit", "quit"}
+CLEAR = {r"\c", "clear"}
+
+
 def enable_readline() -> None:
     """
-    Enables readline functionality for enhanced input handling in Linux terminal.
+    Enables readline functionality for enhanced input handling in Linux/Mac terminal.
     """
     import readline
 
@@ -24,19 +28,20 @@ def enable_readline() -> None:
 
 def evaluate_query() -> None:
     """
-    Inputs the evaluates the used specified query.
+    Inputs the evaluates the user specified query.
     """
+    global EXIT, CLEAR
 
-    query: str = input("FiSE>")
+    query: str = input("FiSE> ")
     start_time: float = time.perf_counter()
 
     if not query:
         return
 
-    elif query.lower() in ("exit", "quit"):
+    elif query.lower() in EXIT:
         sys.exit(0)
 
-    elif query.lower() in (r"\c", "clear"):
+    elif query.lower() in CLEAR:
         return print("\033c", end="")
 
     # If none of the above are matched, the input is
@@ -60,6 +65,8 @@ def evaluate_query() -> None:
 
 
 def main() -> None:
+    """Main function for program execution."""
+
     while True:
         try:
             evaluate_query()

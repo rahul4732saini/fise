@@ -89,7 +89,7 @@ class ConditionHandler:
                     return datetime.strptime(operand, r"%Y-%m-%d")
 
                 except ValueError:
-                    QueryParseError(
+                    raise QueryParseError(
                         f"Invalid datetime format around {''.join(self._query)}"
                     )
 
@@ -127,7 +127,7 @@ class ConditionHandler:
         # out of the string formatted tuple.
         else:
             if not self._tuple_pattern.match(operand):
-                QueryParseError(
+                raise QueryParseError(
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )
 
@@ -139,7 +139,7 @@ class ConditionHandler:
             ]
 
             if operator == "between" and len(operand) != 2:
-                QueryParseError(
+                raise QueryParseError(
                     "The tuple specified for `BETWEEN` conditional "
                     "operation must only comprises two elements."
                 )
@@ -161,14 +161,16 @@ class ConditionHandler:
             )
 
         elif length < 3:
-            QueryParseError(f"Invalid query syntax around {' '.join(condition)}")
+            raise QueryParseError(f"Invalid query syntax around {' '.join(condition)}")
 
         for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
             if condition[1] == i:
                 operator: str = i
                 break
         else:
-            QueryParseError(f"Invalid query syntax around {' '.join(self._query)!r}")
+            raise QueryParseError(
+                f"Invalid query syntax around {' '.join(self._query)!r}"
+            )
 
         operand1 = self._parse_comparison_operand(condition[0])
         operand2 = (
@@ -221,7 +223,7 @@ class ConditionHandler:
                 operand = getattr(obj, self._aliases.get(field, field))
 
             except AttributeError:
-                QueryParseError(
+                raise QueryParseError(
                     f"Invalid field {operand.field!r} specified in query conditions."
                 )
 
@@ -269,7 +271,7 @@ class ConditionHandler:
             # of the operator in the `_method_map` instance attribute.
             response: bool = self._method_map[condition.operator](operand1, operand2)
         except (TypeError, ValueError):
-            OperationError("Unable to process the query conditions.")
+            raise OperationError("Unable to process the query conditions.")
 
         else:
             return response

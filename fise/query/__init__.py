@@ -63,7 +63,7 @@ class QueryHandler:
             initials: QueryInitials = self._parse_initials()
 
         except IndexError:
-            QueryParseError("Invalid query syntax.")
+            raise QueryParseError("Invalid query syntax.")
 
         else:
             handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
@@ -158,14 +158,14 @@ class QueryHandler:
         # Verify semantic aspects of the query for further processing
         if export:
             if operation.operation == "remove":
-                QueryParseError("Cannot export data with delete operation.")
+                raise QueryParseError("Cannot export data with delete operation.")
 
             elif (
                 operation.operand == "data"
                 and operation.filemode == "bytes"
                 and export.type_ == "database"
             ):
-                QueryParseError(
+                raise QueryParseError(
                     "Exporting binary data to SQL databases is currently unsupported."
                 )
 
@@ -181,7 +181,9 @@ class QueryHandler:
 
         # Verifying operation parameters syntax.
         if not self._operation_params_pattern.match(self._current_query[0][6:]):
-            QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}.")
+            raise QueryParseError(
+                f"Invalid query syntax around {self._current_query[0]!r}."
+            )
 
         # Generator of operation parameters.
         params: Generator[str, None, None] = (
@@ -197,27 +199,33 @@ class QueryHandler:
             param = param.split(" ")
 
             if len(param) != 2:
-                QueryParseError(
+                raise QueryParseError(
                     f"Invalid query syntax around {self._current_query[0]!r}"
                 )
 
             if param[0] == "type":
                 if param[1] not in constants.SEARCH_QUERY_OPERANDS:
-                    QueryParseError(f"Invalid value {param[1]!r} for 'type' parameter.")
+                    raise QueryParseError(
+                        f"Invalid value {param[1]!r} for 'type' parameter."
+                    )
 
                 operand = param[1]
 
             elif param[0] == "mode":
                 if param[1] not in constants.FILE_MODES_MAP:
-                    QueryParseError(f"Invalid value {param[1]!r} for 'mode' parameter.")
+                    raise QueryParseError(
+                        f"Invalid value {param[1]!r} for 'mode' parameter."
+                    )
 
                 filemode = param[1]
 
             else:
-                QueryParseError(f"Invalid parameter {param[0]!r} for search operation.")
+                raise QueryParseError(
+                    f"Invalid parameter {param[0]!r} for search operation."
+                )
 
         if operand != "data" and filemode:
-            QueryParseError(
+            raise QueryParseError(
                 "The 'mode' parameter is only valid for filedata search operations."
             )
 
@@ -236,7 +244,9 @@ class QueryHandler:
 
         # Verifying operation parameters syntax.
         if not self._operation_params_pattern.match(self._current_query[0][6:]):
-            QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}.")
+            raise QueryParseError(
+                f"Invalid query syntax around {self._current_query[0]!r}."
+            )
 
         # Generator of operation parameters.
         params: Generator[str, None, None] = (
@@ -253,14 +263,18 @@ class QueryHandler:
 
             if param[0] == "type":
                 if param[1] not in constants.DELETE_QUERY_OPERANDS:
-                    QueryParseError(f"Invalid value {param[1]!r} for 'type' parameter.")
+                    raise QueryParseError(
+                        f"Invalid value {param[1]!r} for 'type' parameter."
+                    )
 
                 operand = param[1]
 
             elif param[0] == "skip_err":
                 skip_err = True
             else:
-                QueryParseError(f"Invalid parameter {param[0]!r} for search operation.")
+                raise QueryParseError(
+                    f"Invalid parameter {param[0]!r} for search operation."
+                )
 
         return OperationData("remove", operand, skip_err=skip_err)
 
@@ -277,13 +291,15 @@ class QueryHandler:
         operation: str = self._current_query[0][:6].lower()
 
         if operation not in constants.OPERATION_ALIASES:
-            QueryParseError(f"Invalid operation specified: {operation!r}")
+            raise QueryParseError(f"Invalid operation specified: {operation!r}")
 
         try:
             data: OperationData = parser_map[operation]()
 
         except IndexError:
-            QueryParseError(f"Invalid query syntax around {self._current_query[0]!r}")
+            raise QueryParseError(
+                f"Invalid query syntax around {self._current_query[0]!r}"
+            )
 
         else:
             return data
@@ -298,7 +314,7 @@ class QueryHandler:
 
         if query[1].lower().startswith("sql"):
             if not self._export_subquery_pattern.match(query[1].lower()):
-                QueryParseError("Unable to parse SQL database name.")
+                raise QueryParseError("Unable to parse SQL database name.")
 
             return ExportData("database", query[1][4:-1])
 

@@ -114,7 +114,7 @@ class Size:
     """
 
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(
-        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]|)$"
+        rf"^size\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]?$"
     )
 
     unit: str
@@ -139,7 +139,7 @@ class Field:
     Field class stores individual query condition fields.
     """
 
-    field: str
+    field: str | Size
 
 
 @dataclass(slots=True, frozen=True, eq=False)

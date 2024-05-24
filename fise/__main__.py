@@ -9,7 +9,7 @@ import pandas as pd
 
 from version import version
 from notify import Message, Alert
-from handlers import QueryHandler
+from query import QueryHandler
 from errors import QueryHandleError
 
 

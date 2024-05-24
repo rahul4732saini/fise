@@ -7,7 +7,6 @@ FiSE project to handle various exceptional scenarios.
 """
 
 import sys
-from common import constants
 
 
 class QueryHandleError(Exception):
@@ -25,7 +24,7 @@ class QueryHandleError(Exception):
             description = "\nDescription: " + description
 
         print(
-            constants.COLOR_RED % f"{self._error}{description}",
+            f"\033[31m{self._error}{description}\033[0m",
             file=sys.stderr,
         )
         super().__init__()

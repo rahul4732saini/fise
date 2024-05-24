@@ -81,7 +81,7 @@ def main() -> None:
             ...
 
         except Exception as e:
-            QueryHandleError(e)
+            raise QueryHandleError(e)
 
 
 if __name__ == "__main__":

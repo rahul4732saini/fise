@@ -29,7 +29,7 @@ class File(Entity):
     """
 
     __slots__ = "_path", "_stats"
-    
+
     @property
     def filetype(self) -> str | None:
         return self._path.suffix or None

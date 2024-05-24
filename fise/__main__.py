@@ -8,9 +8,9 @@ import time
 import pandas as pd
 
 from version import version
-from common import constants
+from notify import Message, Alert
 from handlers import QueryHandler
-from errors import QueryHandleError, Alert
+from errors import QueryHandleError
 
 
 EXIT = {"exit", "quit"}
@@ -61,7 +61,7 @@ def evaluate_query() -> None:
         print(data if not data.empty else "Empty Dataset")
 
     elapsed: float = time.perf_counter() - start_time
-    print(constants.COLOR_GREEN % f"Completed in {elapsed:.2f} seconds")
+    Message(f"Completed in {elapsed:.2f} seconds")
 
 
 def main() -> None:
@@ -81,8 +81,7 @@ def main() -> None:
             ...
 
         except Exception as e:
-            print(e)
-            # TODO: Unexpected exceptions handling.
+            QueryHandleError(e)
 
 
 if __name__ == "__main__":

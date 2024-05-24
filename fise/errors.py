@@ -45,12 +45,3 @@ class OperationError(QueryHandleError):
     """
 
     _error = "OperationError: There was an error in processing the query."
-
-
-class Alert:
-    """
-    Prints an alert message to the terminal window.
-    """
-    
-    def __init__(self, mesg: str) -> None:
-        print(constants.COLOR_YELLOW % mesg)

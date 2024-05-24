@@ -9,11 +9,6 @@ classes and functions defined within the project.
 import sys
 from typing import Literal
 
-# Templates for colored strings.
-COLOR_RED = "\033[31m%s\033[0m"
-COLOR_YELLOW = "\033[33m%s\033[0m"
-COLOR_GREEN = "\033[32m%s\033[0m"
-
 # Includes additional fields if the operating system is not windows.
 POSIX_FIELDS = set() if sys.platform == "win32" else {"owner", "group"}
 

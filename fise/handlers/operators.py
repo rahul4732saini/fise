@@ -1,9 +1,9 @@
 """
 Operators Module
-------------
+----------------
 
-This module comprises objects and methods for processing user queries and
-conducting file/directory search/delete operations within a specified directory.
+This module comprises classes for processing user queries and conducting
+file/directory search/delete operations within a specified directory.
 It also comprises objects for performing search operations within files.
 """
 
@@ -14,6 +14,7 @@ import shutil
 import pandas as pd
 
 from errors import OperationError
+from notify import Message, Alert
 from common import tools, constants
 from shared import File, Directory, DataLine, Field, Size
 
@@ -30,11 +31,11 @@ class FileQueryOperator:
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
-        - directory (Path): Path of the directory to be processed.
+        - directory (Path): Path to the directory.
         - recursive (bool): Boolean value to specify whether to include the files
         present within the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
-        absolute path of the files.
+        absolute path to the files.
         """
 
         self._directory = directory
@@ -46,19 +47,21 @@ class FileQueryOperator:
     @staticmethod
     def _get_field(field: Field, file: File) -> Any:
         """
-        Extracts individual fields from the specified `File` object.
+        Extracts the specified field from the specified `File` object.
 
         #### Params:
         - field (Field): `Field` object comprising the field to be extracted.
         - file (File): `File` object to extract data from.
         """
 
+        # TODO: Extend the functionality to support custom
+        # query functions evaluation in version 0.1.1
+
         if isinstance(field.field, Size):
             # Extracts the size in bytes and converts into the parsed size unit.
             return getattr(file, "size") / constants.SIZE_CONVERSION_MAP.get(
                 field.field.unit
             )
-
         else:
             return getattr(file, field.field)
 
@@ -69,12 +72,12 @@ class FileQueryOperator:
         condition: Callable[[File], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the fields specified
-        of all the files present within the specified directory.
+        Returns a pandas DataFrame comprising the search records of all the
+        files matching the specified condition present within the directory.
 
         #### Params:
         - fields (list[Field]): list of desired file metadata `Field` objects.
-        - columns (list[str]): list of columns to be used in records dataframe.
+        - columns (list[str]): list of columns names for the specified fields.
         - condition (Callable): function for filtering search records.
         """
 
@@ -93,15 +96,16 @@ class FileQueryOperator:
             columns=columns,
         )
 
-        # Renames the column `size` -> `size[<size_unit>]` to
-        # also include the storage unit if not done explicitly.
+        # Renames the column `size` -> `size[<size_unit>]` to also include
+        # the storage unit if not specified explicitly in the field name.
         records.rename(columns={"size": f"size[B]"}, inplace=True)
 
         return records
 
     def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """
-        Removes all the files present within the specified directory.
+        Removes all the files present within the
+        directory matching the specified condition.
 
         #### Params:
         - condition (Callable): function for filtering search records.
@@ -109,10 +113,9 @@ class FileQueryOperator:
         permission errors while removing files.
         """
 
-        # `ctr` counts the number of files removed.
-        # `skipped` counts the number of skipped files if `skip_err` set to `True`.
-        ctr = 0
-        skipped = 0
+        # `ctr` counts the number of files removed whereas `skipped` counts
+        # the number of skipped files if `skip_err` set to `True`.
+        ctr = skipped = 0
 
         # Iterates through the files and removes them is the condition is met.
         for file in tools.get_files(self._directory, self._recursive):
@@ -127,7 +130,9 @@ class FileQueryOperator:
                     skipped += 1
                     continue
 
-                OperationError(f"Not enough permissions to delete '{file.absolute()}'.")
+                raise OperationError(
+                    f"Not enough permissions to delete '{file.absolute()}'."
+                )
 
             else:
                 ctr += 1
@@ -135,23 +140,17 @@ class FileQueryOperator:
         # Extracts the absolute path to the directory and stores it locally.
         directory: Path = self._directory.absolute()
 
-        print(
-            constants.COLOR_GREEN
-            % f"Successfully removed {ctr} files from {directory}."
-        )
+        Message(f"Successfully removed {ctr} files from {directory}.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
-            print(
-                constants.COLOR_YELLOW
-                % f"Skipped {skipped} files from {directory} due to permission errors."
-            )
+            Alert(f"Skipped {skipped} files from {directory} due to permission errors.")
 
 
 class FileDataQueryOperator:
     """
     FileDataQueryOperator defines methods for performing
-    text data search operations within files.
+    file-content(text/bytes) search operations.
     """
 
     __slots__ = "_path", "_recursive", "_filemode"
@@ -167,11 +166,11 @@ class FileDataQueryOperator:
         Creates an instance of the `FileDataQueryOperator` class.
 
         #### Params:
-        - path (pathlib.Path): Path of the file/directory to be processed.
+        - path (pathlib.Path): Path to the file/directory.
         - recursive (bool): Boolean value to specify whether to include the files
-        present within the subdirectories if the specified path is a directory.
+        present within the subdirectories (only if the specified path is a directory).
         - absolute (bool): Boolean value to specify whether to include the
-        absolute path of the files.
+        absolute path to the files.
         - filemode (str): desired filemode to read files.
         """
 
@@ -182,11 +181,10 @@ class FileDataQueryOperator:
         if absolute:
             self._path = self._path.absolute()
 
-    def _get_filedata(self) -> Generator[tuple[Path, list[str]], None, None]:
+    def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """
-        Yields the file `pathlib.Path` object and a list of strings
-        representing the lines of text from each file. Each string in
-        the list corresponds to an individual line of text in the file.
+        Yields the file `pathlib.Path` object and a list of strings/bytes
+        corresponding to individual lines of text/bytes in the file.
         """
 
         # Generator object of `pathlib.Path` objects of all the files present within
@@ -205,8 +203,7 @@ class FileDataQueryOperator:
     def _search_datalines(self) -> Generator[DataLine, None, None]:
         """
         Iterates through each file and its corresponding data-lines,
-        yielding `DataLine` objects comprising the metadata of the
-        data-lines.
+        yielding `DataLine` objects comprising the data and its metadata.
         """
 
         for file, data in self._get_filedata():
@@ -217,14 +214,15 @@ class FileDataQueryOperator:
     @staticmethod
     def _get_field(field: Field, data: DataLine) -> Any:
         """
-        Extracts individual fields from the specified `DataLine` object.
+        Extracts the specified field from the specified `DataLine` object.
 
         #### Params:
         - field (Field): `Field` object comprising the field to be extracted.
         - data (DataLine): `DataLine` object to extract data from.
         """
 
-        # TODO: Extend the functionality to support custom query functions evaluation.
+        # TODO: Extend the functionality to support custom
+        # query functions evaluation in version 0.1.1
         return getattr(data, field.field)
 
     def get_dataframe(
@@ -234,12 +232,11 @@ class FileDataQueryOperator:
         condition: Callable[[DataLine], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the specified fields
-        of all the datalines present within the specified file(s)
-        matching the specified condition.
+        Returns a pandas DataFrame comprising the search records of all the
+        datalines matching the specified condition present within the file(s).
 
         #### Params:
-        - fields (list[str]): list of desired file metadata fields.
+        - fields (list[str]): list of the desired metadata fields.
         - condition (Callable): function for filtering search records.
         """
 
@@ -258,7 +255,7 @@ class FileDataQueryOperator:
 class DirectoryQueryOperator:
     """
     DirectoryQueryOperator defines methods for performing
-    directory search/delete operations within files.
+    directory search/delete operations.
     """
 
     __slots__ = "_directory", "_recursive"
@@ -268,11 +265,11 @@ class DirectoryQueryOperator:
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
-        - directory (Path): Path of the directory to be processed.
+        - directory (Path): Path to the directory.
         - recursive (bool): Boolean value to specify whether to include the
         files present within the subdirectories.
         - absolute (bool): Boolean value to specify whether to include the
-        absolute path of the files.
+        absolute path to the files.
         """
 
         self._directory = directory
@@ -284,14 +281,15 @@ class DirectoryQueryOperator:
     @staticmethod
     def _get_field(field: Field, directory: Directory) -> Any:
         """
-        Extracts individual fields from the specified `Directory` object.
+        Extracts the specified field from the specified `Directory` object.
 
         #### Params:
         - field (Field): `Field` object comprising the field to be extracted.
         - directory (Directory): `Directory` object to extract data from.
         """
 
-        # TODO: Extend the functionality to support custom query functions evaluation.
+        # TODO: Extend the functionality to support custom
+        # query functions evaluation in version 0.1.1
         return getattr(directory, field.field)
 
     def get_dataframe(
@@ -301,8 +299,8 @@ class DirectoryQueryOperator:
         condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the specified metadata fields
-        of all the subdirectories present within the specified directory.
+        Returns a pandas DataFrame comprising the search records of all the
+        subdirectories matching the specified condition present within the directory.
 
         #### Params:
         - fields (list[str]): list of desired directory metadata fields.
@@ -316,7 +314,7 @@ class DirectoryQueryOperator:
 
         # Creates a pandas DataFrame out of a Generator object
         # comprising records of the specified fields.
-        records = pd.DataFrame(
+        return pd.DataFrame(
             (
                 [self._get_field(field, directory) for field in fields]
                 for directory in directories
@@ -325,40 +323,38 @@ class DirectoryQueryOperator:
             columns=columns,
         )
 
-        return records
-
     def remove_directories(
         self, condition: Callable[[Directory], bool], skip_err: bool
     ) -> None:
         """
         Removes all the subdirectories present within the
-        specified directory matching the specified condition.
+        directory matching the specified condition.
 
         #### Params:
         - condition (Callable): function for filtering directory records.
         - skip_err (bool): Boolean value to specify whether to supress
-        permission errors while removing files.
+        permission errors while removing subdirectories.
         """
 
-        # `ctr` counts the number of files removed.
-        # `skipped` counts the number of skipped files if `skip_err` set to `True`.
-        ctr = 0
-        skipped = 0
+        # `ctr` counts the number of directories removed whereas `skipped` counts
+        # the number of skipped directories if `skip_err` set to `True`.
+        ctr = skipped = 0
 
         # Iterates through the directories and removes them is the condition is met.
-        for directory in tools.get_directories(self._directory, self._recursive):
-            if not condition(Directory(directory)):
+        for subdir in tools.get_directories(self._directory, self._recursive):
+            if not condition(Directory(subdir)):
                 continue
 
             try:
-                shutil.rmtree(directory)
+                shutil.rmtree(subdir)
 
             except PermissionError:
                 if skip_err:
+                    skipped += 1
                     continue
 
-                OperationError(
-                    f"Not enough permissions to delete '{directory.absolute()}'."
+                raise OperationError(
+                    f"Permission Error: Cannot delete file {subdir.absolute()}."
                 )
 
             else:
@@ -367,14 +363,10 @@ class DirectoryQueryOperator:
         # Extracts the absolute path to the directory and stores it locally.
         directory: Path = self._directory.absolute()
 
-        print(
-            constants.COLOR_GREEN
-            % f"Successfully removed {ctr} directories from {directory}."
-        )
+        Message(f"Successfully removed {ctr} directories from {directory}.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
-            print(
-                constants.COLOR_YELLOW
-                % f"Skipped {skipped} directories from {directory} due to permission errors."
+            Alert(
+                f"Skipped {skipped} directories from {directory} due to permission errors."
             )

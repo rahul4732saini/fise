@@ -67,13 +67,13 @@ class DataLine:
 
     __slots__ = "_file", "_data", "_lineno"
 
-    def __init__(self, file: Path, data: str, lineno: int) -> None:
+    def __init__(self, file: Path, data: str | bytes, lineno: int) -> None:
         """
         Creates an instance of the `DataLine` class.
 
         #### Params:
         - file (pathlib.Path): path to the file.
-        - data (str): dataline to be stored.
+        - data (str | bytes): dataline to be stored.
         - lineno (int): line number of the dataline.
         """
         self._file = file
@@ -89,7 +89,7 @@ class DataLine:
         return self._file.name
 
     @property
-    def dataline(self) -> str:
+    def dataline(self) -> str | bytes:
         return self._data
 
     @property

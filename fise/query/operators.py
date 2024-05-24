@@ -76,9 +76,9 @@ class FileQueryOperator:
         files matching the specified condition present within the directory.
 
         #### Params:
-        - fields (list[Field]): list of desired file metadata `Field` objects.
-        - columns (list[str]): list of columns names for the specified fields.
-        - condition (Callable): function for filtering search records.
+        - fields (list[Field]): List of desired file metadata `Field` objects.
+        - columns (list[str]): List of columns names for the specified fields.
+        - condition (Callable): Function for filtering search records.
         """
 
         files: Generator[File, None, None] = (
@@ -108,7 +108,7 @@ class FileQueryOperator:
         directory matching the specified condition.
 
         #### Params:
-        - condition (Callable): function for filtering search records.
+        - condition (Callable): Function for filtering search records.
         - skip_err (bool): Boolean value to specify whether to supress
         permission errors while removing files.
         """
@@ -171,7 +171,7 @@ class FileDataQueryOperator:
         present within the subdirectories (only if the specified path is a directory).
         - absolute (bool): Boolean value to specify whether to include the
         absolute path to the files.
-        - filemode (str): desired filemode to read files.
+        - filemode (str): Desired filemode to read files.
         """
 
         self._path = path
@@ -236,8 +236,8 @@ class FileDataQueryOperator:
         datalines matching the specified condition present within the file(s).
 
         #### Params:
-        - fields (list[str]): list of the desired metadata fields.
-        - condition (Callable): function for filtering search records.
+        - fields (list[str]): List of the desired metadata fields.
+        - condition (Callable): Function for filtering search records.
         """
 
         # Returns a pandas DataFrame out of a Generator object
@@ -303,8 +303,8 @@ class DirectoryQueryOperator:
         subdirectories matching the specified condition present within the directory.
 
         #### Params:
-        - fields (list[str]): list of desired directory metadata fields.
-        - condition (Callable): function for filtering search records.
+        - fields (list[str]): List of desired directory metadata fields.
+        - condition (Callable): Function for filtering search records.
         """
 
         directories: Generator[Directory, None, None] = (
@@ -331,7 +331,7 @@ class DirectoryQueryOperator:
         directory matching the specified condition.
 
         #### Params:
-        - condition (Callable): function for filtering directory records.
+        - condition (Callable): Function for filtering directory records.
         - skip_err (bool): Boolean value to specify whether to supress
         permission errors while removing subdirectories.
         """

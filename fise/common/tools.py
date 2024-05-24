@@ -98,7 +98,7 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
                 yield from get_files(path, recursive)
 
     except PermissionError:
-        Alert(f"Permission Error: Skipping directory {directory}")
+        Alert(f"Permission Error: Skipping directory '{directory}'")
 
         # Yields from a tuple to not disrupt the proper functioning of
         # the function if the `yield from get_files(...)` statement is
@@ -129,7 +129,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
             yield path
 
     except PermissionError:
-        Alert(f"Permission Error: Skipping directory {directory}")
+        Alert(f"Permission Error: Skipping directory '{directory}'")
 
         # Yields from a tuple to not disrupt the proper functioning of the
         # function if the `yield from get_directories(...)` statement is
@@ -164,7 +164,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
 
     if not export_method:
         raise OperationError(
-            f"{file.suffix!r} file type is not supported for exporting search records."
+            f"'{file.suffix!r}' file type is not supported for exporting search records."
         )
 
     # Converts datetime objects in datetime columns into string

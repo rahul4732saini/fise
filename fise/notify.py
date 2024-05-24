@@ -6,18 +6,16 @@ This modules comprises class for displaying alerts
 and notifications on the command-line interface.
 """
 
-from common import constants
-
 
 class Message:
     """Prints a success message on the terminal window."""
 
     def __init__(self, mesg: str) -> None:
-        print(constants.COLOR_GREEN % mesg)
+        print(f"\033[32m{mesg}\033[0m")
 
 
 class Alert:
     """Prints an alert message on the terminal window."""
 
     def __init__(self, mesg: str) -> None:
-        print(constants.COLOR_YELLOW % mesg)
+        print(f"\033[33m{mesg}\033[0m")

@@ -2,11 +2,10 @@
 Parsers Module
 --------------
 
-This module comprises objects and methods for parsing user
-queries extracting relevant data for further processing.
+This module comprises classes and functions for parsing user queries
+extracting relevant data for further processing and evaluation.
 """
 
-import re
 from pathlib import Path
 from typing import Callable
 
@@ -19,44 +18,45 @@ from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, S
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
     """
     Parses the file/directory path and its type from the specified sub-query.
-    Also returns the index of the file/directory relative to the specified subquery.
+    Also returns the index of the file/directory specification in the query
+    relative to the specified subquery.
     """
 
     if subquery[0].lower() in constants.PATH_TYPES:
+        # Returns a boolean value rather than a string to signify the file/directory type.
         is_absolute: bool = subquery[0].lower() == "absolute"
 
         return is_absolute, Path(subquery[1].strip("'\"")), 1
 
-    # Returns `False` for a relative path type if not specified in query.
+    # Returns `False` for a relative path type as not explicitly specified in query.
     return False, Path(subquery[0].strip("'\"")), 0
 
 
-def _get_from_keyword_index(query: list[str]) -> int:
-    """
-    Returns the index of the 'from' keyword in the file query.
-    """
+def _get_from_keyword_index(subquery: list[str]) -> int:
+    """Returns the index of the `FROM` keyword in the specified subquery."""
 
-    for i, kw in enumerate(query):
+    for i, kw in enumerate(subquery):
         if kw.lower() == "from":
             return i
     else:
-        QueryParseError("Cannot find 'FROM' keyword in the query.")
+        raise QueryParseError("Cannot find 'FROM' keyword in the query.")
 
 
 def _get_condition_handler(
     subquery: list[str],
 ) -> Callable[[File | DataLine | Directory], bool]:
     """
-    Parses the query conditions subquery and returns a function for filtering records.
+    Parses the conditions defined in the specified subquery
+    and returns a function for filtering records.
     """
 
-    # Returns a lambda function returning `True` by default if no conditions
-    # are explicitly defined to include all the records during operation.
+    # Returns a lambda function returing `True` by default to include all the records
+    # during processing in no conditions are explicitly defined in the specified subquery.
     if not subquery:
         return lambda _: True
 
     if subquery[0].lower() != "where":
-        QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
+        raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
     conditions: list[str] = subquery[1:]
     handler = ConditionHandler(conditions)
@@ -67,34 +67,28 @@ def _get_condition_handler(
 
 class FileQueryParser:
     """
-    FileQueryParser defines methods for parsing
-    file search/delete operation queries.
+    FileQueryParser defines methods for parsing file search/delete queries.
     """
 
     __slots__ = "_query", "_operation", "_from_index"
-
-    _size_field_pattern = re.compile(
-        rf"^size(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]|)$"
-    )
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         """
         Creates an instance of `FileQueryParser` class.
 
         #### Params:
-        - subquery (list[str]): subquery to be parsed.
-        - operation (constants.OPERATIONS): the operation to be performed upon the query.
+        - subquery (list[str]): Subquery to be parsed.
+        - operation (constants.OPERATIONS): The operation to be performed upon the query.
         """
 
-        # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed beforehand and
-        # the remaining is handed and parsed here.
+        # This parser class accepts the subquery and parses only the fields, path-type,
+        # path, and conditions defined within the query. The initials are parsed beforehand.
 
         self._query = subquery
         self._operation = operation
         self._from_index = _get_from_keyword_index(subquery)
 
-    def _parse_fields(self, attrs: str | list[str]) -> tuple[Field, list[str]]:
+    def _parse_fields(self, attrs: str | list[str]) -> tuple[list[Field], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -102,13 +96,14 @@ class FileQueryParser:
         - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        fields, columns = [], []
+        fields: list[Field] = []
+        columns: list[str] = []
         file_fields: set[str] = (
             constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
         )
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).split(","):
+        for field in "".join(attrs).lower().split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.FILE_FIELDS)
                 columns += constants.FILE_FIELDS
@@ -125,21 +120,20 @@ class FileQueryParser:
                 columns.append(field)
 
             else:
-                QueryParseError(
+                raise QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
         return fields, columns
 
-    @staticmethod
-    def _parse_directory(subquery: list[str]) -> tuple[Path, bool, int]:
+    def _parse_directory(self) -> tuple[Path, bool, int]:
         """
-        Parses the directory path and its type from the specified sub-query.
+        Parses the directory path and its metadata.
         """
-        is_absolute, path, index = _parse_path(subquery)
+        is_absolute, path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not path.is_dir():
-            QueryParseError("The specified path for lookup must be a directory.")
+            raise QueryParseError("The specified path for lookup must be a directory.")
 
         return path, is_absolute, index
 
@@ -149,11 +143,13 @@ class FileQueryParser:
         """
 
         if self._from_index != 0:
-            QueryParseError("Cannot find 'FROM' keyword in the query.")
+            raise QueryParseError("Invalid query syntax.")
 
-        path, is_absolute, index = self._parse_directory(self._query[1:])
-        condition: Callable[[File], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :]
+        path, is_absolute, index = self._parse_directory()
+
+        # Extracts the function for filtering file records.
+        condition: Callable[[File | DataLine | Directory], bool] = (
+            _get_condition_handler(self._query[self._from_index + index + 2 :])
         )
 
         return DeleteQuery(path, is_absolute, condition)
@@ -164,19 +160,18 @@ class FileQueryParser:
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, is_absolute, index = self._parse_directory(
-            self._query[self._from_index + 1 :]
-        )
+        path, is_absolute, index = self._parse_directory()
 
-        condition: Callable[[File], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :]
+        # Extracts the function for filtering file records.
+        condition: Callable[[File | DataLine | Directory], bool] = (
+            _get_condition_handler(self._query[self._from_index + index + 2 :])
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)
 
     def parse_query(self) -> SearchQuery | DeleteQuery:
         """
-        Parses the file search/deletion query.
+        Parses the file search/delete query.
         """
         return (
             self._parse_search_query()
@@ -187,8 +182,7 @@ class FileQueryParser:
 
 class FileDataQueryParser:
     """
-    FileDataQueryParser defines methods for
-    parsing file data search operation queries.
+    FileDataQueryParser defines methods for parsing file data search queries.
     """
 
     __slots__ = "_query", "_from_index"
@@ -198,18 +192,16 @@ class FileDataQueryParser:
         Creates an instance of the `FileDataQueryParser` class.
 
         #### Params:
-        - subquery (list[str]): query to be parsed.
+        - subquery (list[str]): Query to be parsed.
         """
 
-        # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed beforehand and
-        # the remaining is handed and parsed here.
-
+        # This parser class accepts the subquery and parses only the fields, path-type,
+        # path, and conditions defined within the query. The initials are parsed beforehand.
         self._query = subquery
         self._from_index = _get_from_keyword_index(subquery)
 
     @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> tuple[Field, list[str]]:
+    def _parse_fields(attrs: list[str] | str) -> tuple[list[Field], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -217,13 +209,14 @@ class FileDataQueryParser:
         - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        fields, columns = [], []
+        fields: list[Field] = []
+        columns: list[str] = []
         data_fields: set[str] = (
             constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
         )
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).split(","):
+        for field in "".join(attrs).lower().split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.DATA_FIELDS)
                 columns += constants.DATA_FIELDS
@@ -233,21 +226,20 @@ class FileDataQueryParser:
                 columns.append(field)
 
             else:
-                QueryParseError(
+                raise QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
         return fields, columns
 
-    @staticmethod
-    def _parse_path(subquery: list[str]) -> tuple[Path, bool, int]:
+    def _parse_path(self) -> tuple[Path, bool, int]:
         """
-        Parses the file/directory path, its type, and index from the specified sub-query.
+        Parses the file/directory path and its metadata.
         """
-        is_absolute, path, index = _parse_path(subquery)
+        is_absolute, path, index = _parse_path(self._query[self._from_index + 1 :])
 
-        if (path.is_dir() or path.is_file()) is False:
-            QueryParseError(
+        if not (path.is_dir() or path.is_file()):
+            raise QueryParseError(
                 "The specified path for lookup must be a file or directory."
             )
 
@@ -259,10 +251,11 @@ class FileDataQueryParser:
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, is_absolute, index = self._parse_path(self._query[self._from_index + 1 :])
+        path, is_absolute, index = self._parse_path()
 
-        condition: Callable[[DataLine], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :]
+        # Extracts the function for filtering file records.
+        condition: Callable[[File | DataLine | Directory], bool] = (
+            _get_condition_handler(self._query[self._from_index + index + 2 :])
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)
@@ -270,29 +263,25 @@ class FileDataQueryParser:
 
 class DirectoryQueryParser(FileQueryParser):
     """
-    DirectoryQueryParser defines methods for parsing
-    directory search/manipulation operation queries.
+    DirectoryQueryParser defines methods for parsing directory search/delete queries.
     """
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    def __init__(
-        self, subquery: str | list[str], operation: constants.OPERATIONS
-    ) -> None:
+    def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         """
         Creates an instance of the `DirectoryQueryParser` class.
 
         #### Params:
-        - subquery (list[str]): query to be parsed.
-        - operation (constants.OPERATIONS): the operation to be performed upon the query.
+        - subquery (list[str]): Query to be parsed.
+        - operation (constants.OPERATIONS): The operation to be performed upon the query.
         """
 
-        # This parser object accepts the subquery and parses only the fields, directory/file
-        # and conditions defined within the query. The initials are parsed beforehand and
-        # the remaining is handed and parsed here.
+        # This parser class accepts the subquery and parses only the fields, path-type,
+        # path, and conditions defined within the query. The initials are parsed beforehand.
         super().__init__(subquery, operation)
 
-    def _parse_fields(self, attrs: list[str] | str) -> tuple[Field, list[str]]:
+    def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -300,7 +289,8 @@ class DirectoryQueryParser(FileQueryParser):
         - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
         """
 
-        fields, columns = [], []
+        fields: list[Field] = []
+        columns: list[str] = []
         dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
@@ -310,11 +300,11 @@ class DirectoryQueryParser(FileQueryParser):
                 columns += constants.DIR_FIELDS
 
             elif field in dir_fields:
-                fields.append(Field(field))
+                fields.append(Field(constants.DIR_FIELD_ALIASES(field, field)))
                 columns.append(field)
 
             else:
-                QueryParseError(
+                raise QueryParseError(
                     f"Found an invalid field {field!r} in the search query."
                 )
 
@@ -325,13 +315,12 @@ class DirectoryQueryParser(FileQueryParser):
         Parses the directory search query.
         """
 
-        from_index: int = _get_from_keyword_index(self._query)
+        fields, columns = self._parse_fields(self._query[: self._from_index])
+        path, is_absolute, index = self._parse_directory()
 
-        fields, columns = self._parse_fields(self._query[:from_index])
-        path, is_absolute, index = self._parse_directory(self._query[from_index + 1 :])
-
-        condition: Callable[[Directory], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :]
+        # Extracts the function for filtering file records.
+        condition: Callable[[File | DataLine | Directory], bool] = (
+            _get_condition_handler(self._query[self._from_index + index + 2 :])
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)

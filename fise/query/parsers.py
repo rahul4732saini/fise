@@ -300,7 +300,7 @@ class DirectoryQueryParser(FileQueryParser):
                 columns += constants.DIR_FIELDS
 
             elif field in dir_fields:
-                fields.append(Field(constants.DIR_FIELD_ALIASES(field, field)))
+                fields.append(Field(constants.DIR_FIELD_ALIASES.get(field, field)))
                 columns.append(field)
 
             else:

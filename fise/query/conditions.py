@@ -2,7 +2,7 @@
 Conditions Module
 -----------------
 
-This module comprises objects and methods for parsing and evaluating
+This module comprises classes for parsing and evaluating
 query conditions for filtering file/data/directory records.
 """
 
@@ -22,17 +22,24 @@ class ConditionHandler:
     query conditions for search/delete operations.
     """
 
-    __slots__ = "_query", "_conditions", "_method_map", "_aliases"
+    __slots__ = "_query", "_conditions", "_method_map"
 
     # Regular expression patterns for matching fields in query conditions.
-    _string_pattern = re.compile(r"^('|\").*('|\")$")
-    _float_pattern = re.compile(r"^-?\d+(\.)\d+$")
+    _string_pattern = re.compile("^['\"].*['\"]")
+    _float_pattern = re.compile(r"^-?\d+\.\d+$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
 
     # The following regex pattern only matches date and datetime formats, and
     # doesn't explicitly verify the validity of the date and time values.
     _datetime_pattern = re.compile(
-        r"('|\")\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?('|\")$"
+        r"['\"]\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?['\"]$"
+    )
+
+    # Aliases for query fields.
+    _aliases = (
+        constants.FILE_FIELD_ALIASES
+        | constants.DATA_FIELD_ALIASES
+        | constants.DIR_FIELD_ALIASES
     )
 
     def __init__(self, subquery: list[str]) -> None:
@@ -40,15 +47,9 @@ class ConditionHandler:
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
-        - subquery (list[str]): subquery to be parsed.
+        - subquery (list[str]): Subquery comprising the conditions to be parsed and evaluated.
         """
         self._query = subquery
-
-        self._aliases = (
-            constants.FILE_FIELD_ALIASES
-            | constants.DATA_FIELD_ALIASES
-            | constants.DIR_FIELD_ALIASES
-        )
 
         # Maps operator names with corresponding evaluation methods.
         self._method_map: dict[str, Callable[[Any, Any], bool]] = {
@@ -66,13 +67,13 @@ class ConditionHandler:
         # Parses the conditions and stores them in a list.
         self._conditions = list(self._parse_conditions(subquery))
 
-    def _parse_comparison_operand(self, operand: str) -> Field | str | float | int:
+    def _parse_comparison_operand(self, operand: str) -> Any:
         """
         Parses individual operands specified within a comparison
-        expression for appropriate data type conversion.
+        operation expression for appropriate data type conversion.
 
         #### Params:
-        - operand (str): operand to be parsed.
+        - operand (str): Operand to be parsed.
         """
 
         if self._datetime_pattern.match(operand):
@@ -83,17 +84,17 @@ class ConditionHandler:
                 return datetime.strptime(operand, r"%Y-%m-%d %H:%M:%S")
 
             except ValueError:
-                # Passes without raising an error in case
-                # the operand matches the date format.
+                # Passes without raising an error if in
+                # case the operand matches the date format.
                 try:
                     return datetime.strptime(operand, r"%Y-%m-%d")
 
                 except ValueError:
                     raise QueryParseError(
-                        f"Invalid datetime format around {''.join(self._query)}"
+                        f"Invalid datetime format around {' '.join(self._query)!r}"
                     )
 
-        if self._string_pattern.match(operand):
+        elif self._string_pattern.match(operand):
             # Strips the leading and trailing quotes and returns the string.
             return operand[1:-1]
 
@@ -116,23 +117,27 @@ class ConditionHandler:
         self, operand: str, operator: str
     ) -> list[str] | re.Pattern:
         """
-        Parses individual operands specified within a conditional expression.
+        Parses individual operands specified within a conditional operation expression.
         """
 
         if operator == "like":
+            if not self._string_pattern.match(operator):
+                raise QueryParseError(
+                    f"Invalid query pattern around {' '.join(self._query)!r}"
+                )
+
             return re.compile(operand[1:-1])
 
-        # In case of a `IN` or `BETWEEN` operation, tuples are defined as
-        # second operands. The below mechanism parses and creates a list
-        # out of the string formatted tuple.
+        # In case of a `IN` or `BETWEEN` operation, second operand is defined as a tuple.
+        # The below mechanism parses and creates a list out of the string formatted tuple.
         else:
             if not self._tuple_pattern.match(operand):
                 raise QueryParseError(
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )
 
-            # Parses and creates a list of individual
-            # operands present within specified tuple.
+            # Parses and creates a list of individual operands
+            # present within the specified tuple.
             operand: list[str] = [
                 self._parse_comparison_operand(i.strip())
                 for i in operand[1:-1].split(",")
@@ -151,7 +156,7 @@ class ConditionHandler:
         Parses individual query conditions.
 
         #### Params:
-        - condition (list[str]): condition to be parsed.
+        - condition (list[str]): Condition to be parsed.
         """
 
         # Evaluates and returns the conditions if nested.
@@ -161,10 +166,12 @@ class ConditionHandler:
             )
 
         elif length < 3:
-            raise QueryParseError(f"Invalid query syntax around {' '.join(condition)}")
+            raise QueryParseError(
+                f"Invalid query syntax around {' '.join(condition)!r}"
+            )
 
         for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
-            if condition[1] == i:
+            if i == condition[1]:
                 operator: str = i
                 break
         else:
@@ -172,11 +179,11 @@ class ConditionHandler:
                 f"Invalid query syntax around {' '.join(self._query)!r}"
             )
 
-        operand1 = self._parse_comparison_operand(condition[0])
-        operand2 = (
+        operand1: Any = self._parse_comparison_operand(condition[0])
+        operand2: Any = (
             self._parse_comparison_operand(condition[2])
             if operator in constants.COMPARISON_OPERATORS
-            else self._parse_conditional_operand("".join(condition[2:]), operator)
+            else self._parse_conditional_operand(condition[2], operator)
         )
 
         return Condition(operand1, operator, operand2)
@@ -191,7 +198,7 @@ class ConditionHandler:
         """
 
         # Stores individual conditions during iteration.
-        condition = []
+        condition: list[str] = []
 
         for token in subquery:
             if token in constants.CONDITION_SEPARATORS:
@@ -213,7 +220,7 @@ class ConditionHandler:
         Evaluates the specified condition operand.
 
         #### Params:
-        - operand (Any): operand to be processed.
+        - operand (Any): Operand to be processed.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
@@ -228,13 +235,13 @@ class ConditionHandler:
                 )
 
             # Converts `bytes` and `pathlib.Path` objects into strings
-            # for better compatibility in comparison operations.
+            # for better compatibility in condition evaluation.
 
             if isinstance(operand, Path):
                 operand = str(operand)
 
             # Strips out the leading binary notation and
-            # quotes only extracting the required data.
+            # quotes, only extracting the required data.
             elif isinstance(operand, bytes):
                 operand = str(operand)[2:-1]
 
@@ -253,7 +260,7 @@ class ConditionHandler:
         Evaluates the specified condition.
 
         #### Params:
-        - condition (Condition): condition to be processed.
+        - condition (Condition): Condition to be evluated.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
@@ -283,7 +290,7 @@ class ConditionHandler:
         Evaluates the specified condition segment.
 
         #### Params:
-        - segment (list): query condition segment to be evaluated.
+        - segment (list): Query condition segment to be evaluated.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
@@ -302,7 +309,7 @@ class ConditionHandler:
 
     def _eval_all_conditions(
         self,
-        conditions: list[str | list | Condition],
+        conditions: list[str | Condition],
         obj: File | DataLine | Directory,
     ) -> bool:
         """
@@ -311,7 +318,7 @@ class ConditionHandler:
 
         # Adds a `True and` condition at the beginning of the conditions list
         # to avoid defining mechanism for evaluating single conditions.
-        conditions = ["True", "and"] + conditions
+        conditions = [True, "and"] + conditions
         ctr: int = 0
 
         # Evaluates conditions separated by `and` operator.
@@ -337,9 +344,7 @@ class ConditionHandler:
             ]
 
         # Extracts the singe-most boolean value from the list and returns it.
-        (result,) = conditions
-
-        return result
+        return conditions[0]
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
         """

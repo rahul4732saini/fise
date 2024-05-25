@@ -89,8 +89,9 @@ class DataLine:
         return self._file.name
 
     @property
-    def dataline(self) -> str | bytes:
-        return self._data
+    def dataline(self) -> str:
+        # Strips the leading binary notation and quotes if the dataline is a bytes object.
+        return str(self._data)[2:-1] if isinstance(self._data, bytes) else self._data
 
     @property
     def lineno(self) -> int:

@@ -131,7 +131,7 @@ class FileQueryOperator:
                     continue
 
                 raise OperationError(
-                    f"Not enough permissions to delete '{file.absolute()}'."
+                    f"Permission Error: Cannot delete '{file.absolute()}'"
                 )
 
             else:
@@ -140,11 +140,13 @@ class FileQueryOperator:
         # Extracts the absolute path to the directory and stores it locally.
         directory: Path = self._directory.absolute()
 
-        Message(f"Successfully removed {ctr} files from {directory}.")
+        Message(f"Successfully removed {ctr} files from '{directory}'.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
-            Alert(f"Skipped {skipped} files from {directory} due to permission errors.")
+            Alert(
+                f"Skipped {skipped} files from '{directory}' due to permission errors."
+            )
 
 
 class FileDataQueryOperator:
@@ -354,7 +356,7 @@ class DirectoryQueryOperator:
                     continue
 
                 raise OperationError(
-                    f"Permission Error: Cannot delete file {subdir.absolute()}."
+                    f"Permission Error: Cannot delete '{subdir.absolute()}'"
                 )
 
             else:
@@ -363,10 +365,10 @@ class DirectoryQueryOperator:
         # Extracts the absolute path to the directory and stores it locally.
         directory: Path = self._directory.absolute()
 
-        Message(f"Successfully removed {ctr} directories from {directory}.")
+        Message(f"Successfully removed {ctr} directories from '{directory}'.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
             Alert(
-                f"Skipped {skipped} directories from {directory} due to permission errors."
+                f"Skipped {skipped} directories from '{directory}' due to permission errors."
             )

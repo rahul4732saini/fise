@@ -1,6 +1,6 @@
 """
-Handlers Package
-----------------
+Query Package
+-------------
 
 This package provides a collection of objects and methods designed for
 parsing and processing user-specified search and manipulation queries.
@@ -40,7 +40,7 @@ class QueryHandler:
     __slots__ = "_query", "_current_query"
 
     # Regular expression patterns for parsing sub-queries.
-    _export_subquery_pattern = re.compile(rf"^sql(\[(mysql|postgresql|sqlite)]|)$")
+    _export_subquery_pattern = re.compile(rf"^sql[(mysql|postgresql|sqlite)]?$")
     _operation_params_pattern = re.compile(r"^(\[.*]|)$")
 
     def __init__(self, query: str) -> None:
@@ -48,15 +48,16 @@ class QueryHandler:
         Creates an instance of the `QueryHandler` class.
 
         #### Params:
-        - query (str): Query to be parsed and processed.
+        - query (str): Query to be handled.
         """
         self._query = self._current_query = tools.parse_query(query)
 
     def handle(self) -> pd.DataFrame | None:
         """
-        Parses and processes the specified search/deletion query.
+        Handles the specified search/delete query.
         """
 
+        # Creates another copy of the query to avoid changes in it during runtime.
         self._current_query = self._query
 
         try:
@@ -78,7 +79,7 @@ class QueryHandler:
                 initials
             )
 
-            if not initials.export or initials.operation == "remove":
+            if not initials.export:
                 return data
 
             if initials.export.type_ == "file":
@@ -142,36 +143,38 @@ class QueryHandler:
         """
 
         recursive: bool = False
-        export: ExportData | None = self._parse_export_data(self._current_query)
-
-        if export:
-            self._current_query = self._current_query[2:]
+        export: ExportData | None = self._parse_export_data()
 
         if self._current_query[0].lower() in ("r", "recursive"):
             recursive = True
-            self._current_query = self._current_query[1:]
+            self._current_query.pop(0)
 
         # Parses the query operation
         operation: OperationData = self._parse_operation()
-        self._current_query = self._current_query[1:]
+        self._current_query.pop(0)
 
         # Verify semantic aspects of the query for further processing
         if export:
             if operation.operation == "remove":
                 raise QueryParseError("Cannot export data with delete operation.")
 
-            elif (
-                operation.operand == "data"
-                and operation.filemode == "bytes"
-                and export.type_ == "database"
-            ):
+            elif operation.filemode == "bytes" and export.type_ == "database":
                 raise QueryParseError(
                     "Exporting binary data to SQL databases is currently unsupported."
                 )
 
         return QueryInitials(operation, recursive, export)
 
-    def _parse_search_operation(self):
+    def _parse_operation_type(self, type_: str) -> str:
+        """
+        Parses the query operation type.
+        """
+        if type_ not in constants.SEARCH_QUERY_OPERANDS:
+            raise QueryParseError(f"Invalid value {type_[1]!r} for 'type' parameter.")
+
+        return type_
+
+    def _parse_search_operation(self) -> OperationData:
         """
         Parses the search operation subquery.
         """
@@ -187,10 +190,10 @@ class QueryHandler:
 
         # Generator of operation parameters.
         params: Generator[str, None, None] = (
-            # Lowers and splits the parameters subquery about commas, and iterates
+            # Splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
             i.strip()
-            for i in self._current_query[0][7:-1].lower().split(",")
+            for i in self._current_query[0][7:-1].split(",")
             if i
         )
 
@@ -204,12 +207,7 @@ class QueryHandler:
                 )
 
             if param[0] == "type":
-                if param[1] not in constants.SEARCH_QUERY_OPERANDS:
-                    raise QueryParseError(
-                        f"Invalid value {param[1]!r} for 'type' parameter."
-                    )
-
-                operand = param[1]
+                operand = self._parse_operation_type(param[1])
 
             elif param[0] == "mode":
                 if param[1] not in constants.FILE_MODES_MAP:
@@ -234,7 +232,7 @@ class QueryHandler:
 
         return OperationData("search", operand, filemode)
 
-    def _parse_delete_operation(self):
+    def _parse_delete_operation(self) -> OperationData:
         """
         Parses the delete operation subquery.
         """
@@ -250,10 +248,10 @@ class QueryHandler:
 
         # Generator of operation parameters.
         params: Generator[str, None, None] = (
-            # Lowers and splits the parameters subquery about commas, and iterates
+            # Splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
             i.strip()
-            for i in self._current_query[0][7:-1].lower().split(",")
+            for i in self._current_query[0][7:-1].split(",")
             if i
         )
 
@@ -262,14 +260,14 @@ class QueryHandler:
             param = param.split(" ")
 
             if param[0] == "type":
-                if param[1] not in constants.DELETE_QUERY_OPERANDS:
-                    raise QueryParseError(
-                        f"Invalid value {param[1]!r} for 'type' parameter."
-                    )
-
-                operand = param[1]
+                operand = self._parse_operation_type(param[1])
 
             elif param[0] == "skip_err":
+                if len(param) > 1:
+                    raise QueryParseError(
+                        f"Invalid query syntax around {self._current_query[0]!r}"
+                    )
+
                 skip_err = True
             else:
                 raise QueryParseError(
@@ -288,7 +286,11 @@ class QueryHandler:
             "delete": self._parse_delete_operation,
         }
 
-        operation: str = self._current_query[0][:6].lower()
+        self._current_query[0] = self._current_query[0].lower()
+
+        # Only extracts the query operation, operators parameters are
+        # parsed explicitly by the specific operation parser method.
+        operation: str = self._current_query[0][:6]
 
         if operation not in constants.OPERATION_ALIASES:
             raise QueryParseError(f"Invalid operation specified: {operation!r}")
@@ -304,21 +306,23 @@ class QueryHandler:
         else:
             return data
 
-    def _parse_export_data(self, query: list[str]) -> ExportData | None:
+    def _parse_export_data(self) -> ExportData | None:
         """
         Parses export data from the query if specified else returns `None`.
         """
 
-        if query[0].lower() != "export":
-            return
+        if self._current_query[0].lower() != "export":
+            return None
 
-        if query[1].lower().startswith("sql"):
-            if not self._export_subquery_pattern.match(query[1].lower()):
+        target: str = self._current_query[1].lower()
+        self._current_query = self._current_query[2:]
+
+        if target.startswith("sql"):
+            if not self._export_subquery_pattern.match(target):
                 raise QueryParseError("Unable to parse SQL database name.")
 
-            return ExportData("database", query[1][4:-1])
+            return ExportData("database", target[4:-1])
 
-        # The export is assumed to be directing to
-        # a file if none of the above are matched.
+        # The export is assumed to a file if none of the above are matched.
         else:
-            return ExportData("file", Path(query[1]))
+            return ExportData("file", Path(target))

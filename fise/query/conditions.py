@@ -121,7 +121,7 @@ class ConditionHandler:
         """
 
         if operator == "like":
-            if not self._string_pattern.match(operator):
+            if not self._string_pattern.match(operand):
                 raise QueryParseError(
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )

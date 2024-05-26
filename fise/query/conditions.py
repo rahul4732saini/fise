@@ -328,7 +328,7 @@ class ConditionHandler:
             if segment[1] == "or":
                 # Increments the counter by 1 to skip the
                 # conditions separated by the `or` operator.
-                ctr += 1
+                ctr += 2
 
             else:
                 # Replaces the conditions with the evaluated boolean value.
@@ -339,9 +339,12 @@ class ConditionHandler:
         # Evaluates conditions separated by `or` operator.
         for _ in range(len(conditions) // 2):
             # Replaces the conditions with the evaluated boolean value.
-            conditions[0 : 0 + 3] = [
-                self._eval_condition_segments(conditions[0 : 0 + 3], obj)
-            ]
+            result: bool = self._eval_condition_segments(conditions[0 : 0 + 3], obj)
+
+            if result:
+                return result
+
+            conditions[0 : 0 + 3] = [result]
 
         # Extracts the singe-most boolean value from the list and returns it.
         return conditions[0]

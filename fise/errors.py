@@ -14,7 +14,7 @@ class QueryHandleError(Exception):
     Exception raised when there is an error handling the query.
     """
 
-    _error: str
+    _error: str = "QueryHandleError: There was an error in handling the query."
 
     def __init__(self, description: str = "") -> None:
 

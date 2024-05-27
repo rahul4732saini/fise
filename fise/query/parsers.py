@@ -50,7 +50,7 @@ def _get_condition_handler(
     and returns a function for filtering records.
     """
 
-    # Returns a lambda function returing `True` by default to include all the records
+    # Returns a lambda function returning `True` by default to include all the records
     # during processing in no conditions are explicitly defined in the specified subquery.
     if not subquery:
         return lambda _: True

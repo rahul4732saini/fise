@@ -262,7 +262,7 @@ class ConditionHandler:
         Evaluates the specified condition.
 
         #### Params:
-        - condition (Condition): Condition to be evluated.
+        - condition (Condition): Condition to be evaluated.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 

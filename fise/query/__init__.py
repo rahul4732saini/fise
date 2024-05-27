@@ -165,7 +165,8 @@ class QueryHandler:
 
         return QueryInitials(operation, recursive, export)
 
-    def _parse_operation_type(self, type_: str) -> str:
+    @staticmethod
+    def _parse_operation_type(type_: str) -> str:
         """
         Parses the query operation type.
         """

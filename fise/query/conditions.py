@@ -108,10 +108,10 @@ class ConditionHandler:
         # be a query field and returned as a `Field` object or explicitly as a
         # `Size` object if the field starts with the word 'size'.
 
-        elif operand.startswith("size"):
+        elif operand.lower().startswith("size"):
             return Size.from_string(operand)
 
-        return Field(operand)
+        return Field(operand.lower())
 
     def _parse_conditional_operand(
         self, operand: str, operator: str
@@ -169,6 +169,8 @@ class ConditionHandler:
             raise QueryParseError(
                 f"Invalid query syntax around {' '.join(condition)!r}"
             )
+
+        condition[1] = condition[1].lower()
 
         for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
             if i == condition[1]:

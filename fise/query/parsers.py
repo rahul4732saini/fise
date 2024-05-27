@@ -102,20 +102,22 @@ class FileQueryParser:
         columns: list[str] = []
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).lower().split(","):
+        for field in "".join(attrs).split(","):
+            col: str = field.lower()
+
             if field == "*":
                 fields += (Field(i) for i in constants.FILE_FIELDS)
                 columns += constants.FILE_FIELDS
 
-            elif field.startswith("size"):
+            elif col.startswith("size"):
                 # Parses size from the string.
                 size: Size = Size.from_string(field)
 
                 fields.append(Field(size))
                 columns.append(field)
 
-            elif field in self._file_fields:
-                fields.append(Field(constants.FILE_FIELD_ALIASES.get(field, field)))
+            elif col in self._file_fields:
+                fields.append(Field(constants.FILE_FIELD_ALIASES.get(col, col)))
                 columns.append(field)
 
             else:

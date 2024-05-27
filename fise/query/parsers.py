@@ -72,6 +72,8 @@ class FileQueryParser:
 
     __slots__ = "_query", "_operation", "_from_index"
 
+    _file_fields = set(constants.FILE_FIELDS) | constants.FILE_FIELD_ALIASES.keys()
+
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         """
         Creates an instance of `FileQueryParser` class.
@@ -98,9 +100,6 @@ class FileQueryParser:
 
         fields: list[Field] = []
         columns: list[str] = []
-        file_fields: set[str] = (
-            constants.FILE_FIELDS | constants.FILE_FIELD_ALIASES.keys()
-        )
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).lower().split(","):
@@ -115,7 +114,7 @@ class FileQueryParser:
                 fields.append(Field(size))
                 columns.append(field)
 
-            elif field in file_fields:
+            elif field in self._file_fields:
                 fields.append(Field(constants.FILE_FIELD_ALIASES.get(field, field)))
                 columns.append(field)
 
@@ -187,6 +186,8 @@ class FileDataQueryParser:
 
     __slots__ = "_query", "_from_index"
 
+    _data_fields = set(constants.DATA_FIELDS) | constants.DATA_FIELD_ALIASES.keys()
+
     def __init__(self, subquery: list[str]) -> None:
         """
         Creates an instance of the `FileDataQueryParser` class.
@@ -200,8 +201,7 @@ class FileDataQueryParser:
         self._query = subquery
         self._from_index = _get_from_keyword_index(subquery)
 
-    @staticmethod
-    def _parse_fields(attrs: list[str] | str) -> tuple[list[Field], list[str]]:
+    def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -211,9 +211,6 @@ class FileDataQueryParser:
 
         fields: list[Field] = []
         columns: list[str] = []
-        data_fields: set[str] = (
-            constants.DATA_FIELDS | constants.DATA_FIELD_ALIASES.keys()
-        )
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).lower().split(","):
@@ -221,7 +218,7 @@ class FileDataQueryParser:
                 fields += (Field(i) for i in constants.DATA_FIELDS)
                 columns += constants.DATA_FIELDS
 
-            elif field in data_fields:
+            elif field in self._data_fields:
                 fields.append(Field(constants.DATA_FIELD_ALIASES.get(field, field)))
                 columns.append(field)
 
@@ -268,6 +265,8 @@ class DirectoryQueryParser(FileQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
+    _dir_fields = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
+
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         """
         Creates an instance of the `DirectoryQueryParser` class.
@@ -291,7 +290,6 @@ class DirectoryQueryParser(FileQueryParser):
 
         fields: list[Field] = []
         columns: list[str] = []
-        dir_fields: set[str] = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).split(","):
@@ -299,7 +297,7 @@ class DirectoryQueryParser(FileQueryParser):
                 fields += (Field(i) for i in constants.DIR_FIELDS)
                 columns += constants.DIR_FIELDS
 
-            elif field in dir_fields:
+            elif field in self._dir_fields:
                 fields.append(Field(constants.DIR_FIELD_ALIASES.get(field, field)))
                 columns.append(field)
 

@@ -115,7 +115,7 @@ class Size:
     """
 
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(
-        rf"^size\[({'|'.join(constants.SIZE_CONVERSION_MAP)})]?$"
+        rf"^(size|SIZE)(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})])?$"
     )
 
     unit: str

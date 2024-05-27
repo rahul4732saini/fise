@@ -200,7 +200,14 @@ class FileDataQueryOperator:
 
         for i in files:
             with i.open(self._filemode) as file:
-                yield i, file.readlines()
+                try:
+                    yield i, file.readlines()
+
+                except UnicodeDecodeError:
+                    raise OperationError(
+                        "Cannot read bytes with 'text' filemode. Set "
+                        "filemode to 'bytes' for reading bytes within files."
+                    )
 
     def _search_datalines(self) -> Generator[DataLine, None, None]:
         """

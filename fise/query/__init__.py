@@ -325,4 +325,4 @@ class QueryHandler:
 
         # The export is assumed to a file if none of the above are matched.
         else:
-            return ExportData("file", Path(target))
+            return ExportData("file", Path(target.strip("'\"")))

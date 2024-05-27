@@ -33,3 +33,12 @@ def data_fields() -> tuple[str, ...]:
 def dir_fields() -> tuple[str, ...]:
     posix_fields: tuple = ("owner", "group") if sys.platform != "win32" else ()
     return ("name", "path", "parent", "permissions") + posix_fields
+
+
+@pytest.fixture
+def test_export_files(test_directory) -> tuple[Path, ...]:
+    return (
+        test_directory / "records.csv",
+        test_directory / "data.xlsx",
+        test_directory / "searchdata.html",
+    )

@@ -45,10 +45,10 @@ def test_export_files(test_directory) -> tuple[Path, ...]:
 
 
 @pytest.fixture
-def text_test_directories(test_directory) -> tuple[Path, ...]:
-    return (test_directory / "Text",)
+def text_test_directory(test_directory) -> Path:
+    return test_directory / "Text"
 
 
 @pytest.fixture
-def binary_test_directories(test_directory) -> tuple[Path, ...]:
-    return (test_directory / "Records",)
+def binary_test_directory(test_directory) -> Path:
+    return test_directory / "Binaries"

@@ -294,7 +294,7 @@ class DirectoryQueryParser(FileQueryParser):
         columns: list[str] = []
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).split(","):
+        for field in "".join(attrs).lower().split(","):
             if field == "*":
                 fields += (Field(i) for i in constants.DIR_FIELDS)
                 columns += constants.DIR_FIELDS

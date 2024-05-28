@@ -203,9 +203,9 @@ class ConditionHandler:
         condition: list[str] = []
 
         for token in subquery:
-            if token in constants.CONDITION_SEPARATORS:
+            if token.lower() in constants.CONDITION_SEPARATORS:
                 yield self._parse_condition(condition)
-                yield token
+                yield token.lower()
 
                 condition.clear()
 

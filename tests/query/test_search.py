@@ -14,7 +14,7 @@ def _handle_query(query: str) -> pd.DataFrame | None:
     return QueryHandler(query).handle()
 
 
-class TestFileSearch:
+class TestFileSearchQuery:
     """
     Tests the file search query with different test cases.
     """

@@ -182,7 +182,6 @@ class TestTextDataSearchQuery:
         for fields in (
             random.choices(data_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            # Tests data search in text files.
             for query in (
                 f"select[type data] {', '.join(fields)} from '{text_test_directory}'",
                 f"SELECT[TYPE DATA] {', '.join(fields)} FROM '{text_test_directory}'",
@@ -271,6 +270,145 @@ class TestTextDataSearchQuery:
             _handle_query(
                 f"EXPORT '{file}' r SELECT[Type Data] * from ABSOlUTE '{text_test_directory}'"
                 " WHERE name IN ('Lorem.txt', 'ML.txt') AND LINENO in (1, 13, 10, 7)"
+            )
+
+            # Verifies whether the export was successful.
+            assert file.exists()
+            file.unlink()
+
+
+class TestBinaryDataSearchQuery:
+    """
+    Tests the binary data search query with different test cases.
+    """
+
+    @staticmethod
+    def test_basic_query_syntax(binary_test_directory: Path) -> None:
+        """
+        Tests basic binary data search query syntax with uppercase and lowercase characters.
+        """
+
+        for query in (
+            f"select[type data, mode bytes] * from '{binary_test_directory}'",
+            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}'",
+        ):
+            _handle_query(query)
+
+    @staticmethod
+    def test_individual_search_fields(
+        data_fields: tuple[str, ...], binary_test_directory: Path
+    ) -> None:
+        """Tests the binary data search query with individual fields."""
+
+        for field in data_fields:
+            for query in (
+                f"select[type data, mode bytes] {field} from '{binary_test_directory}'",
+                f"select[type data, mode bytes] {field.upper()} from '{binary_test_directory}'",
+            ):
+                _handle_query(query)
+
+    @staticmethod
+    def test_multiple_search_field_patterns(
+        data_fields: tuple[str, ...], binary_test_directory: Path
+    ) -> None:
+        """Tests the binary data search query with multiple field patterns."""
+
+        for fields in (
+            random.choices(data_fields, k=random.choice(range(1, 5))) for _ in range(5)
+        ):
+            for query in (
+                f"select[type data, mode bytes] {', '.join(fields)} from '{binary_test_directory}'",
+                f"SELECT[TYPE DATA, MODE BYTES] {', '.join(fields)} FROM '{binary_test_directory}'",
+            ):
+                _handle_query(query)
+
+    @staticmethod
+    def test_export_to_file(
+        binary_test_directory: Path, test_export_files: tuple[Path, ...]
+    ) -> None:
+        """Tests exporting binary data search records to different file types."""
+
+        for file in test_export_files:
+            _handle_query(
+                f"export '{file}' select[type data, mode bytes] * from '{binary_test_directory}'"
+            )
+
+            # Verifies whether the export was successful.
+            assert file.exists()
+            file.unlink()
+
+    @staticmethod
+    def test_recursive_search(binary_test_directory: Path) -> None:
+        """Tests the recursive operator in binary data search query."""
+
+        for i in ("r", "recursive", "R", "RECURSIVE"):
+            _handle_query(
+                f"{i} select[type data, mode bytes] * from '{binary_test_directory}'"
+            )
+
+    @staticmethod
+    def test_search_with_different_path_types(binary_test_directory: Path) -> None:
+        """Tests the binary data search query with different path types."""
+
+        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+            _handle_query(
+                f"select[type data, mode bytes] * from {type_} '{binary_test_directory}'"
+            )
+
+    @staticmethod
+    def test_search_conditions_with_comparison_operators(
+        binary_test_directory: Path,
+    ) -> None:
+        """Tests the binary data search query conditions with comparison operators."""
+
+        _handle_query(
+            f"select[type data, mode bytes] * from '{binary_test_directory}' "
+            "where name = 'Lorem.txt' and lineno != 5"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' "
+            "WHERE NAME = 'ML.txt' OR NAME = 'Lorem.txt' AND LINENO = 10"
+        )
+
+    @staticmethod
+    def test_search_conditions_with_conditional_operators(
+        binary_test_directory: Path,
+    ) -> None:
+        """Tests the binary data search query conditions with conditional operators."""
+
+        _handle_query(
+            f"select[type data, mode bytes] * from '{binary_test_directory}' where "
+            "name like '^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' WHERE NAME IN "
+            "('Lorem.txt', 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'"
+        )
+
+    @staticmethod
+    def test_nested_search_conditions(binary_test_directory: Path) -> None:
+        """Tests the binary data search query with nested conditions."""
+
+        _handle_query(
+            f"select[type data, mode bytes] * from '{binary_test_directory}' where (name = "
+            "'M1.txt' or name = 'Lorem.txt') and path like '^.*/Text/.*$' and lineno = 15"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' WHERE (DATA LIKE "
+            "'^Lorem.*$' OR DATA LIKE '^netus.*$') AND NAME = 'Lorem.txt' AND LINENO BETWEEN (1, 50)"
+        )
+
+    @staticmethod
+    def miscellaneous_tests(
+        binary_test_directory: Path, test_export_files: tuple[Path, ...]
+    ) -> None:
+        """Tests various aspects of the binary data search query."""
+
+        for file in test_export_files:
+            _handle_query(
+                f"EXPORT '{file}' r SELECT[Type Data, MODE Bytes] * from "
+                f"ABSOlUTE '{binary_test_directory}' WHERE name IN ('Lorem.txt', "
+                "'ML.txt') AND LINENO in (1, 13, 10, 7)"
             )
 
             # Verifies whether the export was successful.

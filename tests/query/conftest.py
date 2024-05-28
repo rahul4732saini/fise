@@ -42,3 +42,13 @@ def test_export_files(test_directory) -> tuple[Path, ...]:
         test_directory / "data.xlsx",
         test_directory / "searchdata.html",
     )
+
+
+@pytest.fixture
+def text_test_directories(test_directory) -> tuple[Path, ...]:
+    return (test_directory / "Text",)
+
+
+@pytest.fixture
+def binary_test_directories(test_directory) -> tuple[Path, ...]:
+    return (test_directory / "Records",)

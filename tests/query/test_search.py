@@ -5,6 +5,7 @@ Tests the search query with different test cases.
 import sys
 import random
 from pathlib import Path
+
 import pandas as pd
 from fise.query import QueryHandler
 
@@ -141,9 +142,145 @@ class TestFileSearchQuery:
         )
 
 
+class TestTextDataSearchQuery:
+    """
+    Tests the text data search query with different test cases.
+    """
+
+    @staticmethod
+    def test_basic_query_syntax(text_test_directory: Path) -> None:
+        """
+        Tests basic text data search query syntax with uppercase and lowercase characters.
+        """
+
+        for query in (
+            f"select[type data] * from '{text_test_directory}'",
+            f"SELECT[TYPE DATA] * FROM '{text_test_directory}'",
+            f"select[type data, mode text] * from '{text_test_directory}'",
+            f"SELECT[TYPE DATA, MODE TEXT] * FROM '{text_test_directory}'",
+        ):
+            _handle_query(query)
+
+    @staticmethod
+    def test_individual_search_fields(
+        data_fields: tuple[str, ...], text_test_directory: Path
+    ) -> None:
+        """Tests the text data search query with individual fields."""
+
+        for field in data_fields:
+            _handle_query(f"select[type data] {field} from '{text_test_directory}'")
+            _handle_query(
+                f"select[type data] {field.upper()} from '{text_test_directory}'"
+            )
+
+    @staticmethod
+    def test_multiple_search_field_patterns(
+        data_fields: tuple[str, ...], text_test_directory: Path
+    ) -> None:
+        """Tests the text data search query with multiple field patterns."""
+
+        for fields in (
+            random.choices(data_fields, k=random.choice(range(1, 5))) for _ in range(5)
+        ):
+            # Tests data search in text files.
+            for query in (
+                f"select[type data] {', '.join(fields)} from '{text_test_directory}'",
+                f"SELECT[TYPE DATA] {', '.join(fields)} FROM '{text_test_directory}'",
+            ):
+                _handle_query(query)
+
+    @staticmethod
+    def test_export_to_file(
+        text_test_directory: Path, test_export_files: tuple[Path, ...]
+    ) -> None:
+        """Tests exporting text data search records to different file types."""
+
+        for file in test_export_files:
+            _handle_query(
+                f"export '{file}' select[type data] * from '{text_test_directory}'"
+            )
+
+            # Verifies whether the export was successful.
+            assert file.exists()
+            file.unlink()
+
+    @staticmethod
+    def test_recursive_search(text_test_directory: Path) -> None:
+        """Tests the recursive operator in text data search query."""
+
+        for i in ("r", "recursive", "R", "RECURSIVE"):
+            _handle_query(f"{i} select[type data] * from '{text_test_directory}'")
+
+    @staticmethod
+    def test_search_with_different_path_types(text_test_directory: Path) -> None:
+        """Tests the text data search query with different path types."""
+
+        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+            _handle_query(f"select[type data] * from {type_} '{text_test_directory}'")
+
+    @staticmethod
+    def test_search_conditions_with_comparison_operators(
+        text_test_directory: Path,
+    ) -> None:
+        """Tests the text data search query conditions with comparison operators."""
+
+        _handle_query(
+            f"select[type data] * from '{text_test_directory}' "
+            "where name = 'Lorem.txt' and lineno != 5"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' "
+            "WHERE NAME = 'ML.txt' OR NAME = 'Lorem.txt'"
+        )
+
+    @staticmethod
+    def test_search_conditions_with_conditional_operators(
+        text_test_directory: Path,
+    ) -> None:
+        """Tests the text data search query conditions with conditional operators."""
+
+        _handle_query(
+            f"select[type data] * from '{text_test_directory}' where name like "
+            "'^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' WHERE NAME IN ('Lorem.txt',"
+            " 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'"
+        )
+
+    @staticmethod
+    def test_nested_search_conditions(text_test_directory: Path) -> None:
+        """Tests the data search query with nested conditions."""
+
+        _handle_query(
+            f"select[type data] * from '{text_test_directory}' where (name = 'M1.txt'"
+            " or name = 'Lorem.txt') and path like '^.*/Text/.*$' and lineno = 15"
+        )
+        _handle_query(
+            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' WHERE (DATA LIKE '^Lorem.*$'"
+            " OR DATA LIKE '^netus.*$') AND NAME = 'Lorem.txt' AND LINENO BETWEEN (1, 50)"
+        )
+
+    @staticmethod
+    def miscellaneous_tests(
+        text_test_directory: Path, test_export_files: tuple[Path, ...]
+    ) -> None:
+        """Tests various aspects of the text data search query."""
+
+        for file in test_export_files:
+            _handle_query(
+                f"EXPORT '{file}' r SELECT[Type Data] * from ABSOlUTE '{text_test_directory}'"
+                " WHERE name IN ('Lorem.txt', 'ML.txt') AND LINENO in (1, 13, 10, 7)"
+            )
+
+            # Verifies whether the export was successful.
+            assert file.exists()
+            file.unlink()
+
+
 class TestDirSearchQuery:
     """
-    Tests the data search query with different test cases.
+    Tests the directory search query with different test cases.
     """
 
     @staticmethod
@@ -262,8 +399,8 @@ class TestDirSearchQuery:
 
         for file in test_export_files:
             _handle_query(
-                f"EXPORT '{file}' r SELECT * from ABSOLUTE '{test_directory}' WHERE name IN "
-                "('Sofware', 'Libraries', 'Documents', 'Music') OR path like '^.*(Media|Archive)'"
+                f"EXPORT '{file}' r SELECT[Type DIR] * from ABSOlUTE '{test_directory}' WHERE name "
+                "IN ('Sofware', 'Libraries', 'Documents', 'Music') OR pAth like '^.*(Media|Archive)'"
             )
 
             # Verifies whether the export was successful.

@@ -22,15 +22,15 @@ class TestFileSearchQuery:
 
     # fmt: off
     _size_units = (
-    "b", "B", "Kb", "KB", "Kib", "KiB", "Mb", "MB", "Mib",
-    "MiB", "Gb", "GB", "Gib", "GiB", "Tb", "TB", "Tib", "TiB"
+        "b", "B", "Kb", "KB", "Kib", "KiB", "Mb", "MB", "Mib",
+        "MiB", "Gb", "GB", "Gib", "GiB", "Tb", "TB", "Tib", "TiB"
     )
     # fmt: on
 
     @staticmethod
     def test_basic_search_query_syntax(test_directory: Path) -> None:
         """
-        Tests the the validity of query syntax with uppercase and lowercase characters.
+        Tests the validity of query syntax with uppercase and lowercase characters.
         """
         _handle_query(f"select * from '{test_directory}'")
         _handle_query(f"SELECT * FROM '{test_directory}'")
@@ -136,7 +136,7 @@ class TestFileSearchQuery:
             "between (10, 100) or size[KiB] between (800, 1000)) and ctime > '2020-05-15'"
         )
         _handle_query(
-            rf"R SELECT * FROM '{test_directory}' WHERE PATH LIKE '^.*/Sofware/.*$' AND "
+            rf"R SELECT * FROM '{test_directory}' WHERE PATH LIKE '^.*/Software/.*$' AND "
             r"(NAME IN ('main.py', 'array.py', 'random.py') OR NAME LIKE '^.*\.js$') AND "
             "MTIME BETWEEN ('2022-12-07', '2024-07-03')"
         )
@@ -504,7 +504,7 @@ class TestDirSearchQuery:
 
     @staticmethod
     def test_search_conditions_with_conditional_operators(test_directory: Path) -> None:
-        """Tests the directroy search query conditions with conditional operators."""
+        """Tests the directory search query conditions with conditional operators."""
 
         _handle_query(
             f"select[type dir] * from '{test_directory}' where name like "
@@ -538,7 +538,7 @@ class TestDirSearchQuery:
         for file in test_export_files:
             _handle_query(
                 f"EXPORT '{file}' r SELECT[Type DIR] * from ABSOlUTE '{test_directory}' WHERE name "
-                "IN ('Sofware', 'Libraries', 'Documents', 'Music') OR pAth like '^.*(Media|Archive)'"
+                "IN ('Software', 'Libraries', 'Documents', 'Music') OR pAth like '^.*(Media|Archive)'"
             )
 
             # Verifies whether the export was successful.

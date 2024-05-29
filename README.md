@@ -1,5 +1,16 @@
 <h1 align=center>FiSE</h1>
 
+<a href="https://www.codefactor.io/repository/github/rahul4732saini/fise"><img src="https://www.codefactor.io/repository/github/rahul4732saini/fise/badge" alt="CodeFactor"></a>
+<a href="https://www.github.com/rahul4732saini/atmolib"><img src="https://img.shields.io/badge/status-beta-yellow?maxAge=60" alt="projectStatus"></a>
+<a href="https://www.github.com/rahul4732saini/atmolib"><img src="https://img.shields.io/badge/python-3.10+-blue?label=Python&maxAge=60" alt="pythonVersion"></a>
+<a href="https://github.com/rahul4732saini/atmolib/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?maxAge=60" alt="License"></a>
+
+<a href="https://www.github.com/rahul4732saini/atmolib"><img src="https://img.shields.io/github/stars/rahul4732saini/atmolib.svg?style=social&label=Star&maxAge=60" alt="StarProject"></a>
+<a href="https://www.twitter.com/rahulsaini4732"><img src="https://img.shields.io/twitter/follow/rahulsaini4732?style=social&label=Follow&maxAge=60" alt="Twitter"></a>
+<a href="https://www.linkedin.com/in/rahul-saini-9191a5286/)"><img src="https://img.shields.io/badge/LinkedIn-Connect-blue?style=social&logo=linkedin&maxAge=60" alt="Linkedin"></a>
+
+<h2 align=center>Description</h2>
+
 **FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for seamless file, directory, and content search and manipulation. It empowers users with the ability to perform comprehensive search operations using intuitive SQL-like commands. It streamlines file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility allows exporting search records to files and databases in a professional manner. Ideal for developers, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for all file system operations.
 
 <h2 align=center>Features</h2>

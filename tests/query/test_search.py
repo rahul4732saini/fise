@@ -40,17 +40,21 @@ class TestFileSearchQuery:
         _handle_query(f"SELECT[TYPE FILE] * FROM '{test_directory}'")
 
     @staticmethod
-    def test_recursive_search(test_directory: Path) -> None:
+    def test_recursive_search(
+        test_directory: Path, recursion_options: tuple[str, ...]
+    ) -> None:
         """Tests the recursive operator in file search query."""
 
-        for i in ("r", "recursive", "R", "RECURSIVE"):
+        for i in recursion_options:
             _handle_query(f"{i} select * from '{test_directory}'")
 
     @staticmethod
-    def test_search_with_different_path_types(test_directory: Path) -> None:
+    def test_search_with_different_path_types(
+        test_directory: Path, path_types: tuple[str, ...]
+    ) -> None:
         """Tests the file search query with different path types."""
 
-        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+        for type_ in path_types:
             _handle_query(f"r select * from {type_} '{test_directory}'")
 
     @staticmethod
@@ -203,17 +207,21 @@ class TestTextDataSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_recursive_search(text_test_directory: Path) -> None:
+    def test_recursive_search(
+        text_test_directory: Path, recursion_options: tuple[str, ...]
+    ) -> None:
         """Tests the recursive operator in text data search query."""
 
-        for i in ("r", "recursive", "R", "RECURSIVE"):
+        for i in recursion_options:
             _handle_query(f"{i} select[type data] * from '{text_test_directory}'")
 
     @staticmethod
-    def test_search_with_different_path_types(text_test_directory: Path) -> None:
+    def test_search_with_different_path_types(
+        text_test_directory: Path, path_types: tuple[str, ...]
+    ) -> None:
         """Tests the text data search query with different path types."""
 
-        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+        for type_ in path_types:
             _handle_query(f"select[type data] * from {type_} '{text_test_directory}'")
 
     @staticmethod
@@ -337,19 +345,23 @@ class TestBinaryDataSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_recursive_search(binary_test_directory: Path) -> None:
+    def test_recursive_search(
+        binary_test_directory: Path, recursion_options: tuple[str, ...]
+    ) -> None:
         """Tests the recursive operator in binary data search query."""
 
-        for i in ("r", "recursive", "R", "RECURSIVE"):
+        for i in recursion_options:
             _handle_query(
                 f"{i} select[type data, mode bytes] * from '{binary_test_directory}'"
             )
 
     @staticmethod
-    def test_search_with_different_path_types(binary_test_directory: Path) -> None:
+    def test_search_with_different_path_types(
+        binary_test_directory: Path, path_types: tuple[str, ...]
+    ) -> None:
         """Tests the binary data search query with different path types."""
 
-        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+        for type_ in path_types:
             _handle_query(
                 f"select[type data, mode bytes] * from {type_} '{binary_test_directory}'"
             )
@@ -457,17 +469,21 @@ class TestDirSearchQuery:
             )
 
     @staticmethod
-    def test_recursive_search(test_directory: Path) -> None:
+    def test_recursive_search(
+        test_directory: Path, recursion_options: tuple[str, ...]
+    ) -> None:
         """Tests the recursive operator in directory search query."""
 
-        for i in ("r", "recursive", "R", "RECURSIVE"):
+        for i in recursion_options:
             _handle_query(f"{i} select * from '{test_directory}'")
 
     @staticmethod
-    def test_search_with_different_path_types(test_directory: Path) -> None:
+    def test_search_with_different_path_types(
+        test_directory: Path, path_types: tuple[str, ...]
+    ) -> None:
         """Tests the directory search query with different path types."""
 
-        for type_ in ("absolute", "relative", "ABSOLUTE", "RELATIVE"):
+        for type_ in path_types:
             _handle_query(f"r select[type dir] * from {type_} '{test_directory}'")
 
     @staticmethod

@@ -52,3 +52,15 @@ def text_test_directory(test_directory) -> Path:
 @pytest.fixture
 def binary_test_directory(test_directory) -> Path:
     return test_directory / "Binaries"
+
+
+@pytest.fixture
+def recursion_options() -> tuple[str, ...]:
+    # Includes both uppercase and lowercase versions for comprehensive testing coverage.
+    return "r", "recursive", "R", "RECURSIVE"
+
+
+@pytest.fixture
+def path_types() -> tuple[str, ...]:
+    # Includes both uppercase and lowercase versions for comprehensive testing coverage.
+    return "absolute", "relative", "ABSOLUTE", "RELATIVE"

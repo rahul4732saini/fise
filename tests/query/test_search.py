@@ -119,7 +119,7 @@ class TestFileSearchQuery:
             test_directory,
             recur="r",
             conditions=(
-                "NAME = 'main.py' and PERMS != 16395 or MTIME <= '2024-06-05' and SIZE[Kib] < 1"
+                "NAME = 'main.py' AND PERMS != 16395 OR MTIME <= '2024-06-05' AND SIZE[Kib] < 1"
             ),
         )
 
@@ -132,8 +132,8 @@ class TestFileSearchQuery:
     @pytest.mark.parametrize(
         "conditions",
         [
-            "name like '^.*.\.py$' and ctime between ('1998-02-20', '2024-06-03')",
-            "NAME LIKE '^.*.\.py' " "OR ATIME BETWEEN ('1998-07-27', '2001-12-30')",
+            r"name like '^.*.\.py$' and ctime between ('1998-02-20', '2024-06-03')",
+            r"NAME LIKE '^.*.\.py' OR ATIME BETWEEN ('1998-07-27', '2001-12-30')",
         ],
     )
     def test_search_conditions_with_conditional_operators(
@@ -146,7 +146,7 @@ class TestFileSearchQuery:
     @pytest.mark.parametrize(
         "conditions",
         [
-            "(size[KB] between (10, 100) or size[KiB] between (800, 1000)) and name = 'main.py'",
+            r"(size[KB] between (10, 100) or size[KiB] between (800, 1000)) and name = 'main.py'",
             r"path LIKE '^.*/Media/.*$' AND name IN ('main.py', 'array.py') OR NAME LIKE '^.*\.js$')",
         ],
     )

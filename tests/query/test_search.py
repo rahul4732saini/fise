@@ -468,12 +468,32 @@ class TestDirSearchQuery:
     """
 
     @staticmethod
-    def test_basic_query_syntax(test_directory: Path) -> None:
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_basic_query_syntax(test_directory: Path, ucase: bool) -> None:
         """
         Tests basic directory search query syntax with uppercase and lowercase characters.
         """
-        _handle_query(f"select[type dir] * from '{test_directory}'")
-        _handle_query(f"SELECT[TYPE DIR] * FROM '{test_directory}'")
+        eval_search_query(test_directory, oparams="type dir", ucase=True)
+
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_recursive_search(
+        test_directory: Path, recursion_options: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the recursive operator in directory search query."""
+
+        for i in recursion_options:
+            eval_search_query(test_directory, recur=i)
+
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_search_with_different_path_types(
+        test_directory: Path, path_types: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the directory search query with different path types."""
+
+        for type_ in path_types:
+            eval_search_query(test_directory, oparams="type dir", path_type=type_)
 
     @staticmethod
     def test_individual_search_fields(
@@ -482,8 +502,8 @@ class TestDirSearchQuery:
         """Tests the directory search query with individual fields."""
 
         for field in dir_fields:
-            _handle_query(f"select[type dir] {field} from '{test_directory}'")
-            _handle_query(f"select[type dir] {field.upper()} from '{test_directory}'")
+            eval_search_query(test_directory, fields=field, oparams="type dir")
+            eval_search_query(test_directory, fields=field.upper(), oparams="type dir")
 
     @staticmethod
     def test_multiple_search_field_patterns(
@@ -496,30 +516,9 @@ class TestDirSearchQuery:
         for fields in (
             random.choices(dir_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            _handle_query(
-                f"select[type dir] {','.join(fields)} from '{test_directory}'"
+            eval_search_query(
+                test_directory, fields=", ".join(fields), oparams="type dir"
             )
-            _handle_query(
-                f"select[type dir] {', '.join(fields)} from '{test_directory}'"
-            )
-
-    @staticmethod
-    def test_recursive_search(
-        test_directory: Path, recursion_options: tuple[str, ...]
-    ) -> None:
-        """Tests the recursive operator in directory search query."""
-
-        for i in recursion_options:
-            _handle_query(f"{i} select * from '{test_directory}'")
-
-    @staticmethod
-    def test_search_with_different_path_types(
-        test_directory: Path, path_types: tuple[str, ...]
-    ) -> None:
-        """Tests the directory search query with different path types."""
-
-        for type_ in path_types:
-            _handle_query(f"r select[type dir] * from {type_} '{test_directory}'")
 
     @staticmethod
     def test_export_to_file(
@@ -528,7 +527,7 @@ class TestDirSearchQuery:
         """Tests exporting directory search records to different file types."""
 
         for file in test_export_files:
-            _handle_query(f"export '{file}' select[type dir] * from '{test_directory}'")
+            eval_search_query(test_directory, oparams="type dir", export=f"'{file}'")
 
             # Verifies whether the export was successful.
             assert file.exists()
@@ -538,46 +537,52 @@ class TestDirSearchQuery:
     def test_search_conditions_with_comparison_operators(test_directory: Path) -> None:
         """Tests the directory search query conditions with comparison operators."""
 
-        _handle_query(
-            f"select[type dir] * from '{test_directory}' where name = 'Software'"
+        eval_search_query(
+            test_directory,
+            oparams="type dir",
+            recur="r",
+            conditions="name = 'Software'",
         )
-        _handle_query(
-            f"SELECT[TYPE DIR] * FROM '{test_directory}' WHERE NAME = "
-            "'Media' OR NAME = 'Archive' AND PERMS = 16395"
+        eval_search_query(
+            test_directory,
+            oparams="type dir",
+            recur="r",
+            conditions="NAME = 'Media' OR NAME = 'Archive' AND PERMS = 16395",
         )
 
         if sys.platform != "win32":
-            _handle_query(
-                f"select[type dir] * from '{test_directory}' where name = "
-                "'Documents' and owner = 'none' and group != 'unknown'"
+            eval_search_query(
+                test_directory,
+                oparams="type dir",
+                recur="r",
+                conditions="name = 'Documents' and owner = 'none' and group != 'unknown'",
             )
 
     @staticmethod
-    def test_search_conditions_with_conditional_operators(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"name like '^(Documents|Software)$'and parent in ('test_directory', 'tests')",
+            r"NAME IN ('Software', 'Documents') AND PARENT LIKE '^.*/test_directory'",
+        ),
+    )
+    def test_search_conditions_with_conditional_operators(
+        test_directory: Path, conditions: str
+    ) -> None:
         """Tests the directory search query conditions with conditional operators."""
-
-        _handle_query(
-            f"select[type dir] * from '{test_directory}' where name like "
-            "'^(Documents|Software)$' and path like '^.*/test_directory/.*$' "
-            "and parent in ('test_directory', 'tests', 'archive')"
-        )
-        _handle_query(
-            f"SELECT[TYPE DIR] * FROM '{test_directory}' WHERE NAME IN ('Software',"
-            " 'Documents', 'Archive') AND PARENT LIKE '^.*/test_directory'"
-        )
+        eval_search_query(test_directory, oparams="type dir", conditions=conditions)
 
     @staticmethod
-    def test_nested_search_conditions(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"(name = 'Software' and parent like '^.*/test_directory')",
+            r"(PATH LIKE '^.*/Media/.*$' OR PATH LIKE '^.*/Docs/.*$')",
+        ),
+    )
+    def test_nested_search_conditions(test_directory: Path, conditions: str) -> None:
         """Tests the directory search query with nested conditions."""
-
-        _handle_query(
-            f"select[type dir] * from '{test_directory}' where (name ="
-            " 'Software' and parent like '^.*/test_directory')"
-        )
-        _handle_query(
-            f"SELECT[TYPE DIR] * FROM '{test_directory}' WHERE (PATH LIKE '^.*/Documents/.*$'"
-            " OR PATH LIKE '^.*/Software/.*$') AND NAME IN ('Libraries', 'Meeting_Notes')"
-        )
+        eval_search_query(test_directory, oparams="type dir", conditions=conditions)
 
     @staticmethod
     def miscellaneous_tests(

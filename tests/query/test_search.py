@@ -534,20 +534,22 @@ class TestDirSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_search_conditions_with_comparison_operators(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        [
+            r"name = 'Software' or name = 'Media'",
+            r"NAME = 'Media' OR NAME = 'Archive' AND PERMS = 16395",
+        ],
+    )
+    def test_search_conditions_with_comparison_operators(
+        test_directory: Path, conditions: str
+    ) -> None:
         """Tests the directory search query conditions with comparison operators."""
-
         eval_search_query(
             test_directory,
             oparams="type dir",
             recur="r",
-            conditions="name = 'Software'",
-        )
-        eval_search_query(
-            test_directory,
-            oparams="type dir",
-            recur="r",
-            conditions="NAME = 'Media' OR NAME = 'Archive' AND PERMS = 16395",
+            conditions=conditions,
         )
 
     @staticmethod

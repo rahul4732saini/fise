@@ -6,8 +6,11 @@ import sys
 import random
 from pathlib import Path
 
+import pytest
 import pandas as pd
+
 from fise.query import QueryHandler
+from query_utils import eval_search_query
 
 
 def _handle_query(query: str) -> pd.DataFrame | None:
@@ -28,34 +31,35 @@ class TestFileSearchQuery:
     # fmt: on
 
     @staticmethod
-    def test_basic_search_query_syntax(test_directory: Path) -> None:
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_basic_search_query_syntax(test_directory: Path, ucase: bool) -> None:
         """
-        Tests the validity of query syntax with uppercase and lowercase characters.
+        Tests the validity of query syntax.
         """
-        _handle_query(f"select * from '{test_directory}'")
-        _handle_query(f"SELECT * FROM '{test_directory}'")
+        eval_search_query(test_directory, ucase=ucase)
 
         # Explicitly mentions the file search operation and tests once for all fields.
-        _handle_query(f"select[type file] * from '{test_directory}'")
-        _handle_query(f"SELECT[TYPE FILE] * FROM '{test_directory}'")
+        eval_search_query(test_directory, oparams="type file", ucase=ucase)
 
     @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
     def test_recursive_search(
-        test_directory: Path, recursion_options: tuple[str, ...]
+        test_directory: Path, recursion_options: tuple[str, ...], ucase: bool
     ) -> None:
         """Tests the recursive operator in file search query."""
 
         for i in recursion_options:
-            _handle_query(f"{i} select * from '{test_directory}'")
+            eval_search_query(test_directory, recur=i, ucase=ucase)
 
     @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
     def test_search_with_different_path_types(
-        test_directory: Path, path_types: tuple[str, ...]
+        test_directory: Path, path_types: tuple[str, ...], ucase: bool
     ) -> None:
         """Tests the file search query with different path types."""
 
         for type_ in path_types:
-            _handle_query(f"r select * from {type_} '{test_directory}'")
+            eval_search_query(test_directory, path_type=type_, ucase=ucase)
 
     @staticmethod
     def test_search_with_individual_fields(
@@ -64,14 +68,14 @@ class TestFileSearchQuery:
         """Tests the file search query with individual fields."""
 
         for field in file_fields:
-            _handle_query(f"select {field} from '{test_directory}'")
-            _handle_query(f"select {field.upper()} from '{test_directory}'")
+            eval_search_query(test_directory, field)
+            eval_search_query(test_directory, field.upper())
 
     def test_size_field_width_different_params(self, test_directory: Path) -> None:
         """Tests the size field in the search query with different size unit parameters."""
 
         for unit in self._size_units:
-            _handle_query(f"select size[{unit}] from '{test_directory}'")
+            eval_search_query(test_directory, f"size[{unit}]")
 
     @staticmethod
     def test_search_with_multiple_fields(
@@ -85,7 +89,7 @@ class TestFileSearchQuery:
         for fields in (
             random.choices(file_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            _handle_query(f"select {', '.join(fields)} from '{test_directory}'")
+            eval_search_query(test_directory, f"{', '.join(fields)}")
 
     @staticmethod
     def test_export_to_file(
@@ -94,7 +98,7 @@ class TestFileSearchQuery:
         """Tests exporting file search records to files."""
 
         for file in test_export_files:
-            _handle_query(f"export '{file}' select * from '{test_directory}'")
+            eval_search_query(test_directory, export=f"'{file}'")
 
             # Verifies whether the export was successful.
             assert file.exists()
@@ -104,46 +108,51 @@ class TestFileSearchQuery:
     def test_search_conditions_with_comparison_operators(test_directory: Path) -> None:
         """Tests the file search conditions with comparison operators."""
 
-        _handle_query(
-            f"r select * from '{test_directory}' where atime > '2000-01-05' "
-            "or ctime < '1988-02-10' and size >= 0 and size[KB] < 1"
+        eval_search_query(
+            test_directory,
+            recur="r",
+            conditions=(
+                "atime > '2000-01-05' or ctime < '1988-02-10' and size >= 0 and size[KB] < 1"
+            ),
         )
-        _handle_query(
-            f"SELECT * FROM '{test_directory}' WHERE NAME = 'main.py' "
-            "and PERMS != 16395 or MTIME <= '2024-06-05' and SIZE[Kib] < 1"
+        eval_search_query(
+            test_directory,
+            recur="r",
+            conditions=(
+                "NAME = 'main.py' and PERMS != 16395 or MTIME <= '2024-06-05' and SIZE[Kib] < 1"
+            ),
         )
 
         if sys.platform != "win32":
-            _handle_query(
-                f"select * from '{test_directory}' where owner = 'none' and group != 'unknown'"
+            eval_search_query(
+                test_directory, conditions="where owner = 'none' and group != 'unknown'"
             )
 
     @staticmethod
-    def test_search_conditions_with_conditional_operators(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        [
+            "name like '^.*.\.py$' and ctime between ('1998-02-20', '2024-06-03')",
+            "NAME LIKE '^.*.\.py' " "OR ATIME BETWEEN ('1998-07-27', '2001-12-30')",
+        ],
+    )
+    def test_search_conditions_with_conditional_operators(
+        test_directory: Path, conditions: str
+    ) -> None:
         """Tests the file search conditions with conditional operators."""
-
-        _handle_query(
-            rf"select * from '{test_directory}' where name like '^.*.\.py$' and ctime "
-            "between ('1998-02-20', '2024-06-03') or mtime in ('2024-05-24', '2022-08-13')"
-        )
-        _handle_query(
-            rf"SELECT * FROM '{test_directory}' WHERE NAME LIKE '^.*.\.py' "
-            "OR ATIME BETWEEN ('1998-07-27', '2001-12-30')"
-        )
+        eval_search_query(test_directory, conditions=conditions)
 
     @staticmethod
-    def test_nested_search_conditions(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        [
+            "(size[KB] between (10, 100) or size[KiB] between (800, 1000)) and name = 'main.py'",
+            r"path LIKE '^.*/Media/.*$' AND name IN ('main.py', 'array.py') OR NAME LIKE '^.*\.js$')",
+        ],
+    )
+    def test_nested_search_conditions(test_directory: Path, conditions: str) -> None:
         """Tests the file search query with nested search conditions."""
-
-        _handle_query(
-            rf"select * from '{test_directory}' where name like '^.*\.py$' and (size[KB] "
-            "between (10, 100) or size[KiB] between (800, 1000)) and ctime > '2020-05-15'"
-        )
-        _handle_query(
-            rf"R SELECT * FROM '{test_directory}' WHERE PATH LIKE '^.*/Software/.*$' AND "
-            r"(NAME IN ('main.py', 'array.py', 'random.py') OR NAME LIKE '^.*\.js$') AND "
-            "MTIME BETWEEN ('2022-12-07', '2024-07-03')"
-        )
+        eval_search_query(test_directory, conditions=conditions)
 
 
 class TestTextDataSearchQuery:

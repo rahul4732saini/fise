@@ -7,15 +7,7 @@ import random
 from pathlib import Path
 
 import pytest
-import pandas as pd
-
-from fise.query import QueryHandler
 from query_utils import eval_search_query
-
-
-def _handle_query(query: str) -> pd.DataFrame | None:
-    """Handles the specified query."""
-    return QueryHandler(query).handle()
 
 
 class TestFileSearchQuery:
@@ -293,9 +285,13 @@ class TestTextDataSearchQuery:
         """Tests various aspects of the text data search query."""
 
         for file in test_export_files:
-            _handle_query(
-                f"EXPORT '{file}' r SELECT[Type Data] * from ABSOlUTE '{text_test_directory}'"
-                " WHERE name IN ('Lorem.txt', 'ML.txt') AND LINENO in (1, 13, 10, 7)"
+            # Tests the query with mixed case characters.
+            eval_search_query(
+                text_test_directory,
+                recur="r",
+                path_type="ABSoLUTE",
+                export=f"'{file}'",
+                conditions=r"name IN ('Lorem.txt', 'ML.txt') AND lINENO in (1, 13, 10, 7)",
             )
 
             # Verifies whether the export was successful.
@@ -451,10 +447,12 @@ class TestBinaryDataSearchQuery:
         """Tests various aspects of the binary data search query."""
 
         for file in test_export_files:
-            _handle_query(
-                f"EXPORT '{file}' r SELECT[Type Data, MODE Bytes] * from "
-                f"ABSOlUTE '{binary_test_directory}' WHERE name IN ('Lorem.txt', "
-                "'ML.txt') AND LINENO in (1, 13, 10, 7)"
+            eval_search_query(
+                binary_test_directory,
+                recur="RecursivE",
+                path_type="ABSOlUTE",
+                export=f"'{file}'",
+                conditions=r"name = 'Lorem.txt' AND LINENO in (1, 13, 7, 25)",
             )
 
             # Verifies whether the export was successful.
@@ -604,9 +602,12 @@ class TestDirSearchQuery:
         """Tests various aspects of the directory search query."""
 
         for file in test_export_files:
-            _handle_query(
-                f"EXPORT '{file}' r SELECT[Type DIR] * from ABSOlUTE '{test_directory}' WHERE name "
-                "IN ('Software', 'Libraries', 'Documents', 'Music') OR pAth like '^.*(Media|Archive)'"
+            eval_search_query(
+                test_directory,
+                recur="R",
+                path_type="RelativE",
+                export=f"'{file}'",
+                conditions=r"name In ('Software', 'Libraries') OR pAth like '^.*(Media|Archive)'",
             )
 
             # Verifies whether the export was successful.

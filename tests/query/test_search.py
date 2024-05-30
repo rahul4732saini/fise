@@ -68,14 +68,14 @@ class TestFileSearchQuery:
         """Tests the file search query with individual fields."""
 
         for field in file_fields:
-            eval_search_query(test_directory, field)
-            eval_search_query(test_directory, field.upper())
+            eval_search_query(test_directory, fields=field)
+            eval_search_query(test_directory, fields=field.upper())
 
     def test_size_field_width_different_params(self, test_directory: Path) -> None:
         """Tests the size field in the search query with different size unit parameters."""
 
         for unit in self._size_units:
-            eval_search_query(test_directory, f"size[{unit}]")
+            eval_search_query(test_directory, fields=f"size[{unit}]")
 
     @staticmethod
     def test_search_with_multiple_fields(
@@ -89,7 +89,7 @@ class TestFileSearchQuery:
         for fields in (
             random.choices(file_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            eval_search_query(test_directory, f"{', '.join(fields)}")
+            eval_search_query(test_directory, fields=f"{', '.join(fields)}")
 
     @staticmethod
     def test_export_to_file(
@@ -168,17 +168,35 @@ class TestTextDataSearchQuery:
     """
 
     @staticmethod
-    def test_basic_query_syntax(text_test_directory: Path) -> None:
+    @pytest.mark.parametrize("oparams", ("type data", "type data, mode text"))
+    def test_basic_query_syntax(text_test_directory: Path, oparams: str) -> None:
         """
         Tests basic text data search query syntax with uppercase and lowercase characters.
         """
+        eval_search_query(text_test_directory, oparams=oparams)
+        eval_search_query(text_test_directory, oparams=oparams, ucase=True)
 
-        for query in (
-            f"select[type data] * from '{text_test_directory}'",
-            f"select[type data, mode text] * from '{text_test_directory}'",
-            f"SELECT[TYPE DATA, MODE TEXT] * FROM '{text_test_directory}'",
-        ):
-            _handle_query(query)
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_recursive_search(
+        text_test_directory: Path, recursion_options: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the recursive operator in text data search query."""
+
+        for i in recursion_options:
+            eval_search_query(
+                text_test_directory, recur=i, oparams="type data", ucase=ucase
+            )
+
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_search_with_different_path_types(
+        text_test_directory: Path, path_types: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the text data search query with different path types."""
+
+        for type_ in path_types:
+            eval_search_query(text_test_directory, path_type=type_, oparams="type data")
 
     @staticmethod
     def test_individual_search_fields(
@@ -187,9 +205,9 @@ class TestTextDataSearchQuery:
         """Tests the text data search query with individual fields."""
 
         for field in data_fields:
-            _handle_query(f"select[type data] {field} from '{text_test_directory}'")
-            _handle_query(
-                f"select[type data] {field.upper()} from '{text_test_directory}'"
+            eval_search_query(text_test_directory, fields=field, oparams="type data")
+            eval_search_query(
+                text_test_directory, fields=field.upper(), oparams="type data"
             )
 
     @staticmethod
@@ -201,11 +219,9 @@ class TestTextDataSearchQuery:
         for fields in (
             random.choices(data_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            for query in (
-                f"select[type data] {', '.join(fields)} from '{text_test_directory}'",
-                f"SELECT[TYPE DATA] {', '.join(fields)} FROM '{text_test_directory}'",
-            ):
-                _handle_query(query)
+            eval_search_query(
+                text_test_directory, ", ".join(fields), oparams="type data"
+            )
 
     @staticmethod
     def test_export_to_file(
@@ -214,8 +230,8 @@ class TestTextDataSearchQuery:
         """Tests exporting text data search records to different file types."""
 
         for file in test_export_files:
-            _handle_query(
-                f"export '{file}' select[type data] * from '{text_test_directory}'"
+            eval_search_query(
+                text_test_directory, export=f"'{file}'", oparams="type data"
             )
 
             # Verifies whether the export was successful.
@@ -223,64 +239,51 @@ class TestTextDataSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_recursive_search(
-        text_test_directory: Path, recursion_options: tuple[str, ...]
-    ) -> None:
-        """Tests the recursive operator in text data search query."""
-
-        for i in recursion_options:
-            _handle_query(f"{i} select[type data] * from '{text_test_directory}'")
-
-    @staticmethod
-    def test_search_with_different_path_types(
-        text_test_directory: Path, path_types: tuple[str, ...]
-    ) -> None:
-        """Tests the text data search query with different path types."""
-
-        for type_ in path_types:
-            _handle_query(f"select[type data] * from {type_} '{text_test_directory}'")
-
-    @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"name = 'Lorem.txt' and lineno != 5",
+            r"NAME = 'ML.txt' OR NAME = 'Lorem.txt'",
+        ),
+    )
     def test_search_conditions_with_comparison_operators(
-        text_test_directory: Path,
+        text_test_directory: Path, conditions: str
     ) -> None:
         """Tests the text data search query conditions with comparison operators."""
-
-        _handle_query(
-            f"select[type data] * from '{text_test_directory}' "
-            "where name = 'Lorem.txt' and lineno != 5"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' "
-            "WHERE NAME = 'ML.txt' OR NAME = 'Lorem.txt'"
+        eval_search_query(
+            text_test_directory, oparams="type data", conditions=conditions
         )
 
     @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"name like '^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'",
+            r"NAME IN ('Lorem.txt', 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'",
+        ),
+    )
     def test_search_conditions_with_conditional_operators(
-        text_test_directory: Path,
+        text_test_directory: Path, conditions: str
     ) -> None:
         """Tests the text data search query conditions with conditional operators."""
-
-        _handle_query(
-            f"select[type data] * from '{text_test_directory}' where name like "
-            "'^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' WHERE NAME IN ('Lorem.txt',"
-            " 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'"
+        eval_search_query(
+            text_test_directory, oparams="type data", conditions=conditions
         )
 
     @staticmethod
-    def test_nested_search_conditions(text_test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"(name = 'M1.txt' or name = 'Lorem.txt') and path like '^.*/Text/.*$'",
+            r"(DATA LIKE '^Lorem.*$' OR DATA LIKE '^netus.*$') AND NAME = 'Lorem.txt'",
+        ),
+    )
+    def test_nested_search_conditions(
+        text_test_directory: Path, conditions: str
+    ) -> None:
         """Tests the data search query with nested conditions."""
-
-        _handle_query(
-            f"select[type data] * from '{text_test_directory}' where (name = 'M1.txt'"
-            " or name = 'Lorem.txt') and path like '^.*/Text/.*$' and lineno = 15"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA] * FROM '{text_test_directory}' WHERE (DATA LIKE '^Lorem.*$'"
-            " OR DATA LIKE '^netus.*$') AND NAME = 'Lorem.txt' AND LINENO BETWEEN (1, 50)"
+        eval_search_query(
+            text_test_directory, oparams="type data", conditions=conditions
         )
 
     @staticmethod

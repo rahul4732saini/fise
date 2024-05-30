@@ -153,6 +153,26 @@ class TestFileSearchQuery:
         """Tests the file search query with nested search conditions."""
         eval_search_query(test_directory, conditions=conditions)
 
+    @staticmethod
+    def miscellaneous_tests(
+        test_directory: Path, test_export_files: tuple[Path, ...]
+    ) -> None:
+        """Tests various aspects of the file search query."""
+
+        for file in test_export_files:
+            # Tests the query with mixed case characters.
+            eval_search_query(
+                test_directory,
+                recur="R",
+                path_type="ABSoLuTE",
+                export=f"'{file}'",
+                conditions=r"name LIKe '^.*\.txt$' AnD Size[KiB] >= 1",
+            )
+
+            # Verifies whether the export was successful.
+            assert file.exists()
+            file.unlink()
+
 
 class TestTextDataSearchQuery:
     """

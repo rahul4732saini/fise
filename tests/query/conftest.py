@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 # Adds the project directories to sys.path at runtime.
+sys.path.append(str(Path(__file__).parent))
 sys.path.append(str(Path(__file__).parents[2]))
 sys.path.append(str(Path(__file__).parents[2] / "fise"))
 

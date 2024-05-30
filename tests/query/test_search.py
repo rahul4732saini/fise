@@ -131,7 +131,7 @@ class TestFileSearchQuery:
         Tests the file search conditions with additional fields for Posix based systems.
         """
         if sys.platform == "win32":
-            return
+            return None
 
         eval_search_query(test_directory, conditions=conditions)
 
@@ -550,13 +550,24 @@ class TestDirSearchQuery:
             conditions="NAME = 'Media' OR NAME = 'Archive' AND PERMS = 16395",
         )
 
-        if sys.platform != "win32":
-            eval_search_query(
-                test_directory,
-                oparams="type dir",
-                recur="r",
-                conditions="name = 'Documents' and owner = 'none' and group != 'unknown'",
-            )
+    @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        [
+            r"name like '^Software|Media$' and (owner = 'none' or group != 'unknown)'",
+            r"OWNER != 'ArchUser' AND GROUP = 'FiSE-dev'",
+        ],
+    )
+    def test_posix_search_conditions(test_directory: Path, conditions: str) -> None:
+        """
+        Tests the directory search conditions with additional fields for Posix based systems.
+        """
+        if sys.platform == "win32":
+            return None
+
+        eval_search_query(
+            test_directory, recur="r", oparams="type dir", conditions=conditions
+        )
 
     @staticmethod
     @pytest.mark.parametrize(

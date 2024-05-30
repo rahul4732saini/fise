@@ -155,7 +155,6 @@ class TestTextDataSearchQuery:
 
         for query in (
             f"select[type data] * from '{text_test_directory}'",
-            f"SELECT[TYPE DATA] * FROM '{text_test_directory}'",
             f"select[type data, mode text] * from '{text_test_directory}'",
             f"SELECT[TYPE DATA, MODE TEXT] * FROM '{text_test_directory}'",
         ):

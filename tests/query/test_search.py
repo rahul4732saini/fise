@@ -123,10 +123,22 @@ class TestFileSearchQuery:
             ),
         )
 
-        if sys.platform != "win32":
-            eval_search_query(
-                test_directory, conditions="where owner = 'none' and group != 'unknown'"
-            )
+    @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        [
+            r"size[Mib] < 1 and owner = 'none' and group != 'unknown'",
+            r"OWNER != 'ArchUser' AND GROUP = 'FiSE-dev'",
+        ],
+    )
+    def test_posix_search_conditions(test_directory: Path, conditions: str) -> None:
+        """
+        Tests the file search conditions with additional fields for Posix based systems.
+        """
+        if sys.platform == "win32":
+            return
+
+        eval_search_query(test_directory, conditions=conditions)
 
     @staticmethod
     @pytest.mark.parametrize(

@@ -309,16 +309,38 @@ class TestBinaryDataSearchQuery:
     """
 
     @staticmethod
-    def test_basic_query_syntax(binary_test_directory: Path) -> None:
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_basic_query_syntax(binary_test_directory: Path, ucase: bool) -> None:
         """
         Tests basic binary data search query syntax with uppercase and lowercase characters.
         """
+        eval_search_query(
+            binary_test_directory, oparams="type data, mode bytes", ucase=ucase
+        )
 
-        for query in (
-            f"select[type data, mode bytes] * from '{binary_test_directory}'",
-            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}'",
-        ):
-            _handle_query(query)
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_recursive_search(
+        binary_test_directory: Path, recursion_options: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the recursive operator in binary data search query."""
+
+        for i in recursion_options:
+            eval_search_query(
+                binary_test_directory, oparams="type data, mode bytes", recur=i
+            )
+
+    @staticmethod
+    @pytest.mark.parametrize("ucase", (True, False))
+    def test_search_with_different_path_types(
+        binary_test_directory: Path, path_types: tuple[str, ...], ucase: bool
+    ) -> None:
+        """Tests the binary data search query with different path types."""
+
+        for type_ in path_types:
+            eval_search_query(
+                binary_test_directory, oparams="type data, mode bytes", path_type=type_
+            )
 
     @staticmethod
     def test_individual_search_fields(
@@ -327,11 +349,14 @@ class TestBinaryDataSearchQuery:
         """Tests the binary data search query with individual fields."""
 
         for field in data_fields:
-            for query in (
-                f"select[type data, mode bytes] {field} from '{binary_test_directory}'",
-                f"select[type data, mode bytes] {field.upper()} from '{binary_test_directory}'",
-            ):
-                _handle_query(query)
+            eval_search_query(
+                binary_test_directory, oparams="type data, mode bytes", fields=field
+            )
+            eval_search_query(
+                binary_test_directory,
+                oparams="type data, mode bytes",
+                fields=field.upper(),
+            )
 
     @staticmethod
     def test_multiple_search_field_patterns(
@@ -342,11 +367,11 @@ class TestBinaryDataSearchQuery:
         for fields in (
             random.choices(data_fields, k=random.choice(range(1, 5))) for _ in range(5)
         ):
-            for query in (
-                f"select[type data, mode bytes] {', '.join(fields)} from '{binary_test_directory}'",
-                f"SELECT[TYPE DATA, MODE BYTES] {', '.join(fields)} FROM '{binary_test_directory}'",
-            ):
-                _handle_query(query)
+            eval_search_query(
+                binary_test_directory,
+                oparams="type data, mode bytes",
+                fields=", ".join(fields),
+            )
 
     @staticmethod
     def test_export_to_file(
@@ -355,8 +380,10 @@ class TestBinaryDataSearchQuery:
         """Tests exporting binary data search records to different file types."""
 
         for file in test_export_files:
-            _handle_query(
-                f"export '{file}' select[type data, mode bytes] * from '{binary_test_directory}'"
+            eval_search_query(
+                binary_test_directory,
+                oparams="type data, mode bytes",
+                export=f"'{file}'",
             )
 
             # Verifies whether the export was successful.
@@ -364,68 +391,57 @@ class TestBinaryDataSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_recursive_search(
-        binary_test_directory: Path, recursion_options: tuple[str, ...]
-    ) -> None:
-        """Tests the recursive operator in binary data search query."""
-
-        for i in recursion_options:
-            _handle_query(
-                f"{i} select[type data, mode bytes] * from '{binary_test_directory}'"
-            )
-
-    @staticmethod
-    def test_search_with_different_path_types(
-        binary_test_directory: Path, path_types: tuple[str, ...]
-    ) -> None:
-        """Tests the binary data search query with different path types."""
-
-        for type_ in path_types:
-            _handle_query(
-                f"select[type data, mode bytes] * from {type_} '{binary_test_directory}'"
-            )
-
-    @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"name = 'Lorem.txt' and lineno != 5",
+            r"NAME = 'ML.txt' OR NAME = 'Lorem.txt' AND LINENO = 10",
+        ),
+    )
     def test_search_conditions_with_comparison_operators(
-        binary_test_directory: Path,
+        binary_test_directory: Path, conditions: str
     ) -> None:
         """Tests the binary data search query conditions with comparison operators."""
-
-        _handle_query(
-            f"select[type data, mode bytes] * from '{binary_test_directory}' "
-            "where name = 'Lorem.txt' and lineno != 5"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' "
-            "WHERE NAME = 'ML.txt' OR NAME = 'Lorem.txt' AND LINENO = 10"
+        eval_search_query(
+            binary_test_directory,
+            oparams="type data, mode bytes",
+            conditions=conditions,
         )
 
     @staticmethod
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"name like '^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'",
+            r"NAME IN ('Lorem.txt', 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'",
+        ),
+    )
     def test_search_conditions_with_conditional_operators(
-        binary_test_directory: Path,
+        binary_test_directory: Path, conditions: str
     ) -> None:
         """Tests the binary data search query conditions with conditional operators."""
-
-        _handle_query(
-            f"select[type data, mode bytes] * from '{binary_test_directory}' where "
-            "name like '^(Lorem|ML).txt$' and path like '^.*/test_directory/Text/.*$'"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' WHERE NAME IN "
-            "('Lorem.txt', 'ML.txt') AND LINENO BETWEEN (1, 24) AND DATA LIKE '^Lorem.*$'"
+        eval_search_query(
+            binary_test_directory,
+            oparams="type data, mode bytes",
+            conditions=conditions,
         )
 
     @staticmethod
-    def test_nested_search_conditions(binary_test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"(name = 'M1.txt' or name = 'Lorem.txt') and path like '^.*/Text/.*$' and lineno = 15",
+            r"(DATA LIKE '^Lorem.*$' OR DATA LIKE '^netus.*$') AND LINENO BETWEEN (1, 50)",
+        ),
+    )
+    def test_nested_search_conditions(
+        binary_test_directory: Path, conditions: str
+    ) -> None:
         """Tests the binary data search query with nested conditions."""
-
-        _handle_query(
-            f"select[type data, mode bytes] * from '{binary_test_directory}' where (name = "
-            "'M1.txt' or name = 'Lorem.txt') and path like '^.*/Text/.*$' and lineno = 15"
-        )
-        _handle_query(
-            f"SELECT[TYPE DATA, MODE BYTES] * FROM '{binary_test_directory}' WHERE (DATA LIKE "
-            "'^Lorem.*$' OR DATA LIKE '^netus.*$') AND NAME = 'Lorem.txt' AND LINENO BETWEEN (1, 50)"
+        eval_search_query(
+            binary_test_directory,
+            oparams="type data, mode bytes",
+            conditions=conditions,
         )
 
     @staticmethod

@@ -105,23 +105,18 @@ class TestFileSearchQuery:
             file.unlink()
 
     @staticmethod
-    def test_search_conditions_with_comparison_operators(test_directory: Path) -> None:
+    @pytest.mark.parametrize(
+        "conditions",
+        (
+            r"atime > '2000-01-05' or ctime < '1988-02-10' and size >= 0 and size[KB] < 1",
+            r"NAME = 'main.py' AND PERMS != 16395 OR MTIME <= '2024-06-05' AND SIZE[Kib] < 1",
+        ),
+    )
+    def test_search_conditions_with_comparison_operators(
+        test_directory: Path, conditions: str
+    ) -> None:
         """Tests the file search conditions with comparison operators."""
-
-        eval_search_query(
-            test_directory,
-            recur="r",
-            conditions=(
-                "atime > '2000-01-05' or ctime < '1988-02-10' and size >= 0 and size[KB] < 1"
-            ),
-        )
-        eval_search_query(
-            test_directory,
-            recur="r",
-            conditions=(
-                "NAME = 'main.py' AND PERMS != 16395 OR MTIME <= '2024-06-05' AND SIZE[Kib] < 1"
-            ),
-        )
+        eval_search_query(test_directory, recur="r", conditions=conditions)
 
     @staticmethod
     @pytest.mark.parametrize(

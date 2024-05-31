@@ -87,3 +87,11 @@ def eval_delete_query(
 
     # Handles the specified query.
     return QueryHandler(query).handle()
+
+
+def read_delete_record(path: str) -> pd.DataFrame:
+    """
+    Extracts test delete records from `delete_records.hdf`.
+    """
+    with pd.HDFStore(Path(__file__).parent / "delete_records.hdf") as store:
+        return store[path]

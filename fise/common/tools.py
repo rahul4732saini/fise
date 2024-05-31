@@ -164,7 +164,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
 
     if not export_method:
         raise OperationError(
-            f"'{file.suffix!r}' file type is not supported for exporting search records."
+            f"{file.suffix!r} file type is not supported for exporting search records."
         )
 
     # Converts datetime objects in datetime columns into string

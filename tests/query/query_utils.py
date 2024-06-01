@@ -134,6 +134,7 @@ def reset_test_directory() -> None:
 
     test_directory: Path = Path(__file__).parents[1] / "test_directory"
 
+    # Removes the directory tree if already in existence.
     if test_directory.exists():
         shutil.rmtree(test_directory)
 
@@ -145,8 +146,13 @@ def reset_test_directory() -> None:
     for file in get_test_files():
         file.touch()
 
+    # Extracts `pd.Series` objects comprising binary/text file contents.
     with pd.HDFStore(Path(__file__).parents[1] / "test_directory.hdf") as store:
-        file_contents: pd.Series = store["/file_contents"]
+        bin_file_contents: pd.Series = store["/file_contents/bin"]
+        text_file_contents: pd.Series = store["/file_contents/text"]
 
-    for file, content in file_contents.items():
-        (Path(__file__) / file).write_text(content)
+    for file, contents in bin_file_contents.items():
+        Path(test_directory / file).write_bytes(contents)
+
+    for file, contents in text_file_contents.items():
+        Path(test_directory / file).write_text(contents)

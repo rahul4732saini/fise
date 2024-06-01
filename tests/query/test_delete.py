@@ -2,9 +2,31 @@
 Tests the delete query with different test cases.
 """
 
+import functools
 from pathlib import Path
+
 import pytest
-from query_utils import eval_delete_query
+import pandas as pd
+
+from fise.errors import QueryHandleError
+from query_utils import eval_delete_query, reset_test_directory
+
+
+def _handle_test_case(func):
+    """Handles the specified delete query test case."""
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs) -> pd.DataFrame | None:
+        try:
+            data: pd.DataFrame | None = func(*args, **kwargs)
+
+        except (AssertionError, QueryHandleError):
+            reset_test_directory()
+
+        else:
+            return data
+
+    return wrapper
 
 
 class TestFileDeleteQuery:

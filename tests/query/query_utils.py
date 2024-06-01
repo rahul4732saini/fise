@@ -7,7 +7,9 @@ classes and functions for testing queries.
 """
 
 import sys
+import shutil
 from pathlib import Path
+from typing import Generator
 
 import pandas as pd
 
@@ -95,3 +97,56 @@ def read_delete_record(path: str) -> pd.DataFrame:
     """
     with pd.HDFStore(Path(__file__).parent / "delete_records.hdf") as store:
         return store[path]
+
+
+def get_test_directory_contents(path: str) -> Generator[Path, None, None]:
+    """
+    Yields `pathlib.Path` objects of paths extracted
+    from the dataframe at the specified `path`.
+    """
+
+    with pd.HDFStore(Path(__file__).parents[1] / "test_directory.hdf") as store:
+        # Extracts `pandas.Series` object of the `path` column in the extracted dataframe.
+        contents: pd.Series = store[path]
+
+    test_directory: Path = Path(__file__).parents[1] / "test_directory"
+    yield from (test_directory / i for i in contents)
+
+
+def get_test_files() -> Generator[Path, None, None]:
+    """
+    Yields `pathlib.Path` objects of all the files present within `test_directory`.
+    """
+    yield from get_test_directory_contents("/files")
+
+
+def get_test_subdirs() -> Generator[Path, None, None]:
+    """
+    Yields `pathlib.Path` objects of all the subdirectories present within `test_directory`.
+    """
+    yield from get_test_directory_contents("/dirs")
+
+
+def reset_test_directory() -> None:
+    """
+    Resets `test_directory` re-creating the files and directories originally defined in it.
+    """
+
+    test_directory: Path = Path(__file__).parents[1] / "test_directory"
+
+    if test_directory.exists():
+        shutil.rmtree(test_directory)
+
+    test_directory.mkdir()
+
+    for direc in get_test_subdirs():
+        direc.mkdir()
+
+    for file in get_test_files():
+        file.touch()
+
+    with pd.HDFStore(Path(__file__).parents[1] / "test_directory.hdf") as store:
+        file_contents: pd.Series = store["/file_contents"]
+
+    for file, content in file_contents.items():
+        (Path(__file__) / file).write_text(content)

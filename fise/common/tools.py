@@ -123,10 +123,10 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
             if path.is_file():
                 continue
 
+            yield path
+
             if recursive:
                 yield from get_directories(path, recursive)
-
-            yield path
 
     except PermissionError:
         Alert(f"Permission Error: Skipping directory '{directory}'")

@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from query_utils import get_test_files, get_test_subdirs
 
 # Adds the project directories to sys.path at runtime.
 sys.path.append(str(Path(__file__).parent))
@@ -63,3 +64,8 @@ def recursion_options() -> tuple[str, ...]:
 @pytest.fixture
 def path_types() -> tuple[str, ...]:
     return "absolute", "relative"
+
+
+@pytest.fixture
+def test_directory_contents() -> list[Path]:
+    return list(get_test_files()) + list(get_test_subdirs())

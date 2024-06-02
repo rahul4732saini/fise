@@ -95,10 +95,13 @@ def read_delete_record(path: str) -> set[Path]:
     """
     Extracts test delete records from `delete_records.hdf`.
     """
+
+    test_directory: Path = Path(__file__).parents[1] / "test_directory"
+
     with pd.HDFStore(Path(__file__).parent / "delete_records.hdf") as store:
         data: pd.Series = store[path]
 
-    return {Path(path) for path in data}
+    return {test_directory / path for path in data}
 
 
 def get_test_directory_contents(path: str) -> Generator[Path, None, None]:

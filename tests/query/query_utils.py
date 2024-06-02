@@ -91,12 +91,14 @@ def eval_delete_query(
     return QueryHandler(query).handle()
 
 
-def read_delete_record(path: str) -> pd.DataFrame:
+def read_delete_record(path: str) -> set[Path]:
     """
     Extracts test delete records from `delete_records.hdf`.
     """
     with pd.HDFStore(Path(__file__).parent / "delete_records.hdf") as store:
-        return store[path]
+        data: pd.Series = store[path]
+
+    return {Path(path) for path in data}
 
 
 def get_test_directory_contents(path: str) -> Generator[Path, None, None]:

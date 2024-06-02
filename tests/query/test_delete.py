@@ -20,8 +20,12 @@ def _handle_test_case(func):
         try:
             data: pd.DataFrame | None = func(*args, **kwargs)
 
-        except (AssertionError, QueryHandleError):
+        except (AssertionError, QueryHandleError) as error:
             reset_test_directory()
+
+            # Raises the error after resetting the test directory
+            # to make the test cases marked `FAILED`.
+            raise error
 
         else:
             return data

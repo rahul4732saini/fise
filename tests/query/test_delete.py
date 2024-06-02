@@ -4,12 +4,13 @@ Tests the delete query with different test cases.
 
 import functools
 from pathlib import Path
+from typing import Literal
 
 import pytest
 import pandas as pd
 
 from fise.errors import QueryHandleError
-from query_utils import eval_delete_query, reset_test_directory
+from query_utils import eval_delete_query, reset_test_directory, read_delete_record
 
 
 def _handle_test_case(func):
@@ -31,6 +32,33 @@ def _handle_test_case(func):
             return data
 
     return wrapper
+
+
+def match_delete_records(
+    test_directory_contents: set[Path],
+    records_path: str,
+    type_: Literal["file", "dir"],
+) -> None:
+    """
+    Matches the existence of the files and directories present within the test
+    directory based on the delete records extracted from the specified `records_path`
+    comprising the files/directories deleted during the delete opertion.
+    """
+
+    records: set[Path] = read_delete_record(records_path)
+
+    for path in test_directory_contents:
+
+        # Creates the path if not in existence and is
+        # a part of the deleted file/directory records.
+        if path in records:
+            assert not path.exists()
+            path.touch() if type_ == "file" else path.mkdir()
+
+            continue
+
+        # Asserts the path existence if it isn't a part of the delete query.
+        assert path.exists()
 
 
 class TestFileDeleteQuery:

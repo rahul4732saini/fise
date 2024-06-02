@@ -9,7 +9,6 @@ from typing import Literal
 import pytest
 import pandas as pd
 
-from fise.errors import QueryHandleError
 from query_utils import eval_delete_query, reset_test_directory, read_delete_record
 
 
@@ -21,7 +20,7 @@ def _handle_test_case(func):
         try:
             data: pd.DataFrame | None = func(*args, **kwargs)
 
-        except (AssertionError, QueryHandleError) as error:
+        except Exception as error:
             reset_test_directory()
 
             # Raises the error after resetting the test directory
@@ -35,9 +34,9 @@ def _handle_test_case(func):
 
 
 def match_delete_records(
-    test_directory_contents: set[Path],
+    test_directory_contents: list[Path],
     records_path: str,
-    type_: Literal["file", "dir"],
+    type_: Literal["file", "dir"] = "file",
 ) -> None:
     """
     Matches the existence of the files and directories present within the test

@@ -66,35 +66,50 @@ class TestFileDeleteQuery:
     """
 
     @staticmethod
+    @_handle_test_case
     @pytest.mark.parametrize("ucase", (True, False))
-    def test_basic_query_syntax(test_directory: Path, ucase: bool) -> None:
+    def test_basic_query_syntax(
+        test_directory: Path, test_directory_contents: list[Path], ucase: bool
+    ) -> None:
         """
-        Tests basic syntax for file delete query.
+        Tests the validity of file delete query basic syntax.
         """
-        eval_delete_query(test_directory, ucase=ucase)
-        eval_delete_query(test_directory, oparams="type file", ucase=ucase)
+
+        for oparams in (None, "type file"):
+            eval_delete_query(test_directory, oparams=oparams, ucase=ucase)
+            match_delete_records(test_directory_contents, "/file/basic")
 
     @staticmethod
+    @_handle_test_case
     @pytest.mark.parametrize("ucase", (True, False))
     def test_recursive_delete(
-        test_directory: Path, recursion_options: tuple[str, ...], ucase: bool
+        test_directory: Path,
+        test_directory_contents: list[Path],
+        recursion_options: tuple[str, ...],
+        ucase: bool,
     ) -> None:
         """
         Tests the recursive operator in file delete query.
         """
         for i in recursion_options:
             eval_delete_query(test_directory / "Media", recur=i, ucase=ucase)
+            match_delete_records(test_directory_contents, "/file/recursive")
 
     @staticmethod
+    @_handle_test_case
     @pytest.mark.parametrize("ucase", (True, False))
     def test_delete_query_path_types(
-        test_directory: Path, path_types: tuple[str, ...], ucase: bool
+        test_directory: Path,
+        test_directory_contents: list[Path],
+        path_types: tuple[str, ...],
+        ucase: bool,
     ):
         """
         Tests the file delete query with different path types.
         """
         for i in path_types:
             eval_delete_query(test_directory, path_type=i, ucase=ucase)
+            match_delete_records(test_directory_contents, "/file/basic")
 
     @staticmethod
     @pytest.mark.parametrize("conditions", ())

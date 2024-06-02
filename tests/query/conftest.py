@@ -2,12 +2,13 @@ import sys
 from pathlib import Path
 
 import pytest
-from query_utils import get_test_files, get_test_subdirs
 
 # Adds the project directories to sys.path at runtime.
 sys.path.append(str(Path(__file__).parent))
 sys.path.append(str(Path(__file__).parents[2]))
 sys.path.append(str(Path(__file__).parents[2] / "fise"))
+
+from query_utils import get_test_files, get_test_subdirs
 
 
 @pytest.fixture

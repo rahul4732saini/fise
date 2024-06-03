@@ -41,8 +41,8 @@ def parse_query(query: str) -> list[str]:
     # not yet terminated during iteration in the specified query.
     cur: list = []
 
-    # Adding a whitespace at the end of the query
-    # to avoid parsing it separately after iteration.
+    # Adds a whitespace at the end of the query to avoid
+    # parsing the last token separately after iteration.
     for char in query + " ":
         # Only executes the conditional block if the character is a starting
         # delimiter and not nested inside or in the conflicting delimiters.
@@ -78,14 +78,12 @@ def parse_query(query: str) -> list[str]:
 
 def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     """
-    Returns a `typing.Generator` object of all files present within the specified
-    directory. Also extracts the files present within the subdirectories if
-    `recursive` is set to `True`.
+    Returns a `typing.Generator` object of all files present within the specified directory.
+    Files present within subdirectories are also extracted if `recursive` is set to `True`.
 
     #### Params:
     - directory (pathlib.Path): Path to the directory.
-    - recursive (bool): Boolean value to specify whether to include the files
-    present within the subdirectories.
+    - recursive (bool): Whether to include files from subdirectories.
     """
 
     try:
@@ -108,14 +106,13 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     """
-    Returns a `typing.Generator` object of all subdirectories present within
-    the specified directory. Also extracts the directories present within the
-    subdirectories if `recursive` is set to `True`.
+    Returns a `typing.Generator` object of all subdirectories present within the specified
+    directory. Directories present within subdirectories are also extracted if `recursive`
+    is set to `True`.
 
     #### Params:
     - directory (pathlib.Path): Path to the directory.
-    - recursive (bool): Boolean value to specify whether to include the files
-    present within the subdirectories.
+    - recursive (bool): Whether to include files from subdirectories.
     """
 
     try:
@@ -149,7 +146,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     if file.is_file():
         raise OperationError(
             "The specified path for exporting search "
-            "records must not direct to an existing file."
+            "records must not point to an existing file."
         )
 
     elif not file.parent.exists():
@@ -158,8 +155,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
             "for exporting search records cannot be found."
         )
 
-    # String representation of the export method used exporting
-    # the pandas DataFrame comprising the search data records.
+    # String representation of the export method for exporting search records.
     export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
 
     if not export_method:
@@ -167,13 +163,13 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
             f"{file.suffix!r} file type is not supported for exporting search records."
         )
 
-    # Converts datetime objects in datetime columns into string
-    # objects for better representation in Excel files.
+    # Converts datetime objects present in datetime columns into
+    # string objects for better representation in Excel files.
     if export_method == "to_excel":
         for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
             data[col] = data[col].map(str)
 
-    # Exporting the search data to the specified file with a suitable method.
+    # Exports search records to the specified file with a suitable method.
     getattr(data, export_method)(file)
 
 
@@ -190,18 +186,18 @@ def _connect_database(database: str) -> Engine:
     Connects to the specified SQL database server.
 
     #### Params:
-    - database (str): database name to export data.
+    - database (str): The name of the database to connect.
     """
 
     # Inputs database credentials.
     user: str = input("Username: ")
     passkey: str = getpass.getpass("Password: ")
-    host: str = input("Host[localhost]: ") or "localhost"
+    host: str = input("Host [localhost]: ") or "localhost"
     port: str = input("Port: ")
     db: str = input("Database: ")
 
     if not port:
-        raise QueryHandleError(f"Invalid port number {port!r}")
+        raise QueryHandleError(f"Invalid port number: {port!r}")
 
     return sqlalchemy.create_engine(
         f"{constants.DATABASE_URL_DIALECTS[database]}{user}:{passkey}@{host}:{port}/{db}"
@@ -210,11 +206,11 @@ def _connect_database(database: str) -> Engine:
 
 def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
     """
-    Exports search records data to the specified database.
+    Exports search records to the specified database.
 
     #### Params:
     - data (pd.DataFrame): pandas DataFrame comprising search records.
-    - database (str): database name to export data.
+    - database (str): The name of the database to connect.
     """
 
     # Creates an `sqlalchemy.Engine` object of the specified SQL database.
@@ -233,7 +229,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
         raise OperationError(f"Unable to connect to {database!r} database.")
 
     else:
-        # Prompts for data replacement if the specified table already exists in the database.
+        # Prompts for replacement if the specified table already exists in the database.
         if table in metadata:
             force: str = input(
                 "The specified table already exist, would you like to alter it? (Y/N) "
@@ -242,8 +238,7 @@ def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
             if force.lower() != "y":
                 print("Export cancelled!")
 
-                # Raises `QueryHandleError` without any message
-                # to terminate the current query.
+                # Raises `QueryHandleError` without any message to terminate the current query.
                 raise QueryHandleError
 
         data.to_sql(table, conn, if_exists="replace", index=False)

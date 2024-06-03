@@ -200,6 +200,9 @@ def _connect_database(database: str) -> Engine:
     port: str = input("Port: ")
     db: str = input("Database: ")
 
+    if not port:
+        raise QueryHandleError(f"Invalid port number {port!r}")
+
     return sqlalchemy.create_engine(
         f"{constants.DATABASE_URL_DIALECTS[database]}{user}:{passkey}@{host}:{port}/{db}"
     )

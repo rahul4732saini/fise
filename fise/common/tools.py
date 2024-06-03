@@ -120,7 +120,7 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
 
     try:
         for path in directory.iterdir():
-            if path.is_file():
+            if not path.is_dir():
                 continue
 
             if recursive:

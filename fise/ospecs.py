@@ -8,6 +8,7 @@ of platform-specific tasks across diverse environments.
 """
 
 import os
+from typing import Callable, Any
 from pathlib import Path
 
 
@@ -29,19 +30,38 @@ class BaseEntity:
         self._path: Path = path
         self._stats: os.stat_result = path.stat()
 
+    @staticmethod
+    def safe_execute(func: Callable[[], Any]) -> Callable[[], Any] | None:
+        """
+        Safely executes the specified function and
+        returns None in case of an Exception.
+        """
+
+        def wrapper(self) -> Any:
+            try:
+                return func(self)
+            except Exception:
+                return None
+
+        return wrapper
+
     @property
+    @safe_execute
     def name(self) -> str:
         return self._path.name
 
     @property
+    @safe_execute
     def path(self) -> Path:
         return self._path
 
     @property
+    @safe_execute
     def parent(self) -> Path:
         return self._path.parent
 
     @property
+    @safe_execute
     def permissions(self) -> int:
         return self._stats.st_mode
 
@@ -66,9 +86,11 @@ class PosixEntity(BaseEntity):
     __slots__ = "_path", "_stats"
 
     @property
+    @BaseEntity.safe_execute
     def owner(self) -> str:
         return self._path.owner()
 
     @property
+    @BaseEntity.safe_execute
     def group(self) -> str:
         return self._path.group()

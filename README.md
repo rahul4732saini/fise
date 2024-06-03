@@ -1,5 +1,5 @@
 <h1 align=center>
-<img src="assets/fise.png" width=400 align=center>
+<img src="assets/fise.svg" width=400 align=center>
 </h1>
 
 <a href="https://www.codefactor.io/repository/github/rahul4732saini/fise"><img src="https://www.codefactor.io/repository/github/rahul4732saini/fise/badge" alt="CodeFactor"></a>

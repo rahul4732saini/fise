@@ -60,7 +60,7 @@ def eval_search_query(
 
 
 def eval_delete_query(
-    path: str,
+    path: Path,
     ucase: bool = False,
     path_type: str | None = None,
     recur: str | None = None,
@@ -75,7 +75,7 @@ def eval_delete_query(
     operation: str = "delete" + (f"[{oparams}]" if oparams else "")
     path_type = path_type or ""
     from_ = "FROM" if ucase else "from"
-    conditions = "where" + conditions if conditions else ""
+    conditions = "where " + conditions if conditions else ""
 
     if ucase:
         recur, operation, path_type = (

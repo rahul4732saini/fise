@@ -11,12 +11,36 @@ import os
 from typing import Callable, Any
 from pathlib import Path
 
+from notify import Alert
+
+
+def field_extraction_alert() -> None:
+    """
+    Raises an alert indicating an error in metadata fields
+    extraction from the recorded files/directories.
+    """
+
+    if BaseEntity.field_alert:
+        return
+
+    Alert(
+        "ExtractionError: Unable to access specific metdata fields from the "
+        "recorded files/directories. These fields are being assigned as 'None'."
+    )
+
+    # Sets `field_alert` attribute to `True` to avoid repeating the alert.
+    BaseEntity.field_alert = True
+
 
 class BaseEntity:
     """
     BaseEntity class serves as the base class for accessing all methods and attributes
     related to the file/directory `pathlib.Path` and `os.stat_result` object.
     """
+
+    # Boolean value to specify whether a field extraction alert has already
+    # been encountered to only alert the user once during the operation.
+    field_alert = False
 
     __slots__ = "_path", "_stats"
 
@@ -40,7 +64,9 @@ class BaseEntity:
         def wrapper(self) -> Any:
             try:
                 return func(self)
+
             except Exception:
+                field_extraction_alert()
                 return None
 
         return wrapper

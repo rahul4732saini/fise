@@ -98,7 +98,7 @@ class FileQueryOperator:
 
         # Renames the column `size` -> `size[<size_unit>]` to also include
         # the storage unit if not specified explicitly in the field name.
-        records.rename(columns={"size": f"size[B]"}, inplace=True)
+        records.rename(columns={"size": "size[B]"}, inplace=True)
 
         return records
 

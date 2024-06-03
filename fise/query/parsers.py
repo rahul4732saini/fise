@@ -9,10 +9,10 @@ extracting relevant data for further processing and evaluation.
 from pathlib import Path
 from typing import Callable
 
-from .conditions import ConditionHandler
-from common import constants
-from errors import QueryParseError
 from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
+from errors import QueryParseError
+from common import constants
+from .conditions import ConditionHandler
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
@@ -38,8 +38,8 @@ def _get_from_keyword_index(subquery: list[str]) -> int:
     for i, kw in enumerate(subquery):
         if kw.lower() == "from":
             return i
-    else:
-        raise QueryParseError("Cannot find 'FROM' keyword in the query.")
+
+    raise QueryParseError("Cannot find 'FROM' keyword in the query.")
 
 
 def _get_condition_handler(

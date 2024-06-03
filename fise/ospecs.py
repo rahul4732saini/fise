@@ -52,13 +52,13 @@ class BaseEntity:
 
     @property
     @safe_execute
-    def path(self) -> Path:
-        return self._path
+    def path(self) -> str:
+        return str(self._path)
 
     @property
     @safe_execute
-    def parent(self) -> Path:
-        return self._path.parent
+    def parent(self) -> str:
+        return str(self._path.parent)
 
     @property
     @safe_execute

@@ -78,8 +78,8 @@ class DataLine:
         self._lineno = lineno
 
     @property
-    def path(self) -> Path:
-        return self._file
+    def path(self) -> str:
+        return str(self._file)
 
     @property
     def name(self) -> str:

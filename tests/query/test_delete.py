@@ -41,7 +41,7 @@ def match_delete_records(
     """
     Matches the existence of the files and directories present within the test
     directory based on the delete records extracted from the specified `records_path`
-    comprising the files/directories deleted during the delete opertion.
+    comprising the files/directories deleted during the delete operation.
     """
 
     records: set[Path] = read_delete_record(records_path)
@@ -112,29 +112,70 @@ class TestFileDeleteQuery:
             match_delete_records(test_directory_contents, "/file/basic")
 
     @staticmethod
-    @pytest.mark.parametrize("conditions", ())
+    @_handle_test_case
+    @pytest.mark.parametrize(
+        ("ctr", "conditions"),
+        (
+            (1, r"size[B] <= 1 and filetype = '.mp4'"),
+            (2, r"TYPE = '.pdf' AND SIZE[KB] = 0"),
+        ),
+    )
     def test_query_conditions_with_comparison_operators(
-        test_directory: Path, conditions: str
+        test_directory: Path,
+        test_directory_contents: list[Path],
+        conditions: str,
+        ctr: int,
     ) -> None:
         """
         Tests the file delete query conditions with comparison operators.
         """
-        eval_delete_query(test_directory, conditions=conditions)
+        eval_delete_query(test_directory, recur="r", conditions=conditions)
+        match_delete_records(
+            test_directory_contents, f"/file/conditions/comparison/df{ctr}"
+        )
 
     @staticmethod
-    @pytest.mark.parametrize("conditions", ())
+    @_handle_test_case
+    @pytest.mark.parametrize(
+        ("ctr", "conditions"),
+        (
+            (1, r"name like '^report.*\.pdf$' and size[B] between (0, 100)"),
+            (2, r"TYPE = '.docx' AND NAME LIKE '^.*Report.docx$'"),
+        ),
+    )
     def test_query_conditions_with_conditional_operators(
-        test_directory: Path, conditions: str
+        test_directory: Path,
+        test_directory_contents: list[Path],
+        conditions: str,
+        ctr: int,
     ) -> None:
         """
         Tests the file delete query conditions with conditional operators.
         """
-        eval_delete_query(test_directory, conditions=conditions)
+        eval_delete_query(test_directory, recur="r", conditions=conditions)
+        match_delete_records(
+            test_directory_contents, f"/file/conditions/conditional/df{ctr}"
+        )
 
     @staticmethod
-    @pytest.mark.parametrize("conditions", ())
-    def test_nested_query_conditions(test_directory: Path, conditions: str) -> None:
+    @_handle_test_case
+    @pytest.mark.parametrize(
+        ("ctr", "conditions"),
+        (
+            (1, r"(filetype = '.pdf' or type = '.docx') and size[b] = 0"),
+            (2, r"(SIZE IN (0, 1) OR SIZE BETWEEN (5, 10)) AND NAME LIKE '^.*\.xlsx$'"),
+        ),
+    )
+    def test_nested_query_conditions(
+        test_directory: Path,
+        test_directory_contents: list[Path],
+        conditions: str,
+        ctr: int,
+    ) -> None:
         """
         Tests the file delete query with nested conditions.
         """
-        eval_delete_query(test_directory, conditions=conditions)
+        eval_delete_query(test_directory / "Archive", conditions=conditions)
+        match_delete_records(
+            test_directory_contents, f"/file/conditions/nested/df{ctr}"
+        )

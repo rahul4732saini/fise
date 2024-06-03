@@ -16,9 +16,9 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
-from . import constants
-from notify import Alert
 from errors import OperationError, QueryHandleError
+from notify import Alert
+from . import constants
 
 
 def parse_query(query: str) -> list[str]:
@@ -171,7 +171,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     # objects for better representation in Excel files.
     if export_method == "to_excel":
         for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
-            data[col] = data[col].map(lambda dt: str(dt))
+            data[col] = data[col].map(str)
 
     # Exporting the search data to the specified file with a suitable method.
     getattr(data, export_method)(file)

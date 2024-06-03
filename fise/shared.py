@@ -1,6 +1,6 @@
 """
 Shared Module
---------------
+-------------
 
 This module comprises classes shared across the project
 assisting various classes and functions defined within it.
@@ -31,32 +31,29 @@ class File(Entity):
     __slots__ = "_path", "_stats"
 
     @property
+    @Entity.safe_execute
     def filetype(self) -> str | None:
         return self._path.suffix or None
 
     @property
+    @Entity.safe_execute
     def size(self) -> int | float:
         return self._stats.st_size
 
     @property
+    @Entity.safe_execute
     def access_time(self) -> datetime | None:
-        return self._get_datetime(self._stats.st_atime)
+        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
 
     @property
+    @Entity.safe_execute
     def create_time(self) -> datetime | None:
-        return self._get_datetime(self._stats.st_ctime)
+        return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
 
     @property
+    @Entity.safe_execute
     def modify_time(self) -> datetime | None:
-        return self._get_datetime(self._stats.st_mtime)
-
-    @staticmethod
-    def _get_datetime(timestamp: float) -> datetime | None:
-        """Creates a `datetime.datetime` object from the specified timestamp."""
-        try:
-            return datetime.fromtimestamp(timestamp).replace(microsecond=0)
-        except OSError:
-            return None
+        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
 
 class DataLine:

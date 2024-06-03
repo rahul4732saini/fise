@@ -52,12 +52,13 @@ def match_delete_records(
         # a part of the deleted file/directory records.
         if path in records:
             assert not path.exists()
-            path.touch() if type_ == "file" else path.mkdir()
-
             continue
 
         # Asserts the path existence if it isn't a part of the delete query.
         assert path.exists()
+
+    # Resets the test directory after verification.
+    reset_test_directory()
 
 
 class TestFileDeleteQuery:

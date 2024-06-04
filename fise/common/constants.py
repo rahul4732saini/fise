@@ -9,11 +9,11 @@ classes and functions defined within the project.
 import sys
 from typing import Literal
 
-# Includes additional fields if the operating system is not windows.
-POSIX_FIELDS = () if sys.platform == "win32" else ("owner", "group")
+# Additional fields for non-windows operating systems.
+POSIX_FIELDS = () if sys.platform == "win32" else ("owner", "group", "permissions")
 
 # Search query fields for various query types.
-DIR_FIELDS = ("name", "path", "parent", "permissions") + POSIX_FIELDS
+DIR_FIELDS = ("name", "path", "parent") + POSIX_FIELDS
 DATA_FIELDS = "name", "path", "lineno", "dataline"
 FILE_FIELDS = DIR_FIELDS + (
     "size", "filetype", "access_time", "create_time", "modify_time"
@@ -58,7 +58,6 @@ FILE_FIELD_ALIASES = {
     "atime": "access_time",
     "mtime": "modify_time",
     "ctime": "create_time",
-    "perms": "permissions",
     "type": "filetype",
 }
 
@@ -69,7 +68,7 @@ DATA_FIELD_ALIASES = {
     "line": "dataline",
 }
 
-DIR_FIELD_ALIASES = {"perms": "permissions"}
+DIR_FIELD_ALIASES = {}
 
 PATH_TYPES = {"absolute", "relative"}
 

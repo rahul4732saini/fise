@@ -9,8 +9,8 @@ classes and functions defined within the project.
 import sys
 from typing import Literal
 
-# Additional fields for non-windows operating systems.
-POSIX_FIELDS = () if sys.platform == "win32" else ("owner", "group", "permissions")
+# Additional fields for Posix-based operating systems.
+POSIX_FIELDS = ("owner", "group", "permissions") if sys.platform != "win32" else ()
 
 # Search query fields for various query types.
 DIR_FIELDS = (
@@ -55,7 +55,16 @@ DATA_EXPORT_TYPES_MAP = {
     ".xlsx": "to_excel",
 }
 
-FILE_FIELD_ALIASES = {
+# Additional field aliases for Posix-based operating systems.
+POSIX_FIELD_ALIASES = {"perms": "permissions"} if sys.platform != "win32" else {}
+
+DIR_FIELD_ALIASES = POSIX_FIELD_ALIASES | {
+    "ctime": "create_time",
+    "mtime": "modify_time",
+    "atime": "access_time",
+}
+
+FILE_FIELD_ALIASES = DIR_FIELD_ALIASES | {
     "atime": "access_time",
     "mtime": "modify_time",
     "ctime": "create_time",
@@ -68,8 +77,6 @@ DATA_FIELD_ALIASES = {
     "data": "dataline",
     "line": "dataline",
 }
-
-DIR_FIELD_ALIASES = {}
 
 PATH_TYPES = {"absolute", "relative"}
 

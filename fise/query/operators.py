@@ -2,9 +2,9 @@
 Operators Module
 ----------------
 
-This module comprises classes for processing user queries and conducting
-file/directory search/delete operations within a specified directory.
-It also comprises objects for performing search operations within files.
+This module includes classes for processing user queries and for conducting file
+and directory search and delete operations within a specified directory. It also
+includes classes for performing search operations within files.
 """
 
 from typing import Generator, Callable, Any
@@ -32,10 +32,8 @@ class FileQueryOperator:
 
         #### Params:
         - directory (Path): Path to the directory.
-        - recursive (bool): Boolean value to specify whether to include the files
-        present within the subdirectories.
-        - absolute (bool): Boolean value to specify whether to include the
-        absolute path to the files.
+        - recursive (bool): Whether to include files from subdirectories.
+        - absolute (bool): Whether to include the absolute path to the files.
         """
 
         self._directory = directory
@@ -53,9 +51,6 @@ class FileQueryOperator:
         - field (Field): `Field` object comprising the field to be extracted.
         - file (File): `File` object to extract data from.
         """
-
-        # TODO: Extend the functionality to support custom
-        # query functions evaluation in version 0.1.1
 
         if isinstance(field.field, Size):
             # Extracts the size in bytes and converts into the parsed size unit.
@@ -86,7 +81,7 @@ class FileQueryOperator:
         )
 
         # Creates a pandas DataFrame out of a Generator object
-        # comprising records of the specified fields.
+        # comprising search records of the specified fields.
         records = pd.DataFrame(
             (
                 [self._get_field(field, file) for field in fields]
@@ -109,15 +104,14 @@ class FileQueryOperator:
 
         #### Params:
         - condition (Callable): Function for filtering search records.
-        - skip_err (bool): Boolean value to specify whether to supress
-        permission errors while removing files.
+        - skip_err (bool): When to supress permission errors during operation.
         """
 
         # `ctr` counts the number of files removed whereas `skipped` counts
-        # the number of skipped files if `skip_err` set to `True`.
+        # the number of skipped files if `skip_err` is set to `True`.
         ctr = skipped = 0
 
-        # Iterates through the files and removes them is the condition is met.
+        # Iterates through the files and deletes indivdually if the condition is met.
         for file in tools.get_files(self._directory, self._recursive):
             if not condition(File(file)):
                 continue
@@ -152,7 +146,7 @@ class FileQueryOperator:
 class FileDataQueryOperator:
     """
     FileDataQueryOperator defines methods for performing
-    file-content(text/bytes) search operations.
+    text and byte search operations within files.
     """
 
     __slots__ = "_path", "_recursive", "_filemode"
@@ -169,10 +163,8 @@ class FileDataQueryOperator:
 
         #### Params:
         - path (pathlib.Path): Path to the file/directory.
-        - recursive (bool): Boolean value to specify whether to include the files
-        present within the subdirectories (only if the specified path is a directory).
-        - absolute (bool): Boolean value to specify whether to include the
-        absolute path to the files.
+        - recursive (bool): Whether to include files from subdirectories.
+        - absolute (bool): Weather to include the absolute path to the files.
         - filemode (str): Desired filemode to read files.
         """
 
@@ -185,8 +177,8 @@ class FileDataQueryOperator:
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """
-        Yields the file `pathlib.Path` object and a list of strings/bytes
-        corresponding to individual lines of text/bytes in the file.
+        Yields the file(s) `pathlib.Path` object and a list of strings/bytes
+        corresponding to individual lines of text/byte in the file(s).
         """
 
         # Generator object of `pathlib.Path` objects of all the files present within
@@ -206,13 +198,13 @@ class FileDataQueryOperator:
                 except UnicodeDecodeError:
                     raise OperationError(
                         "Cannot read bytes with 'text' filemode. Set "
-                        "filemode to 'bytes' for reading bytes within files."
+                        "filemode to 'bytes' to read byte data within files."
                     )
 
     def _search_datalines(self) -> Generator[DataLine, None, None]:
         """
-        Iterates through each file and its corresponding data-lines,
-        yielding `DataLine` objects comprising the data and its metadata.
+        Iterates through the files and their corresponding data-lines,
+        yielding `DataLine` objects comprising the dataline and its metadata.
         """
 
         for file, data in self._get_filedata():
@@ -229,9 +221,6 @@ class FileDataQueryOperator:
         - field (Field): `Field` object comprising the field to be extracted.
         - data (DataLine): `DataLine` object to extract data from.
         """
-
-        # TODO: Extend the functionality to support custom
-        # query functions evaluation in version 0.1.1
         return getattr(data, field.field)
 
     def get_dataframe(
@@ -250,7 +239,7 @@ class FileDataQueryOperator:
         """
 
         # Returns a pandas DataFrame out of a Generator object
-        # comprising records of the specified fields.
+        # comprising search records of the specified fields.
         return pd.DataFrame(
             (
                 [self._get_field(field, data) for field in fields]
@@ -264,7 +253,7 @@ class FileDataQueryOperator:
 class DirectoryQueryOperator:
     """
     DirectoryQueryOperator defines methods for performing
-    directory search/delete operations.
+    directory search and delete operations.
     """
 
     __slots__ = "_directory", "_recursive"
@@ -275,10 +264,8 @@ class DirectoryQueryOperator:
 
         #### Params:
         - directory (Path): Path to the directory.
-        - recursive (bool): Boolean value to specify whether to include the
-        files present within the subdirectories.
-        - absolute (bool): Boolean value to specify whether to include the
-        absolute path to the files.
+        - recursive (bool): Whether to include files from subdirectories.
+        - absolute (bool): Wheather to include the absolute path to the directories.
         """
 
         self._directory = directory
@@ -296,9 +283,6 @@ class DirectoryQueryOperator:
         - field (Field): `Field` object comprising the field to be extracted.
         - directory (Directory): `Directory` object to extract data from.
         """
-
-        # TODO: Extend the functionality to support custom
-        # query functions evaluation in version 0.1.1
         return getattr(directory, field.field)
 
     def get_dataframe(
@@ -308,8 +292,8 @@ class DirectoryQueryOperator:
         condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the search records of all the
-        subdirectories matching the specified condition present within the directory.
+        Returns a pandas DataFrame comprising the search records of
+        all the subdirectories matching the specified condition.
 
         #### Params:
         - fields (list[str]): List of desired directory metadata fields.
@@ -322,7 +306,7 @@ class DirectoryQueryOperator:
         )
 
         # Creates a pandas DataFrame out of a Generator object
-        # comprising records of the specified fields.
+        # comprising search records of the specified fields.
         return pd.DataFrame(
             (
                 [self._get_field(field, directory) for field in fields]
@@ -336,20 +320,19 @@ class DirectoryQueryOperator:
         self, condition: Callable[[Directory], bool], skip_err: bool
     ) -> None:
         """
-        Removes all the subdirectories present within the
-        directory matching the specified condition.
+        Removes all the subdirectories matching the specified condition.
 
         #### Params:
         - condition (Callable): Function for filtering directory records.
-        - skip_err (bool): Boolean value to specify whether to supress
-        permission errors while removing subdirectories.
+        - skip_err (bool): When to supress permission errors during operation.
         """
 
         # `ctr` counts the number of directories removed whereas `skipped` counts
-        # the number of skipped directories if `skip_err` set to `True`.
+        # the number of skipped directories if `skip_err` is set to `True`.
         ctr = skipped = 0
 
-        # Iterates through the directories and removes them is the condition is met.
+        # Iterates through the subdirectories and deletes
+        # individual directory tree(s) if the condition is met.
         for subdir in tools.get_directories(self._directory, self._recursive):
             if not condition(Directory(subdir)):
                 continue

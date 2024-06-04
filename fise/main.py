@@ -1,5 +1,13 @@
 """
-FiSE (File Search Engine)
+Main Module
+-----------
+
+This script serves as the entry point for the FiSE (File Search Engine) 
+application. It provides a command-line interface for users to perform
+search and delete queries.
+
+Author: rahul4732saini (github.com/rahul4732saini)
+License: MIT
 """
 
 import sys
@@ -28,7 +36,7 @@ def enable_readline() -> None:
 
 def evaluate_query() -> None:
     """
-    Inputs the evaluates the user specified query.
+    Inputs and evaluates the user specified query.
     """
     global EXIT, CLEAR
 
@@ -44,8 +52,8 @@ def evaluate_query() -> None:
     elif query.lower() in CLEAR:
         return print("\033c", end="")
 
-    # If none of the above are matched, the input is
-    # assumed to be a query and evaluated accordingly.
+    # If none of the above conditions are matched, the input
+    # is assumed to be a query and evaluated accordingly.
 
     handler = QueryHandler(query)
     data: pd.DataFrame | None = handler.handle()

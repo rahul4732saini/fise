@@ -11,10 +11,10 @@ import sys
 
 class QueryHandleError(Exception):
     """
-    Exception raised when there is an error handling the query.
+    Exception raised when there is an error in handling the query.
     """
 
-    _error: str = "QueryHandleError: There was an error in handling the query."
+    _error: str = "QueryHandleError: There is an error in handling the query."
 
     def __init__(self, description: str = "") -> None:
 
@@ -35,7 +35,7 @@ class QueryParseError(QueryHandleError):
     Exception raised when there is an error in parsing the query.
     """
 
-    _error = "QueryParseError: There was an error in parsing the query."
+    _error = "QueryParseError: There is an error in parsing the query."
 
 
 class OperationError(QueryHandleError):
@@ -43,4 +43,4 @@ class OperationError(QueryHandleError):
     Exception raised when there is an error in processing the query.
     """
 
-    _error = "OperationError: There was an error in processing the query."
+    _error = "OperationError: There is an error in processing the query."

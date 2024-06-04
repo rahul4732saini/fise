@@ -42,17 +42,17 @@ class File(Entity):
 
     @property
     @Entity.safe_execute
-    def access_time(self) -> datetime | None:
+    def access_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
 
     @property
     @Entity.safe_execute
-    def create_time(self) -> datetime | None:
+    def create_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
 
     @property
     @Entity.safe_execute
-    def modify_time(self) -> datetime | None:
+    def modify_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
 
@@ -69,9 +69,9 @@ class DataLine:
         Creates an instance of the `DataLine` class.
 
         #### Params:
-        - file (pathlib.Path): path to the file.
-        - data (str | bytes): dataline to be stored.
-        - lineno (int): line number of the dataline.
+        - file (pathlib.Path): Path to the file.
+        - data (str | bytes): Dataline to be stored.
+        - lineno (int): Line number of the dataline.
         """
         self._file = file
         self._data = data
@@ -108,7 +108,7 @@ class Directory(Entity):
 class Size:
     """
     Size class stores the size unit of the size field
-    and also defines a mechanism for parsing the field.
+    and defines a mechanism for parsing the field.
     """
 
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(
@@ -120,8 +120,7 @@ class Size:
     @classmethod
     def from_string(cls, field: str):
         """
-        Parses the string and creates an instance of
-        `Size` object from the specified size field.
+        Creates an instance of `Size` object from the specified size field string.
         """
 
         if not cls._size_field_pattern.match(field):
@@ -134,7 +133,7 @@ class Size:
 @dataclass(slots=True, frozen=True, eq=False)
 class Field:
     """
-    Field class stores individual query condition fields.
+    Field class stores individual search query fields.
     """
 
     field: str | Size
@@ -163,7 +162,7 @@ class SearchQuery(BaseQuery):
 
 class DeleteQuery(BaseQuery):
     """
-    DeleteQuery class stores attributes related to file/directory deletion queries.
+    DeleteQuery class stores attributes related to delete queries.
     """
 
 

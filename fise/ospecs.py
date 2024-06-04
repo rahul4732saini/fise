@@ -35,7 +35,7 @@ def field_extraction_alert() -> None:
 class BaseEntity:
     """
     BaseEntity class serves as the base class for accessing all methods and attributes
-    related to the file/directory `pathlib.Path` and `os.stat_result` object.
+    related to a file/directory `pathlib.Path` and `os.stat_result` object.
     """
 
     # Boolean value to specify whether a field extraction alert has already
@@ -55,7 +55,7 @@ class BaseEntity:
         self._stats: os.stat_result = path.stat()
 
     @staticmethod
-    def safe_execute(func: Callable[[], Any]) -> Callable[[], Any] | None:
+    def safe_execute(func: Callable[..., Any]) -> Callable[..., Any] | None:
         """
         Safely executes the specified function and
         returns None in case of an Exception.

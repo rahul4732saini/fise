@@ -8,9 +8,8 @@ assisting various classes and functions defined within it.
 
 import re
 import sys
-from datetime import datetime
-from typing import ClassVar, Callable, Literal, Any
 from dataclasses import dataclass
+from typing import ClassVar, Callable, Literal, Any
 from pathlib import Path
 
 from common import constants
@@ -39,21 +38,6 @@ class File(Entity):
     @Entity.safe_execute
     def size(self) -> int | float:
         return self._stats.st_size
-
-    @property
-    @Entity.safe_execute
-    def access_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
-
-    @property
-    @Entity.safe_execute
-    def create_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
-
-    @property
-    @Entity.safe_execute
-    def modify_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
 
 class DataLine:

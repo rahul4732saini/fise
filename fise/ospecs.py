@@ -8,8 +8,9 @@ of platform-specific tasks across diverse environments.
 """
 
 import os
-from typing import Callable, Any
 from pathlib import Path
+from typing import Callable, Any
+from datetime import datetime
 
 from notify import Alert
 
@@ -85,6 +86,21 @@ class BaseEntity:
     @safe_execute
     def parent(self) -> str:
         return str(self._path.parent)
+    
+    @property
+    @safe_execute
+    def access_time(self) -> datetime:
+        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
+
+    @property
+    @safe_execute
+    def create_time(self) -> datetime:
+        return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
+
+    @property
+    @safe_execute
+    def modify_time(self) -> datetime:
+        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
 
 class WindowsEntity(BaseEntity):

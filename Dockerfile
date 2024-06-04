@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y build-essential \
 
 WORKDIR /home/fise
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --no-cache-dir --upgrade pip
 
 COPY requirements.txt /tmp
 RUN pip install --no-cache-dir -r /tmp/requirements.txt 

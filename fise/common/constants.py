@@ -13,11 +13,12 @@ from typing import Literal
 POSIX_FIELDS = () if sys.platform == "win32" else ("owner", "group", "permissions")
 
 # Search query fields for various query types.
-DIR_FIELDS = ("name", "path", "parent") + POSIX_FIELDS
+DIR_FIELDS = (
+    "name", "path", "parent", "access_time", "create_time", "modify_time"
+) + POSIX_FIELDS
+
 DATA_FIELDS = "name", "path", "lineno", "dataline"
-FILE_FIELDS = DIR_FIELDS + (
-    "size", "filetype", "access_time", "create_time", "modify_time"
-)
+FILE_FIELDS = DIR_FIELDS + ("size", "filetype")
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = Literal["file", "data", "dir"]

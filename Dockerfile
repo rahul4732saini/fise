@@ -5,11 +5,13 @@ RUN apt-get update && apt-get install -y build-essential \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /fise
+WORKDIR /home/fise
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt 
+RUN python -m pip install --upgrade pip
 
-COPY ./fise ./fise
+COPY requirements.txt /tmp
+RUN pip install --no-cache-dir -r /tmp/requirements.txt 
 
-CMD ["python", "./fise/main.py"]
+COPY ./fise .
+
+CMD ["python", "./main.py"]

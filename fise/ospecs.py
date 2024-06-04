@@ -86,11 +86,6 @@ class BaseEntity:
     def parent(self) -> str:
         return str(self._path.parent)
 
-    @property
-    @safe_execute
-    def permissions(self) -> int:
-        return self._stats.st_mode
-
 
 class WindowsEntity(BaseEntity):
     """
@@ -120,3 +115,8 @@ class PosixEntity(BaseEntity):
     @BaseEntity.safe_execute
     def group(self) -> str:
         return self._path.group()
+
+    @property
+    @BaseEntity.safe_execute
+    def permissions(self) -> int:
+        return self._stats.st_mode

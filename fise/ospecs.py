@@ -33,6 +33,23 @@ def _field_extraction_alert() -> None:
     BaseEntity.field_alert = True
 
 
+def safe_execute(func: Callable[..., Any]) -> Callable[..., Any] | None:
+    """
+    Safely executes the specified field extraction
+    function and returns None in case of an Exception.
+    """
+
+    def wrapper(self) -> Any:
+        try:
+            return func(self)
+
+        except Exception:
+            _field_extraction_alert()
+            return None
+
+    return wrapper
+
+
 class BaseEntity:
     """
     BaseEntity class serves as the base class for accessing all methods and attributes
@@ -55,23 +72,6 @@ class BaseEntity:
         self._path: Path = path
         self._stats: os.stat_result = path.stat()
 
-    @staticmethod
-    def safe_execute(func: Callable[..., Any]) -> Callable[..., Any] | None:
-        """
-        Safely executes the specified function and
-        returns None in case of an Exception.
-        """
-
-        def wrapper(self) -> Any:
-            try:
-                return func(self)
-
-            except Exception:
-                _field_extraction_alert()
-                return None
-
-        return wrapper
-
     @property
     @safe_execute
     def name(self) -> str:
@@ -86,7 +86,7 @@ class BaseEntity:
     @safe_execute
     def parent(self) -> str:
         return str(self._path.parent)
-    
+
     @property
     @safe_execute
     def access_time(self) -> datetime:
@@ -123,16 +123,16 @@ class PosixEntity(BaseEntity):
     __slots__ = "_path", "_stats"
 
     @property
-    @BaseEntity.safe_execute
+    @safe_execute
     def owner(self) -> str:
         return self._path.owner()
 
     @property
-    @BaseEntity.safe_execute
+    @safe_execute
     def group(self) -> str:
         return self._path.group()
 
     @property
-    @BaseEntity.safe_execute
+    @safe_execute
     def permissions(self) -> int:
         return self._stats.st_mode

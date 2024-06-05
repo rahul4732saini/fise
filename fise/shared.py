@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import ClassVar, Callable, Literal, Any
 from pathlib import Path
 
+import ospecs
 from common import constants
 from errors import QueryParseError
 
@@ -30,12 +31,12 @@ class File(Entity):
     __slots__ = "_path", "_stats"
 
     @property
-    @Entity.safe_execute
+    @ospecs.safe_execute
     def filetype(self) -> str | None:
         return self._path.suffix or None
 
     @property
-    @Entity.safe_execute
+    @ospecs.safe_execute
     def size(self) -> int | float:
         return self._stats.st_size
 
@@ -62,23 +63,28 @@ class DataLine:
         self._lineno = lineno
 
     @property
+    @ospecs.safe_execute
     def path(self) -> str:
         return str(self._file)
 
     @property
+    @ospecs.safe_execute
     def name(self) -> str:
         return self._file.name
 
     @property
+    @ospecs.safe_execute
     def dataline(self) -> str:
         # Strips the leading binary notation and quotes if the dataline is a bytes object.
         return str(self._data)[2:-1] if isinstance(self._data, bytes) else self._data
 
     @property
+    @ospecs.safe_execute
     def lineno(self) -> int:
         return self._lineno
-    
+
     @property
+    @ospecs.safe_execute
     def filetype(self) -> str:
         return self._file.suffix
 

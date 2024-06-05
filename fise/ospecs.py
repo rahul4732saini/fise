@@ -15,7 +15,7 @@ from datetime import datetime
 from notify import Alert
 
 
-def field_extraction_alert() -> None:
+def _field_extraction_alert() -> None:
     """
     Raises an alert indicating an error in metadata fields
     extraction from the recorded files/directories.
@@ -67,7 +67,7 @@ class BaseEntity:
                 return func(self)
 
             except Exception:
-                field_extraction_alert()
+                _field_extraction_alert()
                 return None
 
         return wrapper

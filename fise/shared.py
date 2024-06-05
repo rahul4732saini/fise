@@ -86,7 +86,7 @@ class DataLine:
     @property
     @ospecs.safe_extract_field
     def filetype(self) -> str:
-        return self._file.suffix
+        return self._file.suffix or None
 
 
 class Directory(Entity):

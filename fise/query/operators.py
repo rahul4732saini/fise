@@ -21,7 +21,7 @@ from shared import File, Directory, DataLine, Field, Size
 
 class FileQueryOperator:
     """
-    FileQueryOperator defines methods for performing file search/delete operations.
+    FileQueryOperator defines methods for performing file search and delete operations.
     """
 
     __slots__ = "_directory", "_recursive"
@@ -43,7 +43,7 @@ class FileQueryOperator:
             self._directory = self._directory.absolute()
 
     @staticmethod
-    def _get_field(field: Field, file: File) -> Any:
+    def _get_field(field: Field | Size, file: File) -> Any:
         """
         Extracts the specified field from the specified `File` object.
 
@@ -52,13 +52,13 @@ class FileQueryOperator:
         - file (File): `File` object to extract data from.
         """
 
-        if isinstance(field.field, Size):
+        if isinstance(field, Size):
             # Extracts the size in bytes and converts into the parsed size unit.
             return getattr(file, "size") / constants.SIZE_CONVERSION_MAP.get(
-                field.field.unit
+                field.unit
             )
-        else:
-            return getattr(file, field.field)
+        
+        return getattr(file, field.field)
 
     def get_dataframe(
         self,

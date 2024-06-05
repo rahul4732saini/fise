@@ -110,10 +110,8 @@ class FileQueryParser:
                 columns += constants.FILE_FIELDS
 
             elif col.startswith("size"):
-                # Parses size from the string.
-                size: Size = Size.from_string(field)
-
-                fields.append(Field(size))
+                # Parses size from the string and adds it the `fields` list.
+                fields.append(Size.from_string(field))
                 columns.append(field)
 
             elif col in self._file_fields:

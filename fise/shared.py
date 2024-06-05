@@ -77,6 +77,10 @@ class DataLine:
     @property
     def lineno(self) -> int:
         return self._lineno
+    
+    @property
+    def filetype(self) -> str:
+        return self._file.suffix
 
 
 class Directory(Entity):

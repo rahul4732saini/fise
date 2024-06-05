@@ -130,7 +130,7 @@ class Field:
     Field class stores individual search query fields.
     """
 
-    field: str | Size
+    field: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)

@@ -17,7 +17,7 @@ DIR_FIELDS = (
     "name", "path", "parent", "access_time", "create_time", "modify_time"
 ) + POSIX_FIELDS
 
-DATA_FIELDS = "name", "path", "lineno", "dataline"
+DATA_FIELDS = "name", "path", "lineno", "dataline", "filetype"
 FILE_FIELDS = DIR_FIELDS + ("size", "filetype")
 
 OPERATIONS = Literal["search", "remove"]
@@ -76,6 +76,7 @@ DATA_FIELD_ALIASES = {
     "filepath": "path",
     "data": "dataline",
     "line": "dataline",
+    "type": "filetype",
 }
 
 PATH_TYPES = {"absolute", "relative"}

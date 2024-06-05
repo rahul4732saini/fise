@@ -31,12 +31,12 @@ class File(Entity):
     __slots__ = "_path", "_stats"
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def filetype(self) -> str | None:
         return self._path.suffix or None
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def size(self) -> int | float:
         return self._stats.st_size
 
@@ -63,28 +63,28 @@ class DataLine:
         self._lineno = lineno
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def path(self) -> str:
         return str(self._file)
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def name(self) -> str:
         return self._file.name
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def dataline(self) -> str:
         # Strips the leading binary notation and quotes if the dataline is a bytes object.
         return str(self._data)[2:-1] if isinstance(self._data, bytes) else self._data
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def lineno(self) -> int:
         return self._lineno
 
     @property
-    @ospecs.safe_execute
+    @ospecs.safe_extract_field
     def filetype(self) -> str:
         return self._file.suffix
 

@@ -33,7 +33,7 @@ def _field_extraction_alert() -> None:
     BaseEntity.field_alert = True
 
 
-def safe_execute(func: Callable[..., Any]) -> Callable[..., Any] | None:
+def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
     """
     Safely executes the specified field extraction
     function and returns None in case of an Exception.
@@ -73,32 +73,32 @@ class BaseEntity:
         self._stats: os.stat_result = path.stat()
 
     @property
-    @safe_execute
+    @safe_extract_field
     def name(self) -> str:
         return self._path.name
 
     @property
-    @safe_execute
+    @safe_extract_field
     def path(self) -> str:
         return str(self._path)
 
     @property
-    @safe_execute
+    @safe_extract_field
     def parent(self) -> str:
         return str(self._path.parent)
 
     @property
-    @safe_execute
+    @safe_extract_field
     def access_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
 
     @property
-    @safe_execute
+    @safe_extract_field
     def create_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
 
     @property
-    @safe_execute
+    @safe_extract_field
     def modify_time(self) -> datetime:
         return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
 
@@ -123,16 +123,16 @@ class PosixEntity(BaseEntity):
     __slots__ = "_path", "_stats"
 
     @property
-    @safe_execute
+    @safe_extract_field
     def owner(self) -> str:
         return self._path.owner()
 
     @property
-    @safe_execute
+    @safe_extract_field
     def group(self) -> str:
         return self._path.group()
 
     @property
-    @safe_execute
+    @safe_extract_field
     def permissions(self) -> int:
         return self._stats.st_mode

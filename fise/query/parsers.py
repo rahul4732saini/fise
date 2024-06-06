@@ -61,13 +61,13 @@ def _get_condition_handler(
     conditions: list[str] = subquery[1:]
     handler = ConditionHandler(conditions)
 
-    # Returns the evaluation method to be called for filtering records.
+    # Returns the evaluation method for filtering records.
     return handler.eval_conditions
 
 
 class FileQueryParser:
     """
-    FileQueryParser defines methods for parsing file search/delete queries.
+    FileQueryParser defines methods for parsing file search and delete queries.
     """
 
     __slots__ = "_query", "_operation", "_from_index"
@@ -75,34 +75,34 @@ class FileQueryParser:
     _file_fields = set(constants.FILE_FIELDS) | constants.FILE_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
-        """
-        Creates an instance of `FileQueryParser` class.
-
-        #### Params:
-        - subquery (list[str]): Subquery to be parsed.
-        - operation (constants.OPERATIONS): The operation to be performed upon the query.
-        """
 
         # This parser class accepts the subquery and parses only the fields, path-type,
         # path, and conditions defined within the query. The initials are parsed beforehand.
 
         self._query = subquery
         self._operation = operation
+
+        # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = _get_from_keyword_index(subquery)
 
-    def _parse_fields(self, attrs: str | list[str]) -> tuple[list[Field], list[str]]:
+    def _parse_fields(
+        self, attrs: str | list[str]
+    ) -> tuple[list[Field | Size], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
         #### Params:
-        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
+        - attrs (str | list[str]): String or a list of strings of query fields.
         """
 
-        fields: list[Field] = []
+        fields: list[Field | Size] = []
         columns: list[str] = []
 
         # Iterates through the specified tokens, parses and stores them in the `fields` list.
         for field in "".join(attrs).split(","):
+
+            # Keep a separate copy of the lowered string to avoid affecting
+            # the case of the field string when adding it to the columns.
             col: str = field.lower()
 
             if field == "*":
@@ -110,7 +110,7 @@ class FileQueryParser:
                 columns += constants.FILE_FIELDS
 
             elif col.startswith("size"):
-                # Parses size from the string and adds it the `fields` list.
+                # Parses size from the string and adds it to the `fields` list.
                 fields.append(Size.from_string(field))
                 columns.append(field)
 
@@ -138,7 +138,7 @@ class FileQueryParser:
 
     def _parse_remove_query(self) -> DeleteQuery:
         """
-        Parses the file deletion query.
+        Parses the file delete query.
         """
 
         if self._from_index != 0:
@@ -189,16 +189,13 @@ class FileDataQueryParser:
     _data_fields = set(constants.DATA_FIELDS) | constants.DATA_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str]) -> None:
-        """
-        Creates an instance of the `FileDataQueryParser` class.
-
-        #### Params:
-        - subquery (list[str]): Query to be parsed.
-        """
 
         # This parser class accepts the subquery and parses only the fields, path-type,
         # path, and conditions defined within the query. The initials are parsed beforehand.
+
         self._query = subquery
+
+        # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = _get_from_keyword_index(subquery)
 
     def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
@@ -206,7 +203,7 @@ class FileDataQueryParser:
         Parses the search query fields and returns an array of parsed fields and columns.
 
         #### Params:
-        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
+        - attrs (str | list[str]): String or a list of strings of query fields.
         """
 
         fields: list[Field] = []
@@ -233,6 +230,7 @@ class FileDataQueryParser:
         """
         Parses the file/directory path and its metadata.
         """
+
         is_absolute, path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not (path.is_dir() or path.is_file()):
@@ -266,19 +264,6 @@ class DirectoryQueryParser(FileQueryParser):
     __slots__ = "_query", "_operation", "_from_index"
 
     _dir_fields = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
-
-    def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
-        """
-        Creates an instance of the `DirectoryQueryParser` class.
-
-        #### Params:
-        - subquery (list[str]): Query to be parsed.
-        - operation (constants.OPERATIONS): The operation to be performed upon the query.
-        """
-
-        # This parser class accepts the subquery and parses only the fields, path-type,
-        # path, and conditions defined within the query. The initials are parsed beforehand.
-        super().__init__(subquery, operation)
 
     def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
         """

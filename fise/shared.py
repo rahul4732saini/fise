@@ -85,7 +85,7 @@ class DataLine:
 
     @property
     @ospecs.safe_extract_field
-    def filetype(self) -> str:
+    def filetype(self) -> str | None:
         return self._file.suffix or None
 
 

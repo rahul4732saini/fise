@@ -150,7 +150,7 @@ class SearchQuery(BaseQuery):
     SearchQuery class stores attributes related to search queries.
     """
 
-    fields: list[Field]
+    fields: list[Field | Size]
     columns: list[str]
 
 

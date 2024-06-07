@@ -2,7 +2,7 @@
 Operators Module
 ----------------
 
-This module includes classes for processing user queries and for conducting file
+This module includes classes for processing user queries and conducting file
 and directory search and delete operations within a specified directory. It also
 includes classes for performing search operations within files.
 """

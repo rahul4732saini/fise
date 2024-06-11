@@ -113,18 +113,19 @@ class ConditionHandler:
         elif operand.isdigit():
             return int(operand)
 
-        # Lowers the operand as the letter case does not matter for remaning conditions.
+        # If none of the above conditions are matched, the operand is assumed
+        # to be a query field and returned as a `Field` object or explicitly
+        # as a `Size` object for size fields.
+
+        elif operand.startswith("size"):
+            return Size.from_string(operand)
+
+        # Lowers the operand as the character case does
+        # not matter for the following confitions.
         operand = operand.lower()
 
         if operand == "none":
             return None
-
-        # If none of the above conditions are matched, the operand is assumed to
-        # be a query field and returned as a `Field` object or explicitly as a
-        # `Size` object for size fields.
-
-        elif operand.startswith("size"):
-            return Size.from_string(operand)
 
         return Field(operand)
 

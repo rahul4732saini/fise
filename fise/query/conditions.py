@@ -2,8 +2,8 @@
 Conditions Module
 -----------------
 
-This module comprises classes for parsing and evaluating
-query conditions for filtering file/data/directory records.
+This module comprises classes for parsing and evaluating query
+conditions, and filtering file, data and directory records.
 """
 
 import re

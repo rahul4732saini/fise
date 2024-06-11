@@ -2,8 +2,8 @@
 Query Package
 -------------
 
-This package provides a collection of objects and methods designed for
-parsing and processing user-specified search and manipulation queries.
+This package provides a collection of classes and functions
+designed for handling user-specified search and delete queries.
 """
 
 import re
@@ -33,8 +33,8 @@ __all__ = ("QueryHandler",)
 
 class QueryHandler:
     """
-    QueryHandler defines methods for handling, parsing and
-    processing user-specified search and manipulation queries.
+    QueryHandler defines methods for parsing and
+    processing user-specified search and delete queries.
     """
 
     __slots__ = "_query", "_current_query"

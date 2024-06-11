@@ -66,6 +66,31 @@ class ConditionHandler:
         # Parses the conditions and stores them in a list.
         self._conditions = list(self._parse_conditions(subquery))
 
+    def _parse_datetime(self, operand: str) -> datetime | None:
+        """
+        Parses date/datetime from the specified operand if it
+        matches the coressponding pattern, else returns None.
+        """
+
+        if not self._datetime_pattern.match(operand):
+            return None
+
+        try:
+            return datetime.strptime(operand, r"%Y-%m-%d %H:%M:%S")
+
+        except ValueError:
+            # Passes without raising an error if in
+            # case the operand matches the date format.
+            ...
+
+        try:
+            return datetime.strptime(operand, r"%Y-%m-%d")
+
+        except ValueError:
+            raise QueryParseError(
+                f"Invalid datetime format around {' '.join(self._query)!r}"
+            )
+
     def _parse_comparison_operand(self, operand: str) -> Any:
         """
         Parses individual operands specified within a comparison
@@ -75,27 +100,12 @@ class ConditionHandler:
         - operand (str): Operand to be parsed.
         """
 
-        if self._datetime_pattern.match(operand):
+        if self._string_pattern.match(operand):
             # Strips the leading and trailing quotes in the string.
             operand = operand[1:-1]
+            timedate: datetime | None = self._parse_datetime(operand)
 
-            try:
-                return datetime.strptime(operand, r"%Y-%m-%d %H:%M:%S")
-
-            except ValueError:
-                # Passes without raising an error if in
-                # case the operand matches the date format.
-                try:
-                    return datetime.strptime(operand, r"%Y-%m-%d")
-
-                except ValueError:
-                    raise QueryParseError(
-                        f"Invalid datetime format around {' '.join(self._query)!r}"
-                    )
-
-        elif self._string_pattern.match(operand):
-            # Strips the leading and trailing quotes and returns the string.
-            return operand[1:-1]
+            return timedate if timedate else operand
 
         elif self._float_pattern.match(operand):
             return float(operand)

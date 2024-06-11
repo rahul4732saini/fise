@@ -8,11 +8,10 @@ conditions, and filtering file, data and directory records.
 
 import re
 from datetime import datetime
-from pathlib import Path
 from typing import Generator, Callable, Any
 
-from errors import QueryParseError, OperationError
 from common import constants, tools
+from errors import QueryParseError, OperationError
 from shared import File, DataLine, Directory, Field, Condition, Size
 
 
@@ -29,8 +28,8 @@ class ConditionHandler:
     _float_pattern = re.compile(r"^-?\d+\.\d+$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
 
-    # The following regex pattern only matches date and datetime formats, and
-    # doesn't explicitly verify the validity of the date and time values.
+    # This regex pattern only matches date and datetime formats, and does
+    # not explicitly verify the validity of the date and time values.
     _datetime_pattern = re.compile(
         r"['\"]\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?['\"]$"
     )
@@ -47,11 +46,11 @@ class ConditionHandler:
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
-        - subquery (list[str]): Subquery comprising the conditions to be parsed and evaluated.
+        - subquery (list[str]): Subquery comprising the conditions.
         """
         self._query = subquery
 
-        # Maps operator names with corresponding evaluation methods.
+        # Maps operator notations with corresponding evaluation methods.
         self._method_map: dict[str, Callable[[Any, Any], bool]] = {
             ">=": self._ge,
             "<=": self._le,

@@ -211,11 +211,11 @@ class ConditionHandler:
 
     def _parse_conditions(
         self, subquery: list[str]
-    ) -> Generator[Condition | str, None, None]:
+    ) -> Generator[Condition | str | list[Condition | str], None, None]:
         """
-        Parses the query conditions and returns a `typing.Generator` object of the
-        parsed conditions as `Condition` objects also including the condition
-        separators `and` and `or` as string objects.
+        Parses the query conditions and returns a `typing.Generator` object of the parsed
+        conditions as `Condition` objects also including the condition separators `and`
+        and `or` as string objects or a list of all of the above if nested.
         """
 
         # Stores individual conditions during iteration.
@@ -247,8 +247,7 @@ class ConditionHandler:
 
         if isinstance(operand, Field):
             try:
-                field: str = operand.field
-                operand = getattr(obj, self._aliases.get(field, field))
+                operand = getattr(obj, self._aliases.get(operand.field, operand.field))
 
             except AttributeError:
                 raise QueryParseError(
@@ -289,8 +288,8 @@ class ConditionHandler:
         ), self._eval_operand(condition.operand2, obj)
 
         try:
-            # Process the operation with a method corresponding to the name
-            # of the operator in the `_method_map` instance attribute.
+            # Evaluates the operation with a method corresponding to the name
+            # of the operator defined in the `_method_map` instance attribute.
             response: bool = self._method_map[condition.operator](operand1, operand2)
         except (TypeError, ValueError):
             raise OperationError("Unable to process the query conditions.")
@@ -299,10 +298,13 @@ class ConditionHandler:
             return response
 
     def _eval_condition_segments(
-        self, segment: list[Condition | str], obj: File | DataLine | Directory
+        self,
+        segment: list[Condition | str | list[str | Condition]],
+        obj: File | DataLine | Directory,
     ) -> bool:
         """
-        Evaluates the specified condition segment.
+        Evaluates the specified condition segment comprising
+        of two conditions along with a seperator.
 
         #### Params:
         - segment (list): Query condition segment to be evaluated.
@@ -324,15 +326,19 @@ class ConditionHandler:
 
     def _eval_all_conditions(
         self,
-        conditions: list[str | Condition],
+        conditions: list[str | Condition | list[str | Condition]],
         obj: File | DataLine | Directory,
     ) -> bool:
         """
         Evaluates all the query conditions.
+
+        #### Params:
+        - conditions (list): List comprising the conditions along with their seperators.
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        # Adds a `True and` condition at the beginning of the conditions list
-        # to avoid defining mechanism for evaluating single conditions.
+        # Adds a `True and` condition at the beginning of the list to avoid
+        # explicit definition of a mechanism for evaluating a single condition.
         conditions = [True, "and"] + conditions
         ctr: int = 0
 

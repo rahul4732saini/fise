@@ -144,16 +144,15 @@ class ConditionHandler:
 
             return re.compile(operand[1:-1])
 
-        # In case of a `IN` or `BETWEEN` operation, second operand is defined as a tuple.
-        # The below mechanism parses and creates a list out of the string formatted tuple.
+        # In case of a `IN` or `BETWEEN` operation, second operand is expected to be
+        # a string formatted tuple. The below mechanism parses it and creates a list.
         else:
             if not self._tuple_pattern.match(operand):
                 raise QueryParseError(
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )
 
-            # Parses and creates a list of individual operands
-            # present within the specified tuple.
+            # Parses and creates a list of individual operands.
             operand: list[str] = [
                 self._parse_comparison_operand(i.strip())
                 for i in operand[1:-1].split(",")
@@ -167,7 +166,9 @@ class ConditionHandler:
 
         return operand
 
-    def _parse_condition(self, condition: list[str]) -> Condition:
+    def _parse_condition(
+        self, condition: list[str]
+    ) -> Condition | list[str | Condition]:
         """
         Parses individual query conditions.
 
@@ -175,13 +176,13 @@ class ConditionHandler:
         - condition (list[str]): Condition to be parsed.
         """
 
-        # Evaluates and returns the conditions if nested.
-        if (length := len(condition)) == 1 and self._tuple_pattern.match(condition[0]):
+        # Evaluates and returns a list of conditions if nested.
+        if len(condition) == 1 and self._tuple_pattern.match(condition[0]):
             return list(
                 self._parse_conditions(tools.parse_query(condition[0][1:-1])),
             )
 
-        elif length < 3:
+        elif len(condition) < 3:
             raise QueryParseError(
                 f"Invalid query syntax around {' '.join(condition)!r}"
             )
@@ -198,6 +199,8 @@ class ConditionHandler:
             )
 
         operand1: Any = self._parse_comparison_operand(condition[0])
+
+        # Parses the second operand accordingly based on the specified operator.
         operand2: Any = (
             self._parse_comparison_operand(condition[2])
             if operator in constants.COMPARISON_OPERATORS

@@ -43,11 +43,15 @@ def _get_from_keyword_index(subquery: list[str]) -> int:
 
 
 def _get_condition_handler(
-    subquery: list[str],
+    subquery: list[str], operation_target: constants.OPERANDS
 ) -> Callable[[File | DataLine | Directory], bool]:
     """
     Parses the conditions defined in the specified subquery
     and returns a function for filtering records.
+
+    #### Params:
+    - subquery (list): Subquery comprising the query conditions.
+    - operation_target (constants.OPERANDS): Targeted operand in the query operation.
     """
 
     # Returns a lambda function returning `True` by default to include all the records
@@ -59,7 +63,7 @@ def _get_condition_handler(
         raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
     conditions: list[str] = subquery[1:]
-    handler = ConditionHandler(conditions)
+    handler = ConditionHandler(conditions, operation_target)
 
     # Returns the evaluation method for filtering records.
     return handler.eval_conditions

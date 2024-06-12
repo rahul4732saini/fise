@@ -122,21 +122,13 @@ class ConditionParser:
         elif operand.isdigit():
             return int(operand)
 
-        # If none of the above conditions are matched, the operand is assumed
-        # to be a query field and returned as a `Field` object or explicitly
-        # as a `Size` object for size fields.
-
-        elif operand.startswith("size"):
-            return Size.from_string(operand)
-
-        # Lowers the operand as the character case does
-        # not matter for the following conditions.
-        operand = operand.lower()
-
-        if operand == "none":
+        if operand.lower() == "none":
             return None
 
-        return Field(operand)
+        # If none of the above conditions are matched, the operand is assumed
+        # to be a query field and returned as `Field` object or explicitly as
+        # a `Size` object for size fields.
+        return self._parse_field(operand)
 
     def _parse_conditional_operand(
         self, operand: str, operator: str

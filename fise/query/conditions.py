@@ -69,7 +69,7 @@ class ConditionHandler:
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
         Parses date/datetime from the specified operand if it
-        matches the coressponding pattern, else returns None.
+        matches the corresponding pattern, else returns None.
         """
 
         if not self._datetime_pattern.match(operand):
@@ -121,7 +121,7 @@ class ConditionHandler:
             return Size.from_string(operand)
 
         # Lowers the operand as the character case does
-        # not matter for the following confitions.
+        # not matter for the following conditions.
         operand = operand.lower()
 
         if operand == "none":
@@ -304,7 +304,7 @@ class ConditionHandler:
     ) -> bool:
         """
         Evaluates the specified condition segment comprising
-        of two conditions along with a seperator.
+        two conditions along with a seperator.
 
         #### Params:
         - segment (list): Query condition segment to be evaluated.
@@ -333,18 +333,18 @@ class ConditionHandler:
         Evaluates all the query conditions.
 
         #### Params:
-        - conditions (list): List comprising the conditions along with their seperators.
+        - conditions (list): List comprising the conditions along with their separators.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
         # Adds a `True and` condition at the beginning of the list to avoid
         # explicit definition of a mechanism for evaluating a single condition.
-        conditions = [True, "and"] + conditions
+        segments: list[Any] = [True, "and"] + conditions
         ctr: int = 0
 
         # Evaluates conditions separated by `and` operator.
-        for _ in range(len(conditions) // 2):
-            segment: list[Condition | str] = conditions[ctr : ctr + 3]
+        for _ in range(len(segments) // 2):
+            segment: list[Any] = segments[ctr : ctr + 3]
 
             if segment[1] == "or":
                 # Increments the counter by 1 to skip the
@@ -352,23 +352,18 @@ class ConditionHandler:
                 ctr += 2
 
             else:
-                # Replaces the conditions with the evaluated boolean value.
-                conditions[ctr : ctr + 3] = [
-                    self._eval_condition_segments(segment, obj)
-                ]
+                segments[ctr : ctr + 3] = [self._eval_condition_segments(segment, obj)]
 
         # Evaluates conditions separated by `or` operator.
-        for _ in range(len(conditions) // 2):
+        for _ in range(len(segments) // 2):
             # Replaces the conditions with the evaluated boolean value.
-            result: bool = self._eval_condition_segments(conditions[0 : 0 + 3], obj)
+            segments[:3] = [self._eval_condition_segments(segments[:3], obj)]
 
-            if result:
-                return result
-
-            conditions[0 : 0 + 3] = [result]
+            if segments[0]:
+                return True
 
         # Extracts the singe-most boolean value from the list and returns it.
-        return conditions[0]
+        return segments[0]
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
         """

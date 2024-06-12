@@ -25,8 +25,8 @@ class ConditionParser:
 
     # Regular expression patterns for matching fields in query conditions.
     _string_pattern = re.compile("^['\"].*['\"]")
-    _float_pattern = re.compile(r"^-?\d+\.\d+$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
+    _float_pattern = re.compile(r"^-?\d+\.\d+$")
 
     # This regex pattern only matches date and datetime formats, and does
     # not explicitly verify the validity of the date and time values.
@@ -34,21 +34,30 @@ class ConditionParser:
         r"['\"]\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?['\"]$"
     )
 
-    # Aliases for query fields.
-    _aliases = (
-        constants.FILE_FIELD_ALIASES
-        | constants.DATA_FIELD_ALIASES
-        | constants.DIR_FIELD_ALIASES
-    )
+    _fields = {
+        "file": constants.FILE_FIELDS,
+        "dir": constants.DIR_FIELDS,
+        "data": constants.DATA_FIELDS,
+    }
 
-    def __init__(self, subquery: list[str]) -> None:
+    _aliases = {
+        "file": constants.FILE_FIELD_ALIASES,
+        "dir": constants.DIR_FIELD_ALIASES,
+        "data": constants.DATA_FIELD_ALIASES,
+    }
+
+    def __init__(self, subquery: list[str], operation_target: str) -> None:
         """
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
         - subquery (list[str]): Subquery comprising the conditions.
+        - operation_target (str): Targeted operand of the operation (file/data/directory).
         """
         self._query = subquery
+
+        self._lookup_fields, self._aliases = self._fields[operation_target]
+        self._field_aliases = self._aliases[operation_target]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
@@ -245,12 +254,13 @@ class ConditionHandler:
 
     __slots__ = "_conditions", "_method_map"
 
-    def __init__(self, subquery: str) -> None:
+    def __init__(self, subquery: str, operation_target: str) -> None:
         """
         Creates an instance of the `ConditionHandler` class.
 
         #### Params:
         - conditions (list): List of parsed query conditions.
+        - operation_target (str): Targeted operand of the operation (file/data/directory).
         """
 
         # Maps operator notations with corresponding evaluation methods.
@@ -267,7 +277,9 @@ class ConditionHandler:
         }
 
         # Parses the conditions and stores them in a list.
-        self._conditions = list(ConditionParser(subquery).parse_conditions())
+        self._conditions = list(
+            ConditionParser(subquery, operation_target).parse_conditions()
+        )
 
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         """

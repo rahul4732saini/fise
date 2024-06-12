@@ -50,22 +50,6 @@ class ConditionParser:
         """
         self._query = subquery
 
-        # Maps operator notations with corresponding evaluation methods.
-        self._method_map: dict[str, Callable[[Any, Any], bool]] = {
-            ">=": self._ge,
-            "<=": self._le,
-            "<": self._lt,
-            ">": self._gt,
-            "=": self._eq,
-            "!=": self._ne,
-            "like": self._like,
-            "in": self._contains,
-            "between": self._between,
-        }
-
-        # Parses the conditions and stores them in a list.
-        self._conditions = list(self._parse_conditions(subquery))
-
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
         Parses date/datetime from the specified operand if it
@@ -244,6 +228,46 @@ class ConditionParser:
         and `or` as string objects or a list of all of the above if nested.
         """
         return self._parse_conditions(self._query)
+
+
+class ConditionHandler:
+    """
+    ConditionHandler defines methods for handling and evaluating
+    query conditions for search and delete operations.
+    """
+
+    # Aliases for query fields.
+    _aliases = (
+        constants.FILE_FIELD_ALIASES
+        | constants.DATA_FIELD_ALIASES
+        | constants.DIR_FIELD_ALIASES
+    )
+
+    __slots__ = "_conditions", "_method_map"
+
+    def __init__(self, subquery: str) -> None:
+        """
+        Creates an instance of the `ConditionHandler` class.
+
+        #### Params:
+        - conditions (list): List of parsed query conditions.
+        """
+
+        # Maps operator notations with corresponding evaluation methods.
+        self._method_map: dict[str, Callable[[Any, Any], bool]] = {
+            ">=": self._ge,
+            "<=": self._le,
+            "<": self._lt,
+            ">": self._gt,
+            "=": self._eq,
+            "!=": self._ne,
+            "like": self._like,
+            "in": self._contains,
+            "between": self._between,
+        }
+
+        # Parses the conditions and stores them in a list.
+        self._conditions = list(ConditionParser(subquery).parse_conditions())
 
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         """

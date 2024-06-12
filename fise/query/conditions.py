@@ -253,13 +253,6 @@ class ConditionHandler:
     query conditions for search and delete operations.
     """
 
-    # Aliases for query fields.
-    _aliases = (
-        constants.FILE_FIELD_ALIASES
-        | constants.DATA_FIELD_ALIASES
-        | constants.DIR_FIELD_ALIASES
-    )
-
     __slots__ = "_conditions", "_method_map"
 
     def __init__(self, subquery: str, operation_target: str) -> None:
@@ -300,7 +293,7 @@ class ConditionHandler:
 
         if isinstance(operand, Field):
             try:
-                operand = getattr(obj, self._aliases.get(operand.field, operand.field))
+                operand = getattr(obj, operand.field)
 
             except AttributeError:
                 raise QueryParseError(
@@ -313,10 +306,8 @@ class ConditionHandler:
                 operand = str(operand)[2:-1]
 
         elif isinstance(operand, Size):
-            size = getattr(obj, "size")
-
-            # Converts the size into the specified unit.
-            operand = size / constants.SIZE_CONVERSION_MAP[operand.unit]
+            # Extracts the size and converts it into the specified unit.
+            operand = obj.size / constants.SIZE_CONVERSION_MAP[operand.unit]
 
         return operand
 
@@ -354,7 +345,7 @@ class ConditionHandler:
 
     def _eval_condition_segments(
         self,
-        segment: list[bool | Condition | str | list[str | Condition]],
+        segment: list[bool | str | Condition | list],
         obj: File | DataLine | Directory,
     ) -> bool:
         """
@@ -366,12 +357,11 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        # Evaluates individual conditions if not done yet.
-        if isinstance(segment[0], list | Condition):
-            segment[0] = self._eval_condition(segment[0], obj)
-
-        if isinstance(segment[2], list | Condition):
-            segment[2] = self._eval_condition(segment[2], obj)
+        # Evaluates individual conditions present at the
+        # 0th and 2th position in the list if not done yet.
+        for i in (0, 2):
+            if isinstance(segment[i], list):
+                segment[i] = self._eval_condition(segment[i], obj)
 
         return (
             segment[0] and segment[2]
@@ -381,7 +371,7 @@ class ConditionHandler:
 
     def _eval_all_conditions(
         self,
-        conditions: list[str | Condition | list[str | Condition]],
+        conditions: list[str | Condition | list],
         obj: File | DataLine | Directory,
     ) -> bool:
         """

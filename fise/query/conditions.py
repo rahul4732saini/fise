@@ -237,6 +237,14 @@ class ConditionParser:
         if condition:
             yield self._parse_condition(condition)
 
+    def parse_conditions(self) -> Generator[Condition | str | list, None, None]:
+        """
+        Parses the query conditions and returns a `typing.Generator` object of the parsed
+        conditions as `Condition` objects also including the condition separators `and`
+        and `or` as string objects or a list of all of the above if nested.
+        """
+        return self._parse_conditions(self._query)
+
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         """
         Evaluates the specified condition operand.

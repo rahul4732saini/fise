@@ -153,18 +153,18 @@ class ConditionHandler:
                 )
 
             # Parses and creates a list of individual operands.
-            operand: list[str] = [
+            operands: list[Any] = [
                 self._parse_comparison_operand(i.strip())
                 for i in operand[1:-1].split(",")
             ]
 
-            if operator == "between" and len(operand) != 2:
+            if operator == "between" and len(operands) != 2:
                 raise QueryParseError(
                     "The tuple specified for `BETWEEN` conditional "
                     "operation must only comprises two elements."
                 )
 
-        return operand
+        return operands
 
     def _parse_condition(
         self, condition: list[str]
@@ -268,7 +268,9 @@ class ConditionHandler:
         return operand
 
     def _eval_condition(
-        self, condition: tuple | Condition, obj: File | DataLine | Directory
+        self,
+        condition: Condition | list[str | Condition],
+        obj: File | DataLine | Directory,
     ) -> bool:
         """
         Evaluates the specified condition.
@@ -299,7 +301,7 @@ class ConditionHandler:
 
     def _eval_condition_segments(
         self,
-        segment: list[Condition | str | list[str | Condition]],
+        segment: list[bool | Condition | str | list[str | Condition]],
         obj: File | DataLine | Directory,
     ) -> bool:
         """
@@ -362,8 +364,10 @@ class ConditionHandler:
             if segments[0]:
                 return True
 
+        result: bool = segments[0]
+
         # Extracts the singe-most boolean value from the list and returns it.
-        return segments[0]
+        return result
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
         """

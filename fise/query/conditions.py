@@ -21,7 +21,7 @@ class ConditionParser:
     conditions for search and delete operations.
     """
 
-    __slots__ = "_query", "_conditions", "_method_map"
+    __slots__ = "_query", "_method_map", "_lookup_fields", "_field_aliases"
 
     # Regular expression patterns for matching fields in query conditions.
     _string_pattern = re.compile("^['\"].*['\"]")
@@ -34,13 +34,13 @@ class ConditionParser:
         r"['\"]\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?['\"]$"
     )
 
-    _fields = {
+    _fields: dict[str, tuple[str, ...]] = {
         "file": constants.FILE_FIELDS,
         "dir": constants.DIR_FIELDS,
         "data": constants.DATA_FIELDS,
     }
 
-    _aliases = {
+    _aliases: dict[str, dict[str, str]] = {
         "file": constants.FILE_FIELD_ALIASES,
         "dir": constants.DIR_FIELD_ALIASES,
         "data": constants.DATA_FIELD_ALIASES,
@@ -56,7 +56,7 @@ class ConditionParser:
         """
         self._query = subquery
 
-        self._lookup_fields, self._aliases = self._fields[operation_target]
+        self._lookup_fields = set(self._fields[operation_target])
         self._field_aliases = self._aliases[operation_target]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
@@ -90,9 +90,9 @@ class ConditionParser:
         """
 
         low_field: str = field.lower()
-        field = self._aliases.get(low_field, field)
+        field = self._field_aliases.get(low_field, field)
 
-        if low_field not in self._fields:
+        if low_field not in self._lookup_fields:
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
         if field.startswith("size"):

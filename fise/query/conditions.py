@@ -84,6 +84,22 @@ class ConditionParser:
                 f"Invalid datetime format around {' '.join(self._query)!r}"
             )
 
+    def _parse_field(self, field: str) -> Field | Size:
+        """
+        Parses the specified string formatted field.
+        """
+
+        low_field: str = field.lower()
+        field = self._aliases.get(low_field, field)
+
+        if low_field not in self._fields:
+            raise QueryParseError(f"Found an invalid field {field!r} in the query.")
+
+        if field.startswith("size"):
+            return Size.from_string(field)
+
+        return Field(field)
+
     def _parse_comparison_operand(self, operand: str) -> Any:
         """
         Parses individual operands specified within a comparison

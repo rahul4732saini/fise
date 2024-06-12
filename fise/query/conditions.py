@@ -52,7 +52,7 @@ class ConditionParser:
 
         #### Params:
         - subquery (list[str]): Subquery comprising the conditions.
-        - operation_target (str): Targeted operand of the operation (file/data/directory).
+        - operation_target (str): Targeted operand in the operation (file/data/directory).
         """
         self._query = subquery
 
@@ -268,7 +268,7 @@ class ConditionHandler:
 
         #### Params:
         - conditions (list): List of parsed query conditions.
-        - operation_target (str): Targeted operand of the operation (file/data/directory).
+        - operation_target (str): Targeted operand in the operation (file/data/directory).
         """
 
         # Maps operator notations with corresponding evaluation methods.

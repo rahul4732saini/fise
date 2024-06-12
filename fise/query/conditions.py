@@ -211,11 +211,12 @@ class ConditionParser:
 
     def _parse_conditions(
         self, subquery: list[str]
-    ) -> Generator[Condition | str | list[Condition | str], None, None]:
+    ) -> Generator[Condition | str | list, None, None]:
         """
-        Parses the query conditions and returns a `typing.Generator` object of the parsed
-        conditions as `Condition` objects also including the condition separators `and`
-        and `or` as string objects or a list of all of the above if nested.
+        Parses the query conditions.
+
+        #### Params:
+        - subquery (list): Subquery comprising the query conditions.
         """
 
         # Stores individual conditions during iteration.

@@ -15,10 +15,10 @@ from errors import QueryParseError, OperationError
 from shared import File, DataLine, Directory, Field, Condition, Size
 
 
-class ConditionHandler:
+class ConditionParser:
     """
-    ConditionHandler defines methods for parsing and evaluating
-    query conditions for search/delete operations.
+    ConditionParser defined methods for parsing query
+    conditions for search and delete operations.
     """
 
     __slots__ = "_query", "_conditions", "_method_map"

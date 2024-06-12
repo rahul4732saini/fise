@@ -43,7 +43,7 @@ def _get_from_keyword_index(subquery: list[str]) -> int:
 
 
 def _get_condition_handler(
-    subquery: list[str], operation_target: constants.OPERANDS
+    subquery: list[str], operation_target: str
 ) -> Callable[[File | DataLine | Directory], bool]:
     """
     Parses the conditions defined in the specified subquery
@@ -51,7 +51,7 @@ def _get_condition_handler(
 
     #### Params:
     - subquery (list): Subquery comprising the query conditions.
-    - operation_target (constants.OPERANDS): Targeted operand in the query operation.
+    - operation_target (str): Targeted operand in the query operation.
     """
 
     # Returns a lambda function returning `True` by default to include all the records

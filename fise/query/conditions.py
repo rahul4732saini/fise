@@ -364,9 +364,9 @@ class ConditionHandler:
             if segments[0]:
                 return True
 
+        # Extracts the singe-most boolean value from the list.
         result: bool = segments[0]
 
-        # Extracts the singe-most boolean value from the list and returns it.
         return result
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:

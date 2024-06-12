@@ -9,10 +9,10 @@ extracting relevant data for further processing and evaluation.
 from pathlib import Path
 from typing import Callable
 
-from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
 from errors import QueryParseError
 from common import constants
 from .conditions import ConditionHandler
+from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
 
 
 def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
@@ -76,6 +76,7 @@ class FileQueryParser:
 
     __slots__ = "_query", "_operation", "_from_index"
 
+    _operand = "file"
     _file_fields = set(constants.FILE_FIELDS) | constants.FILE_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
@@ -152,7 +153,9 @@ class FileQueryParser:
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(self._query[self._from_index + index + 2 :])
+            _get_condition_handler(
+                self._query[self._from_index + index + 2 :], self._operand
+            )
         )
 
         return DeleteQuery(path, is_absolute, condition)
@@ -167,7 +170,9 @@ class FileQueryParser:
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(self._query[self._from_index + index + 2 :])
+            _get_condition_handler(
+                self._query[self._from_index + index + 2 :], self._operand
+            )
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)
@@ -190,6 +195,7 @@ class FileDataQueryParser:
 
     __slots__ = "_query", "_from_index"
 
+    _operand = "data"
     _data_fields = set(constants.DATA_FIELDS) | constants.DATA_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str]) -> None:
@@ -254,7 +260,9 @@ class FileDataQueryParser:
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(self._query[self._from_index + index + 2 :])
+            _get_condition_handler(
+                self._query[self._from_index + index + 2 :], self._operand
+            )
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)
@@ -267,6 +275,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
+    _operand = "dir"
     _dir_fields = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
     def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
@@ -307,7 +316,9 @@ class DirectoryQueryParser(FileQueryParser):
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(self._query[self._from_index + index + 2 :])
+            _get_condition_handler(
+                self._query[self._from_index + index + 2 :], self._operand
+            )
         )
 
         return SearchQuery(path, is_absolute, condition, fields, columns)

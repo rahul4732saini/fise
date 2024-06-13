@@ -30,7 +30,7 @@ class QueryHandler:
     __slots__ = "_query", "_current_query", "_handler_map"
 
     # Regular expression patterns for parsing sub-queries.
-    _export_subquery_pattern = re.compile(r"^sql\[(mysql|postgresql|sqlite)]$")
+    _export_subquery_pattern = re.compile(r"^(sql|file)\[.*]$")
     _operation_params_pattern = re.compile(r"^(\[.*])?$")
 
     def __init__(self, query: str) -> None:
@@ -299,21 +299,28 @@ class QueryHandler:
 
     def _parse_export_data(self) -> ExportData | None:
         """
-        Parses export data from the query if specified else returns `None`.
+        Parses export specifications from the query if specified else returns `None`.
         """
 
         if self._current_query[0].lower() != "export":
             return None
 
-        target: str = self._current_query[1].lower()
+        target: str = self._current_query[1]
         self._current_query = self._current_query[2:]
 
-        if target.startswith("sql"):
-            if not self._export_subquery_pattern.match(target):
-                raise QueryParseError("Unable to parse SQL database name.")
+        if not self._export_subquery_pattern.match(target.lower()):
+            raise QueryParseError(
+                "Unable to parse the export specifications in the query."
+            )
 
-            return ExportData("database", target[4:-1])
+        if target.lower().startswith("file"):
+            return ExportData("file", Path(target[5:-1]))
 
-        # The export is assumed to a file if none of the above are matched.
-        else:
-            return ExportData("file", Path(target.strip("'\"")))
+        database: str = target.lower()[4:-1]
+
+        if database not in constants.DATABASES:
+            raise QueryParseError(
+                f"Invalid database {database!r} specified for exporting search records."
+            )
+
+        return ExportData("database", database)

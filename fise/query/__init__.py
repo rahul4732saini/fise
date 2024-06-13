@@ -27,7 +27,7 @@ class QueryHandler:
     processing user-specified search and delete queries.
     """
 
-    __slots__ = "_query", "_current_query", "_handler_map"
+    __slots__ = "_query", "_ctr", "_handler_map"
 
     # Regular expression patterns for parsing sub-queries.
     _export_subquery_pattern = re.compile(r"^(sql|file)\[.*]$")
@@ -48,16 +48,15 @@ class QueryHandler:
             "data": self._handle_data_query,
         }
 
-        # Keeps another copy of the query to avoid changes in it during every runtime.
-        self._query = self._current_query = tools.parse_query(query)
+        self._query = tools.parse_query(query)
 
     def handle(self) -> pd.DataFrame | None:
         """
         Handles the specified search/delete query.
         """
 
-        # Updates current query with the specified query.
-        self._current_query = self._query
+        # Keeps track of the current position of the token to be parsed in the query.
+        self._ctr = 0
 
         try:
             initials: QueryInitials = self._parse_initials()
@@ -85,7 +84,7 @@ class QueryHandler:
         Parses and handles the specified file search/delete query.
         """
 
-        parser = FileQueryParser(self._current_query, initials.operation.operation)
+        parser = FileQueryParser(self._query[self._ctr :], initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(query.path, initials.recursive, query.is_absolute)
@@ -100,7 +99,7 @@ class QueryHandler:
         Parses and handles the specified data search query.
         """
 
-        parser = FileDataQueryParser(self._current_query)
+        parser = FileDataQueryParser(self._query[self._ctr :])
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
@@ -117,7 +116,9 @@ class QueryHandler:
         Parses and handles the specified directory search/delete query.
         """
 
-        parser = DirectoryQueryParser(self._current_query, initials.operation.operation)
+        parser = DirectoryQueryParser(
+            self._query[self._ctr :], initials.operation.operation
+        )
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = DirectoryQueryOperator(
@@ -137,13 +138,13 @@ class QueryHandler:
         recursive: bool = False
         export: ExportData | None = self._parse_export_data()
 
-        if self._current_query[0].lower() in ("r", "recursive"):
+        if self._query[self._ctr].lower() in ("r", "recursive"):
             recursive = True
-            self._current_query.pop(0)
+            self._ctr += 1
 
         # Parses the query operation
         operation: OperationData = self._parse_operation()
-        self._current_query.pop(0)
+        self._ctr += 1
 
         if export:
             if operation.operation == "remove":
@@ -175,9 +176,9 @@ class QueryHandler:
         filemode: str | None = None
 
         # Verifying operation parameters syntax.
-        if not self._operation_params_pattern.match(self._current_query[0][6:]):
+        if not self._operation_params_pattern.match(self._query[self._ctr][6:]):
             raise QueryParseError(
-                f"Invalid query syntax around {self._current_query[0]!r}."
+                f"Invalid query syntax around {self._query[self._ctr]!r}."
             )
 
         # Generator of operation parameters.
@@ -185,7 +186,7 @@ class QueryHandler:
             # Splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
             i.strip()
-            for i in self._current_query[0][7:-1].split(",")
+            for i in self._query[self._ctr][7:-1].split(",")
             if i
         )
 
@@ -195,7 +196,7 @@ class QueryHandler:
 
             if len(param) != 2:
                 raise QueryParseError(
-                    f"Invalid query syntax around {self._current_query[0]!r}"
+                    f"Invalid query syntax around {self._query[self._ctr]!r}"
                 )
 
             if param[0] == "type":
@@ -233,9 +234,9 @@ class QueryHandler:
         skip_err: bool = False
 
         # Verifying operation parameters syntax.
-        if not self._operation_params_pattern.match(self._current_query[0][6:]):
+        if not self._operation_params_pattern.match(self._query[self._ctr][6:]):
             raise QueryParseError(
-                f"Invalid query syntax around {self._current_query[0]!r}."
+                f"Invalid query syntax around {self._query[self._ctr]!r}."
             )
 
         # Generator of operation parameters.
@@ -243,7 +244,7 @@ class QueryHandler:
             # Splits the parameters subquery about commas, and iterates
             # through it striping whitespaces from individual parameters.
             i.strip()
-            for i in self._current_query[0][7:-1].split(",")
+            for i in self._query[self._ctr][7:-1].split(",")
             if i
         )
 
@@ -257,7 +258,7 @@ class QueryHandler:
             elif param[0] == "skip_err":
                 if len(param) > 1:
                     raise QueryParseError(
-                        f"Invalid query syntax around {self._current_query[0]!r}"
+                        f"Invalid query syntax around {self._query[self._ctr]!r}"
                     )
 
                 skip_err = True
@@ -273,11 +274,11 @@ class QueryHandler:
         Parses the query operation data.
         """
 
-        self._current_query[0] = self._current_query[0].lower()
+        self._query[self._ctr] = self._query[self._ctr].lower()
 
         # Only extracts the query operation, operators parameters are
         # parsed explicitly by the specific operation parser method.
-        operation: str = self._current_query[0][:6]
+        operation: str = self._query[self._ctr][:6]
 
         if operation not in constants.OPERATION_ALIASES:
             raise QueryParseError(f"Invalid operation specified: {operation!r}")
@@ -291,7 +292,7 @@ class QueryHandler:
 
         except IndexError:
             raise QueryParseError(
-                f"Invalid query syntax around {self._current_query[0]!r}"
+                f"Invalid query syntax around {self._query[self._ctr]!r}"
             )
 
         else:
@@ -302,21 +303,21 @@ class QueryHandler:
         Parses export specifications from the query if specified else returns `None`.
         """
 
-        if self._current_query[0].lower() != "export":
+        if self._query[0].lower() != "export":
             return None
 
-        target: str = self._current_query[1]
-        self._current_query = self._current_query[2:]
+        self._ctr += 2
+        low_target: str = self._query[1].lower()
 
-        if not self._export_subquery_pattern.match(target.lower()):
+        if not self._export_subquery_pattern.match(low_target):
             raise QueryParseError(
                 "Unable to parse the export specifications in the query."
             )
 
-        if target.lower().startswith("file"):
-            return ExportData("file", Path(target[5:-1]))
+        if low_target.startswith("file"):
+            return ExportData("file", Path(self._query[1][5:-1]))
 
-        database: str = target.lower()[4:-1]
+        database: str = low_target[4:-1]
 
         if database not in constants.DATABASES:
             raise QueryParseError(

@@ -359,7 +359,7 @@ class ConditionHandler:
         # Evaluates individual conditions present at the
         # 0th and 2th position in the list if not done yet.
         for i in (0, 2):
-            if isinstance(segment[i], list):
+            if not isinstance(segment[i], bool):
                 segment[i] = self._eval_condition(segment[i], obj)
 
         return (

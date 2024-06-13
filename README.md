@@ -42,18 +42,18 @@ The basic syntax of the query is shown below:
 - Search Query:
 
 ```SQL
-EXPORT (<FILEPATH>|SQL[<DATABASE>]) (R|RECURSIVE) SEARCH[<PARAMETERS>] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
+EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SEARCH[<PARAMETERS>] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
 ```
 
 - Delete Query:
 
 ```SQL
-EXPORT (<FILEPATH>|SQL[<DATABASE>]) (R|RECURSIVE) DELETE[<PARAMETERS>] FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
+(R|RECURSIVE) DELETE[<PARAMETERS>] FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
 ```
 
 Where:
 
-1. `EXPORT (<FILEPATH>|SQL[<DATABASE>])` is an optional command exclusive to the search operation and is used to export search records to a file or database.
+1. `EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>])` is an optional command exclusive to the search operation and is used to export search records to a file or database.
 2. `(R|RECURSIVE)` is an optional command used to recursively include all the files/directories present within the subdirectories of the specified directory. If not explicitly specified, operations are only limited to the root directory.
 3. `(SEARCH|DELETE)[<PARAMETERS>]` defines the desired operation to be performed. Additional parameters can be specified within `[]` to toggle operations between different file types, and file-modes explicitly for data search operation.
 4. `<FIELDS>` is only limited to search operations for accessing metadata fields related to the searched files, data, or directories. Field names must be separated by commas.
@@ -72,19 +72,19 @@ The **Search** operation encompasses the ability to query files, file contents, 
 - File Search Query:
 
 ```SQL
-EXPORT (<FILEPATH>|SQL[<DATABASE>]) (R|RECURSIVE) SELECT([TYPE FILE]) <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
+EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT([TYPE FILE]) <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
 ```
 
 - Data Search Query:
 
 ```SQL
-EXPORT (<FILEPATH>|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DATA(, MODE (TEXT|BYTES))] <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
+EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DATA(, MODE (TEXT|BYTES))] <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
 ```
 
 - Directory Search Query:
 
 ```SQL
-EXPORT (<FILEPATH>|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DIR] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
+EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DIR] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
 ```
 
 #### Search Query Examples
@@ -94,7 +94,7 @@ SELECT * FROM ./fise WHERE name LIKE '^.*\.py$'
 ```
 
 ```SQL
-EXPORT ./records.csv R SELECT[TYPE FILE] RELATIVE * FROM .
+EXPORT FILE[./records.csv] R SELECT[TYPE FILE] RELATIVE * FROM .
 ```
 
 ```SQL
@@ -110,7 +110,7 @@ SELECT[TYPE DATA] lineno, data FROM ./fise/query/parsers.py WHERE "This" IN data
 ```
 
 ```SQL
-EXPORT ./data.xlsx R SELECT[TYPE DATA] * FROM ./fise/query WHERE name IN ('parsers.py', 'operators.py') AND data LIKE '^.*get_files.*$'
+EXPORT FILE[./data.xlsx] R SELECT[TYPE DATA] * FROM ./fise/query WHERE name IN ('parsers.py', 'operators.py') AND data LIKE '^.*get_files.*$'
 ```
 
 ### Overview of Delete Operation

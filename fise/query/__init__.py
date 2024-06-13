@@ -162,7 +162,7 @@ class QueryHandler:
         Parses the query operation type.
         """
         if type_ not in constants.SEARCH_QUERY_OPERANDS:
-            raise QueryParseError(f"Invalid value {type_[1]!r} for 'type' parameter.")
+            raise QueryParseError(f"Invalid value {type_!r} for 'type' parameter.")
 
         return type_
 
@@ -273,11 +273,6 @@ class QueryHandler:
         Parses the query operation data.
         """
 
-        parser_map: dict[str, Callable[[], OperationData]] = {
-            "select": self._parse_search_operation,
-            "delete": self._parse_delete_operation,
-        }
-
         self._current_query[0] = self._current_query[0].lower()
 
         # Only extracts the query operation, operators parameters are
@@ -288,7 +283,11 @@ class QueryHandler:
             raise QueryParseError(f"Invalid operation specified: {operation!r}")
 
         try:
-            data: OperationData = parser_map[operation]()
+            data: OperationData = (
+                self._parse_search_operation()
+                if operation == "select"
+                else self._parse_delete_operation()
+            )
 
         except IndexError:
             raise QueryParseError(

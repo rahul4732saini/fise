@@ -27,7 +27,7 @@ class QueryHandler:
     processing user-specified search and delete queries.
     """
 
-    __slots__ = "_query", "_current_query"
+    __slots__ = "_query", "_current_query", "_handler_map"
 
     # Regular expression patterns for parsing sub-queries.
     _export_subquery_pattern = re.compile(r"^sql\[(mysql|postgresql|sqlite)]$")
@@ -40,6 +40,13 @@ class QueryHandler:
         #### Params:
         - query (str): Query to be handled.
         """
+
+        # Maps targeted operands names with coressponding methods for handling the query.
+        self._handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
+            "file": self._handle_file_query,
+            "dir": self._handle_dir_query,
+            "data": self._handle_data_query,
+        }
 
         # Keeps another copy of the query to avoid changes in it during every runtime.
         self._query = self._current_query = tools.parse_query(query)
@@ -58,16 +65,11 @@ class QueryHandler:
         except IndexError:
             raise QueryParseError("Invalid query syntax.")
 
-        # Maps targeted operands names with coressponding methods for handling the query.
-        handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
-            "file": self._handle_file_query,
-            "dir": self._handle_dir_query,
-            "data": self._handle_data_query,
-        }
-
         # Calls the corresponding handler method, extracts, and stores the
         # search records if search operation is specified else stores `None`.
-        data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
+        data: pd.DataFrame | None = self._handler_map[initials.operation.operand](
+            initials
+        )
 
         if not initials.export:
             return data

@@ -12,21 +12,11 @@ from typing import Callable, Generator
 
 import pandas as pd
 
-from shared import QueryInitials, ExportData, OperationData
 from common import constants, tools
+from .parsers import FileQueryParser, DirectoryQueryParser, FileDataQueryParser
+from .operators import FileQueryOperator, FileDataQueryOperator, DirectoryQueryOperator
+from shared import QueryInitials, ExportData, OperationData, DeleteQuery, SearchQuery
 from errors import QueryParseError
-from .operators import (
-    FileQueryOperator,
-    FileDataQueryOperator,
-    DirectoryQueryOperator,
-)
-from .parsers import (
-    FileQueryParser,
-    DirectoryQueryParser,
-    FileDataQueryParser,
-    DeleteQuery,
-    SearchQuery,
-)
 
 __all__ = ("QueryHandler",)
 
@@ -41,7 +31,7 @@ class QueryHandler:
 
     # Regular expression patterns for parsing sub-queries.
     _export_subquery_pattern = re.compile(r"^sql\[(mysql|postgresql|sqlite)]$")
-    _operation_params_pattern = re.compile(r"^(\[.*]|)$")
+    _operation_params_pattern = re.compile(r"^(\[.*])?$")
 
     def __init__(self, query: str) -> None:
         """
@@ -50,6 +40,8 @@ class QueryHandler:
         #### Params:
         - query (str): Query to be handled.
         """
+
+        # Keeps another copy of the query to avoid changes in it during every runtime.
         self._query = self._current_query = tools.parse_query(query)
 
     def handle(self) -> pd.DataFrame | None:
@@ -57,7 +49,7 @@ class QueryHandler:
         Handles the specified search/delete query.
         """
 
-        # Creates another copy of the query to avoid changes in it during runtime.
+        # Updates current query with the specified query.
         self._current_query = self._query
 
         try:
@@ -66,27 +58,25 @@ class QueryHandler:
         except IndexError:
             raise QueryParseError("Invalid query syntax.")
 
+        # Maps targeted operands names with coressponding methods for handling the query.
+        handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
+            "file": self._handle_file_query,
+            "dir": self._handle_dir_query,
+            "data": self._handle_data_query,
+        }
+
+        # Calls the corresponding handler method, extracts, and stores the
+        # search records if search operation is specified else stores `None`.
+        data: pd.DataFrame | None = handler_map[initials.operation.operand](initials)
+
+        if not initials.export:
+            return data
+
+        if initials.export.type_ == "file":
+            tools.export_to_file(data, initials.export.target)
+
         else:
-            handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
-                "file": self._handle_file_query,
-                "dir": self._handle_dir_query,
-                "data": self._handle_data_query,
-            }
-
-            # Calls the corresponding handler method, extracts, and stores the
-            # search records if search operation is specified else stores `None`.
-            data: pd.DataFrame | None = handler_map[initials.operation.operand](
-                initials
-            )
-
-            if not initials.export:
-                return data
-
-            if initials.export.type_ == "file":
-                tools.export_to_file(data, initials.export.target)
-
-            else:
-                tools.export_to_sql(data, initials.export.target)
+            tools.export_to_sql(data, initials.export.target)
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """

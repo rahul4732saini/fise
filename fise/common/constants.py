@@ -80,8 +80,8 @@ DATA_FIELD_ALIASES = {
 
 PATH_TYPES = {"absolute", "relative"}
 
-# Supported databases for data export.
-DATABASES = Literal["postgresql", "mysql", "sqlite"]
+# Supported databases for exporing search records.
+DATABASES = {"postgresql", "mysql", "sqlite"}
 
 DATABASE_URL_DIALECTS = {
     "postgresql": "postgresql://",

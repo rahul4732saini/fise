@@ -82,7 +82,7 @@ class QueryHandler:
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """
-        Parses and processes the specified file search/deletion query.
+        Parses and handles the specified file search/delete query.
         """
 
         parser = FileQueryParser(self._current_query, initials.operation.operation)
@@ -97,7 +97,7 @@ class QueryHandler:
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
         """
-        Parses and processes the specified file data search query.
+        Parses and handles the specified data search query.
         """
 
         parser = FileDataQueryParser(self._current_query)
@@ -114,7 +114,7 @@ class QueryHandler:
 
     def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """
-        Parses and processes the specified directory search/deletion query.
+        Parses and handles the specified directory search/delete query.
         """
 
         parser = DirectoryQueryParser(self._current_query, initials.operation.operation)
@@ -145,7 +145,6 @@ class QueryHandler:
         operation: OperationData = self._parse_operation()
         self._current_query.pop(0)
 
-        # Verify semantic aspects of the query for further processing
         if export:
             if operation.operation == "remove":
                 raise QueryParseError("Cannot export data with delete operation.")

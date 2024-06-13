@@ -22,8 +22,7 @@ FILE_FIELDS = DIR_FIELDS + ("size", "filetype")
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = Literal["file", "data", "dir"]
-SEARCH_QUERY_OPERANDS = ("file", "data", "dir")
-DELETE_QUERY_OPERANDS = ("file", "dir")
+SEARCH_QUERY_OPERANDS = {"file", "data", "dir"}
 OPERATION_ALIASES = {"select": "search", "delete": "remove"}
 
 FILE_MODES = Literal["text", "bytes"]

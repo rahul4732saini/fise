@@ -204,7 +204,7 @@ def _connect_database(database: str) -> Engine:
     )
 
 
-def export_to_sql(data: pd.DataFrame, database: constants.DATABASES) -> None:
+def export_to_sql(data: pd.DataFrame, database: str) -> None:
     """
     Exports search records to the specified database.
 

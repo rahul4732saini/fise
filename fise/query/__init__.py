@@ -315,7 +315,14 @@ class QueryHandler:
             )
 
         if low_target.startswith("file"):
-            return ExportData("file", Path(self._query[1][5:-1]))
+            file: Path = Path(self._query[1][5:-1])
+
+            if file.suffix not in constants.DATA_EXPORT_TYPES_MAP:
+                raise QueryParseError(
+                    f"{file.suffix!r} file type is not supported for exporting search records."
+                )
+
+            return ExportData("file", file)
 
         database: str = low_target[4:-1]
 

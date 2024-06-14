@@ -325,6 +325,21 @@ class QueryHandler:
 
         return ExportData("file", file)
 
+    @staticmethod
+    def _parse_sql_export_specs(export_specs: str) -> ExportData:
+        """
+        Parses and returns the SQL export specifications.
+        """
+
+        database: str = export_specs[4:-1]
+
+        if database not in constants.DATABASES:
+            raise QueryParseError(
+                f"Invalid database {database!r} specified for exporting search records."
+            )
+
+        return ExportData("database", database)
+
     def _parse_export_data(self) -> ExportData | None:
         """
         Parses export specifications from the query if specified else returns `None`.
@@ -344,11 +359,5 @@ class QueryHandler:
         if low_target.startswith("file"):
             return self._parse_file_export_specs(self._query[1])
 
-        database: str = low_target[4:-1]
-
-        if database not in constants.DATABASES:
-            raise QueryParseError(
-                f"Invalid database {database!r} specified for exporting search records."
-            )
-
-        return ExportData("database", database)
+        # Character case of the specifications is ensured to be lowered for proper parsing.
+        return self._parse_sql_export_specs(low_target)

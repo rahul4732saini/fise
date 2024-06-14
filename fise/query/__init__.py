@@ -16,7 +16,7 @@ from common import constants, tools
 from .parsers import FileQueryParser, DirectoryQueryParser, FileDataQueryParser
 from .operators import FileQueryOperator, FileDataQueryOperator, DirectoryQueryOperator
 from shared import QueryInitials, ExportData, OperationData, DeleteQuery, SearchQuery
-from errors import QueryParseError
+from errors import QueryParseError, OperationError
 
 __all__ = ("QueryHandler",)
 
@@ -298,6 +298,33 @@ class QueryHandler:
         else:
             return data
 
+    @staticmethod
+    def _parse_file_export_specs(export_specs: str) -> ExportData:
+        """
+        Parses and returns the file export specifications.
+        """
+
+        file: Path = Path(export_specs[5:-1])
+
+        if file.suffix not in constants.DATA_EXPORT_TYPES_MAP:
+            raise QueryParseError(
+                f"{file.suffix!r} file type is not supported for exporting search records."
+            )
+
+        if file.is_file():
+            raise OperationError(
+                "The specified path for exporting search "
+                "records must not point to an existing file."
+            )
+
+        elif not file.parent.exists():
+            raise OperationError(
+                f"The specified directory '{file.parent}' "
+                "for exporting search records cannot be found."
+            )
+
+        return ExportData("file", file)
+
     def _parse_export_data(self) -> ExportData | None:
         """
         Parses export specifications from the query if specified else returns `None`.
@@ -315,14 +342,7 @@ class QueryHandler:
             )
 
         if low_target.startswith("file"):
-            file: Path = Path(self._query[1][5:-1])
-
-            if file.suffix not in constants.DATA_EXPORT_TYPES_MAP:
-                raise QueryParseError(
-                    f"{file.suffix!r} file type is not supported for exporting search records."
-                )
-
-            return ExportData("file", file)
+            return self._parse_file_export_specs(self._query[1])
 
         database: str = low_target[4:-1]
 

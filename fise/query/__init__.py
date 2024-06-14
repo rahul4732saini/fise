@@ -345,9 +345,14 @@ class QueryHandler:
         Parses export specifications from the query if specified else returns `None`.
         """
 
+        # The method doesn't make much use of the `ctr` attribute
+        # as it only parses the very initial tokens of the query.
+
         if self._query[0].lower() != "export":
             return None
 
+        # Increments the counter by 2, as the initial two tokens are to be
+        # parsed here and won't be required by the other parser methods.
         self._ctr += 2
         low_target: str = self._query[1].lower()
 

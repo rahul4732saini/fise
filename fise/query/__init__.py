@@ -167,52 +167,40 @@ class QueryHandler:
 
         return type_
 
-    def _parse_search_operation(self) -> OperationData:
+    def _parse_search_operation(
+        self, params: Generator[str, None, None]
+    ) -> OperationData:
         """
-        Parses the search operation subquery.
+        Parses the search operation parameters.
         """
 
         operand: str = "file"
         filemode: str | None = None
 
-        # Verifying operation parameters syntax.
-        if not self._operation_params_pattern.match(self._query[self._ctr][6:]):
-            raise QueryParseError(
-                f"Invalid query syntax around {self._query[self._ctr]!r}."
-            )
-
-        # Generator of operation parameters.
-        params: Generator[str, None, None] = (
-            # Splits the parameters subquery about commas, and iterates
-            # through it striping whitespaces from individual parameters.
-            i.strip()
-            for i in self._query[self._ctr][7:-1].split(",")
-            if i
-        )
-
         # Iterates through the parameters and parses them.
         for param in params:
-            param = param.split(" ")
-
             if len(param) != 2:
                 raise QueryParseError(
                     f"Invalid query syntax around {self._query[self._ctr]!r}"
                 )
 
-            if param[0] == "type":
-                operand = self._parse_operation_type(param[1])
+            # Splits the key-value pair in the list into variables for better readability.
+            key, value = param
 
-            elif param[0] == "mode":
-                if param[1] not in constants.FILE_MODES_MAP:
+            if key == "type":
+                operand = self._parse_operation_type(value)
+
+            elif key == "mode":
+                if value not in constants.FILE_MODES_MAP:
                     raise QueryParseError(
-                        f"Invalid value {param[1]!r} for 'mode' parameter."
+                        f"Invalid value {value!r} for 'mode' parameter."
                     )
 
-                filemode = param[1]
+                filemode = value
 
             else:
                 raise QueryParseError(
-                    f"Invalid parameter {param[0]!r} for search operation."
+                    f"Invalid parameter {key!r} for search operation."
                 )
 
         if operand != "data" and filemode:
@@ -225,38 +213,24 @@ class QueryHandler:
 
         return OperationData("search", operand, filemode)
 
-    def _parse_delete_operation(self) -> OperationData:
+    def _parse_delete_operation(
+        self, params: Generator[str, None, None]
+    ) -> OperationData:
         """
-        Parses the delete operation subquery.
+        Parses the delete operation parameters.
         """
 
         operand: str = "file"
         skip_err: bool = False
 
-        # Verifying operation parameters syntax.
-        if not self._operation_params_pattern.match(self._query[self._ctr][6:]):
-            raise QueryParseError(
-                f"Invalid query syntax around {self._query[self._ctr]!r}."
-            )
-
-        # Generator of operation parameters.
-        params: Generator[str, None, None] = (
-            # Splits the parameters subquery about commas, and iterates
-            # through it striping whitespaces from individual parameters.
-            i.strip()
-            for i in self._query[self._ctr][7:-1].split(",")
-            if i
-        )
-
         # Iterates through the parameters and parses them.
         for param in params:
-            param = param.split(" ")
 
             if param[0] == "type":
                 operand = self._parse_operation_type(param[1])
 
             elif param[0] == "skip_err":
-                if len(param) > 1:
+                if len(param) != 1:
                     raise QueryParseError(
                         f"Invalid query syntax around {self._query[self._ctr]!r}"
                     )
@@ -271,23 +245,35 @@ class QueryHandler:
 
     def _parse_operation(self) -> OperationData:
         """
-        Parses the query operation data.
+        Parses the query operation specifications.
         """
 
-        self._query[self._ctr] = self._query[self._ctr].lower()
-
-        # Only extracts the query operation, operators parameters are
-        # parsed explicitly by the specific operation parser method.
-        operation: str = self._query[self._ctr][:6]
+        # Extracts and stores the operation and its parameter specifications.
+        operation, oparams = (
+            self._query[self._ctr][:6].lower(),
+            self._query[self._ctr][6:].lower(),
+        )
 
         if operation not in constants.OPERATION_ALIASES:
             raise QueryParseError(f"Invalid operation specified: {operation!r}")
 
+        # Verifying operation parameters syntax.
+        if not self._operation_params_pattern.match(oparams):
+            raise QueryParseError(
+                f"Invalid query syntax around {self._query[self._ctr]!r}."
+            )
+
+        # Splits the parameters subquery about commas, and iterates
+        # through it striping whitespaces from individual parameters.
+        params: Generator[list[str], None, None] = (
+            i.strip().split(" ") for i in oparams[1:-1].split(",") if i
+        )
+
         try:
             data: OperationData = (
-                self._parse_search_operation()
+                self._parse_search_operation(params)
                 if operation == "select"
-                else self._parse_delete_operation()
+                else self._parse_delete_operation(params)
             )
 
         except IndexError:

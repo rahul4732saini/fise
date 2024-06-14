@@ -16,9 +16,9 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.engine.base import Engine
 import sqlalchemy
 
+from . import constants
 from errors import OperationError, QueryHandleError
 from notify import Alert
-from . import constants
 
 
 def parse_query(query: str) -> list[str]:

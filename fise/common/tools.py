@@ -143,25 +143,8 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     - file (Path): Path to the file.
     """
 
-    if file.is_file():
-        raise OperationError(
-            "The specified path for exporting search "
-            "records must not point to an existing file."
-        )
-
-    elif not file.parent.exists():
-        raise OperationError(
-            f"The specified directory '{file.parent}' "
-            "for exporting search records cannot be found."
-        )
-
     # String representation of the export method for exporting search records.
-    export_method: str | None = constants.DATA_EXPORT_TYPES_MAP.get(file.suffix)
-
-    if not export_method:
-        raise OperationError(
-            f"{file.suffix!r} file type is not supported for exporting search records."
-        )
+    export_method: str = constants.DATA_EXPORT_TYPES_MAP[file.suffix]
 
     # Converts datetime objects present in datetime columns into
     # string objects for better representation in Excel files.

@@ -58,6 +58,8 @@ DATA_EXPORT_TYPES_MAP = {
 POSIX_FIELD_ALIASES = {"perms": "permissions"} if sys.platform != "win32" else {}
 
 DIR_FIELD_ALIASES = POSIX_FIELD_ALIASES | {
+    "filepath": "path",
+    "filename": "name",
     "ctime": "create_time",
     "mtime": "modify_time",
     "atime": "access_time",

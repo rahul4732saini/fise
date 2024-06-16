@@ -64,9 +64,6 @@ DIR_FIELD_ALIASES = POSIX_FIELD_ALIASES | {
 }
 
 FILE_FIELD_ALIASES = DIR_FIELD_ALIASES | {
-    "atime": "access_time",
-    "mtime": "modify_time",
-    "ctime": "create_time",
     "type": "filetype",
 }
 

@@ -143,6 +143,8 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     - file (Path): Path to the file.
     """
 
+    kwargs: dict[str, str] = {}
+
     # String representation of the export method for exporting search records.
     export_method: str = constants.DATA_EXPORT_TYPES_MAP[file.suffix]
 
@@ -152,8 +154,12 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
         for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
             data[col] = data[col].map(str)
 
+    # Adds parameters for additional formatting if the export is to a json file.
+    if export_method == "to_json":
+        kwargs["indent"] = 4
+
     # Exports search records to the specified file with a suitable method.
-    getattr(data, export_method)(file)
+    getattr(data, export_method)(file, **kwargs)
 
 
 def _connect_sqlite() -> Engine:

@@ -240,6 +240,11 @@ class QueryHandler:
                 raise QueryParseError(
                     f"Invalid parameter {param[0]!r} for search operation."
                 )
+        
+        if operand == "data":
+            raise QueryParseError(
+                "Delete operation upon file contents is not supported."
+            )
 
         return OperationData("remove", operand, skip_err=skip_err)
 

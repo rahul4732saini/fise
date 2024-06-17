@@ -89,13 +89,13 @@ class ConditionParser:
         Parses the specified string formatted field.
         """
 
+        if field.lower().startswith("size"):
+            return Size.from_string(field)
+
         field = self._field_aliases.get(field.lower(), field)
 
         if field.lower() not in self._lookup_fields:
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
-
-        if field.startswith("size"):
-            return Size.from_string(field)
 
         return Field(field)
 

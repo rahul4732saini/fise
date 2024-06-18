@@ -131,7 +131,7 @@ class ConditionParser:
 
     def _parse_conditional_operand(
         self, operand: str, operator: str
-    ) -> list[str] | re.Pattern:
+    ) -> Any | list[str] | re.Pattern:
         """
         Parses individual operands specified within a conditional operation expression.
         """
@@ -148,6 +148,12 @@ class ConditionParser:
         # a string formatted tuple. The below mechanism parses it and creates a list.
         else:
             if not self._tuple_pattern.match(operand):
+
+                # Tries to parse the operand as a comparison operand, as it may alternatively
+                # be a string or a field, especially in the context of the IN operation.
+                if operator == "in":
+                    return self._parse_comparison_operand(operand)
+
                 raise QueryParseError(
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )

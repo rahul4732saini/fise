@@ -129,11 +129,41 @@ class ConditionParser:
         # a `Size` object for size fields.
         return self._parse_field(operand)
 
+    def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:
+        """
+        Parses the second operand of a query condition as a collective object explicitly
+        for an `IN` or `BETWEEN` operation based on the specified operator.
+        """
+
+        if not self._tuple_pattern.match(operand):
+
+            # In the context of the `IN` operation, the operand might also be a
+            # string or a Field object, the following also handles this situation.
+            if operator == "in":
+                return self._parse_comparison_operand(operand)
+
+            raise QueryParseError(
+                f"Invalid query pattern around {' '.join(self._query)!r}"
+            )
+
+        # Parses and creates a list of individual operands.
+        operands: list[Any] = [
+            self._parse_comparison_operand(i.strip()) for i in operand[1:-1].split(",")
+        ]
+
+        if operator == "between" and len(operands) != 2:
+            raise QueryParseError(
+                "The tuple specified for `BETWEEN` conditional "
+                "operation must only comprises two elements."
+            )
+
+        return operands
+
     def _parse_conditional_operand(
         self, operand: str, operator: str
     ) -> Any | list[str] | re.Pattern:
         """
-        Parses individual operands specified within a conditional operation expression.
+        Parses the second operand specified within a conditional operation expression.
         """
 
         if operator == "like":
@@ -144,33 +174,10 @@ class ConditionParser:
 
             return re.compile(operand[1:-1])
 
-        # In case of a `IN` or `BETWEEN` operation, second operand is expected to be
-        # a string formatted tuple. The below mechanism parses it and creates a list.
+        # In case of an `IN` or `BETWEEN` operation, the
+        # operand is parsed using the following method.
         else:
-            if not self._tuple_pattern.match(operand):
-
-                # Tries to parse the operand as a comparison operand, as it may alternatively
-                # be a string or a field, especially in the context of the IN operation.
-                if operator == "in":
-                    return self._parse_comparison_operand(operand)
-
-                raise QueryParseError(
-                    f"Invalid query pattern around {' '.join(self._query)!r}"
-                )
-
-            # Parses and creates a list of individual operands.
-            operands: list[Any] = [
-                self._parse_comparison_operand(i.strip())
-                for i in operand[1:-1].split(",")
-            ]
-
-            if operator == "between" and len(operands) != 2:
-                raise QueryParseError(
-                    "The tuple specified for `BETWEEN` conditional "
-                    "operation must only comprises two elements."
-                )
-
-        return operands
+            return self._parse_collective_operand(operand, operator)
 
     def _parse_condition(
         self, condition: list[str]

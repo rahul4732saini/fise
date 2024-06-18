@@ -163,7 +163,8 @@ class ConditionParser:
         self, operand: str, operator: str
     ) -> Any | list[str] | re.Pattern:
         """
-        Parses the second operand specified within a conditional operation expression.
+        Parses the second operand specified within a query
+        condition for an `IN`, `BETWEEN` or `LIKE` operation.
         """
 
         if operator == "like":

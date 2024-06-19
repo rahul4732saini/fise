@@ -9,7 +9,7 @@
 
 <a href="https://www.github.com/rahul4732saini/fise"><img src="https://img.shields.io/github/stars/rahul4732saini/fise.svg?style=social&label=Star&maxAge=60" alt="StarProject"></a>
 <a href="https://www.twitter.com/rahulsaini4732"><img src="https://img.shields.io/twitter/follow/rahulsaini4732?style=social&label=Follow&maxAge=60" alt="Twitter"></a>
-<a href="https://www.linkedin.com/in/rahul-saini-9191a5286/)"><img src="https://img.shields.io/badge/LinkedIn-Connect-blue?style=social&logo=linkedin&maxAge=60" alt="Linkedin"></a>
+<a href="https://www.linkedin.com/in/rahul-saini-9191a5286/)"><img src="https://img.shields.io/badge/LinkedIn-Connect-blue?style=social&logo=linkedin&maxAge=60" alt="LinkedIn"></a>
 
 <h2 align=center>Description</h2>
 
@@ -53,7 +53,7 @@ EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SEARCH[<PARAMETERS>] <FI
 
 Where:
 
-1. `EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>])` is an optional command exclusive to the search operation and is used to export search records to a file or database.
+1. `(EXPORT FILE[<FILEPATH>]|SQL[<DATABASE>])` is an optional command exclusive to the search operation and is used to export search records to a file or database.
 2. `(R|RECURSIVE)` is an optional command used to recursively include all the files/directories present within the subdirectories of the specified directory. If not explicitly specified, operations are only limited to the root directory.
 3. `(SEARCH|DELETE)[<PARAMETERS>]` defines the desired operation to be performed. Additional parameters can be specified within `[]` to toggle operations between different file types, and file-modes explicitly for data search operation.
 4. `<FIELDS>` is only limited to search operations for accessing metadata fields related to the searched files, data, or directories. Field names must be separated by commas.

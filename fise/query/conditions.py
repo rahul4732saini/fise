@@ -295,6 +295,35 @@ class ConditionHandler:
             ConditionParser(subquery, operation_target).parse_conditions()
         )
 
+    def _eval_field(self, field: Field | Size, obj: File | DataLine | Directory) -> Any:
+        """
+        Evaluates the specified metadata field.
+
+        #### Params:
+        - operand (Any): Operand to be processed.
+        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        """
+
+        if isinstance(field, Field):
+            try:
+                field = getattr(obj, field.field)
+
+            except AttributeError:
+                raise QueryParseError(
+                    f"Invalid field {field.field!r} specified in query conditions."
+                )
+
+            # Converts `bytes` object into a string for
+            # better compatibility in condition evaluation.
+            if isinstance(field, bytes):
+                field = str(field)[2:-1]
+
+        elif isinstance(field, Size):
+            # Extracts the size and converts it into the specified unit.
+            field = obj.size / constants.SIZE_CONVERSION_MAP[field.unit]
+
+        return field
+
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         """
         Evaluates the specified condition operand.
@@ -304,23 +333,8 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        if isinstance(operand, Field):
-            try:
-                operand = getattr(obj, operand.field)
-
-            except AttributeError:
-                raise QueryParseError(
-                    f"Invalid field {operand.field!r} specified in query conditions."
-                )
-
-            # Converts `bytes` object into a string for
-            # better compatibility in condition evaluation.
-            if isinstance(operand, bytes):
-                operand = str(operand)[2:-1]
-
-        elif isinstance(operand, Size):
-            # Extracts the size and converts it into the specified unit.
-            operand = obj.size / constants.SIZE_CONVERSION_MAP[operand.unit]
+        if isinstance(operand, Field | Size):
+            operand = self._eval_field(operand, obj)
 
         return operand
 

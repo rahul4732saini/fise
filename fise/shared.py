@@ -105,9 +105,8 @@ class Size:
     and defines a mechanism for parsing the field.
     """
 
-    _size_field_pattern: ClassVar[re.Pattern] = re.compile(
-        rf"^(size|SIZE)(\[({'|'.join(constants.SIZE_CONVERSION_MAP)})])?$"
-    )
+    # Regex pattern for matching size field.
+    _size_field_pattern: ClassVar[re.Pattern] = re.compile(rf"^size(\[.*])?$")
 
     unit: str
 
@@ -117,11 +116,17 @@ class Size:
         Creates an instance of `Size` object from the specified size field string.
         """
 
-        if not cls._size_field_pattern.match(field):
+        if not cls._size_field_pattern.match(field.lower()):
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
+        unit: str = field[5:-1]
+
+        # Only verifies the size unit if explicitly specified.
+        if unit and unit not in constants.SIZE_CONVERSION_MAP:
+            raise QueryParseError(f"Invalid unit {unit!r} specified for 'size' field.")
+
         # Initializes with "B" -> bytes unit if not explicitly specified.
-        return cls(field[5:-1] or "B")
+        return cls(unit or "B")
 
 
 @dataclass(slots=True, frozen=True, eq=False)

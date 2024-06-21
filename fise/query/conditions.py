@@ -196,7 +196,7 @@ class ConditionParser:
                 self._parse_conditions(tools.parse_query(condition[0][1:-1])),
             )
 
-        elif len(condition) < 3:
+        elif len(condition) != 3:
             raise QueryParseError(
                 f"Invalid query syntax around {' '.join(condition)!r}"
             )

@@ -336,6 +336,17 @@ class ConditionHandler:
         if isinstance(operand, Field | Size):
             operand = self._eval_field(operand, obj)
 
+        elif isinstance(operand, list):
+
+            # Creates a seperate copy of the operand list to avoid mutations in it.
+            array: list[Any] = operand.copy()
+
+            for index, val in enumerate(array):
+                if isinstance(val, Field | Size):
+                    array[index] = self._eval_field(val, obj)
+
+            return array
+
         return operand
 
     def _eval_condition(

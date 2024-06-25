@@ -1,0 +1,39 @@
+Product Specifications
+
+Product Name: XYZ Gadget
+Model: XG-2024
+
+Dimensions:
+- Height: 150mm
+- Width: 75mm
+- Depth: 10mm
+
+Weight: 180 grams
+
+Display:
+- Type: OLED
+- Size: 6.5 inches
+- Resolution: 1080 x 2400 pixels
+
+Processor:
+- Type: Octa-core
+- Speed: 2.8 GHz
+
+Memory:
+- RAM: 8GB
+- Storage: 128GB (expandable up to 512GB)
+
+Battery:
+- Capacity: 4000mAh
+- Fast Charging: Yes
+
+Operating System: XYZ OS 5.0
+
+Camera:
+- Rear: 48MP + 12MP + 5MP
+- Front: 24MP
+
+Connectivity:
+- 5G: Yes
+- Wi-Fi: 802.11 a/b/g/n/ac
+- Bluetooth: 5.1

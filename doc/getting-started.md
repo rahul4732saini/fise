@@ -14,9 +14,9 @@ This section will walk you through the steps to install and setup FiSE on your s
 
 ### Prerequisites
 
-Before installing FiSE, ensure you have the following prerequisites installed on your system:
+Before installing FiSE, please ensure that you have the following prerequisites installed on your system:
 
-- **Python**: FiSE requires **Python 3.10** or higher. Ensure Python is installed on your system along with a package manager for python such as **pip**. You can download Python from [python.org](https://www.python.org/downloads/).
+- **Python**: FiSE requires **Python 3.10** or higher, ensure it is installed on your system along with a package manager for python such as **pip**. You can download Python from [python.org](https://www.python.org/downloads/).
 
 - **Git** (Optional): While not mandatory, having **Git** installed can facilitate cloning the **FiSE** GitHub repository onto your system. You can download Git from [git-scm.com](https://www.git-scm.com).
 

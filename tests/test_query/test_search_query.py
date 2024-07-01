@@ -19,7 +19,7 @@ class TestFileSearchQuery:
     """
 
     basic_query_syntax_params = [
-        f"SELECT * FROM '{TEST_DIRECTORY / 'file_dir'}'",
+        f"R SELECT * FROM '{TEST_DIRECTORY / 'file_dir'}'",
         f"SELECT[TYPE FILE] name, filetype FROM '{TEST_DIRECTORY / 'file_dir'}'",
         f"RECURSIVE SELECT * FROM '{TEST_DIRECTORY}' WHERE filetype = '.py'",
     ]

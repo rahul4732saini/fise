@@ -68,7 +68,7 @@ def read_tests_hdf(path: str) -> pd.Series | pd.DataFrame:
 @pytest.mark.parametrize(
     ("query", "result"), zip(PARSE_QUERY_FUNC_PARAMS, PARSE_QUERY_TEST_RESULTS)
 )
-def test_parse_quest_function(query: str, result: list[str]) -> None:
+def test_parse_query_function(query: str, result: list[str]) -> None:
     """Tests the `tools.parse_query` function."""
     parsed_query: list[str] = tools.parse_query(query)
     assert parsed_query == result

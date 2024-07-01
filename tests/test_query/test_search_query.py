@@ -35,3 +35,27 @@ class TestFileSearchQuery:
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
+
+
+class TestDirSearchQuery:
+    """
+    Tests the directory search queries.
+    """
+
+    basic_query_syntax_params = [
+        f"R SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY / 'file_dir'}'",
+        f"SELECT[TYPE DIR] name, parent, ctime FROM '{TEST_DIRECTORY / 'file_dir'}'",
+        f"RECURSIVE SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY}' WHERE name in ('orders', 'reports')",
+    ]
+
+    @pytest.mark.parametrize("query", basic_query_syntax_params)
+    def test_basic_query_syntax(self, query: str) -> None:
+        """
+        Tests the basic directory search query syntax.
+        """
+
+        # This test doesn't explicitly verifies the extracted data is flexible and
+        # subject to change depending on the system and path it's executed from.
+
+        data: pd.DataFrame = QueryHandler(query).handle()
+        assert isinstance(data, pd.DataFrame)

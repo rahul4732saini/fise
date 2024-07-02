@@ -1,5 +1,10 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parents[2]))
-sys.path.append(str(Path(__file__).parents[2] / "fise"))
+ADDITIONAL_PATHS = [
+    str(Path(__file__).parents[1]),
+    str(Path(__file__).parents[2]),
+    str(Path(__file__).parents[2] / "fise"),
+]
+
+sys.path.extend(ADDITIONAL_PATHS)

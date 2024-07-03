@@ -63,7 +63,7 @@ def verify_delete_query(path: str) -> None:
 
 class TestFileDeleteQuery:
     """
-    Tests the file search queries.
+    Tests the file delete queries.
     """
 
     basic_query_syntax_test_params = [
@@ -82,3 +82,27 @@ class TestFileDeleteQuery:
 
         assert result is None
         verify_delete_query(f"/file/basic/test{index}")
+
+
+
+class TestDirDeleteQuery:
+    """
+    Tests the directory delete queries.
+    """
+
+    basic_query_syntax_test_params = [
+        (1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
+        (2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name like '^report.*$'"),
+        (3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')"),
+    ]
+
+    @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
+    def test_basic_query_syntax(self, index: int, query: str) -> None:
+        """
+        Tests the basic directory delete query syntax.
+        """
+
+        result: None = QueryHandler(query).handle()
+
+        assert result is None
+        verify_delete_query(f"/dir/basic/test{index}")

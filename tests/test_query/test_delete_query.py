@@ -151,6 +151,12 @@ class TestDirDeleteQuery:
         (3, f"DELETE[TYPE DIR] FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
     ]
 
+    mixed_case_query_test_params = [
+        (1, f"DeLEtE[TYPe DIR] froM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
+        (2, f"DElEtE[tYPE DiR] From '{FILE_DIR_TEST_DIRECTORY / 'reports'}' Where name LikE '^report.*$'"),
+        (3, f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE name In ('project', 'media')"),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """
@@ -164,3 +170,14 @@ class TestDirDeleteQuery:
         Tests all the available path types in directory delete query.
         """
         examine_delete_query(query, f"/dir/path_types/test{index}")
+    
+    # The following test uses the same delete queries defined for basic query syntax test
+    # comprising characters of mixed cases, and hence uses the file and directory records
+    # stored at the same path in the `test_delete_query.hdf` file.
+
+    @pytest.mark.parametrize(("index", "query"), mixed_case_query_test_params)
+    def test_mixed_case_query(self, index: int, query: str) -> None:
+        """
+        Tests directory delete queries comprising characters of mixed cases.
+        """
+        examine_delete_query(query, f"/dir/basic/test{index}")

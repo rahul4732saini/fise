@@ -180,6 +180,53 @@ class ConditionParser:
         else:
             return self._parse_collective_operand(operand, operator)
 
+    def _extract_condition_elements(self, condition: list[str]) -> list[str]:
+        """
+        Extracts the individual elements/token present within the specified query condition.
+        """
+
+        if len(condition) == 3:
+
+            # The operator is defined at the 1st index and is lowered in
+            # case it is a conditional operator and is typed in uppercase.
+            condition[1] = condition[1].lower()
+
+            if condition[1] not in (
+                constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS
+            ):
+                raise QueryParseError(
+                    f"Invalid query syntax around {' '.join(self._query)!r}"
+                )
+
+            return condition
+
+        # The condition is parsed using differently if all the
+        # tokens are not already seperated as individual strings.
+
+        # In such case, the condition is only looked up for comparison operators
+        # for partitioning it into individual tokens as conditional operators
+        # require whitespaces around them which are already parsed beforehand
+        # using the `tools.parse_query` function.
+        for i in constants.COMPARISON_OPERATORS:
+            if i not in condition[0]:
+                continue
+
+            # If the operator is present within the condition, all the
+            # individual tokens are partitioned into individual strings.
+            condition[:] = condition[0].partition(i)
+            break
+
+        else:
+            raise QueryParseError(
+                f"Invalid query syntax around {' '.join(condition)!r}"
+            )
+
+        # Strips out redundant whitespaces around the tokens.
+        for index, value in enumerate(condition):
+            condition[index] = value.strip()
+
+        return condition
+
     def _parse_condition(
         self, condition: list[str]
     ) -> Condition | list[str | Condition]:
@@ -190,28 +237,20 @@ class ConditionParser:
         - condition (list[str]): Condition to be parsed.
         """
 
-        # Evaluates and returns a list of conditions if nested.
         if len(condition) == 1 and self._tuple_pattern.match(condition[0]):
             return list(
                 self._parse_conditions(tools.parse_query(condition[0][1:-1])),
             )
 
-        elif len(condition) != 3:
-            raise QueryParseError(
-                f"Invalid query syntax around {' '.join(condition)!r}"
-            )
+        # All individual strings are combined into a single string to parse them
+        # differently if the length of the list is not 3, i.e., the tokens are
+        # not already seperated into indvidual strings.
+        if len(condition) != 3:
+            condition = ["".join(condition)]
 
-        condition[1] = condition[1].lower()
+        condition[:] = self._extract_condition_elements(condition)
 
-        for i in constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS:
-            if i == condition[1]:
-                operator: str = i
-                break
-        else:
-            raise QueryParseError(
-                f"Invalid query syntax around {' '.join(self._query)!r}"
-            )
-
+        operator = condition[1]
         operand1: Any = self._parse_comparison_operand(condition[0])
 
         # Parses the second operand accordingly based on the specified operator.

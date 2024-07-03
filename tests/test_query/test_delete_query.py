@@ -81,4 +81,4 @@ class TestFileDeleteQuery:
         result: None = QueryHandler(query).handle()
 
         assert result is None
-        verify_delete_query(f"/basic/test{index}")
+        verify_delete_query(f"/file/basic/test{index}")

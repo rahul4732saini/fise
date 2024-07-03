@@ -112,7 +112,7 @@ class TestFileDeleteQuery:
     @pytest.mark.parametrize(("index", "query"), path_types_test_params)
     def test_path_types(self, index: int, query: str) -> None:
         """
-        Tests the available path types in file delete query.
+        Tests all the available path types in file delete query.
         """
         examine_delete_query(query, f"/file/path_types/test{index}")
 
@@ -128,9 +128,22 @@ class TestDirDeleteQuery:
         (3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')"),
     ]
 
+    path_types_test_params = [
+        (1, f"DELETE[TYPE DIR] FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
+        (2, f"DELETE[TYPE DIR] FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'reports'}'"),
+        (3, f"DELETE[TYPE DIR] FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """
         Tests the basic directory delete query syntax.
         """
         examine_delete_query(query, f"/dir/basic/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), path_types_test_params)
+    def test_path_types(self, index: int, query: str) -> None:
+        """
+        Tests all the available path types in directory delete query.
+        """
+        examine_delete_query(query, f"/dir/path_types/test{index}")

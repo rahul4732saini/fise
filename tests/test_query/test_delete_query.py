@@ -61,6 +61,18 @@ def verify_delete_query(path: str) -> None:
         reset_tests.reset_file_dir_test_directory()
 
 
+def examine_delete_query(query: str, records_path: str) -> None:
+    """
+    Tests the specified delete query and verifies it with the file and directory
+    records stored at the specified path in the `test_delete_query.hdf` file.
+    """
+
+    result: None = QueryHandler(query).handle()
+
+    assert result is None
+    verify_delete_query(records_path)
+
+
 class TestFileDeleteQuery:
     """
     Tests the file delete queries.
@@ -82,22 +94,14 @@ class TestFileDeleteQuery:
         """
         Tests the basic file delete query syntax.
         """
-
-        result: None = QueryHandler(query).handle()
-
-        assert result is None
-        verify_delete_query(f"/file/basic/test{index}")
+        examine_delete_query(query, f"/file/basic/test{index}")
     
     @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
     def test_recursive_command(self, index: int, query: str) -> None:
         """
         Tests the recursive command in file delete query.
         """
-
-        result: None = QueryHandler(query).handle()
-
-        assert result is None
-        verify_delete_query(f"/file/recursive/test{index}")
+        examine_delete_query(query, f"/file/recursive/test{index}")
 
 
 class TestDirDeleteQuery:
@@ -116,8 +120,4 @@ class TestDirDeleteQuery:
         """
         Tests the basic directory delete query syntax.
         """
-
-        result: None = QueryHandler(query).handle()
-
-        assert result is None
-        verify_delete_query(f"/dir/basic/test{index}")
+        examine_delete_query(query, f"/dir/basic/test{index}")

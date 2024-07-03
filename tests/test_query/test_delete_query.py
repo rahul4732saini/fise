@@ -45,15 +45,16 @@ def verify_delete_query(path: str) -> None:
     records: pd.Series = read_hdf(DELETE_QUERY_TEST_RECORDS_FILE, path)
 
     for i in FILE_DIR_TEST_DIRECTORY_LISTINGS:
-        if not (FILE_DIR_TEST_DIRECTORY / i).exists() and i not in records.values:
+        if (FILE_DIR_TEST_DIRECTORY / i).exists() or i in records.values:
+            continue
             
-            # Resets the `file_dir` directory within test directory
-            # in case a file or directory is not found unexpectedly.
-            reset_tests.reset_file_dir_test_directory()
-            
-            raise FileNotFoundError(
-                f"'{FILE_DIR_TEST_DIRECTORY / i}' was not found in the test directory."
-            )
+        # Resets the `file_dir` directory within test directory
+        # in case a file or directory is not found unexpectedly.
+        reset_tests.reset_file_dir_test_directory()
+        
+        raise FileNotFoundError(
+            f"'{FILE_DIR_TEST_DIRECTORY / i}' was not found in the test directory."
+        )
 
     else:
         # Resets the `file_dir` and reverts back all the changes made.

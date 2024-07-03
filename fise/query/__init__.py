@@ -125,6 +125,11 @@ class QueryHandler:
         Parses and handles the specified directory search/delete query.
         """
 
+        if initials.operation.operation == "remove" and initials.recursive:
+            raise QueryParseError(
+                "Recursive deletion operation cannot be performed on directories."
+            )
+
         parser = DirectoryQueryParser(
             self._query[self._ctr :], initials.operation.operation
         )

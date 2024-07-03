@@ -47,11 +47,11 @@ def verify_delete_query(path: str) -> None:
     for i in FILE_DIR_TEST_DIRECTORY_LISTINGS:
         if (FILE_DIR_TEST_DIRECTORY / i).exists() or i in records.values:
             continue
-            
+
         # Resets the `file_dir` directory within test directory
         # in case a file or directory is not found unexpectedly.
         reset_tests.reset_file_dir_test_directory()
-        
+
         raise FileNotFoundError(
             f"'{FILE_DIR_TEST_DIRECTORY / i}' was not found in the test directory."
         )
@@ -72,6 +72,11 @@ class TestFileDeleteQuery:
         (3, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE name like '.*\.py'"),
     ]
 
+    recursive_command_test_params = [
+        (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q4.txt'"),
+        (2, f"RECURSIVE DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """
@@ -82,7 +87,17 @@ class TestFileDeleteQuery:
 
         assert result is None
         verify_delete_query(f"/file/basic/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
+    def test_recursive_command(self, index: int, query: str) -> None:
+        """
+        Tests the recursive command in file delete query.
+        """
 
+        result: None = QueryHandler(query).handle()
+
+        assert result is None
+        verify_delete_query(f"/file/recursive/test{index}")
 
 
 class TestDirDeleteQuery:

@@ -30,8 +30,8 @@ class TestFileSearchQuery:
         Tests the basic file search query syntax.
         """
 
-        # This test doesn't explicitly verifies the extracted data is flexible and
-        # subject to change depending on the system and path it's executed from.
+        # This test doesn't explicitly verifies the extracted data as it is flexible
+        # and subject to change depending on the system and path it's executed from.
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
@@ -54,8 +54,8 @@ class TestDirSearchQuery:
         Tests the basic directory search query syntax.
         """
 
-        # This test doesn't explicitly verifies the extracted data is flexible and
-        # subject to change depending on the system and path it's executed from.
+        # This test doesn't explicitly verifies the extracted data as it is flexible
+        # and subject to change depending on the system and path it's executed from.
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)

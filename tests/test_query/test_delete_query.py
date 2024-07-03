@@ -61,7 +61,7 @@ def verify_delete_query(path: str) -> None:
         reset_tests.reset_file_dir_test_directory()
 
 
-def examine_delete_query(query: str, records_path: str) -> None:
+def examine_delete_query(query: str, records_path: str, verify: bool = True) -> None:
     """
     Tests the specified delete query and verifies it with the file and directory
     records stored at the specified path in the `test_delete_query.hdf` file.
@@ -89,6 +89,12 @@ class TestFileDeleteQuery:
         (2, f"RECURSIVE DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
     ]
 
+    path_types_test_params = [
+        (1, f"R DELETE FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q2.txt'"),
+        (2, f"DELETE FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
+        (3, f"DELETE FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp4'"),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """
@@ -102,6 +108,13 @@ class TestFileDeleteQuery:
         Tests the recursive command in file delete query.
         """
         examine_delete_query(query, f"/file/recursive/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), path_types_test_params)
+    def test_path_types(self, index: int, query: str) -> None:
+        """
+        Tests the available path types in file delete query.
+        """
+        examine_delete_query(query, f"/file/path_types/test{index}")
 
 
 class TestDirDeleteQuery:

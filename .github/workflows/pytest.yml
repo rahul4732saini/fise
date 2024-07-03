@@ -29,7 +29,7 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements-extra.txt
         pip install pytest
-        pip install pytables
+        pip install tables
 
     - name: Run Pytest
       run: pytest tests/

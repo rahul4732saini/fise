@@ -99,6 +99,15 @@ class QueryHandler:
         Parses and handles the specified data search query.
         """
 
+        if (
+            initials.export
+            and initials.operation.filemode == "bytes"
+            and initials.export.type_ == "database"
+        ):
+            raise QueryParseError(
+                "Exporting binary data to SQL databases is currently unsupported."
+            )    
+
         parser = FileDataQueryParser(self._query[self._ctr :])
         query: SearchQuery = parser.parse_query()
 
@@ -146,14 +155,8 @@ class QueryHandler:
         operation: OperationData = self._parse_operation()
         self._ctr += 1
 
-        if export:
-            if operation.operation == "remove":
+        if export and operation.operation == "remove":
                 raise QueryParseError("Cannot export data with delete operation.")
-
-            elif operation.filemode == "bytes" and export.type_ == "database":
-                raise QueryParseError(
-                    "Exporting binary data to SQL databases is currently unsupported."
-                )
 
         return QueryInitials(operation, recursive, export)
 

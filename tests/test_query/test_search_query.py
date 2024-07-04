@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 import pandas as pd
 
+from fise.common import constants
 from fise.query import QueryHandler
 
 TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
@@ -34,6 +35,15 @@ class TestFileSearchQuery:
 
         # This test doesn't explicitly verifies the extracted data as it is flexible
         # and subject to change depending on the system and path it's executed from.
+
+        data: pd.DataFrame = QueryHandler(query).handle()
+        assert isinstance(data, pd.DataFrame)
+    
+    @pytest.mark.parametrize("field", constants.FILE_FIELDS)
+    def test_individual_fields(self, field: str) -> None:
+        """Tests file search queries with all file fields individually."""
+
+        query: str = f"select {field} from '{TEST_DIRECTORY}'"
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)

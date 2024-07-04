@@ -91,10 +91,11 @@ class ConditionParser:
 
         if field.lower().startswith("size"):
             return Size.from_string(field)
+        
+        field = field.lower()
+        field = self._field_aliases.get(field, field)
 
-        field = self._field_aliases.get(field.lower(), field)
-
-        if field.lower() not in self._lookup_fields:
+        if field not in self._lookup_fields:
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
         return Field(field)

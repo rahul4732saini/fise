@@ -8,7 +8,8 @@ import pytest
 
 from fise.common import tools
 
-FILE_DIR_TEST_DIRECTORY = Path(__file__).parent / "test_directory/file_dir"
+TEST_DIRECTORY = Path(__file__).parent / "test_directory"
+FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 
 # Test parameters for individual functions defined below
 
@@ -80,6 +81,7 @@ def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None
 )
 def test_parse_query_function(query: str, result: list[str]) -> None:
     """Tests the `tools.parse_query` function."""
+
     parsed_query: list[str] = tools.parse_query(query)
     assert parsed_query == result
 

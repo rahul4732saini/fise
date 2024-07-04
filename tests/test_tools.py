@@ -11,6 +11,11 @@ from fise.common import tools
 TEST_DIRECTORY = Path(__file__).parent / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 
+PANDAS_READ_METHODS_MAP = {
+    ".csv": "read_csv", ".xlsx": "read_excel",
+    ".html": "read_html", ".json": "read_json",
+}
+
 # Test parameters for individual functions defined below
 
 PARSE_QUERY_FUNC_PARAMS = [
@@ -31,6 +36,16 @@ GET_DIRS_FUNC_PARAMS = [
     (2, FILE_DIR_TEST_DIRECTORY, False),
     (3, FILE_DIR_TEST_DIRECTORY / "reports", True),
 ]
+
+EXPORT_FILE_TEST_PARAMS = [
+    "export.csv", "output.xlsx", "records.html", "save.json"
+]
+
+# Sample dataframe for testing `tools.export_to_file` function.
+
+SAMPLE_EXPORT_FILE_DATA = pd.DataFrame(
+    {2023: [87, 95, 98, 82, 84], 2024: [91, 93, 98, 87, 81]}
+)
 
 # Test results for individual functions defined below
 
@@ -104,3 +119,17 @@ def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
         tools.get_directories(path, recur),
         read_tests_hdf(f"/function/get_directories/test{ctr}"),
     )
+
+
+@pytest.mark.parametrize("file", EXPORT_FILE_TEST_PARAMS)
+def test_file_export_function(
+    file: str, data: pd.DataFrame = SAMPLE_EXPORT_FILE_DATA
+) -> None:
+    """Tests the `tools.export_to_file` function with different file formats."""
+
+    path: Path = TEST_DIRECTORY / file
+
+    tools.export_to_file(data, path)
+    assert path.is_file()
+
+    path.unlink()

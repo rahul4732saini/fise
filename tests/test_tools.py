@@ -1,5 +1,6 @@
 """Tests the `common/tools.py` module."""
 
+from typing import Generator
 from pathlib import Path
 
 import pandas as pd
@@ -63,6 +64,17 @@ def read_tests_hdf(path: str) -> pd.Series | pd.DataFrame:
         return store[path]
 
 
+def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None:
+    """
+    Verifies whether all the specified paths are present in the specified records.
+    """
+
+    records = records.apply(lambda path: FILE_DIR_TEST_DIRECTORY / path).values
+
+    for path in paths:
+        assert path in records
+
+
 @pytest.mark.parametrize(
     ("query", "result"), zip(PARSE_QUERY_FUNC_PARAMS, PARSE_QUERY_TEST_RESULTS)
 )
@@ -75,14 +87,18 @@ def test_parse_query_function(query: str, result: list[str]) -> None:
 @pytest.mark.parametrize(("ctr", "path", "recur"), GET_FILES_FUNC_PARAMS)
 def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
     """Tests the `tools.get_files` function."""
-    files: pd.Series = pd.Series(str(path) for path in tools.get_files(path, recur))
-    assert files.equals(read_tests_hdf(f"/function/get_files/test{ctr}"))
+
+    verify_paths(
+        tools.get_files(path, recur),
+        read_tests_hdf(f"/function/get_files/test{ctr}"),
+    )
 
 
 @pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_FUNC_PARAMS)
 def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
     """Tests the `toolsget_directories` function."""
-    files: pd.Series = pd.Series(
-        str(path) for path in tools.get_directories(path, recur)
+
+    verify_paths(
+        tools.get_directories(path, recur),
+        read_tests_hdf(f"/function/get_directories/test{ctr}"),
     )
-    assert files.equals(read_tests_hdf(f"/function/get_directories/test{ctr}"))

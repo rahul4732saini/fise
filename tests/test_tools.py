@@ -1,6 +1,4 @@
-"""
-Tests the `common/tools.py` module.
-"""
+"""Tests the `common/tools.py` module."""
 
 from pathlib import Path
 
@@ -59,7 +57,7 @@ PARSE_QUERY_TEST_RESULTS = [
 
 
 def read_tests_hdf(path: str) -> pd.Series | pd.DataFrame:
-    """Reads test data from `test_tools.hdf` file."""
+    """Reads tests data stored at the specified path within `test_tools.hdf` file."""
 
     with pd.HDFStore(Path(__file__).parent / "test_tools.hdf") as store:
         return store[path]

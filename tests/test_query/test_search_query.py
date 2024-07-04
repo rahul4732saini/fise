@@ -29,12 +29,12 @@ class TestFileSearchQuery:
         f"RecURSive sELECt * From '{TEST_DIRECTORY}' wHErE FilETypE = '.py'",
     ]
 
+    # Some of the test don't explicitly verify the extracted data as it is flexible and
+    # subject to change depending on the system and path the tests are executed from.
+
     @pytest.mark.parametrize("query", basic_query_syntax_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests the basic file search query syntax."""
-
-        # This test doesn't explicitly verifies the extracted data as it is flexible
-        # and subject to change depending on the system and path it's executed from.
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
@@ -56,9 +56,6 @@ class TestFileSearchQuery:
     def test_mixed_case_query(self, query: str) -> None:
         """Tests file search queries comprising characters of mixed cases."""
 
-        # This test doesn't explicitly verifies the extracted data as it is flexible
-        # and subject to change depending on the system and path it's executed from.
-
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
 
@@ -72,12 +69,12 @@ class TestDirSearchQuery:
         f"RECURSIVE SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY}' WHERE name in ('orders', 'reports')",
     ]
 
+    # Some of the test don't explicitly verify the extracted data as it is flexible and
+    # subject to change depending on the system and path the tests are executed from.
+
     @pytest.mark.parametrize("query", basic_query_syntax_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests the basic directory search query syntax."""
-
-        # This test doesn't explicitly verifies the extracted data as it is flexible
-        # and subject to change depending on the system and path it's executed from.
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)

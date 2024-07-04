@@ -81,3 +81,12 @@ class TestDirSearchQuery:
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
+
+    @pytest.mark.parametrize("field", constants.DIR_FIELDS)
+    def test_individual_fields(self, field: str) -> None:
+        """Tests individual fields in directory search queries."""
+
+        query: str = f"select[type dir] {field} from '{TEST_DIRECTORY}'"
+
+        data: pd.DataFrame = QueryHandler(query).handle()
+        assert isinstance(data, pd.DataFrame)

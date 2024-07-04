@@ -9,7 +9,7 @@ import pytest
 
 from fise.common import tools
 
-TEST_DIRECTORY = Path(__file__).parent / "test_directory"
+FILE_DIR_TEST_DIRECTORY = Path(__file__).parent / "test_directory/file_dir"
 
 # Test parameters for individual functions defined below
 
@@ -17,19 +17,19 @@ PARSE_QUERY_FUNC_PARAMS = [
     r"SELECT[TYPE FILE] * FROM . WHERE name LIKE '^.*\.py$' AND ctime BETWEEN ('2020-01-01', '2022-01-01')",
     "DELETE[TYPE DIR] FROM '/home/user/Projects 2020' WHERE 'temp' IN name",
     "SELECT[TYPE DATA, MODE BYTES] lineno, dataline FROM ./fise/main.py WHERE '#TODO' IN dataline",
-    "SELECT path, size FROM ./documents WHERE filetype='.docx' AND (ctime < '2022-01-01' OR ctime > '2023-12-31')",
+    "SELECT path, size FROM . WHERE filetype='.docx' AND (ctime < '2022-01-01' OR ctime > '2023-12-31')",
 ]
 
 GET_FILES_FUNC_PARAMS = [
-    (1, TEST_DIRECTORY, True),
-    (2, TEST_DIRECTORY / "file_dir", False),
-    (3, TEST_DIRECTORY / "file_dir/docs", True),
+    (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
+    (2, FILE_DIR_TEST_DIRECTORY, False),
+    (3, FILE_DIR_TEST_DIRECTORY / "project", True),
 ]
 
 GET_DIRS_FUNC_PARAMS = [
-    (1, TEST_DIRECTORY, True),
-    (2, TEST_DIRECTORY / "file_dir", False),
-    (3, TEST_DIRECTORY / "file_dir/reports", True),
+    (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
+    (2, FILE_DIR_TEST_DIRECTORY, False),
+    (3, FILE_DIR_TEST_DIRECTORY / "reports", True),
 ]
 
 # Test results for individual functions defined below
@@ -51,7 +51,7 @@ PARSE_QUERY_TEST_RESULTS = [
         "'#TODO'", "IN", "dataline",
     ],
     [
-        "SELECT", "path,", "size", "FROM", "./documents",
+        "SELECT", "path,", "size", "FROM", ".",
         "WHERE", "filetype='.docx'", "AND",
         "(ctime < '2022-01-01' OR ctime > '2023-12-31')",
     ],

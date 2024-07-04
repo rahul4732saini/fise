@@ -38,7 +38,7 @@ class TestFileSearchQuery:
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
-    
+
     @pytest.mark.parametrize("field", constants.FILE_FIELDS)
     def test_individual_fields(self, field: str) -> None:
         """Tests file search queries with all file fields individually."""
@@ -51,7 +51,7 @@ class TestFileSearchQuery:
     # The following test uses the same delete queries defined for basic query syntax test
     # comprising characters of mixed cases, and hence uses the file and directory records
     # stored at the same path in the `test_delete_query.hdf` file.
-    
+
     @pytest.mark.parametrize("query", mixed_case_query_params)
     def test_mixed_case_query(self, query: str) -> None:
         """Tests file search queries comprising characters of mixed cases."""

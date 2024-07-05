@@ -69,6 +69,12 @@ class TestDirSearchQuery:
         f"RECURSIVE SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY}' WHERE name in ('orders', 'reports')",
     ]
 
+    mixed_case_query_params = [
+        f"r SELECT[Type DiR] * fROm '{TEST_DIRECTORY / 'file_dir'}'",
+        f"sEeECl[typE dIr] name, parent, ctime FroM '{TEST_DIRECTORY / 'file_dir'}'",
+        f"Recursive Select[TYPE DIR] * From '{TEST_DIRECTORY}' Where name In ('orders', 'reports')",
+    ]
+
     # Some of the test don't explicitly verify the extracted data as it is flexible and
     # subject to change depending on the system and path the tests are executed from.
 
@@ -84,6 +90,17 @@ class TestDirSearchQuery:
         """Tests individual fields in directory search queries."""
 
         query: str = f"select[type dir] {field} from '{TEST_DIRECTORY}'"
+
+        data: pd.DataFrame = QueryHandler(query).handle()
+        assert isinstance(data, pd.DataFrame)
+
+    # The following test uses the same delete queries defined for basic query syntax test
+    # comprising characters of mixed cases, and hence uses the file and directory records
+    # stored at the same path in the `test_delete_query.hdf` file.
+
+    @pytest.mark.parametrize("query", mixed_case_query_params)
+    def test_mixed_case_query(self, query: str) -> None:
+        """Tests directory search queries comprising characters of mixed cases."""
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)

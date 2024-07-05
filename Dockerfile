@@ -8,8 +8,8 @@ WORKDIR /home/fise
 
 RUN python -m pip install --no-cache-dir --upgrade pip
 
-COPY requirements.txt /tmp
-COPY requirements-extra.txt /tmp
+COPY requirements/requirements.txt /tmp
+COPY requirements/requirements-extra.txt /tmp
 
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-extra.txt

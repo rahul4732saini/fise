@@ -37,8 +37,8 @@ def parse_query(query: str) -> list[str]:
     # Temporarily stores the current token.
     token = ""
 
-    # Stores an array of current starting delimiters which have
-    # not yet terminated during iteration in the specified query.
+    # Stores an array of current starting delimiters in the specified
+    # query which are not yet terminated during iteration.
     cur: list = []
 
     # Adds a whitespace at the end of the query to avoid
@@ -50,20 +50,14 @@ def parse_query(query: str) -> list[str]:
             cur.append(char)
             token += char
 
-        # Adds the token to list if the current character is
-        # not nested inside and is a terminating delimiter.
+        # Adds the current character to the list if it is a terminating delimiter
+        # and also pops up its corresponding starting delimiter in the `cur` list.
         elif cur and char == delimiters.get(cur[-1]):
             cur.pop()
-
-            if not cur:
-                tokens.append(token + char)
-                token = ""
-                continue
-
             token += char
 
         # Adds to list if the character is a top-level whitespace
-        # and `token` is not an empty or enclosed string.
+        # and `token` is not an nested or empty string.
         elif not cur and char.isspace():
             if token:
                 tokens.append(token)

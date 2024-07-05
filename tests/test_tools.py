@@ -18,20 +18,20 @@ PANDAS_READ_METHODS_MAP = {
 
 # Test parameters for individual functions defined below
 
-PARSE_QUERY_FUNC_PARAMS = [
+PARSE_QUERY_TEST_PARAMS = [
     r"SELECT[TYPE FILE] * FROM . WHERE name LIKE '^.*\.py$' AND ctime BETWEEN ('2020-01-01', '2022-01-01')",
     "DELETE[TYPE DIR] FROM '/home/user/Projects 2020' WHERE 'temp' IN name",
     "SELECT[TYPE DATA, MODE BYTES] lineno, dataline FROM ./fise/main.py WHERE '#TODO' IN dataline",
     "SELECT path, size FROM . WHERE filetype='.docx' AND (ctime < '2022-01-01' OR ctime > '2023-12-31')",
 ]
 
-GET_FILES_FUNC_PARAMS = [
+GET_FILES_TEST_PARAMS = [
     (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
     (2, FILE_DIR_TEST_DIRECTORY, False),
     (3, FILE_DIR_TEST_DIRECTORY / "project", True),
 ]
 
-GET_DIRS_FUNC_PARAMS = [
+GET_DIRS_TEST_PARAMS = [
     (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
     (2, FILE_DIR_TEST_DIRECTORY, False),
     (3, FILE_DIR_TEST_DIRECTORY / "reports", True),
@@ -92,7 +92,7 @@ def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None
 
 
 @pytest.mark.parametrize(
-    ("query", "result"), zip(PARSE_QUERY_FUNC_PARAMS, PARSE_QUERY_TEST_RESULTS)
+    ("query", "result"), zip(PARSE_QUERY_TEST_PARAMS, PARSE_QUERY_TEST_RESULTS)
 )
 def test_parse_query_function(query: str, result: list[str]) -> None:
     """Tests the `tools.parse_query` function."""
@@ -101,7 +101,7 @@ def test_parse_query_function(query: str, result: list[str]) -> None:
     assert parsed_query == result
 
 
-@pytest.mark.parametrize(("ctr", "path", "recur"), GET_FILES_FUNC_PARAMS)
+@pytest.mark.parametrize(("ctr", "path", "recur"), GET_FILES_TEST_PARAMS)
 def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
     """Tests the `tools.get_files` function."""
 
@@ -111,7 +111,7 @@ def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
     )
 
 
-@pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_FUNC_PARAMS)
+@pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_TEST_PARAMS)
 def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
     """Tests the `toolsget_directories` function."""
 

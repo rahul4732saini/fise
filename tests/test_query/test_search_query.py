@@ -71,7 +71,7 @@ class TestDirSearchQuery:
 
     mixed_case_query_params = [
         f"r SELECT[Type DiR] * fROm '{TEST_DIRECTORY / 'file_dir'}'",
-        f"sEeECl[typE dIr] name, parent, ctime FroM '{TEST_DIRECTORY / 'file_dir'}'",
+        f"sEleCt[typE dIr] name, parent, ctime FroM '{TEST_DIRECTORY / 'file_dir'}'",
         f"Recursive Select[TYPE DIR] * From '{TEST_DIRECTORY}' Where name In ('orders', 'reports')",
     ]
 

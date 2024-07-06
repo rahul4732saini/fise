@@ -168,6 +168,12 @@ class TestDirDeleteQuery:
         (3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')"),
     ]
 
+    recursive_command_test_params = [
+        (1, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
+        (2, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name='report-2023'"),
+        (3, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name in ('media', 'orders')"),
+    ]
+
     path_types_test_params = [
         (1, f"DELETE[TYPE DIR] FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
         (2, f"DELETE[TYPE DIR] FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'reports'}'"),
@@ -184,6 +190,11 @@ class TestDirDeleteQuery:
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """Tests the basic directory delete query syntax."""
         examine_delete_query(query, f"/dir/basic/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
+    def test_recursive_command(self, index: int, query: str) -> None:
+        """Tests the recursive command in directory delete query."""
+        examine_delete_query(query, f"/dir/recursive/test{index}")
 
     @pytest.mark.parametrize(("index", "query"), path_types_test_params)
     def test_path_types(self, index: int, query: str) -> None:

@@ -61,7 +61,7 @@ def verify_delete_query(path: str) -> None:
         reset_tests.reset_file_dir_test_directory()
 
 
-def examine_delete_query(query: str, records_path: str, verify: bool = True) -> None:
+def examine_delete_query(query: str, records_path: str) -> None:
     """
     Tests the specified delete query and verifies it with the file and directory
     records stored at the specified path in the `test_delete_query.hdf` file.

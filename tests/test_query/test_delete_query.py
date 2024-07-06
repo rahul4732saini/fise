@@ -101,6 +101,12 @@ class TestFileDeleteQuery:
         (3, rf"r dELETe FrOM '{FILE_DIR_TEST_DIRECTORY / 'project'}' wHERe name liKe '.*\.py'"),
     ]
 
+    query_conditions_test_params = [
+        (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1.txt'"),
+        (2, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt'$"),
+        (3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type in ('.mp4', '.avi') or type='.mp3'"),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """Tests the basic file delete query syntax."""
@@ -115,6 +121,11 @@ class TestFileDeleteQuery:
     def test_path_types(self, index: int, query: str) -> None:
         """Tests all the available path types in file delete query."""
         examine_delete_query(query, f"/file/path_types/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), query_conditions_test_params)
+    def test_query_conditions(self, index: int, query: str) -> None:
+        """Tests delete query conditions."""
+        examine_delete_query(query, f"/file/conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test
     # comprising characters of mixed cases, and hence uses the file and directory records

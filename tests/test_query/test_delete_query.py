@@ -103,8 +103,23 @@ class TestFileDeleteQuery:
 
     query_conditions_test_params = [
         (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1.txt'"),
-        (2, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt'$"),
+        (2, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt$'"),
         (3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type in ('.mp4', '.avi') or type='.mp3'"),
+    ]
+
+    nested_conditions_test_params = [
+        (
+            1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+            "size[b] = 0 AND (filetype = '.txt' or type = '.mp3')"
+        ),
+        (
+            2, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE size[b]"
+            "= 0 AND (type = None or (type in ('.txt', '.py'))) AND name != 'LICENSE'"
+        ),
+        (
+            3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE"
+            " type = '.txt' AND  (((name = 'Q1.txt' OR name = 'Q3.txt')))"
+        ),
     ]
 
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
@@ -126,6 +141,11 @@ class TestFileDeleteQuery:
     def test_query_conditions(self, index: int, query: str) -> None:
         """Tests delete query conditions."""
         examine_delete_query(query, f"/file/conditions/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
+    def test_nested_query_conditions(self, index: int, query: str) -> None:
+        """Tests nested delete query conditions."""
+        examine_delete_query(query, f"/file/nested_conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test
     # comprising characters of mixed cases, and hence uses the file and directory records

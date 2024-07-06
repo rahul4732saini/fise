@@ -24,7 +24,7 @@ class ConditionParser:
     __slots__ = "_query", "_method_map", "_lookup_fields", "_field_aliases"
 
     # Regular expression patterns for matching fields in query conditions.
-    _string_pattern = re.compile("^['\"].*['\"]")
+    _string_pattern = re.compile(r"^['\"].*['\"]$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
     _float_pattern = re.compile(r"^-?\d+\.\d+$")
 

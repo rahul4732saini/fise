@@ -66,7 +66,7 @@ class TestDirSearchQuery:
     basic_query_syntax_params = [
         f"R SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY / 'file_dir'}'",
         f"SELECT[TYPE DIR] name, parent, ctime FROM '{TEST_DIRECTORY / 'file_dir'}'",
-        f"RECURSIVE SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY}' WHERE name in ('orders', 'reports')",
+        f"RECURSIVE SELECT[TYPE DIR] * FROM '{TEST_DIRECTORY}' WHERE name IN ('orders', 'reports')",
     ]
 
     mixed_case_query_params = [

@@ -81,7 +81,7 @@ class TestFileDeleteQuery:
     basic_query_syntax_test_params = [
         (1, f"DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
         (2, f"DELETE[TYPE FILE] FROM '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp3'"),
-        (3, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE name like '.*\.py'"),
+        (3, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE name LIKE '.*\.py'"),
     ]
 
     recursive_command_test_params = [
@@ -133,7 +133,7 @@ class TestDirDeleteQuery:
 
     basic_query_syntax_test_params = [
         (1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
-        (2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name like '^report.*$'"),
+        (2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name LIKE '^report.*$'"),
         (3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')"),
     ]
 

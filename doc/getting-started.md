@@ -44,13 +44,13 @@ To install FiSE on your system, follow the steps mentioned below:
 
 3. **Install Dependencies**:
 
-   All the base requirements are specified within [requirements.txt](../requirements.txt) which can be installed using the following command:
+   All the base requirements are specified within [requirements.txt](../requirements/requirements.txt) which can be installed using the following command:
 
    ```bash
    python -m pip install -r requirements.txt --no-cache-dir
    ```
 
-   To utilize the additional features offered by FiSE, including the database export functionality, it is necessary to install the supplementary requirements specified within [requirements-extra.txt](../requirements-extra.txt). These requirements can be installed using the same procedure as mentioned before:
+   To utilize the additional features offered by FiSE, including the database export functionality, it is necessary to install the supplementary requirements specified within [requirements-extra.txt](../requirements/requirements-extra.txt). These requirements can be installed using the same procedure as mentioned before:
 
    ```bash
    python -m pip install -r requirements-extra.txt --no-cache-dir

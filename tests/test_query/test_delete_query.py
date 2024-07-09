@@ -30,7 +30,8 @@ FILE_DIR_TEST_DIRECTORY_LISTINGS = pd.concat(
     [
         read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/dirs"),
         read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/files"),
-    ]
+    ],
+    ignore_index=True
 )
 
 
@@ -57,7 +58,7 @@ def verify_delete_query(path: str) -> None:
         )
 
     else:
-        # Resets the `file_dir` and reverts back all the changes made.
+        # Resets the `file_dir` and reverts back all the changes made within the directory.
         reset_tests.reset_file_dir_test_directory()
 
 
@@ -104,7 +105,7 @@ class TestFileDeleteQuery:
     query_conditions_test_params = [
         (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1.txt'"),
         (2, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt$'"),
-        (3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type in ('.mp4', '.avi') or type='.mp3'"),
+        (3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type IN ('.mp4', '.avi') OR type='.mp3'"),
     ]
 
     nested_conditions_test_params = [
@@ -114,7 +115,7 @@ class TestFileDeleteQuery:
         ),
         (
             2, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE size[b]"
-            "= 0 AND (type = None or (type in ('.txt', '.py'))) AND name != 'LICENSE'"
+            "= 0 AND (type = None OR (type in ('.txt', '.py'))) AND name != 'LICENSE'"
         ),
         (
             3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE"
@@ -144,7 +145,7 @@ class TestFileDeleteQuery:
 
     @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
     def test_nested_query_conditions(self, index: int, query: str) -> None:
-        """Tests nested file delete query conditions."""
+        """Tests nested conditions in file delete query."""
         examine_delete_query(query, f"/file/nested_conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test
@@ -171,7 +172,7 @@ class TestDirDeleteQuery:
     recursive_command_test_params = [
         (1, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
         (2, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name='report-2023'"),
-        (3, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name in ('media', 'orders')"),
+        (3, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('media', 'orders')"),
     ]
 
     path_types_test_params = [
@@ -192,7 +193,7 @@ class TestDirDeleteQuery:
         ),
         (
             2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
-            "name in ('orders', 'media') AND parent LIKE '^.*file_dir[/]?$'"
+            "name IN ('orders', 'media') AND parent LIKE '^.*file_dir[/]?$'"
         ),
         (
             3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE"
@@ -237,7 +238,7 @@ class TestDirDeleteQuery:
     
     @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
     def test_nested_query_conditions(self, index: int, query: str) -> None:
-        """Tests nested directory delete query conditions."""
+        """Tests nested conditions in directory delete query."""
         examine_delete_query(query, f"/dir/nested_conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test

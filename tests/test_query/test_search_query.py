@@ -77,6 +77,8 @@ class TestDirSearchQuery:
         f"Recursive Select[TYPE DIR] * From '{TEST_DIRECTORY}' Where name In ('orders', 'reports')",
     ]
 
+    individual_fields_test_params = constants.DIR_FIELDS + ("*",)
+
     # Some of the test don't explicitly verify the extracted data as it is flexible and
     # subject to change depending on the system and path the tests are executed from.
 
@@ -87,7 +89,7 @@ class TestDirSearchQuery:
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
 
-    @pytest.mark.parametrize("field", constants.DIR_FIELDS)
+    @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
         """Tests individual fields in directory search queries."""
 

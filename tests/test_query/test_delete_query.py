@@ -196,6 +196,21 @@ class TestDirDeleteQuery:
         ),
     ]
 
+    nested_conditions_test_params = [
+        (
+            1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE parent"
+            " LIKE '^.*file_dir[/]?$' AND (name = 'orders' OR name = 'media')"
+        ),
+        (
+            2, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE"
+            " ((name IN ('src'))) AND path LIKE '^.*file_dir/src[/]?$'"
+        ),
+        (
+            3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE path LIKE "
+            "'^.*report-20(23|24)[/]?$' AND ((name = 'report-2023') OR ((name = 'report-2024')))"
+        ),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """Tests the basic directory delete query syntax."""
@@ -215,6 +230,11 @@ class TestDirDeleteQuery:
     def test_query_conditions(self, index: int, query: str) -> None:
         """Tests directory delete query conditions."""
         examine_delete_query(query, f"/dir/conditions/test{index}")
+    
+    @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
+    def test_nested_query_conditions(self, index: int, query: str) -> None:
+        """Tests nested directory delete query conditions."""
+        examine_delete_query(query, f"/dir/nested_conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test
     # comprising characters of mixed cases, and hence uses the file and directory records

@@ -191,9 +191,13 @@ class TestDirDeleteQuery:
             1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'media'"
         ),
         (
-            2, rf"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+            2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
             "name in ('orders', 'media') AND parent LIKE '^.*file_dir[/]?$'"
         ),
+        (
+            3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE"
+            " name = 'report-2021' OR name = 'report-2022' OR name = 'report-2023'"
+        )
     ]
 
     nested_conditions_test_params = [

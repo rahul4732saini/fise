@@ -29,6 +29,8 @@ class TestFileSearchQuery:
         f"RecURSive sELECt * From '{TEST_DIRECTORY}' wHErE FilETypE = '.py'",
     ]
 
+    individual_fields_test_params = constants.FILE_FIELDS + ("*",)
+
     # Some of the test don't explicitly verify the extracted data as it is flexible and
     # subject to change depending on the system and path the tests are executed from.
 
@@ -39,7 +41,7 @@ class TestFileSearchQuery:
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
 
-    @pytest.mark.parametrize("field", constants.FILE_FIELDS)
+    @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
         """Tests file search queries with all file fields individually."""
 

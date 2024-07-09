@@ -136,12 +136,12 @@ class TestFileDeleteQuery:
     def test_path_types(self, index: int, query: str) -> None:
         """Tests all the available path types in file delete query."""
         examine_delete_query(query, f"/file/path_types/test{index}")
-    
+
     @pytest.mark.parametrize(("index", "query"), query_conditions_test_params)
     def test_query_conditions(self, index: int, query: str) -> None:
         """Tests delete query conditions."""
         examine_delete_query(query, f"/file/conditions/test{index}")
-    
+
     @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
     def test_nested_query_conditions(self, index: int, query: str) -> None:
         """Tests nested delete query conditions."""
@@ -186,11 +186,21 @@ class TestDirDeleteQuery:
         (3, f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE name In ('project', 'media')"),
     ]
 
+    query_conditions_test_params = [
+        (
+            1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'media'"
+        ),
+        (
+            2, rf"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+            "name in ('orders', 'media') AND parent LIKE '^.*file_dir[/]?$'"
+        ),
+    ]
+
     @pytest.mark.parametrize(("index", "query"), basic_query_syntax_test_params)
     def test_basic_query_syntax(self, index: int, query: str) -> None:
         """Tests the basic directory delete query syntax."""
         examine_delete_query(query, f"/dir/basic/test{index}")
-    
+
     @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
     def test_recursive_command(self, index: int, query: str) -> None:
         """Tests the recursive command in directory delete query."""
@@ -200,6 +210,11 @@ class TestDirDeleteQuery:
     def test_path_types(self, index: int, query: str) -> None:
         """Tests all the available path types in directory delete query."""
         examine_delete_query(query, f"/dir/path_types/test{index}")
+
+    @pytest.mark.parametrize(("index", "query"), query_conditions_test_params)
+    def test_query_conditions(self, index: int, query: str) -> None:
+        """Tests directory delete query conditions."""
+        examine_delete_query(query, f"/dir/conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test
     # comprising characters of mixed cases, and hence uses the file and directory records

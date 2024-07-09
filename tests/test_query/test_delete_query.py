@@ -139,12 +139,12 @@ class TestFileDeleteQuery:
 
     @pytest.mark.parametrize(("index", "query"), query_conditions_test_params)
     def test_query_conditions(self, index: int, query: str) -> None:
-        """Tests delete query conditions."""
+        """Tests file delete query conditions."""
         examine_delete_query(query, f"/file/conditions/test{index}")
 
     @pytest.mark.parametrize(("index", "query"), nested_conditions_test_params)
     def test_nested_query_conditions(self, index: int, query: str) -> None:
-        """Tests nested delete query conditions."""
+        """Tests nested file delete query conditions."""
         examine_delete_query(query, f"/file/nested_conditions/test{index}")
 
     # The following test uses the same delete queries defined for basic query syntax test

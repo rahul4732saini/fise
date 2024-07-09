@@ -45,7 +45,7 @@ class TestFileSearchQuery:
     def test_individual_fields(self, field: str) -> None:
         """Tests file search queries with all file fields individually."""
 
-        query: str = f"select {field} from '{TEST_DIRECTORY}'"
+        query: str = f"SELECT {field} FROM '{TEST_DIRECTORY}'"
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)
@@ -93,7 +93,7 @@ class TestDirSearchQuery:
     def test_individual_fields(self, field: str) -> None:
         """Tests individual fields in directory search queries."""
 
-        query: str = f"select[type dir] {field} from '{TEST_DIRECTORY}'"
+        query: str = f"SELECT[TYPE DIR] {field} FROM '{TEST_DIRECTORY}'"
 
         data: pd.DataFrame = QueryHandler(query).handle()
         assert isinstance(data, pd.DataFrame)

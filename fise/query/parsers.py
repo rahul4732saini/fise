@@ -15,7 +15,7 @@ from .conditions import ConditionHandler
 from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
 
 
-def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
+def _parse_path(subquery: list[str]) -> tuple[Path, int]:
     """
     Parses the file/directory path and its type from the specified sub-query.
     Also returns the index of the file/directory specification in the query
@@ -31,10 +31,10 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
         if path_type == "absolute":
             path = path.resolve()
 
-        return path_type == "absolute", path, 1
+        return path, 1
 
     # Returns `False` for a relative path type as not explicitly specified in query.
-    return False, Path(subquery[0].strip("'\"")), 0
+    return Path(subquery[0].strip("'\"")), 0
 
 
 def _get_from_keyword_index(subquery: list[str]) -> int:
@@ -135,16 +135,16 @@ class FileQueryParser:
 
         return fields, columns
 
-    def _parse_directory(self) -> tuple[Path, bool, int]:
+    def _parse_directory(self) -> tuple[Path, int]:
         """
         Parses the directory path and its metadata.
         """
-        is_absolute, path, index = _parse_path(self._query[self._from_index + 1 :])
+        path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not path.is_dir():
             raise QueryParseError("The specified path for lookup must be a directory.")
 
-        return path, is_absolute, index
+        return path, index
 
     def _parse_remove_query(self) -> DeleteQuery:
         """
@@ -154,7 +154,7 @@ class FileQueryParser:
         if self._from_index != 0:
             raise QueryParseError("Invalid query syntax.")
 
-        path, is_absolute, index = self._parse_directory()
+        path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
@@ -171,7 +171,7 @@ class FileQueryParser:
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, is_absolute, index = self._parse_directory()
+        path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
@@ -241,19 +241,19 @@ class FileDataQueryParser:
 
         return fields, columns
 
-    def _parse_path(self) -> tuple[Path, bool, int]:
+    def _parse_path(self) -> tuple[Path, int]:
         """
         Parses the file/directory path and its metadata.
         """
 
-        is_absolute, path, index = _parse_path(self._query[self._from_index + 1 :])
+        path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not (path.is_dir() or path.is_file()):
             raise QueryParseError(
                 "The specified path for lookup must be a file or directory."
             )
 
-        return path, is_absolute, index
+        return path, index
 
     def parse_query(self) -> SearchQuery:
         """
@@ -261,7 +261,7 @@ class FileDataQueryParser:
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, is_absolute, index = self._parse_path()
+        path, index = self._parse_path()
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
@@ -317,7 +317,7 @@ class DirectoryQueryParser(FileQueryParser):
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, is_absolute, index = self._parse_directory()
+        path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (

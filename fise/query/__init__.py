@@ -87,7 +87,7 @@ class QueryHandler:
         parser = FileQueryParser(self._query[self._ctr :], initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
-        operator = FileQueryOperator(query.path, initials.recursive, query.is_absolute)
+        operator = FileQueryOperator(query.path, initials.recursive)
 
         if initials.operation.operation == "search":
             return operator.get_dataframe(query.fields, query.columns, query.condition)
@@ -106,16 +106,13 @@ class QueryHandler:
         ):
             raise QueryParseError(
                 "Exporting binary data to SQL databases is currently unsupported."
-            )    
+            )
 
         parser = FileDataQueryParser(self._query[self._ctr :])
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
-            query.path,
-            initials.recursive,
-            query.is_absolute,
-            initials.operation.filemode,
+            query.path, initials.recursive, initials.operation.filemode
         )
 
         return operator.get_dataframe(query.fields, query.columns, query.condition)
@@ -128,11 +125,9 @@ class QueryHandler:
         parser = DirectoryQueryParser(
             self._query[self._ctr :], initials.operation.operation
         )
-        query: SearchQuery | DeleteQuery = parser.parse_query()
 
-        operator = DirectoryQueryOperator(
-            query.path, initials.recursive, query.is_absolute
-        )
+        query: SearchQuery | DeleteQuery = parser.parse_query()
+        operator = DirectoryQueryOperator(query.path, initials.recursive)
 
         if initials.operation.operation == "search":
             return operator.get_dataframe(query.fields, query.columns, query.condition)
@@ -156,7 +151,7 @@ class QueryHandler:
         self._ctr += 1
 
         if export and operation.operation == "remove":
-                raise QueryParseError("Cannot export data with delete operation.")
+            raise QueryParseError("Cannot export data with delete operation.")
 
         return QueryInitials(operation, recursive, export)
 
@@ -243,7 +238,7 @@ class QueryHandler:
                 raise QueryParseError(
                     f"Invalid parameter {param[0]!r} for search operation."
                 )
-        
+
         if operand == "data":
             raise QueryParseError(
                 "Delete operation upon file contents is not supported."

@@ -26,21 +26,17 @@ class FileQueryOperator:
 
     __slots__ = "_directory", "_recursive"
 
-    def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
+    def __init__(self, directory: Path, recursive: bool) -> None:
         """
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
         - directory (Path): Path to the directory.
         - recursive (bool): Whether to include files from subdirectories.
-        - absolute (bool): Whether to include the absolute path to the files.
         """
 
         self._directory = directory
         self._recursive = recursive
-
-        if absolute:
-            self._directory = self._directory.absolute()
 
     @staticmethod
     def _get_field(field: Field | Size, file: File) -> Any:
@@ -152,11 +148,7 @@ class FileDataQueryOperator:
     __slots__ = "_path", "_recursive", "_filemode"
 
     def __init__(
-        self,
-        path: Path,
-        recursive: bool,
-        absolute: bool,
-        filemode: constants.FILE_MODES,
+        self, path: Path, recursive: bool, filemode: constants.FILE_MODES
     ) -> None:
         """
         Creates an instance of the `FileDataQueryOperator` class.
@@ -164,16 +156,12 @@ class FileDataQueryOperator:
         #### Params:
         - path (pathlib.Path): Path to the file/directory.
         - recursive (bool): Whether to include files from subdirectories.
-        - absolute (bool): Weather to include the absolute path to the files.
         - filemode (str): Desired filemode to read files.
         """
 
         self._path = path
         self._recursive = recursive
         self._filemode = constants.FILE_MODES_MAP[filemode]
-
-        if absolute:
-            self._path = self._path.absolute()
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """
@@ -258,21 +246,17 @@ class DirectoryQueryOperator:
 
     __slots__ = "_directory", "_recursive"
 
-    def __init__(self, directory: Path, recursive: bool, absolute: bool) -> None:
+    def __init__(self, directory: Path, recursive: bool) -> None:
         """
         Creates an instance of the `FileQueryOperator` class.
 
         #### Params:
         - directory (Path): Path to the directory.
         - recursive (bool): Whether to include files from subdirectories.
-        - absolute (bool): Wheather to include the absolute path to the directories.
         """
 
         self._directory = directory
         self._recursive = recursive
-
-        if absolute:
-            self._directory = self._directory.absolute()
 
     @staticmethod
     def _get_field(field: Field, directory: Directory) -> Any:

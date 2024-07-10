@@ -145,7 +145,6 @@ class BaseQuery:
     """
 
     path: Path
-    is_absolute: bool
     condition: Callable[[File | DataLine | Directory], bool]
 
 

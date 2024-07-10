@@ -163,7 +163,7 @@ class FileQueryParser:
             )
         )
 
-        return DeleteQuery(path, is_absolute, condition)
+        return DeleteQuery(path, condition)
 
     def _parse_search_query(self) -> SearchQuery:
         """
@@ -180,7 +180,7 @@ class FileQueryParser:
             )
         )
 
-        return SearchQuery(path, is_absolute, condition, fields, columns)
+        return SearchQuery(path, condition, fields, columns)
 
     def parse_query(self) -> SearchQuery | DeleteQuery:
         """
@@ -270,7 +270,7 @@ class FileDataQueryParser:
             )
         )
 
-        return SearchQuery(path, is_absolute, condition, fields, columns)
+        return SearchQuery(path, condition, fields, columns)
 
 
 class DirectoryQueryParser(FileQueryParser):
@@ -326,4 +326,4 @@ class DirectoryQueryParser(FileQueryParser):
             )
         )
 
-        return SearchQuery(path, is_absolute, condition, fields, columns)
+        return SearchQuery(path, condition, fields, columns)

@@ -23,10 +23,15 @@ def _parse_path(subquery: list[str]) -> tuple[bool, Path, int]:
     """
 
     if subquery[0].lower() in constants.PATH_TYPES:
-        # Returns a boolean value rather than a string to signify the file/directory type.
-        is_absolute: bool = subquery[0].lower() == "absolute"
+        path: Path = Path(subquery[1].strip("'\""))
 
-        return is_absolute, Path(subquery[1].strip("'\"")), 1
+        # Returns a boolean value rather than a string to signify the file/directory type.
+        path_type: str = subquery[0].lower()
+
+        if path_type == "absolute":
+            path = path.resolve()
+
+        return path_type == "absolute", path, 1
 
     # Returns `False` for a relative path type as not explicitly specified in query.
     return False, Path(subquery[0].strip("'\"")), 0

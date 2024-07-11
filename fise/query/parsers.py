@@ -308,20 +308,3 @@ class DirectoryQueryParser(FileQueryParser):
                 )
 
         return fields, columns
-
-    def _parse_search_query(self) -> SearchQuery:
-        """
-        Parses the directory search query.
-        """
-
-        fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, index = self._parse_directory()
-
-        # Extracts the function for filtering file records.
-        condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(
-                self._query[self._from_index + index + 2 :], self._operand
-            )
-        )
-
-        return SearchQuery(path, condition, fields, columns)

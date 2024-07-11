@@ -42,7 +42,7 @@ def _get_from_keyword_index(subquery: list[str]) -> int:
         if kw.lower() == "from":
             return i
 
-    raise QueryParseError("Cannot find 'FROM' keyword in the query.")
+    raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
 
 
 def _get_condition_handler(
@@ -58,7 +58,7 @@ def _get_condition_handler(
     """
 
     # Returns a lambda function returning `True` by default to include all the records
-    # during processing in no conditions are explicitly defined in the specified subquery.
+    # during processing in no conditions are explicitly defined in the query.
     if not subquery:
         return lambda _: True
 
@@ -146,10 +146,10 @@ class FileQueryParser:
 
     def _parse_remove_query(self) -> DeleteQuery:
         """
-        Parses the file delete query.
+        Parses the delete query.
         """
 
-        if self._from_index != 0:
+        if self._from_index:
             raise QueryParseError("Invalid query syntax.")
 
         path, index = self._parse_directory()
@@ -165,7 +165,7 @@ class FileQueryParser:
 
     def _parse_search_query(self) -> SearchQuery:
         """
-        Parses the file search query.
+        Parses the search query.
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
@@ -182,7 +182,7 @@ class FileQueryParser:
 
     def parse_query(self) -> SearchQuery | DeleteQuery:
         """
-        Parses the file search/delete query.
+        Parses the search/delete query.
         """
         return (
             self._parse_search_query()

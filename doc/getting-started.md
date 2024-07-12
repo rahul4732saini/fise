@@ -2,13 +2,13 @@
 
 <h1 align=center>Getting Started</h1>
 
-Welcome to **FiSE (File Search Engine)**! This comprehensive guide will walk you through the steps to install FiSE, set it up, and perform basic operations.
+Welcome to **FiSE (File Search Engine)**! This comprehensive guide will walk you through the steps to install FiSE, set it up, and perform basic operations with it.
 
 <h2 align=center>Introduction</h2>
 
-**FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and manipulation operations. It empowers users with the ability to perform comprehensive search operations using intuitive SQL-like commands streamlining file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility allows exporting search records to files and databases in a professional manner. Ideal for developers, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for all file system operations.
+**FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and delete operations. It empowers users with the ability to perform comprehensive search operations using intuitive SQL-like commands streamlining file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility also allows exporting search records to files and databases in a professional manner. Ideal for developers, data analysts, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for advanced search and delete operations.
 
-<h2 align=center>Installation</h2>
+<h2 align=center>Setup</h2>
 
 This section will walk you through the steps to install and setup FiSE on your system.
 
@@ -32,7 +32,7 @@ To install FiSE on your system, follow the steps mentioned below:
    git clone https://github.com/rahul4732saini/fise.git
    ```
 
-   Otherwise, you can download the source code archive file from the GitHub repository at [FiSE](https://www.github.com/rahul4732saini/fise).
+   Otherwise, you can download the source code archive file from the [FiSE GitHub Repository](https://www.github.com/rahul4732saini/fise).
 
 2. **Change the current working directory**:
 
@@ -47,13 +47,13 @@ To install FiSE on your system, follow the steps mentioned below:
    All the base requirements are specified within [requirements.txt](../requirements/requirements.txt) which can be installed using the following command:
 
    ```bash
-   python -m pip install -r requirements.txt --no-cache-dir
+   python -m pip install -r requirements/requirements.txt --no-cache-dir
    ```
 
    To utilize the additional features offered by FiSE, including the database export functionality, it is necessary to install the supplementary requirements specified within [requirements-extra.txt](../requirements/requirements-extra.txt). These requirements can be installed using the same procedure as mentioned before:
 
    ```bash
-   python -m pip install -r requirements-extra.txt --no-cache-dir
+   python -m pip install -r requirements/requirements-extra.txt --no-cache-dir
    ```
 
 4. **(Optional) Build Application**:

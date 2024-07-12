@@ -36,7 +36,7 @@ To install FiSE on your system, follow the steps mentioned below:
 
 2. **Change the current working directory**:
 
-   Change the current directory to `./fise` to perform the remaining installation:
+   Change the current directory to the source code directory, i.e., `./fise` to perform the remaining installation:
 
    ```bash
    cd ./fise

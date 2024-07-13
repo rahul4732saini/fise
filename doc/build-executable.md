@@ -1,6 +1,6 @@
 <h1 align=center>Executable Build Guide</h1>
 
-Welcome! This comprehensive guide will walk you through the steps to manually build FiSE into an executable file. The procedure is consistent across all platforms, with minor variations detailed below.
+This comprehensive guide will walk you through the steps to manually build FiSE into an executable file. The procedure is consistent across all platforms, with minor variations detailed below.
 
 ### Prerequisites
 

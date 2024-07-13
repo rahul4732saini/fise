@@ -52,7 +52,7 @@ This section provides a detailed overview of the various metadata fields that ca
 
     - Extracts the size of the file.
 
-    - Users can also extract the file size in different units by accompanying the field name 'size' with a square brackets `[]` and typing in a unit specified within the **Different Size Units** section. Eg: `size[KB]`, `size[GiB]` and `size[b]`.
+    - Users can also extract the file size in different units by accompanying the field name 'size' with a square brackets `[]` and typing in a unit specified within the **Different Size Units** section below. Eg: `size[KB]`, `size[GiB]` and `size[b]`.
 
     - **Different Size Units**:
 

@@ -26,10 +26,10 @@ This comprehensive guide offers detailed insights into the query syntax, aiming 
 
     - **NOTE**: Currently, exporting records is only limited to search operations.
 
-    - **File Export**: **FiSE** allows search records export only to the file formats mentioned below under the **Available File Formats** section. To export to a file, the following rules must be followed:
+    - **File Export**: **FiSE** allows search records export only to the file formats mentioned below under the **Available File Formats** section below. To export to a file, the following rules must be followed:
 
         - The file specified must be non-existant.
-        - The file name must be followed by a allowed suffix. **FiSE** recognizes the file export type explicitly based on the suffix of the file specified.
+        - The file name must be followed by a allowed suffix, **FiSE** recognizes the file export type explicitly based on the suffix of the file specified.
 
     - **Available File Formats**: **csv**, **html**, **xlsx** and **json**.
     - **Available Databases**: **mysql**, **postgresql** and **sqlite**.
@@ -42,17 +42,17 @@ This comprehensive guide offers detailed insights into the query syntax, aiming 
 
 3. **SELECT[ PARAMETERS ]** or **DELETE[ PARAMETERS ]**:
 
-    - This segments includes the operations specifications. Users can choose between two different query operations: **Search** and **Delete**.
+    - This segments includes the operation specifications. Users can choose between two different query operations: **Search** and **Delete**.
 
-    - **Additional parameters** can be specified within square brackets `[]` seperated by commas, to toggle operations between different file-types or file-modes, especially for data search operations. Refer to the **Types of Parameters** section below to know more about the different types of parameters available.
+    - **Additional parameters** can be specified to toggle between different file-types or file-modes, especially for data search operations. These can be defined within square brackets `[]` adjoining the name of the operation where each parameter is seperated by commas. Refer to the **Parameters Types** section below to know more about the different types of parameters available.
 
-    - **Types of Parameters**: The following are the different types of parameters which can be defined within the operation specifications:
+    - **Parameters Types**: The following are the different types of parameters which can be defined within the operation specifications:
 
-        - **TYPE**: It is used to toggle between file, directory and data operation. To specify this parameter, use the following format: `TYPE (FILE|DIR|DATA)`. Eg: `TYPE DIR` sets the operation to work with files.
+        - **TYPE**: It is used to toggle between file, directory and data operation. The type can only be set to `data` for search operation and is not available for delete operations. To specify this parameter, use the following format: `TYPE (FILE|DIR|DATA)`. Eg: `SELECT[TYPE DIR]` configures the operation to work with directories and `DELETE[TYPE FILE]` toggles the operation to work with files. 
 
-        - **MODE**: It is used to toggle between text and bytes filemode. It is only limited to data search operations. To specify this parameter, use the following format: `MODE (TEXT|BYTES)`. Eg: `MODE BYTES` sets the operation to work with bytes data.
+        - **MODE**: It is used to toggle between text and bytes filemode. It is only limited to data search operations. To specify this parameter, use the following format: `MODE (TEXT|BYTES)`. Eg: `SELECT[TYPE DATA, MODE BYTES]` toggles the operation to work with bytes data and `SELECT[TYPE DATA, MODE TEXT]` configures the operation to work with text data.
 
-    - **NOTE**: By default, the `TYPE` parameter is set to `file` and the `MODE` is set to `text` for data search operation and do not require explicit mentionings.
+    - **NOTE**: By default, the `TYPE` parameter is set to `file` and the `MODE` is set to `text` for data search operation and do not require explicit mentionings. Users must also note that the `text` filemode can only read text files and will raise an error for bytes data.
 
     - Operation specifications examples with different parameters:
 
@@ -71,21 +71,21 @@ This comprehensive guide offers detailed insights into the query syntax, aiming 
 
 5. **ABSOLUTE** or **RELATIVE**:
 
-    - This segment is **optional** and specifies whether to include the absolute path of the files and directories if the specified path is relative.
+    - This segment is optional and specifies whether to include the absolute path of the files and directories if the specified path is relative.
 
 6. **FILE PATH** or **DIRECTORY PATH**:
 
     - Defines the path to the file or directory to operate upon. The path can be either absolute or relative as desired and can be specified directly without any other specifications.
 
-    - **Note**: A File can only be specified as a target if the query is related to a data search or delete operation.
+    - **Note**: Paths comprising whitespaces must be enclosed within single quotes `'` or double quotes `"`.
 
-    - **Example**: `./src` or `/use/local/bin`
+    - **Example**: `./src`, `/usr/local/bin` and `"C:/Program Files/Common Files"`
 
 7. **WHERE CONDITIONS**:
 
-    - This segment is **optional** and is used for filtering search/delete records based on the specified conditions.
+    - This segment is optional and is used for filtering search and delete records based on the specified conditions.
 
-    - For a deeper insight about query conditions, please refer to the [Query-Conditions](./query-conditions.md) guide.
+    - For a deeper insight into query conditions, please refer to the [Query-Conditions](./query-conditions.md) guide.
 
 <h2 align=center>Next Steps</h2>
 

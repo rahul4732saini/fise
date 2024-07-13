@@ -50,9 +50,7 @@ class FileQueryOperator:
 
         if isinstance(field, Size):
             # Extracts the size in bytes and converts into the parsed size unit.
-            return round(
-                getattr(file, "size") / constants.SIZE_CONVERSION_MAP.get(field.unit), 5
-            )
+            return round(file.size / constants.SIZE_CONVERSION_MAP.get(field.unit), 5)
 
         return getattr(file, field.field)
 
@@ -87,10 +85,6 @@ class FileQueryOperator:
             columns=columns,
         )
 
-        # Renames the column `size` -> `size[<size_unit>]` to also include
-        # the storage unit if not specified explicitly in the field name.
-        records.rename(columns={"size": "size[B]"}, inplace=True)
-
         return records
 
     def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
@@ -120,22 +114,17 @@ class FileQueryOperator:
                     skipped += 1
                     continue
 
-                raise OperationError(
-                    f"Permission Error: Cannot delete '{file.absolute()}'"
-                )
+                raise OperationError(f"Permission Error: Cannot delete '{file}'")
 
             else:
                 ctr += 1
 
-        # Extracts the absolute path to the directory and stores it locally.
-        directory: Path = self._directory.absolute()
-
-        Message(f"Successfully removed {ctr} files from '{directory}'.")
+        Message(f"Successfully removed {ctr} files from '{self._directory}'.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
             Alert(
-                f"Skipped {skipped} files from '{directory}' due to permission errors."
+                f"Skipped {skipped} files from '{self._directory}' due to permission errors."
             )
 
 
@@ -329,20 +318,15 @@ class DirectoryQueryOperator:
                     skipped += 1
                     continue
 
-                raise OperationError(
-                    f"Permission Error: Cannot delete '{subdir.absolute()}'"
-                )
+                raise OperationError(f"Permission Error: Cannot delete '{subdir}'")
 
             else:
                 ctr += 1
 
-        # Extracts the absolute path to the directory and stores it locally.
-        directory: Path = self._directory.absolute()
-
-        Message(f"Successfully removed {ctr} directories from '{directory}'.")
+        Message(f"Successfully removed {ctr} directories from '{self._directory}'.")
 
         # Prints the skipped files message only is `skipped` is not 0.
         if skipped:
             Alert(
-                f"Skipped {skipped} directories from '{directory}' due to permission errors."
+                f"Skipped {skipped} directories from '{self._directory}' due to permission errors."
             )

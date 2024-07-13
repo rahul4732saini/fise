@@ -44,7 +44,7 @@ This comprehensive guide offers detailed insights into the query syntax, aiming 
 
     - This segments includes the operation specifications. Users can choose between two different query operations: **Search** and **Delete**.
 
-    - **Additional parameters** can be specified to toggle between different file-types or file-modes, especially for data search operations. These can be defined within square brackets `[]` adjoining the name of the operation where each parameter is seperated by commas. Refer to the **Parameters Types** section below to know more about the different types of parameters available.
+    - **Additional parameters** can be specified to toggle between different file-types or file-modes, especially for data search operations. These can be defined within square brackets `[]` adjoining the name of the operation where each parameter is seperated by commas. Refer to the **Parameters Types** section below to know more about the different types of parameters available for operation configuration.
 
     - **Parameters Types**: The following are the different types of parameters which can be defined within the operation specifications:
 
@@ -93,6 +93,6 @@ To explore more advanced features, refer to the following guides for detailed in
 
 1. **[Query Fields](./query-fields.md)**: Dive deep and know about the different metadata fields which can be used with different query operations.
 2. **[Query Operations](./query/operations.md)**: Explore the various query operations available in FiSE.
-3. **[Query Conditions](./query/export.md)**: Discover the ways to write precise and efficient conditions for filtering search/delete records.
+3. **[Query Conditions](./query/export.md)**: Discover the ways to write precise and efficient conditions for filtering search and delete records.
 
 ---

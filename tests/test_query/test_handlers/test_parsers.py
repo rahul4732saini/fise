@@ -67,6 +67,7 @@ class TestFileQueryParser:
         if results[0]:
             path = path.resolve()
 
+        assert callable(search_query.condition)
         assert search_query.path == path
         assert [field.field for field in search_query.fields] == columns
         assert search_query.columns == columns
@@ -95,6 +96,7 @@ class TestFileQueryParser:
         if results[0]:
             path = path.resolve()
 
+        assert callable(search_query.condition)
         assert search_query.path == path
         assert [field.unit for field in search_query.fields] == units
         assert search_query.columns == columns

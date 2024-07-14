@@ -18,9 +18,9 @@ class TestFileQueryParser:
     file_search_query_test_params = [
         "* FROM .",
         "name, path, parent FROM ABSOLUTE '.'",
-        "access_time, modify_time from RELATIVE .",
+        "access_time,modify_time from RELATIVE .",
         r"* FROM ABSOLUTE . WHERE type = '.txt' AND name LIKE '^report-[0-9]*\.txt$'",
-        "name, path, access_time FROM . WHERE atime >= '2023-04-04' OR ctime >= '2023-12-04'",
+        "name, path,access_time FROM . WHERE atime >= '2023-04-04' OR ctime >= '2023-12-04'",
         "* FROM '.' WHERE atime >= '2024-02-20'",
     ]
 

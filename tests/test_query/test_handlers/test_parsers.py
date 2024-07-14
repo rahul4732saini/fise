@@ -9,13 +9,11 @@ import pytest
 
 from fise.common import tools, constants
 from fise.query.parsers import FileQueryParser
-from fise.shared import Field, SearchQuery
+from fise.shared import SearchQuery
 
 
 class TestFileQueryParser:
     """Tests the FileQueryParser class"""
-
-    file_fields = [Field(field) for field in constants.FILE_FIELDS]
 
     file_search_query_test_params = [
         "* FROM .",
@@ -43,10 +41,8 @@ class TestFileQueryParser:
         ("subquery", "results"),
         zip(file_search_query_test_params, file_search_query_test_results),
     )
-    def test_file_search_query_parser(self, subquery, results):
-        """
-        Tests the file query parser with search queries.
-        """
+    def test_file_search_query_parser(self, subquery, results) -> None:
+        """Tests the file query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
 

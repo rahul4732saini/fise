@@ -2,8 +2,8 @@
 Operators Module
 ----------------
 
-This module includes classes for processing user queries and conducting file
-and directory search and delete operations within a specified directory. It also
+This module defines classes for processing user queries and conducting file
+and directory search and delete operations within directories. It also
 includes classes for performing search operations within files.
 """
 

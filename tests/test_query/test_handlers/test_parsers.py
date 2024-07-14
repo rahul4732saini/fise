@@ -15,7 +15,7 @@ from fise.shared import SearchQuery
 class TestFileQueryParser:
     """Tests the FileQueryParser class"""
 
-    file_search_query_test_params = [
+    search_query_test_params = [
         "* FROM .",
         "name, path, parent FROM ABSOLUTE '.'",
         "access_time,modify_time from RELATIVE .",
@@ -24,7 +24,7 @@ class TestFileQueryParser:
         "* FROM '.' WHERE atime >= '2024-02-20'",
     ]
 
-    file_search_query_with_size_fields_test_params = [
+    search_query_with_size_fields_test_params = [
         "size, size[B] FROM . WHERE type = '.py' AND size[KiB] > 512",
         "size[b],size,size[TiB] FROM ABSOLUTE .",
         "size[MB], size[GB], size[B] FROM . WHERE size[MiB] > 10",
@@ -34,7 +34,7 @@ class TestFileQueryParser:
     # each with a length of 2. The first element of each sub-list signifies whether the path is
     # absolute (True) or relative (False) whereas the second element is a list comprising names
     # of the search fields.
-    file_search_query_test_results = [
+    search_query_test_results = [
         [False, list(constants.FILE_FIELDS)],
         [True, ["name", "path", "parent"]],
         [False, ["access_time", "modify_time"]],
@@ -43,7 +43,7 @@ class TestFileQueryParser:
         [False, list(constants.FILE_FIELDS)],
     ]
 
-    file_search_query_with_size_fields_test_results = [
+    search_query_with_size_fields_test_results = [
         [False, ["B", "B"], ["size", "size[B]"]],
         [True, ["b", "B", "TiB"], ["size[b]", "size", "size[TiB]"]],
         [False, ["MB", "GB", "B"], ["size[MB]", "size[GB]", "size[B]"]],
@@ -51,9 +51,9 @@ class TestFileQueryParser:
 
     @pytest.mark.parametrize(
         ("subquery", "results"),
-        zip(file_search_query_test_params, file_search_query_test_results),
+        zip(search_query_test_params, search_query_test_results),
     )
-    def test_file_search_query_parser(self, subquery, results) -> None:
+    def test_search_query(self, subquery, results) -> None:
         """Tests the file query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
@@ -74,11 +74,11 @@ class TestFileQueryParser:
     @pytest.mark.parametrize(
         ("subquery", "results"),
         zip(
-            file_search_query_with_size_fields_test_params,
-            file_search_query_with_size_fields_test_results,
+            search_query_with_size_fields_test_params,
+            search_query_with_size_fields_test_results,
         ),
     )
-    def test_file_search_query_parser_with_size_fields(self, subquery, results) -> None:
+    def test_search_query_with_size_fields(self, subquery, results) -> None:
         """
         Tests the file query parser with search queries comprising size fields.
         """

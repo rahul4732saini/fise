@@ -48,13 +48,13 @@ class TestFileQueryParser:
         "* FROM .",
         "name, path, parent FROM ABSOLUTE '.'",
         "access_time,modify_time from RELATIVE .",
-        r"* FROM ABSOLUTE . WHERE type = '.txt' AND name LIKE '^report-[0-9]*\.txt$'",
-        "name, path,access_time FROM . WHERE atime >= '2023-04-04' OR ctime >= '2023-12-04'",
-        "* FROM '.' WHERE atime >= '2024-02-20'",
+        r"* FROM ABSOLUTE . WHERE filetype = '.txt' AND name LIKE '^report-[0-9]*\.txt$'",
+        "name, path,access_time FROM . WHERE access_time >= '2023-04-04'",
+        "* FROM '.' WHERE create_time >= '2024-02-20'",
     ]
 
     search_query_with_size_fields_test_params = [
-        "size, size[B] FROM . WHERE type = '.py' AND size[KiB] > 512",
+        "size, size[B] FROM . WHERE filetype = '.py' AND size[KiB] > 512",
         "size[b],size,size[TiB] FROM ABSOLUTE .",
         "size[MB], size[GB], size[B] FROM . WHERE size[MiB] > 10",
     ]

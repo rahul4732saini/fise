@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from fise.common import tools, constants
-from fise.query.parsers import FileQueryParser
+from fise.query.parsers import FileQueryParser, DirectoryQueryParser
 from fise.shared import SearchQuery
 
 
@@ -99,4 +99,51 @@ class TestFileQueryParser:
         assert callable(search_query.condition)
         assert search_query.path == path
         assert [field.unit for field in search_query.fields] == units
+        assert search_query.columns == columns
+
+
+class TestDirectoryQueryParser:
+    """Tests the DirectoryQueryParser class"""
+
+    search_query_test_params = [
+        "* FROM .",
+        "name, path, parent FROM ABSOLUTE '.'",
+        "access_time,modify_time from RELATIVE . WHERE name in ('docs', 'documents')",
+        "name, path,access_time FROM . WHERE atime >= '2023-04-04' OR ctime >= '2023-12-04'",
+        "* FROM ABSOLUTE '.' WHERE atime >= '2024-02-20'",
+    ]
+
+    # The following list comprises results for the file search query test comprising sub-lists,
+    # each with a length of 2. The first element of each sub-list signifies whether the path is
+    # absolute (True) or relative (False) whereas the second element is a list comprising names
+    # of the search fields.
+    search_query_test_results = [
+        [False, list(constants.DIR_FIELDS)],
+        [True, ["name", "path", "parent"]],
+        [False, ["access_time", "modify_time"]],
+        [False, ["name", "path", "access_time"]],
+        [True, list(constants.DIR_FIELDS)],
+    ]
+
+    @pytest.mark.parametrize(
+        ("subquery", "results"),
+        zip(search_query_test_params, search_query_test_results),
+    )
+    def test_search_query(self, subquery, results) -> None:
+        """Tests the directory query parser with search queries."""
+
+        query: list[str] = tools.parse_query(subquery)
+
+        parser = DirectoryQueryParser(query, "search")
+        search_query: SearchQuery = parser.parse_query()
+
+        path: Path = Path(".")
+        columns: list[str] = results[1]
+
+        if results[0]:
+            path = path.resolve()
+
+        assert callable(search_query.condition)
+        assert search_query.path == path
+        assert [field.field for field in search_query.fields] == columns
         assert search_query.columns == columns

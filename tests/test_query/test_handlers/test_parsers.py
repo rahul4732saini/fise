@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 
+from fise.shared import SearchQuery, DeleteQuery
 from fise.common import tools, constants
-from fise.shared import SearchQuery
 from fise.query.parsers import (
     FileQueryParser,
     FileDataQueryParser,
@@ -39,6 +39,21 @@ def examine_search_query(
     assert search_query.columns == columns
 
     return search_query
+
+
+def examine_delete_query(
+    parser: FileQueryParser | DirectoryQueryParser, results: list[Any]
+) -> None:
+    """Tests the delete query based on the specified parser and results."""
+
+    delete_query: DeleteQuery = parser.parse_query()
+    path: Path = Path(".")
+
+    if results[0]:
+        path = path.resolve()
+
+    assert delete_query.path == path
+    assert callable(delete_query.condition)
 
 
 class TestFileQueryParser:

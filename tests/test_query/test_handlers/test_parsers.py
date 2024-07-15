@@ -42,14 +42,14 @@ def examine_search_query(
 
 
 def examine_delete_query(
-    parser: FileQueryParser | DirectoryQueryParser, results: list[Any]
+    parser: FileQueryParser | DirectoryQueryParser, is_absolute: bool
 ) -> None:
     """Tests the delete query based on the specified parser and results."""
 
     delete_query: DeleteQuery = parser.parse_query()
     path: Path = Path(".")
 
-    if results[0]:
+    if is_absolute:
         path = path.resolve()
 
     assert delete_query.path == path

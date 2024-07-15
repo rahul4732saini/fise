@@ -187,6 +187,47 @@ class TestFileQueryParser:
         examine_delete_query(parser, is_absolute)
 
 
+class TestFileDataQueryParser:
+    """Tests the FileDataQueryParser class."""
+
+    search_query_test_params = [
+        "* FROM .",
+        "name, path, dataline FROM ABSOLUTE '.'",
+        "path, lineno, dataline FROM RELATIVE . WHERE type = '.py'",
+        "* FROM '.' WHERE lineno BETWEEN (0, 100)",
+    ]
+
+    # The following are test results for the search query tests comprising sub-lists, each with
+    # a variable length where the first element of each of them signifies whether the path is
+    # absolute (True) or relative (False) whereas the last element in it is a list comprising
+    # names of the search fields. All the remaining objects within the list are test specific
+    # and may differ in different tests.
+
+    search_query_test_results = [
+        [False, list(constants.DATA_FIELDS)],
+        [True, ["name", "path", "dataline"]],
+        [False, ["path", "lineno", "dataline"]],
+        [False, list(constants.DATA_FIELDS)],
+    ]
+
+    @pytest.mark.parametrize(
+        ("subquery", "results"),
+        zip(search_query_test_params, search_query_test_results),
+    )
+    def test_search_query(self, subquery: str, results: list[Any]) -> None:
+        """
+        Tests the file data query parser with search queries.
+        """
+
+        query: list[str] = tools.parse_query(subquery)
+        parser = FileDataQueryParser(query)
+
+        search_query: SearchQuery = examine_search_query(parser, results)
+        fields: list[str] = results[1]
+
+        assert [field.field for field in search_query.fields] == fields
+
+
 class TestDirectoryQueryParser:
     """Tests the DirectoryQueryParser class"""
 

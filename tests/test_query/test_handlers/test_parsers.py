@@ -4,12 +4,41 @@ the functionality of parser classes in FiSE.
 """
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from fise.common import tools, constants
-from fise.query.parsers import FileQueryParser, DirectoryQueryParser
 from fise.shared import SearchQuery
+from fise.query.parsers import (
+    FileQueryParser,
+    FileDataQueryParser,
+    DirectoryQueryParser,
+)
+
+
+def examine_search_query(
+    parser: FileQueryParser | FileDataQueryParser | DirectoryQueryParser,
+    results: list[Any],
+) -> SearchQuery:
+    """
+    Tests the search query based on the specified sub-query and results and
+    returns the `SearchQuery` object for performing additional tests.
+    """
+
+    search_query: SearchQuery = parser.parse_query()
+
+    path: Path = Path(".")
+    columns: list[str] = results[-1]
+
+    if results[0]:
+        path = path.resolve()
+
+    assert callable(search_query.condition)
+    assert search_query.path == path
+    assert search_query.columns == columns
+
+    return search_query
 
 
 class TestFileQueryParser:
@@ -57,20 +86,12 @@ class TestFileQueryParser:
         """Tests the file query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
-
         parser = FileQueryParser(query, "search")
-        search_query: SearchQuery = parser.parse_query()
 
-        path: Path = Path(".")
+        search_query: SearchQuery = examine_search_query(parser, results)
         columns: list[str] = results[1]
 
-        if results[0]:
-            path = path.resolve()
-
-        assert callable(search_query.condition)
-        assert search_query.path == path
         assert [field.field for field in search_query.fields] == columns
-        assert search_query.columns == columns
 
     @pytest.mark.parametrize(
         ("subquery", "results"),
@@ -85,21 +106,12 @@ class TestFileQueryParser:
         """
 
         query: list[str] = tools.parse_query(subquery)
-
         parser = FileQueryParser(query, "search")
-        search_query: SearchQuery = parser.parse_query()
 
-        path: Path = Path(".")
+        search_query: SearchQuery = examine_search_query(parser, results)
         units: list[str] = results[1]
-        columns: list[str] = results[2]
 
-        if results[0]:
-            path = path.resolve()
-
-        assert callable(search_query.condition)
-        assert search_query.path == path
         assert [field.unit for field in search_query.fields] == units
-        assert search_query.columns == columns
 
 
 class TestDirectoryQueryParser:
@@ -133,17 +145,9 @@ class TestDirectoryQueryParser:
         """Tests the directory query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
-
         parser = DirectoryQueryParser(query, "search")
-        search_query: SearchQuery = parser.parse_query()
 
-        path: Path = Path(".")
+        search_query: SearchQuery = examine_search_query(parser, results)
         columns: list[str] = results[1]
 
-        if results[0]:
-            path = path.resolve()
-
-        assert callable(search_query.condition)
-        assert search_query.path == path
         assert [field.field for field in search_query.fields] == columns
-        assert search_query.columns == columns

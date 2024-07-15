@@ -101,9 +101,9 @@ class TestFileQueryParser:
         parser = FileQueryParser(query, "search")
 
         search_query: SearchQuery = examine_search_query(parser, results)
-        columns: list[str] = results[1]
+        fields: list[str] = results[1]
 
-        assert [field.field for field in search_query.fields] == columns
+        assert [field.field for field in search_query.fields] == fields
 
     @pytest.mark.parametrize(
         ("subquery", "results"),
@@ -180,6 +180,6 @@ class TestDirectoryQueryParser:
         parser = DirectoryQueryParser(query, "search")
 
         search_query: SearchQuery = examine_search_query(parser, results)
-        columns: list[str] = results[1]
+        fields: list[str] = results[1]
 
-        assert [field.field for field in search_query.fields] == columns
+        assert [field.field for field in search_query.fields] == fields

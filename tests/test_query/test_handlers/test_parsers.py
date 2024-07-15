@@ -59,6 +59,12 @@ class TestFileQueryParser:
         "size[MB], size[GB], size[B] FROM . WHERE size[MiB] > 10",
     ]
 
+    search_query_with_field_aliases_test_params = [
+        "filename, filepath FROM ABSOLUTE .",
+        "filepath, ctime,atime FROM . WHERE atime <= '2023-01-01' AND ctime >= '2006-02-20'",
+        "filename, type, mtime FROM RELATIVE . WHERE type = '.png'",
+    ]
+
     # The following list comprises results for the file search query test comprising sub-lists,
     # each with a length of 2. The first element of each sub-list signifies whether the path is
     # absolute (True) or relative (False) whereas the second element is a list comprising names
@@ -76,6 +82,12 @@ class TestFileQueryParser:
         [False, ["B", "B"], ["size", "size[B]"]],
         [True, ["b", "B", "TiB"], ["size[b]", "size", "size[TiB]"]],
         [False, ["MB", "GB", "B"], ["size[MB]", "size[GB]", "size[B]"]],
+    ]
+
+    search_query_with_field_aliases_test_results = [
+        [True, ["name", "path"], ["filename", "filepath"]],
+        [False, ["path", "create_time", "access_time"], ["filepath", "ctime", "atime"]],
+        [False, ["name", "filetype", "modify_time"], ["filename", "type", "mtime"]],
     ]
 
     @pytest.mark.parametrize(
@@ -112,6 +124,26 @@ class TestFileQueryParser:
         units: list[str] = results[1]
 
         assert [field.unit for field in search_query.fields] == units
+
+    @pytest.mark.parametrize(
+        ("subquery", "results"),
+        zip(
+            search_query_with_field_aliases_test_params,
+            search_query_with_field_aliases_test_results,
+        ),
+    )
+    def test_search_query_with_field_aliases(self, subquery, results) -> None:
+        """
+        Tests the file query parser with search queries comprising field aliases.
+        """
+
+        query: list[str] = tools.parse_query(subquery)
+        parser = FileQueryParser(query, "search")
+
+        search_query: SearchQuery = examine_search_query(parser, results)
+        fields: list[str] = results[1]
+
+        assert [field.field for field in search_query.fields] == fields
 
 
 class TestDirectoryQueryParser:

@@ -204,6 +204,12 @@ class TestDirectoryQueryParser:
         "filename, mtime FROM RELATIVE . WHERE mtime BETWEEN ('2021-03-12', '2021-04-12')",
     ]
 
+    delete_query_test_params = [
+        "FROM ABSOLUTE .",
+        "FROM . WHERE name IN ('reports', 'media') AND 'fise' in parent",
+        "FROM RELATIVE . WHERE atime <= '2012-02-17' OR ctime <= '2015-03-23'",
+    ]
+
     # The following are test results for the search query tests comprising sub-lists, each with
     # a variable length where the first element of each of them signifies whether the path is
     # absolute (True) or relative (Fasle) whereas the last element in it is a list comprising
@@ -223,6 +229,12 @@ class TestDirectoryQueryParser:
         [False, ["path", "create_time", "access_time"], ["filepath", "ctime", "atime"]],
         [False, ["name", "modify_time"], ["filename", "mtime"]],
     ]
+
+    # The following are test results for the delete query tests and comprise boolean objects
+    # associated with the corresponding delete queries. These boolean objects signify whether
+    # the path type in the query is absolute (True) or relative (False).
+
+    delete_query_test_results = [True, False, False]
 
     @pytest.mark.parametrize(
         ("subquery", "results"),
@@ -258,3 +270,15 @@ class TestDirectoryQueryParser:
         fields: list[str] = results[1]
 
         assert [field.field for field in search_query.fields] == fields
+
+    @pytest.mark.parametrize(
+        ("subquery", "is_absolute"),
+        zip(delete_query_test_params, delete_query_test_results),
+    )
+    def test_delete_query(self, subquery: str, is_absolute: bool) -> None:
+        """Tests the file query parser with delete queries."""
+
+        query: list[str] = tools.parse_query(subquery)
+        parser = FileQueryParser(query, "delete")
+
+        examine_delete_query(parser, is_absolute)

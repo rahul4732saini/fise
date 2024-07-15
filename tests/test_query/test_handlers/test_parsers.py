@@ -65,10 +65,12 @@ class TestFileQueryParser:
         "filename, type, mtime FROM RELATIVE . WHERE type = '.png'",
     ]
 
-    # The following list comprises results for the file search query test comprising sub-lists,
-    # each with a length of 2. The first element of each sub-list signifies whether the path is
-    # absolute (True) or relative (False) whereas the second element is a list comprising names
-    # of the search fields.
+    # The following are test results for the search query tests comprising sub-lists, each with
+    # a variable length where the first element of each of them signifies whether the path is
+    # absolute (True) or relative (Fasle) whereas the last element in it is a list comprising
+    # names of the search fields. All the remaining objects within the list are test specific
+    # and may differ in different tests.
+
     search_query_test_results = [
         [False, list(constants.FILE_FIELDS)],
         [True, ["name", "path", "parent"]],
@@ -163,10 +165,12 @@ class TestDirectoryQueryParser:
         "filename, mtime FROM RELATIVE . WHERE mtime BETWEEN ('2021-03-12', '2021-04-12')",
     ]
 
-    # The following list comprises results for the file search query test comprising sub-lists,
-    # each with a length of 2. The first element of each sub-list signifies whether the path is
-    # absolute (True) or relative (False) whereas the second element is a list comprising names
-    # of the search fields.
+    # The following are test results for the search query tests comprising sub-lists, each with
+    # a variable length where the first element of each of them signifies whether the path is
+    # absolute (True) or relative (Fasle) whereas the last element in it is a list comprising
+    # names of the search fields. All the remaining objects within the list are test specific
+    # and may differ in different tests.
+
     search_query_test_results = [
         [False, list(constants.DIR_FIELDS)],
         [True, ["name", "path", "parent"]],

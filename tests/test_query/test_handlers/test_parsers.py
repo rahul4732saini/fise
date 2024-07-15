@@ -123,7 +123,7 @@ class TestFileQueryParser:
         ("subquery", "results"),
         zip(search_query_test_params, search_query_test_results),
     )
-    def test_search_query(self, subquery, results) -> None:
+    def test_search_query(self, subquery: str, results: list[Any]) -> None:
         """Tests the file query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
@@ -141,7 +141,9 @@ class TestFileQueryParser:
             search_query_with_size_fields_test_results,
         ),
     )
-    def test_search_query_with_size_fields(self, subquery, results) -> None:
+    def test_search_query_with_size_fields(
+        self, subquery: str, results: list[Any]
+    ) -> None:
         """
         Tests the file query parser with search queries comprising size fields.
         """
@@ -161,7 +163,9 @@ class TestFileQueryParser:
             search_query_with_field_aliases_test_results,
         ),
     )
-    def test_search_query_with_field_aliases(self, subquery, results) -> None:
+    def test_search_query_with_field_aliases(
+        self, subquery: str, results: list[Any]
+    ) -> None:
         """
         Tests the file query parser with search queries comprising field aliases.
         """
@@ -313,7 +317,7 @@ class TestDirectoryQueryParser:
         ("subquery", "results"),
         zip(search_query_test_params, search_query_test_results),
     )
-    def test_search_query(self, subquery, results) -> None:
+    def test_search_query(self, subquery: str, results: list[Any]) -> None:
         """Tests the directory query parser with search queries."""
 
         query: list[str] = tools.parse_query(subquery)
@@ -331,7 +335,9 @@ class TestDirectoryQueryParser:
             search_query_with_field_aliases_test_results,
         ),
     )
-    def test_search_query_with_field_aliases(self, subquery, results) -> None:
+    def test_search_query_with_field_aliases(
+        self, subquery: str, results: list[Any]
+    ) -> None:
         """
         Tests the file query parser with search queries comprising field aliases.
         """

@@ -13,7 +13,7 @@
 
 <h2 align=center>Description</h2>
 
-**FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and delete operations. It empowers users with the ability to perform comprehensive operations using intuitive SQL-like commands. It streamlines file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility allows exporting search records to files and databases in a professional manner. Ideal for developers, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for all file system operations.
+**FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and delete operations. It empowers users with the ability to perform comprehensive operations using intuitive SQL-like commands. It streamlines file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility also allows exporting search records to files and databases in a professional manner. Ideal for developers, data analysts, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for search and delete operations.
 
 <h2 align=center>Features</h2>
 

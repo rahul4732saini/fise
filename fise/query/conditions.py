@@ -168,24 +168,26 @@ class ConditionParser:
         condition for an `IN`, `BETWEEN` or `LIKE` operation.
         """
 
-        if operator == "like":
-            if not self._string_pattern.match(operand):
-                raise QueryParseError(
-                    f"Invalid query pattern around {' '.join(self._query)!r}"
-                )
-
-            try:
-                return re.compile(operand[1:-1])
-
-            except re.error:
-                raise QueryParseError(
-                    f"Invalid regex pattern {operand} specified in query conditions"
-                )
-
         # In case of an `IN` or `BETWEEN` operation, the
         # operand is parsed using the following method.
-        else:
+        if operator != "like":
             return self._parse_collective_operand(operand, operator)
+
+        # The operand is parsed using the following
+        # mechanism in case of a `LIKE` operation.
+
+        elif not self._string_pattern.match(operand):
+            raise QueryParseError(
+                f"Invalid query pattern around {' '.join(self._query)!r}"
+            )
+
+        try:
+            return re.compile(operand[1:-1])
+
+        except re.error:
+            raise QueryParseError(
+                f"Invalid regex pattern {operand} specified in query conditions"
+            )
 
     def _extract_condition_elements(self, condition: list[str]) -> list[str]:
         """

@@ -91,7 +91,7 @@ class ConditionParser:
 
         if field.lower().startswith("size"):
             return Size.from_string(field)
-        
+
         field = field.lower()
         field = self._field_aliases.get(field, field)
 
@@ -174,7 +174,13 @@ class ConditionParser:
                     f"Invalid query pattern around {' '.join(self._query)!r}"
                 )
 
-            return re.compile(operand[1:-1])
+            try:
+                return re.compile(operand[1:-1])
+
+            except re.error:
+                raise QueryParseError(
+                    f"Invalid regex pattern {operand} specified in query conditions"
+                )
 
         # In case of an `IN` or `BETWEEN` operation, the
         # operand is parsed using the following method.

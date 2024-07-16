@@ -35,7 +35,7 @@
 
 This guide offers a basic overview of the utility, highlighting some of the commonly used queries. It enables users to efficiently search, query, and manipulate files and directories across different operating systems.
 
-**FiSE** offers two broad categories of operations, namely **Search** and **Delete**. These operations can be performed on files, file contents, and directories, with the exception for file contents for the Delete operation.
+**FiSE** offers two broad categories of operations, namely **Search** and **Delete**. These operations can be performed on files, file data, and directories, with the exception for file data for the Delete operation.
 
 For a deeper insight, please refer to the [Documentation](./doc/getting-started.md).
 
@@ -46,7 +46,7 @@ The basic syntax of the query is shown below:
 - Search Query:
 
 ```SQL
-(EXPORT FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SEARCH([<PARAMETERS>]) <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
+(EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>])) (R|RECURSIVE) SEARCH([<PARAMETERS>]) <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
 ```
 
 - Delete Query:
@@ -57,7 +57,7 @@ The basic syntax of the query is shown below:
 
 Where:
 
-1. `(EXPORT FILE[<FILEPATH>]|SQL[<DATABASE>])` is an optional command exclusive to the search operation and is used to export search records to a file or database.
+1. `(EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]))` is an optional command exclusive to the search operation and is used to export search records to a file or database.
 2. `(R|RECURSIVE)` is an optional command used to recursively include all the files and subdirectories present within the specified directory. If not explicitly specified, operations are only limited to the root directory.
 3. `(SEARCH|DELETE)[<PARAMETERS>]` defines the desired operation to be performed. Additional parameters can be specified within `[]` to toggle operations between different file types, and file-modes explicitly for data search operation.
 4. `<FIELDS>` is only limited to search operations for accessing metadata fields related to the searched files, data, or directories. Field names must be separated by commas. For more information about the different metadata fields that can be used in FiSE queries, please refer to the [Query Fields](./doc/query/query-fields.md) guide.
@@ -71,7 +71,7 @@ Several example for both query types are defined in the following sections.
 
 ### Overview of Search operation
 
-The **Search** operation encompasses the ability to query files, file contents, and directories facilitating precise retrieval by allowing users to filter records based on specified search conditions.
+The **Search** operation encompasses the ability to search files, file data, and directories facilitating precise retrieval by allowing users to filter records based on specified search conditions.
 
 #### Search Query Syntax
 
@@ -84,13 +84,13 @@ EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT([TYPE FILE]) <FIE
 - Data Search Query:
 
 ```SQL
-EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DATA(, MODE (TEXT|BYTES))] <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
+(EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>])) (R|RECURSIVE) SELECT[TYPE DATA(, MODE (TEXT|BYTES))] <FIELDS> FROM (RELATIVE|ABSOLUTE) (<FILEPATH>|<DIRECTORYPATH>) (WHERE <CONDITIONS>)
 ```
 
 - Directory Search Query:
 
 ```SQL
-EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>]) (R|RECURSIVE) SELECT[TYPE DIR] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
+(EXPORT (FILE[<FILEPATH>]|SQL[<DATABASE>])) (R|RECURSIVE) SELECT[TYPE DIR] <FIELDS> FROM (RELATIVE|ABSOLUTE) <DIRECTORYPATH> (WHERE <CONDITIONS>)
 ```
 
 #### Search Query Examples

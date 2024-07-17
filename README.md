@@ -2,7 +2,9 @@
 <img src="assets/fise.svg" width=400 align=center>
 </h1>
 
+<a href="https://github.com/rahul4732saini/fise/actions/workflows/pytest.yml"><img src="https://github.com/rahul4732saini/fise/workflows/Pytest/badge.svg" alt="Pytest" /></a>
 <a href="https://www.codefactor.io/repository/github/rahul4732saini/fise"><img src="https://www.codefactor.io/repository/github/rahul4732saini/fise/badge" alt="CodeFactor"></a>
+
 <a href="https://www.github.com/rahul4732saini/fise"><img src="https://img.shields.io/badge/status-beta-yellow?maxAge=60" alt="projectStatus"></a>
 <a href="https://www.github.com/rahul4732saini/fise"><img src="https://img.shields.io/badge/python-3.10+-blue?label=Python&maxAge=60" alt="pythonVersion"></a>
 <a href="https://github.com/rahul4732saini/fise/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?maxAge=60" alt="License"></a>

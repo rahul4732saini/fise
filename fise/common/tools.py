@@ -92,9 +92,8 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     except PermissionError:
         Alert(f"Permission Error: Skipping directory '{directory}'")
 
-        # Yields from a tuple to not disrupt the proper functioning of
-        # the function if the `yield from get_files(...)` statement is
-        # to be executed in case the function is executed recursively.
+        # Yields from an empty tuple to not disrupt
+        # the proper functioning of the function.
         yield from ()
 
 
@@ -116,15 +115,14 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
 
             if recursive:
                 yield from get_directories(path, recursive)
-            
+
             yield path
 
     except PermissionError:
         Alert(f"Permission Error: Skipping directory '{directory}'")
 
-        # Yields from a tuple to not disrupt the proper functioning of the
-        # function if the `yield from get_directories(...)` statement is
-        # to be executed in case the function is executed recursively.
+        # Yields from an empty tuple to not disrupt
+        # the proper functioning of the function.
         yield from ()
 
 

@@ -154,8 +154,8 @@ class ConditionParser:
 
         if operator == "between" and len(operands) != 2:
             raise QueryParseError(
-                "The tuple specified for `BETWEEN` conditional "
-                "operation must only comprises two elements."
+                "The tuple specified for the `BETWEEN` "
+                "operation must only comprise two elements."
             )
 
         return operands

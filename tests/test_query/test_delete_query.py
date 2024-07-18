@@ -11,7 +11,7 @@ import pandas as pd
 import reset_tests
 from fise.query import QueryHandler
 
-DELETE_QUERY_TEST_RECORDS_FILE = Path(__file__).parent / "test_delete_query.hdf"
+TEST_RECORDS_FILE = Path(__file__).parent / "test_delete_query.hdf"
 TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 TEST_DIRECTORY_LISTINGS_FILE = TEST_DIRECTORY.parent / "test_directory.hdf"
@@ -43,7 +43,7 @@ def verify_delete_query(path: str) -> None:
 
     # File and directories to be exempted during verification as
     # they are meant to be removed during the delete operation.
-    records: pd.Series = read_hdf(DELETE_QUERY_TEST_RECORDS_FILE, path)
+    records: pd.Series = read_hdf(TEST_RECORDS_FILE, path)
 
     for i in FILE_DIR_TEST_DIRECTORY_LISTINGS:
         if (FILE_DIR_TEST_DIRECTORY / i).exists() or i in records.values:

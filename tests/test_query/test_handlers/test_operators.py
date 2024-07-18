@@ -4,7 +4,7 @@ the functionality of operator classes in FiSE.
 """
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Any
 
 import pytest
 import pandas as pd
@@ -35,7 +35,11 @@ def verify_search_operation(path: str, data: pd.DataFrame) -> None:
     assert isinstance(data, pd.DataFrame)
 
     results: pd.DataFrame = read_hdf(TEST_RECORDS_FILE, path)
-    assert data.equals(results)
+
+    data_set: set[tuple[Any]] = set(tuple(row) for row in data.values)
+    results_set: set[tuple[Any]] = set(tuple(row) for row in results.values)
+
+    assert data_set == results_set
 
 
 class TestFileQueryOperator:

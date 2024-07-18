@@ -51,21 +51,22 @@ class TestFileQueryOperator:
         return file.name in ("unknown.mp3", "runaway.mp3", "birthday.avi")
 
     search_operation_test_params = [
-        (1, Path(FILE_DIR_TEST_DIRECTORY), False, ["name", "filetype"], condition1),
-        (2, Path(FILE_DIR_TEST_DIRECTORY / "reports"), True, ["name"], condition2),
+        (1, True, Path(FILE_DIR_TEST_DIRECTORY), False, ["name", "filetype"], condition1),
+        (2, True, Path(FILE_DIR_TEST_DIRECTORY / "reports"), True, ["name"], condition2),
     ]
 
     search_operation_with_size_fields_test_params = [
-        (1, Path(FILE_DIR_TEST_DIRECTORY), True, ["filename", "type"], condition3),
+        (1, True, Path(FILE_DIR_TEST_DIRECTORY), True, ["filename", "type"], condition3),
     ]
 
     @pytest.mark.parametrize(
-        ("index", "directory", "recursive", "columns", "condition"),
+        ("index", "verify", "directory", "recursive", "columns", "condition"),
         search_operation_test_params,
     )
     def test_search_operation(
         self,
         index: int,
+        verify: bool,
         directory: Path,
         recursive: bool,
         columns: list[str],
@@ -78,15 +79,17 @@ class TestFileQueryOperator:
         operator = FileQueryOperator(directory, recursive)
         data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
 
-        verify_search_operation(f"/file/search/test{index}", data)
+        if verify:
+            verify_search_operation(f"/file/search/test{index}", data)
 
     @pytest.mark.parametrize(
-        ("index", "directory", "recursive", "columns", "condition"),
+        ("index", "verify", "directory", "recursive", "columns", "condition"),
         search_operation_with_size_fields_test_params,
     )
     def test_search_operation_with_field_aliases(
         self,
         index: int,
+        verify: bool,
         directory: Path,
         recursive: bool,
         columns: list[str],
@@ -102,4 +105,5 @@ class TestFileQueryOperator:
         operator = FileQueryOperator(directory, recursive)
         data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
 
-        verify_search_operation(f"/file/search2/test{index}", data)
+        if verify:
+            verify_search_operation(f"/file/search2/test{index}", data)

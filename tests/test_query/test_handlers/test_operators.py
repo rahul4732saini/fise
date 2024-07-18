@@ -9,7 +9,8 @@ from typing import Callable
 import pytest
 import pandas as pd
 
-from fise.shared import File, Field
+from fise.shared import File, Field, Size
+from fise.common import constants
 from fise.query.operators import FileQueryOperator
 
 
@@ -54,6 +55,10 @@ class TestFileQueryOperator:
         (2, Path(FILE_DIR_TEST_DIRECTORY / "reports"), True, ["name"], condition2),
     ]
 
+    search_operation_with_size_fields_test_params = [
+        (1, Path(FILE_DIR_TEST_DIRECTORY), True, ["filename", "type"], condition3),
+    ]
+
     @pytest.mark.parametrize(
         ("index", "directory", "recursive", "columns", "condition"),
         search_operation_test_params,
@@ -74,3 +79,27 @@ class TestFileQueryOperator:
         data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
 
         verify_search_operation(f"/file/search/test{index}", data)
+
+    @pytest.mark.parametrize(
+        ("index", "directory", "recursive", "columns", "condition"),
+        search_operation_with_size_fields_test_params,
+    )
+    def test_search_operation_with_field_aliases(
+        self,
+        index: int,
+        directory: Path,
+        recursive: bool,
+        columns: list[str],
+        condition: Callable[[File], bool],
+    ) -> None:
+        """
+        Tests file query operator with the search
+        operation comprising field aliases.
+        """
+
+        fields: list[Size] = [Field(constants.FILE_FIELD_ALIASES[i]) for i in columns]
+
+        operator = FileQueryOperator(directory, recursive)
+        data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
+
+        verify_search_operation(f"/file/search2/test{index}", data)

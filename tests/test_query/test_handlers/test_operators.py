@@ -61,7 +61,7 @@ class TestFileQueryOperator:
         (4, False, ["", False, ["parent", "create_time"], condition1]),
     ]
 
-    search_operation_with_size_fields_test_params = [
+    search_operation_with_fields_alias_test_params = [
         (1, True, ["", True, ["filename", "type"], condition3]),
         (2, False, ["media", False, ["ctime", "atime", "mtime"], condition1]),
         (3, False, ["docs", True, ["filepath", "type", "ctime"], condition2]),
@@ -84,7 +84,7 @@ class TestFileQueryOperator:
             verify_search_operation(f"/file/search/test{index}", data)
 
     @pytest.mark.parametrize(
-        ("index", "verify", "params"), search_operation_with_size_fields_test_params
+        ("index", "verify", "params"), search_operation_with_fields_alias_test_params
     )
     def test_search_operation_with_field_aliases(
         self, index: int, verify: bool, params: list[Any]

@@ -236,7 +236,7 @@ class QueryHandler:
                 skip_err = True
             else:
                 raise QueryParseError(
-                    f"Invalid parameter {param[0]!r} for search operation."
+                    f"Invalid parameter {param[0]!r} for delete operation."
                 )
 
         if operand == "data":

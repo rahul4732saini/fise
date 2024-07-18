@@ -56,7 +56,7 @@ class FileQueryOperator:
 
     def get_dataframe(
         self,
-        fields: list[Field],
+        fields: list[Field | Size],
         columns: list[str],
         condition: Callable[[File], bool],
     ) -> pd.DataFrame:

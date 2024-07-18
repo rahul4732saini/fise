@@ -4,7 +4,7 @@ the functionality of operator classes in FiSE.
 """
 
 from pathlib import Path
-from typing import Callable, Any
+from typing import Any
 
 import pytest
 import pandas as pd
@@ -55,63 +55,49 @@ class TestFileQueryOperator:
         return file.name in ("unknown.mp3", "runaway.mp3", "birthday.avi")
 
     search_operation_test_params = [
-        (1, True, "", False, ["name", "filetype"], condition1),
-        (2, True, "reports", True, ["name"], condition2),
-        (3, False, "", False, ["path", "access_time"], condition2),
-        (4, False, "", False, ["parent", "create_time"], condition1),
+        (1, True, ["", False, ["name", "filetype"], condition1]),
+        (2, True, ["reports", True, ["name"], condition2]),
+        (3, False, ["", False, ["path", "access_time"], condition2]),
+        (4, False, ["", False, ["parent", "create_time"], condition1]),
     ]
 
     search_operation_with_size_fields_test_params = [
-        (1, True, "", True, ["filename", "type"], condition3),
-        (2, False, "media", False, ["ctime", "atime", "mtime"], condition1),
-        (3, False, "docs", True, ["filepath", "type", "ctime"], condition2),
+        (1, True, ["", True, ["filename", "type"], condition3]),
+        (2, False, ["media", False, ["ctime", "atime", "mtime"], condition1]),
+        (3, False, ["docs", True, ["filepath", "type", "ctime"], condition2]),
     ]
 
     @pytest.mark.parametrize(
-        ("index", "verify", "directory", "recursive", "columns", "condition"),
-        search_operation_test_params,
+        ("index", "verify", "params"), search_operation_test_params
     )
     def test_search_operation(
-        self,
-        index: int,
-        verify: bool,
-        directory: Path,
-        recursive: bool,
-        columns: list[str],
-        condition: Callable[[File], bool],
+        self, index: int, verify: bool, params: list[Any]
     ) -> None:
         """Tests file query operator with the search operation."""
 
-        fields: list[Field] = [Field(name) for name in columns]
+        fields: list[Field] = [Field(name) for name in params[2]]
 
-        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / directory, recursive)
-        data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
+        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
+        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/file/search/test{index}", data)
 
     @pytest.mark.parametrize(
-        ("index", "verify", "directory", "recursive", "columns", "condition"),
-        search_operation_with_size_fields_test_params,
+        ("index", "verify", "params"), search_operation_with_size_fields_test_params
     )
     def test_search_operation_with_field_aliases(
-        self,
-        index: int,
-        verify: bool,
-        directory: Path,
-        recursive: bool,
-        columns: list[str],
-        condition: Callable[[File], bool],
+        self, index: int, verify: bool, params: list[Any]
     ) -> None:
         """
         Tests file query operator with the search
         operation comprising field aliases.
         """
 
-        fields: list[Size] = [Field(constants.FILE_FIELD_ALIASES[i]) for i in columns]
+        fields: list[Size] = [Field(constants.FILE_FIELD_ALIASES[i]) for i in params[2]]
 
-        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / directory, recursive)
-        data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
+        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
+        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/file/search2/test{index}", data)

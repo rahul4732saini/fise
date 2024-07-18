@@ -51,14 +51,14 @@ class TestFileQueryOperator:
         return file.name in ("unknown.mp3", "runaway.mp3", "birthday.avi")
 
     search_operation_test_params = [
-        (1, True, Path(FILE_DIR_TEST_DIRECTORY), False, ["name", "filetype"], condition1),
-        (2, True, Path(FILE_DIR_TEST_DIRECTORY / "reports"), True, ["name"], condition2),
-        (3, False, Path(FILE_DIR_TEST_DIRECTORY), False, ["path", "access_time"], condition2),
-        (4, False, Path(FILE_DIR_TEST_DIRECTORY), False, ["parent", "create_time"], condition1),
+        (1, True, "", False, ["name", "filetype"], condition1),
+        (2, True, "reports", True, ["name"], condition2),
+        (3, False, "", False, ["path", "access_time"], condition2),
+        (4, False, "", False, ["parent", "create_time"], condition1),
     ]
 
     search_operation_with_size_fields_test_params = [
-        (1, True, Path(FILE_DIR_TEST_DIRECTORY), True, ["filename", "type"], condition3),
+        (1, True, "", True, ["filename", "type"], condition3),
     ]
 
     @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ class TestFileQueryOperator:
 
         fields: list[Field] = [Field(name) for name in columns]
 
-        operator = FileQueryOperator(directory, recursive)
+        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / directory, recursive)
         data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
 
         if verify:
@@ -104,7 +104,7 @@ class TestFileQueryOperator:
 
         fields: list[Size] = [Field(constants.FILE_FIELD_ALIASES[i]) for i in columns]
 
-        operator = FileQueryOperator(directory, recursive)
+        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / directory, recursive)
         data: pd.DataFrame = operator.get_dataframe(fields, columns, condition)
 
         if verify:

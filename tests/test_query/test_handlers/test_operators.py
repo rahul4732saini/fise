@@ -53,6 +53,8 @@ class TestFileQueryOperator:
     search_operation_test_params = [
         (1, True, Path(FILE_DIR_TEST_DIRECTORY), False, ["name", "filetype"], condition1),
         (2, True, Path(FILE_DIR_TEST_DIRECTORY / "reports"), True, ["name"], condition2),
+        (3, False, Path(FILE_DIR_TEST_DIRECTORY), False, ["path", "access_time"], condition2),
+        (4, False, Path(FILE_DIR_TEST_DIRECTORY), False, ["parent", "create_time"], condition1),
     ]
 
     search_operation_with_size_fields_test_params = [

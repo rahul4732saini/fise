@@ -59,6 +59,8 @@ class TestFileQueryOperator:
 
     search_operation_with_size_fields_test_params = [
         (1, True, "", True, ["filename", "type"], condition3),
+        (2, False, "media", False, ["ctime", "atime", "mtime"], condition1),
+        (3, False, "docs", True, ["filepath", "type", "ctime"], condition2),
     ]
 
     @pytest.mark.parametrize(

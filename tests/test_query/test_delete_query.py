@@ -40,6 +40,7 @@ def verify_delete_query(path: str) -> None:
     Verifies all the files or directories removed from the delete query by matching
     records stored at the specified path in the `test_delete_query.hdf` file.
     """
+    global FILE_DIR_TEST_DIRECTORY, TEST_RECORDS_FILE
 
     # File and directories to be exempted during verification as
     # they are meant to be removed during the delete operation.

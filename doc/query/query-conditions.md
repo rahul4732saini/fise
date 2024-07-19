@@ -57,6 +57,11 @@ Integers are whole numbers without any decimal points. They are typically used t
 
 Floats are numbers with decimal points. They can be used for more precise numerical comparisons within FiSE queries.
 
+
+### None
+
+Similar to the `NULL` keyword in SQL, FiSE uses `None` to represent empty values or undefined data. This can also be used within query conditions to verify the presence or absence of data.
+
 ### Arrays
 
 Arrays in FiSE queries are collections of values(strings, integers, floats, or metadata fields) enclosed within parentheses `()`, separated by commas. They allow users to specify multiple values for operations like membership checking (`IN` operation) or to check if a value lies within a specific range (`BETWEEN` operation).

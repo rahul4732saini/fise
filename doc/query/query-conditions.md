@@ -30,7 +30,7 @@ Operators are symbols that specify the type of operation to be performed within 
 - `IN` : Checks if a value is within an array of values. Eg: `name IN ("main.py", "classes.py")`
 - `BETWEEN` : Checks if a value lies within a range of values. Eg: `ctime BETWEEN ("2022-01-01", "2023-01-01")`
 
-### Logical Operators
+### Logical Operators | Condition Delimiters
 
 Also known as `delimiters`, these operators are used for separating conditions from one-another.
 

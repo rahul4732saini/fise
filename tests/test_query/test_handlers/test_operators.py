@@ -9,9 +9,9 @@ from typing import Any
 import pytest
 import pandas as pd
 
-from fise.shared import File, Field, Size
+from fise.shared import File, Directory, Field, Size
 from fise.common import constants
-from fise.query.operators import FileQueryOperator
+from fise.query.operators import FileQueryOperator, DirectoryQueryOperator
 
 
 FILE_DIR_TEST_DIRECTORY = Path(__file__).parents[2] / "test_directory/file_dir"
@@ -101,3 +101,38 @@ class TestFileQueryOperator:
 
         if verify:
             verify_search_operation(f"/file/search2/test{index}", data)
+
+
+class TestDirectoryQueryOperator:
+    """Tests the DirectoryQueryOperator class"""
+
+    def condition1(directory: Directory) -> bool:
+        return directory.name in ("docs", "media", "reports")
+
+    def condition2(directory: Directory) -> bool:
+        return directory.name in ("report-2021", "report-2022")
+
+    search_operation_test_params = [
+        (1, True, ["", False, ["name"], condition1]),
+        (2, False, ["reports", True, ["name", "access_time"], condition2]),
+        (3, False, ["", True, ["path", "parent", "create_time"], condition1]),
+        (4, False, ["reports", False, ["name", "modify_time"], condition2]),
+    ]
+
+    @pytest.mark.parametrize(
+        ("index", "verify", "params"), search_operation_test_params
+    )
+    def test_search_operation(
+        self, index: int, verify: bool, params: list[Any]
+    ) -> None:
+        """Tests directory query operator with the search operation."""
+
+        fields: list[Field] = [Field(name) for name in params[2]]
+
+        operator = DirectoryQueryOperator(
+            FILE_DIR_TEST_DIRECTORY / params[0], params[1]
+        )
+        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+
+        if verify:
+            verify_search_operation(f"/directory/search/test{index}", data)

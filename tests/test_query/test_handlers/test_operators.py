@@ -81,7 +81,7 @@ class TestFileQueryOperator:
     def test_search_operation(
         self, index: int, verify: bool, params: list[Any]
     ) -> None:
-        """Tests file query operator with the search operation."""
+        """Tests file query operator with search operations."""
 
         fields: list[Field] = [Field(name) for name in params[2]]
 
@@ -98,8 +98,8 @@ class TestFileQueryOperator:
         self, index: int, verify: bool, params: list[Any]
     ) -> None:
         """
-        Tests file query operator with the search
-        operation comprising field aliases.
+        Tests file query operator with search
+        operations comprising field aliases.
         """
 
         fields: list[Field] = [
@@ -147,7 +147,7 @@ class TestFileDataQueryOperator:
     def test_text_search_operation(
         self, index: int, verify: bool, params: list[Any]
     ) -> None:
-        """Tests file data query operator with the text search operation."""
+        """Tests file data query operator with text search operations."""
 
         fields: list[Field] = [Field(name) for name in params[2]]
 
@@ -165,7 +165,7 @@ class TestFileDataQueryOperator:
     def test_bytes_search_operation(
         self, index: int, verify: bool, params: list[Any]
     ) -> None:
-        """Tests file data query operator with the bytes search operation."""
+        """Tests file data query operator with bytes search operations."""
 
         fields: list[Field] = [Field(name) for name in params[2]]
 
@@ -205,7 +205,7 @@ class TestDirectoryQueryOperator:
     def test_search_operation(
         self, index: int, verify: bool, params: list[Any]
     ) -> None:
-        """Tests directory query operator with the search operation."""
+        """Tests directory query operator with search operations."""
 
         fields: list[Field] = [Field(name) for name in params[2]]
 
@@ -219,7 +219,10 @@ class TestDirectoryQueryOperator:
 
     @pytest.mark.parametrize(("params"), search_operation_with_fields_alias_test_params)
     def test_search_operation_with_field_aliases(self, params: list[Any]) -> None:
-        """Tests directory query operator with the search operation."""
+        """
+        Tests directory query operator with search
+        operations comprising field aliases.
+        """
 
         fields: list[Field] = [
             Field(constants.DIR_FIELD_ALIASES[name]) for name in params[2]

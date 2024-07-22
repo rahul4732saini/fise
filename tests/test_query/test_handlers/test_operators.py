@@ -136,6 +136,11 @@ class TestFileDataQueryOperator:
         (2, True, ["documents", False, ["lineno", "dataline"], condition2]),
     ]
 
+    bytes_search_operation_test_params = [
+        (1, True, ["reports", False, ["dataline"], condition3]),
+        (2, True, ["", True, ["name", "dataline", "filetype"], condition4]),
+    ]
+
     @pytest.mark.parametrize(
         ("index", "verify", "params"), text_search_operation_test_params
     )
@@ -153,6 +158,24 @@ class TestFileDataQueryOperator:
 
         if verify:
             verify_search_operation(f"/data/text/search/test{index}", data)
+
+    @pytest.mark.parametrize(
+        ("index", "verify", "params"), bytes_search_operation_test_params
+    )
+    def test_bytes_search_operation(
+        self, index: int, verify: bool, params: list[Any]
+    ) -> None:
+        """Tests file data query operator with the bytes search operation."""
+
+        fields: list[Field] = [Field(name) for name in params[2]]
+
+        operator = FileDataQueryOperator(
+            DATA_TEST_DIRECTORY / params[0], params[1], "bytes"
+        )
+        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+
+        if verify:
+            verify_search_operation(f"/data/bytes/search/test{index}", data)
 
 
 class TestDirectoryQueryOperator:

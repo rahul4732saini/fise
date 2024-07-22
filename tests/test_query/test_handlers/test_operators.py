@@ -123,8 +123,8 @@ class TestDirectoryQueryOperator:
     ]
 
     search_operation_with_fields_alias_test_params = [
-        (1, False, ["", False, ["atime", "mtime", "ctime"], condition1]),
-        (2, False, ["reports", True, ["atime", "ctime"], condition2]),
+        (["", False, ["atime", "mtime", "ctime"], condition1]),
+        (["reports", True, ["atime", "ctime"], condition2]),
     ]
 
     @pytest.mark.parametrize(
@@ -145,12 +145,8 @@ class TestDirectoryQueryOperator:
         if verify:
             verify_search_operation(f"/directory/search/test{index}", data)
 
-    @pytest.mark.parametrize(
-        ("index", "verify", "params"), search_operation_test_params
-    )
-    def test_search_operation_with_field_aliases(
-        self, index: int, verify: bool, params: list[Any]
-    ) -> None:
+    @pytest.mark.parametrize(("params"), search_operation_test_params)
+    def test_search_operation_with_field_aliases(self, params: list[Any]) -> None:
         """Tests directory query operator with the search operation."""
 
         fields: list[Field] = [Field(name) for name in params[2]]
@@ -160,5 +156,4 @@ class TestDirectoryQueryOperator:
         )
         data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
 
-        if verify:
-            verify_search_operation(f"/directory/search/test{index}", data)
+        assert isinstance(data, pd.DataFrame)

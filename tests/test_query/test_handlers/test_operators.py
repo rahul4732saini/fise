@@ -13,8 +13,11 @@ from fise.shared import File, Directory, Field, Size
 from fise.common import constants
 from fise.query.operators import FileQueryOperator, DirectoryQueryOperator
 
+TEST_DIRECTORY = Path(__file__).parents[2] / "test_directory"
 
-FILE_DIR_TEST_DIRECTORY = Path(__file__).parents[2] / "test_directory/file_dir"
+DATA_TEST_DIRECTORY = TEST_DIRECTORY / "data"
+FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
+
 TEST_RECORDS_FILE = Path(__file__).parent / "test_operators.hdf"
 
 

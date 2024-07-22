@@ -6,11 +6,9 @@ This section provides a detailed overview of the various metadata fields that ca
 
 1. **name**:
     - Extracts the name of the directory.
-    - **Alias**: *filename*
 
 2. **path**:
     - Extracts the relative or absolute path of the directory based on the specified path type or if it is explicitly designated as ABSOLUTE in the query.
-    - **Alias**: *filepath*
 
 3. **parent**:
     - Extracts the relative or absolute path pf the parent directory based on the specified path type or if it is explicitly designated as ABSOLUTE in the query.
@@ -42,7 +40,15 @@ This section provides a detailed overview of the various metadata fields that ca
 
 ### File Metadata Fields
 
-**NOTE**: All metadata fields applicable to directories are also relevant for files, with the addition of the following specific fields:
+**NOTE**: All metadata fields applicable to directories are also relevant for files except the *name* and *path* field, with the addition of the following specific fields:
+
+1. **name**:
+    - Extracts the name of the file.
+    - **Alias**: *filename*
+
+2. **path**:
+    - Extracts the relative or absolute path of the file based on the specified path type or if it is explicitly designated as ABSOLUTE in the query.
+    - **Alias**: *filepath*
 
 1. **filetype**:
     - Extracts the filetype of file.

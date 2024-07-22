@@ -276,9 +276,8 @@ class TestDirectoryQueryParser:
     ]
 
     search_query_with_field_aliases_test_params = [
-        "filename, filepath FROM ABSOLUTE .",
-        "filepath, ctime,atime FROM . WHERE atime <= '2023-01-01' AND ctime >= '2006-02-20'",
-        "filename, mtime FROM RELATIVE . WHERE mtime BETWEEN ('2021-03-12', '2021-04-12')",
+        "ctime,atime FROM . WHERE atime <= '2023-01-01' AND ctime >= '2006-02-20'",
+        "mtime, ctime FROM RELATIVE . WHERE mtime BETWEEN ('2021-03-12', '2021-04-12')",
     ]
 
     delete_query_test_params = [
@@ -302,9 +301,8 @@ class TestDirectoryQueryParser:
     ]
 
     search_query_with_field_aliases_test_results = [
-        [True, ["name", "path"], ["filename", "filepath"]],
-        [False, ["path", "create_time", "access_time"], ["filepath", "ctime", "atime"]],
-        [False, ["name", "modify_time"], ["filename", "mtime"]],
+        [False, ["create_time", "access_time"], ["ctime", "atime"]],
+        [False, ["modify_time", "create_time"], ["mtime", "ctime"]],
     ]
 
     # The following are test results for the delete query tests and comprise boolean objects

@@ -97,7 +97,9 @@ class TestFileQueryOperator:
         operation comprising field aliases.
         """
 
-        fields: list[Size] = [Field(constants.FILE_FIELD_ALIASES[i]) for i in params[2]]
+        fields: list[Field] = [
+            Field(constants.FILE_FIELD_ALIASES[i]) for i in params[2]
+        ]
 
         operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
         data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
@@ -145,11 +147,13 @@ class TestDirectoryQueryOperator:
         if verify:
             verify_search_operation(f"/directory/search/test{index}", data)
 
-    @pytest.mark.parametrize(("params"), search_operation_test_params)
+    @pytest.mark.parametrize(("params"), search_operation_with_fields_alias_test_params)
     def test_search_operation_with_field_aliases(self, params: list[Any]) -> None:
         """Tests directory query operator with the search operation."""
 
-        fields: list[Field] = [Field(name) for name in params[2]]
+        fields: list[Field] = [
+            Field(constants.DIR_FIELD_ALIASES[name]) for name in params[2]
+        ]
 
         operator = DirectoryQueryOperator(
             FILE_DIR_TEST_DIRECTORY / params[0], params[1]

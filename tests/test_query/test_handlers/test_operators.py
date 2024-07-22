@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 import pandas as pd
 
-from fise.shared import File, Directory, Field, Size, DataLine
+from fise.shared import File, Directory, Field, DataLine
 from fise.common import constants
 from fise.query.operators import (
     FileDataQueryOperator,

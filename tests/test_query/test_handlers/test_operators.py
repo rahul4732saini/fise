@@ -9,9 +9,14 @@ from typing import Any
 import pytest
 import pandas as pd
 
-from fise.shared import File, Directory, Field, Size
+from fise.shared import File, Directory, Field, Size, DataLine
 from fise.common import constants
-from fise.query.operators import FileQueryOperator, DirectoryQueryOperator
+from fise.query.operators import (
+    FileDataQueryOperator,
+    FileQueryOperator,
+    DirectoryQueryOperator,
+)
+
 
 TEST_DIRECTORY = Path(__file__).parents[2] / "test_directory"
 
@@ -106,6 +111,48 @@ class TestFileQueryOperator:
 
         if verify:
             verify_search_operation(f"/file/search2/test{index}", data)
+
+
+class TestFileDataQueryOperator:
+    """Tests the FileDataQueryOperator class"""
+
+    def condition1(data: DataLine) -> bool:
+        return data.name in ("todo.txt", "specs.txt") and data.lineno in range(20)
+
+    def condition2(data: DataLine) -> bool:
+        return data.name in (
+            "Annual Financial Report 2023.txt",
+            "Customer Satisfaction Survey Results.txt",
+        ) and data.lineno in range(10)
+
+    def condition3(data: DataLine) -> bool:
+        return data.lineno in range(10)
+
+    def condition4(data: DataLine) -> bool:
+        return data.name in ("todo.txt", "report-2020.xlsx") and data.lineno in range(8)
+
+    text_search_operation_test_params = [
+        (1, True, ["", False, ["name", "lineno", "dataline"], condition1]),
+        (2, True, ["documents", False, ["lineno", "dataline"], condition2]),
+    ]
+
+    @pytest.mark.parametrize(
+        ("index", "verify", "params"), text_search_operation_test_params
+    )
+    def test_text_search_operation(
+        self, index: int, verify: bool, params: list[Any]
+    ) -> None:
+        """Tests file data query operator with the text search operation."""
+
+        fields: list[Field] = [Field(name) for name in params[2]]
+
+        operator = FileDataQueryOperator(
+            DATA_TEST_DIRECTORY / params[0], params[1], "text"
+        )
+        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+
+        if verify:
+            verify_search_operation(f"/data/text/search/test{index}", data)
 
 
 class TestDirectoryQueryOperator:

@@ -3,12 +3,21 @@ This module comprises test cases for verifying
 the functionality of operator classes in FiSE.
 """
 
+# The structural format of the attributes comprising test parameters
+# defined within test classes in this module is as described below:
+#
+#   1. Test parameters for search operations
+#
 # The attributes comprising test parameters for the search operations within the test
 # classes comprise sub-arrays, each with a length of 4 where the first element of each
 # of them signifies the index, the second signifies whether the test is verifiable (True)
 # or non-verifiable (False). The third element is an array comprising parameters for the
 # search operation in the following order (sub-directory, recursive, fields) wherease the
 # last element is a reference to the function comprising the filtering conditions.
+#
+# Some attributes may not adhere to these structures due to some exceptions in
+# the tests and will have an explicit structural description along with them.
+
 
 from pathlib import Path
 from typing import Any

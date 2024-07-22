@@ -3,6 +3,13 @@ This module comprises test cases for verifying
 the functionality of operator classes in FiSE.
 """
 
+# The attributes comprising test parameters for the search operations within the test
+# classes comprise sub-arrays, each with a length of 4 where the first element of each
+# of them signifies the index, the second signifies whether the test is verifiable (True)
+# or non-verifiable (False). The third element is an array comprising parameters for the
+# search operation in the following order (sub-directory, recursive, fields) wherease the
+# last element is a reference to the function comprising the filtering conditions.
+
 from pathlib import Path
 from typing import Any
 
@@ -216,6 +223,9 @@ class TestDirectoryQueryOperator:
 
         if verify:
             verify_search_operation(f"/directory/search/test{index}", data)
+
+    # The following method does not verify its tests as the generated data results
+    # are flexible and subject to change based on the execution environment.
 
     @pytest.mark.parametrize(("params"), search_operation_with_fields_alias_test_params)
     def test_search_operation_with_field_aliases(self, params: list[Any]) -> None:

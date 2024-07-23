@@ -11,11 +11,12 @@ import pandas as pd
 from fise.common import constants
 from fise.query import QueryHandler
 
-FILE_DIR_TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory/file_dir"
+TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
+FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 
 
 class TestFileSearchQuery:
-    """Tests the file search queries."""
+    """Tests the file search queries"""
 
     basic_query_syntax_test_params = [
         f"R SELECT * FROM '{FILE_DIR_TEST_DIRECTORY}'",
@@ -63,7 +64,7 @@ class TestFileSearchQuery:
 
 
 class TestDirSearchQuery:
-    """Tests the directory search queries."""
+    """Tests the directory search queries"""
 
     basic_query_syntax_test_params = [
         f"R SELECT[TYPE DIR] * FROM '{FILE_DIR_TEST_DIRECTORY}'",

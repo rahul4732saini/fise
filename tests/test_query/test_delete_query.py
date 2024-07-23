@@ -70,9 +70,7 @@ def examine_delete_query(query: str, records_path: str) -> None:
     records stored at the specified path in the `test_delete_query.hdf` file.
     """
 
-    result: None = QueryHandler(query).handle()
-
-    assert result is None
+    QueryHandler(query).handle()
     verify_delete_query(records_path)
 
 

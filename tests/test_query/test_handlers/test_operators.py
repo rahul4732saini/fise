@@ -264,6 +264,12 @@ class TestDirectoryQueryOperator:
     def condition2(directory: Directory) -> bool:
         return directory.name in ("report-2021", "report-2022")
 
+    def condition3(directory: Directory) -> bool:
+        return directory.name == "media"
+
+    def condition4(directory: Directory) -> bool:
+        return directory.name == "src"
+
     search_operation_test_params = [
         (1, True, ["", False, ["name"], condition1]),
         (2, False, ["reports", True, ["name", "access_time"], condition2]),

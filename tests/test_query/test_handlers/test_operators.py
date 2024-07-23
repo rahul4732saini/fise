@@ -282,6 +282,12 @@ class TestDirectoryQueryOperator:
         (["reports", True, ["atime", "ctime"], condition2]),
     ]
 
+    delete_operation_test_params = [
+        (1, ["", False, condition3, False]),
+        (2, ["reports", False, condition2, True]),
+        (3, ["", True, condition4, False]),
+    ]
+
     @pytest.mark.parametrize(
         ("index", "verify", "params"), search_operation_test_params
     )
@@ -320,3 +326,16 @@ class TestDirectoryQueryOperator:
         data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
 
         assert isinstance(data, pd.DataFrame)
+
+    @pytest.mark.parametrize(("index", "params"), delete_operation_test_params)
+    def test_delete_operation(self, index: int, params: str) -> None:
+        """Tests file query operation with delete operations."""
+
+        operator = DirectoryQueryOperator(
+            FILE_DIR_TEST_DIRECTORY / params[0], params[1]
+        )
+        data: None = operator.remove_directories(params[2], params[3])
+
+        assert data is None
+
+        verify_delete_operation(f"/directory/delete/test{index}")

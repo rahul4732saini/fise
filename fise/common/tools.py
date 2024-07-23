@@ -8,7 +8,7 @@ other classes and functions throughout the project.
 
 import getpass
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Any
 
 import numpy as np
 import pandas as pd
@@ -57,7 +57,7 @@ def parse_query(query: str) -> list[str]:
             token += char
 
         # Adds to list if the character is a top-level whitespace
-        # and `token` is not an nested or empty string.
+        # and `token` is not nested or an empty string.
         elif not cur and char.isspace():
             if token:
                 tokens.append(token)
@@ -135,7 +135,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     - file (Path): Path to the file.
     """
 
-    kwargs: dict[str, str] = {}
+    kwargs: dict[str, Any] = {}
 
     # String representation of the export method for exporting search records.
     export_method: str = constants.DATA_EXPORT_TYPES_MAP[file.suffix]

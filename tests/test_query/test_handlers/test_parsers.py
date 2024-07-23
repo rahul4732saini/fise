@@ -11,9 +11,9 @@ import pytest
 from fise.shared import SearchQuery, DeleteQuery
 from fise.common import tools, constants
 from fise.query.parsers import (
+    DirectoryQueryParser,
     FileQueryParser,
     FileDataQueryParser,
-    DirectoryQueryParser,
 )
 
 
@@ -113,8 +113,8 @@ class TestFileQueryParser:
         [False, ["name", "filetype", "modify_time"], ["filename", "type", "mtime"]],
     ]
 
-    # The following are test results for the delete query tests and comprise boolean objects
-    # associated with the corresponding delete queries. These boolean objects signify whether
+    # The following are test results for the delete query tests and comprise boolean
+    # objects associated with the delete queries. These boolean objects signify whether
     # the path type in the query is absolute (True) or relative (False).
 
     delete_query_test_results = [True, False, False]
@@ -288,7 +288,7 @@ class TestDirectoryQueryParser:
 
     # The following are test results for the search query tests comprising sub-lists, each with
     # a variable length where the first element of each of them signifies whether the path is
-    # absolute (True) or relative (Fasle) whereas the last element in it is a list comprising
+    # absolute (True) or relative (False) whereas the last element in it is a list comprising
     # names of the search fields. All the remaining objects within the list are test specific
     # and may differ in different tests.
 
@@ -305,8 +305,8 @@ class TestDirectoryQueryParser:
         [False, ["modify_time", "create_time"], ["mtime", "ctime"]],
     ]
 
-    # The following are test results for the delete query tests and comprise boolean objects
-    # associated with the corresponding delete queries. These boolean objects signify whether
+    # The following are test results for the delete query tests and comprise boolean
+    # objects associated with the delete queries. These boolean objects signify whether
     # the path type in the query is absolute (True) or relative (False).
 
     delete_query_test_results = [True, False, False]

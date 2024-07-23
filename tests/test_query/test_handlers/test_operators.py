@@ -119,15 +119,19 @@ def verify_delete_operation(path: str) -> None:
 class TestFileQueryOperator:
     """Tests the FileQueryOperator class"""
 
+    @staticmethod
     def condition1(file: File) -> bool:
         return file.filetype is not None
 
+    @staticmethod
     def condition2(file: File) -> bool:
         return not file.size
 
+    @staticmethod
     def condition3(file: File) -> bool:
         return file.name in ("unknown.mp3", "runaway.mp3", "birthday.avi")
 
+    @staticmethod
     def condition4(file: File) -> bool:
         return file.name in ("Q1.txt", "Q2.txt")
 
@@ -202,18 +206,22 @@ class TestFileQueryOperator:
 class TestFileDataQueryOperator:
     """Tests the FileDataQueryOperator class"""
 
+    @staticmethod
     def condition1(data: DataLine) -> bool:
         return data.name in ("todo.txt", "specs.txt") and data.lineno in range(20)
 
+    @staticmethod
     def condition2(data: DataLine) -> bool:
         return data.name in (
             "Annual Financial Report 2023.txt",
             "Customer Satisfaction Survey Results.txt",
         ) and data.lineno in range(10)
 
+    @staticmethod
     def condition3(data: DataLine) -> bool:
         return data.lineno in range(10)
 
+    @staticmethod
     def condition4(data: DataLine) -> bool:
         return data.name in ("todo.txt", "report-2020.xlsx") and data.lineno in range(8)
 
@@ -267,15 +275,19 @@ class TestFileDataQueryOperator:
 class TestDirectoryQueryOperator:
     """Tests the DirectoryQueryOperator class"""
 
+    @staticmethod
     def condition1(directory: Directory) -> bool:
         return directory.name in ("docs", "media", "reports")
 
+    @staticmethod
     def condition2(directory: Directory) -> bool:
         return directory.name in ("report-2021", "report-2022")
 
+    @staticmethod
     def condition3(directory: Directory) -> bool:
         return directory.name == "media"
 
+    @staticmethod
     def condition4(directory: Directory) -> bool:
         return directory.name == "src"
 

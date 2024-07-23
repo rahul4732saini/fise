@@ -135,6 +135,12 @@ class TestFileQueryOperator:
         (3, False, ["docs", True, ["filepath", "type", "ctime"], condition2]),
     ]
 
+    delete_operation_test_params = [
+        (1, ["", False, condition1, False]),
+        (2, ["reports", True, condition4, False]),
+        (3, ["media", False, condition3, True]),
+    ]
+
     @pytest.mark.parametrize(
         ("index", "verify", "params"), search_operation_test_params
     )
@@ -171,6 +177,17 @@ class TestFileQueryOperator:
 
         if verify:
             verify_search_operation(f"/file/search2/test{index}", data)
+
+    @pytest.mark.parametrize(("index", "params"), delete_operation_test_params)
+    def test_delete_operation(self, index: int, params: str) -> None:
+        """Tests file query operation with delete operations."""
+
+        operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
+        data: None = operator.remove_files(params[2], params[3])
+
+        assert data is None
+
+        verify_delete_operation(f"/file/delete/test{index}")
 
 
 class TestFileDataQueryOperator:

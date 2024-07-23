@@ -3,6 +3,7 @@ This module comprises test cases for verifying
 the functionality of operator classes in FiSE.
 """
 
+# NOTE:
 # The structural format of the attributes comprising test parameters
 # defined within test classes in this module is as described below:
 #
@@ -12,11 +13,19 @@ the functionality of operator classes in FiSE.
 # classes comprise sub-arrays, each with a length of 4 where the first element of each
 # of them signifies the index, the second signifies whether the test is verifiable (True)
 # or non-verifiable (False). The third element is an array comprising parameters for the
-# search operation in the following order (sub-directory, recursive, fields) wherease the
+# search operation in the following order (directory, recursive, fields) whereas the
 # last element is a reference to the function comprising the filtering conditions.
 #
-# Some attributes may not adhere to these structures due to some exceptions in
-# the tests and will have an explicit structural description along with them.
+#   2. Test parameters for delete operations
+#
+# The attributes comprising test parameters for the delete operations within the test classes
+# comprise sub-arrays, each with a length of 2 where the first element of each of them signify
+# the index, whereas the second element is another sub-array comprising parameters for the
+# delete operation in the following order (directory, recursive, condition, skip_err).
+
+# NOTE:
+# Some attributes may not adhere to the attribute structures mentioned above due to some
+# exceptions in the tests and will have an explicit structural description along with them.
 
 
 from pathlib import Path

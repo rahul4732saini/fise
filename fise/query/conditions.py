@@ -210,7 +210,7 @@ class ConditionParser:
             return condition
 
         # The condition is parsed using differently if all the
-        # tokens are not already seperated as individual strings.
+        # tokens are not already separated as individual strings.
 
         # In such case, the condition is only looked up for comparison operators
         # for partitioning it into individual tokens as conditional operators
@@ -253,7 +253,7 @@ class ConditionParser:
 
         # All individual strings are combined into a single string to parse them
         # differently if the length of the list is not 3, i.e., the tokens are
-        # not already seperated into indvidual strings.
+        # not already separated into individual strings.
         if len(condition) != 3:
             condition = ["".join(condition)]
 
@@ -316,7 +316,7 @@ class ConditionHandler:
 
     __slots__ = "_conditions", "_method_map"
 
-    def __init__(self, subquery: str, operation_target: str) -> None:
+    def __init__(self, subquery: list[str], operation_target: str) -> None:
         """
         Creates an instance of the `ConditionHandler` class.
 
@@ -343,7 +343,8 @@ class ConditionHandler:
             ConditionParser(subquery, operation_target).parse_conditions()
         )
 
-    def _eval_field(self, field: Field | Size, obj: File | DataLine | Directory) -> Any:
+    @staticmethod
+    def _eval_field(field: Field | Size, obj: File | DataLine | Directory) -> Any:
         """
         Evaluates the specified metadata field.
 
@@ -386,7 +387,7 @@ class ConditionHandler:
 
         elif isinstance(operand, list):
 
-            # Creates a seperate copy of the operand list to avoid mutations in it.
+            # Creates a separate copy of the operand list to avoid mutations in it.
             array: list[Any] = operand.copy()
 
             for index, val in enumerate(array):
@@ -444,7 +445,7 @@ class ConditionHandler:
         """
 
         # Evaluates individual conditions present at the
-        # 0th and 2th position in the list if not done yet.
+        # 0th and 2nd position in the list if not done yet.
         for i in (0, 2):
             if not isinstance(segment[i], bool):
                 segment[i] = self._eval_condition(segment[i], obj)
@@ -475,7 +476,7 @@ class ConditionHandler:
 
         # Evaluates conditions separated by `and` operator.
         for _ in range(len(segments) // 2):
-            segment: list[Any] = segments[ctr : ctr + 3]
+            segment: list[Any] = segments[ctr: ctr + 3]
 
             if segment[1] == "or":
                 # Increments the counter by 1 to skip the
@@ -483,7 +484,7 @@ class ConditionHandler:
                 ctr += 2
 
             else:
-                segments[ctr : ctr + 3] = [self._eval_condition_segments(segment, obj)]
+                segments[ctr: ctr + 3] = [self._eval_condition_segments(segment, obj)]
 
         # Evaluates conditions separated by `or` operator.
         for _ in range(len(segments) // 2):

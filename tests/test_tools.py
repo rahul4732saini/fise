@@ -76,7 +76,7 @@ PARSE_QUERY_TEST_RESULTS = [
 def read_tests_hdf(path: str) -> pd.Series | pd.DataFrame:
     """Reads tests data stored at the specified path within `test_tools.hdf` file."""
 
-    with pd.HDFStore(Path(__file__).parent / "test_tools.hdf") as store:
+    with pd.HDFStore(str(Path(__file__).parent / "test_tools.hdf")) as store:
         return store[path]
 
 
@@ -85,7 +85,7 @@ def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None
     Verifies whether all the specified paths are present in the specified records.
     """
 
-    records = records.apply(lambda path: FILE_DIR_TEST_DIRECTORY / path).values
+    records = records.apply(lambda path_: FILE_DIR_TEST_DIRECTORY / path_).values
 
     for path in paths:
         assert path in records
@@ -113,7 +113,7 @@ def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
 
 @pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_TEST_PARAMS)
 def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
-    """Tests the `toolsget_directories` function."""
+    """Tests the `tools.get_directories` function."""
 
     verify_paths(
         tools.get_directories(path, recur),

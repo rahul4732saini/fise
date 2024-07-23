@@ -168,7 +168,7 @@ class QueryHandler:
         return type_
 
     def _parse_search_operation(
-        self, params: Generator[str, None, None]
+        self, params: Generator[list[str], None, None]
     ) -> OperationData:
         """
         Parses the search operation parameters.
@@ -214,7 +214,7 @@ class QueryHandler:
         return OperationData("search", operand, filemode)
 
     def _parse_delete_operation(
-        self, params: Generator[str, None, None]
+        self, params: Generator[list[str], None, None]
     ) -> OperationData:
         """
         Parses the delete operation parameters.

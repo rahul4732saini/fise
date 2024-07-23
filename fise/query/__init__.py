@@ -41,12 +41,15 @@ class QueryHandler:
         - query (str): Query to be handled.
         """
 
-        # Maps targeted operands names with coressponding methods for handling the query.
+        # Maps targeted operands names with corresponding methods for handling the query.
         self._handler_map: dict[str, Callable[[QueryInitials], pd.DataFrame | None]] = {
             "file": self._handle_file_query,
             "dir": self._handle_dir_query,
             "data": self._handle_data_query,
         }
+
+        # Keeps track of the current position of the token to be parsed in the query.
+        self._ctr = 0
 
         self._query = tools.parse_query(query)
 
@@ -55,7 +58,6 @@ class QueryHandler:
         Handles the specified search/delete query.
         """
 
-        # Keeps track of the current position of the token to be parsed in the query.
         self._ctr = 0
 
         try:
@@ -84,7 +86,7 @@ class QueryHandler:
         Parses and handles the specified file search/delete query.
         """
 
-        parser = FileQueryParser(self._query[self._ctr :], initials.operation.operation)
+        parser = FileQueryParser(self._query[self._ctr:], initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(query.path, initials.recursive)
@@ -108,7 +110,7 @@ class QueryHandler:
                 "Exporting binary data to SQL databases is currently unsupported."
             )
 
-        parser = FileDataQueryParser(self._query[self._ctr :])
+        parser = FileDataQueryParser(self._query[self._ctr:])
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
@@ -123,7 +125,7 @@ class QueryHandler:
         """
 
         parser = DirectoryQueryParser(
-            self._query[self._ctr :], initials.operation.operation
+            self._query[self._ctr:], initials.operation.operation
         )
 
         query: SearchQuery | DeleteQuery = parser.parse_query()

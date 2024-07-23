@@ -1,8 +1,8 @@
 """
 Reset Tests Module
 
-This module provides a utilities to reset the test directories
-by regenerating them based on listings stored in an HDF5 file.
+This module provides utilities to reset the test directories by regenerating them
+based on the file and directory listings stored in the `test_directory.hdf` file.
 """
 
 import shutil
@@ -29,7 +29,7 @@ def reset_file_dir_test_directory(
         shutil.rmtree(directory)
 
     # Extracts and stores the corresponding listings for regeneration.
-    with pd.HDFStore(listings) as store:
+    with pd.HDFStore(str(listings)) as store:
         file_listings: pd.Series[str] = store["/file_dir/files"]
         dir_listings: pd.Series[str] = store["/file_dir/dirs"]
 

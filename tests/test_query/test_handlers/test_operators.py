@@ -119,6 +119,9 @@ class TestFileQueryOperator:
     def condition3(file: File) -> bool:
         return file.name in ("unknown.mp3", "runaway.mp3", "birthday.avi")
 
+    def condition4(file: File) -> bool:
+        return file.name in ("Q1.txt", "Q2.txt")
+
     search_operation_test_params = [
         (1, True, ["", False, ["name", "filetype"], condition1]),
         (2, True, ["reports", True, ["name"], condition2]),

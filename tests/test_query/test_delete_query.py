@@ -18,10 +18,10 @@ TEST_DIRECTORY_LISTINGS_FILE = TEST_DIRECTORY.parent / "test_directory.hdf"
 TEST_RECORDS_FILE = Path(__file__).parent / "test_delete_query.hdf"
 
 
-def read_hdf(file: str, path: str) -> pd.Series:
+def read_hdf(file: Path, path: str) -> pd.Series:
     """Reads records stored at the path mentioned from specified HDF5 file."""
 
-    with pd.HDFStore(file) as store:
+    with pd.HDFStore(str(file)) as store:
         return store[path]
 
 

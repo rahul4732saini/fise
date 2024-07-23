@@ -53,10 +53,10 @@ TEST_DIRECTORY_LISTINGS_FILE = TEST_DIRECTORY.parent / "test_directory.hdf"
 TEST_RECORDS_FILE = Path(__file__).parent / "test_operators.hdf"
 
 
-def read_hdf(file: str, path: str) -> pd.Series:
+def read_hdf(file: Path, path: str) -> pd.Series | pd.DataFrame:
     """Reads records stored at the path mentioned from specified HDF5 file."""
 
-    with pd.HDFStore(file) as store:
+    with pd.HDFStore(str(file)) as store:
         return store[path]
 
 
@@ -192,13 +192,11 @@ class TestFileQueryOperator:
             verify_search_operation(f"/file/search2/test{index}", data)
 
     @pytest.mark.parametrize(("index", "params"), delete_operation_test_params)
-    def test_delete_operation(self, index: int, params: str) -> None:
+    def test_delete_operation(self, index: int, params: list[Any]) -> None:
         """Tests file query operation with delete operations."""
 
         operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
-        data: None = operator.remove_files(params[2], params[3])
-
-        assert data is None
+        operator.remove_files(params[2], params[3])
 
         verify_delete_operation(f"/file/delete/test{index}")
 
@@ -330,7 +328,7 @@ class TestDirectoryQueryOperator:
     # The following method does not verify its tests as the generated data results
     # are flexible and subject to change based on the execution environment.
 
-    @pytest.mark.parametrize(("params"), search_operation_with_fields_alias_test_params)
+    @pytest.mark.parametrize("params", search_operation_with_fields_alias_test_params)
     def test_search_operation_with_field_aliases(self, params: list[Any]) -> None:
         """
         Tests directory query operator with search
@@ -349,14 +347,12 @@ class TestDirectoryQueryOperator:
         assert isinstance(data, pd.DataFrame)
 
     @pytest.mark.parametrize(("index", "params"), delete_operation_test_params)
-    def test_delete_operation(self, index: int, params: str) -> None:
+    def test_delete_operation(self, index: int, params: list[Any]) -> None:
         """Tests file query operation with delete operations."""
 
         operator = DirectoryQueryOperator(
             FILE_DIR_TEST_DIRECTORY / params[0], params[1]
         )
-        data: None = operator.remove_directories(params[2], params[3])
-
-        assert data is None
+        operator.remove_directories(params[2], params[3])
 
         verify_delete_operation(f"/directory/delete/test{index}")

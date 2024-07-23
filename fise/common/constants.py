@@ -79,7 +79,7 @@ DATA_FIELD_ALIASES = {
 
 PATH_TYPES = {"absolute", "relative"}
 
-# Supported databases for exporing search records.
+# Supported databases for exporting search records.
 DATABASES = {"postgresql", "mysql", "sqlite"}
 
 DATABASE_URL_DIALECTS = {

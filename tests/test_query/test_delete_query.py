@@ -11,10 +11,11 @@ import pandas as pd
 import reset_tests
 from fise.query import QueryHandler
 
-TEST_RECORDS_FILE = Path(__file__).parent / "test_delete_query.hdf"
 TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
+
 TEST_DIRECTORY_LISTINGS_FILE = TEST_DIRECTORY.parent / "test_directory.hdf"
+TEST_RECORDS_FILE = Path(__file__).parent / "test_delete_query.hdf"
 
 
 def read_hdf(file: str, path: str) -> pd.Series:
@@ -37,10 +38,10 @@ FILE_DIR_TEST_DIRECTORY_LISTINGS = pd.concat(
 
 def verify_delete_query(path: str) -> None:
     """
-    Verifies all the files or directories removed from the delete query by matching
+    Verifies all the files and directories removed from the delete query by matching
     records stored at the specified path in the `test_delete_query.hdf` file.
     """
-    global FILE_DIR_TEST_DIRECTORY, TEST_RECORDS_FILE
+    global FILE_DIR_TEST_DIRECTORY, FILE_DIR_TEST_DIRECTORY_LISTINGS, TEST_RECORDS_FILE
 
     # File and directories to be exempted during verification as
     # they are meant to be removed during the delete operation.

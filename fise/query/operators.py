@@ -101,7 +101,7 @@ class FileQueryOperator:
         # the number of skipped files if `skip_err` is set to `True`.
         ctr = skipped = 0
 
-        # Iterates through the files and deletes indivdually if the condition is met.
+        # Iterates through the files and deletes individually if the condition is met.
         for file in tools.get_files(self._directory, self._recursive):
             if not condition(File(file)):
                 continue

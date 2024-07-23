@@ -2,7 +2,7 @@
 Notify Module
 -------------
 
-This modules comprises class for displaying alerts
+This module comprises class for displaying alerts
 and notifications on the command-line interface.
 """
 

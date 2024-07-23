@@ -25,7 +25,7 @@ def _field_extraction_alert() -> None:
         return
 
     Alert(
-        "ExtractionError: Unable to access specific metdata fields from the "
+        "ExtractionError: Unable to access specific metadata fields from the "
         "recorded files/directories. These fields are being assigned as 'None'."
     )
 

@@ -3,6 +3,13 @@ This module comprises test cases for verifying
 the functionality of delete queries in FiSE.
 """
 
+# NOTE
+# The attributes comprising test parameters within the test classes in this module are
+# organized such that each individual attribute comprises sub-arrays, each of a length
+# of 2, where the first element within the array signifies the index, whereas the second
+# element is a string comprising the delete query.
+
+
 from pathlib import Path
 
 import pytest

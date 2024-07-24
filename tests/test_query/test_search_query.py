@@ -102,7 +102,7 @@ class TestFileSearchQuery:
         examine_search_query(query)
 
     @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
-    def test_basic_query_syntax(self, index: int, query: str) -> None:
+    def test_recursive_command(self, index: int, query: str) -> None:
         """Tests file search queries with the recursive command"""
         examine_search_query(query, True, f"/file/search/test{index}")
 

@@ -4,15 +4,15 @@ the functionality of parser classes in FiSE.
 """
 
 # NOTE:
-# The structural format of the attributes comprising test parameters and
-# results defined within test classes in this module are as described below:
+# The structural format of the attributes comprising test parameters
+# and results defined within this module are as described below:
 #
-#   1. Test parameters for search and delete queries
+#   1. Test parameters for search and delete queries:
 #
 # The attributes comprising parameters for search and delete query tests
 # comprise strings containing the test queries.
 #
-#   2. Test results for search queries
+#   2. Test results for search queries:
 #
 # The attributes comprising results for search query tests comprise sub-arrays, each
 # with a variable length where the first element of each of them signifies whether the
@@ -20,7 +20,7 @@ the functionality of parser classes in FiSE.
 # comprising column names. The remaining elements in the array are test specific and may
 # different with different tests.
 #
-#   3. Test results for delete queries
+#   3. Test results for delete queries:
 #
 # The attributes comprising parameters for delete query tests comprise boolean objects
 # signifying whether the specified path-type is absolute (True) or relative (False).

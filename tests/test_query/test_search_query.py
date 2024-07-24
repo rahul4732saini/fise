@@ -21,6 +21,21 @@ TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 
 
+def examine_search_query(
+    query: str, verify: bool = False, path: str | None = None
+) -> None:
+    """
+    Tests the specified search query.
+
+    The extracted data is also verified with the test records stored at the specified path
+    in the `test_search_query.hdf` file if `verify` is explicitly set to `True`.
+    """
+
+    data: pd.DataFrame = QueryHandler(query).handle()
+
+    assert isinstance(data, pd.DataFrame)
+
+
 class TestFileSearchQuery:
     """Tests the file search queries"""
 

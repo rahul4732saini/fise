@@ -37,7 +37,7 @@ def examine_search_query(
 
 
 class TestFileSearchQuery:
-    """Tests the file search queries"""
+    """Tests the QueryHandler class with file search queries"""
 
     basic_query_syntax_test_params = [
         f"R SELECT * FROM '{FILE_DIR_TEST_DIRECTORY}'",
@@ -55,24 +55,24 @@ class TestFileSearchQuery:
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
-        """Tests the basic file search query syntax."""
+        """Tests basic syntax for file search queries"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
-        """Tests file search queries with all file fields individually."""
+        """Tests file search queries with all file fields individually"""
 
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:
-        """Tests file search queries comprising characters of mixed cases."""
+        """Tests file search queries comprising mixed case characters"""
         examine_search_query(query)
 
 
 class TestDirSearchQuery:
-    """Tests the directory search queries"""
+    """Tests the QueryHandler class with directory search queries"""
 
     basic_query_syntax_test_params = [
         f"R SELECT[TYPE DIR] * FROM '{FILE_DIR_TEST_DIRECTORY}'",
@@ -90,17 +90,17 @@ class TestDirSearchQuery:
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
-        """Tests the basic directory search query syntax."""
+        """Tests basic syntax for directory search queries"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
-        """Tests individual fields in directory search queries."""
+        """Tests file search queries with all directory fields individually"""
 
         query: str = f"SELECT[TYPE DIR] {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:
-        """Tests directory search queries comprising characters of mixed cases."""
+        """Tests directory search queries comprising mixed case characters."""
         examine_search_query(query)

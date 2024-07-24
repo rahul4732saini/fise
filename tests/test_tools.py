@@ -73,7 +73,7 @@ PARSE_QUERY_TEST_RESULTS = [
 ]
 
 
-def read_tests_hdf(path: str) -> pd.Series | pd.DataFrame:
+def read_test_tools_hdf_file(path: str) -> pd.Series | pd.DataFrame:
     """Reads tests data stored at the specified path within `test_tools.hdf` file."""
 
     with pd.HDFStore(str(Path(__file__).parent / "test_tools.hdf")) as store:
@@ -107,7 +107,7 @@ def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
 
     verify_paths(
         tools.get_files(path, recur),
-        read_tests_hdf(f"/function/get_files/test{ctr}"),
+        read_test_tools_hdf_file(f"/function/get_files/test{ctr}"),
     )
 
 
@@ -117,7 +117,7 @@ def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
 
     verify_paths(
         tools.get_directories(path, recur),
-        read_tests_hdf(f"/function/get_directories/test{ctr}"),
+        read_test_tools_hdf_file(f"/function/get_directories/test{ctr}"),
     )
 
 

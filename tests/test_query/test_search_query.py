@@ -60,8 +60,10 @@ def examine_search_query(
     """
 
     data: pd.DataFrame = QueryHandler(query).handle()
-
     assert isinstance(data, pd.DataFrame)
+
+    if verify:
+        verify_search_query(path, data)
 
 
 class TestFileSearchQuery:

@@ -3,6 +3,29 @@ This module comprises test cases for verifying
 the functionality of parser classes in FiSE.
 """
 
+# NOTE:
+# The structural format of the attributes comprising test parameters and
+# results defined within test classes in this module are as described below:
+#
+#   1. Test parameters for search and delete queries
+#
+# The attributes comprising parameters for search and delete query tests
+# comprise strings containing the test queries.
+#
+#   2. Test results for search queries
+#
+# The attributes comprising results for search query tests comprise sub-arrays, each
+# with a variable length where the first element of each of them signifies whether the
+# path is absolute (True) or relatve (False) whereas the last element is another array
+# comprising column names. The remaining elements in the array are test specific and may
+# different with different tests.
+#
+#   3. Test results for delete queries
+#
+# The attributes comprising parameters for delete query tests comprise boolean objects
+# signifying whether the specified path-type is absolute (True) or relative (False).
+
+
 from pathlib import Path
 from typing import Any
 
@@ -22,8 +45,8 @@ def examine_search_query(
     results: list[Any],
 ) -> SearchQuery:
     """
-    Tests the search query based on the specified sub-query and results and
-    returns the `SearchQuery` object for performing additional tests.
+    Tests the seach query based on the specified query parser and returns the
+    `SearchQuery` object for cases where additional tests are to be performed.
     """
 
     search_query: SearchQuery = parser.parse_query()
@@ -86,12 +109,6 @@ class TestFileQueryParser:
         "FROM RELATIVE . WHERE atime <= '2012-02-17' OR ctime <= '2015-03-23'",
     ]
 
-    # The following are test results for the search query tests comprising sub-lists, each with
-    # a variable length where the first element of each of them signifies whether the path is
-    # absolute (True) or relative (False) whereas the last element in it is a list comprising
-    # names of the search fields. All the remaining objects within the list are test specific
-    # and may differ in different tests.
-
     search_query_test_results = [
         [False, list(constants.FILE_FIELDS)],
         [True, ["name", "path", "parent"]],
@@ -112,10 +129,6 @@ class TestFileQueryParser:
         [False, ["path", "create_time", "access_time"], ["filepath", "ctime", "atime"]],
         [False, ["name", "filetype", "modify_time"], ["filename", "type", "mtime"]],
     ]
-
-    # The following are test results for the delete query tests and comprise boolean
-    # objects associated with the delete queries. These boolean objects signify whether
-    # the path type in the query is absolute (True) or relative (False).
 
     delete_query_test_results = [True, False, False]
 

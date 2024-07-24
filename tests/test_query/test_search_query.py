@@ -75,6 +75,12 @@ class TestFileSearchQuery:
         f"RECURSIVE SELECT * FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = '.py'",
     ]
 
+    recursive_command_test_params = [
+        (1, f"R SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
+        (2, f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None"),
+        (3, f"RECURSIVE SELECT filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
+    ]
+
     mixed_case_query_test_params = [
         f"r Select * FroM '{FILE_DIR_TEST_DIRECTORY}'",
         f"sELect[TYPE FILE] Name, FileType From '{FILE_DIR_TEST_DIRECTORY}'",
@@ -94,6 +100,11 @@ class TestFileSearchQuery:
 
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
+
+    @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
+    def test_basic_query_syntax(self, index: int, query: str) -> None:
+        """Tests file search queries with the recursive command"""
+        examine_search_query(query, True, f"/file/search/test{index}")
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:

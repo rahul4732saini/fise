@@ -100,8 +100,8 @@ class TestFileDeleteQuery:
 
     mixed_case_query_test_params = [
         (1, f"DeLeTE FRoM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
-        (2, f"DelETE[TYPE FiLE] FrOM '{FILE_DIR_TEST_DIRECTORY / 'media'}' Where type = '.mp3'"),
-        (3, rf"r dELETe FrOM '{FILE_DIR_TEST_DIRECTORY / 'project'}' wHERe name liKe '.*\.py'"),
+        (2, f"DelETE[TYPE FiLE] FrOM '{FILE_DIR_TEST_DIRECTORY / 'media'}' Where TypE = '.mp3'"),
+        (3, rf"r dELETe FrOM '{FILE_DIR_TEST_DIRECTORY / 'project'}' wHERe NaMe liKe '.*\.py'"),
     ]
 
     query_conditions_test_params = [
@@ -113,11 +113,11 @@ class TestFileDeleteQuery:
     nested_conditions_test_params = [
         (
             1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
-            "size[b] = 0 AND (filetype = '.txt' or type = '.mp3')"
+            "size[b] = 0 AND (filetype = '.txt' OR type = '.mp3')"
         ),
         (
             2, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE size[b]"
-            "= 0 AND (type = None OR (type in ('.txt', '.py'))) AND name != 'LICENSE'"
+            "= 0 AND (type = None OR (type IN ('.txt', '.py'))) AND name != 'LICENSE'"
         ),
         (
             3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE"
@@ -183,8 +183,8 @@ class TestDirDeleteQuery:
 
     mixed_case_query_test_params = [
         (1, f"DeLEtE[TYPe DIR] froM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
-        (2, f"DElEtE[tYPE DiR] From '{FILE_DIR_TEST_DIRECTORY / 'reports'}' Where name LikE '^report.*$'"),
-        (3, f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE name In ('project', 'media')"),
+        (2, f"DElEtE[tYPE DiR] From '{FILE_DIR_TEST_DIRECTORY / 'reports'}' Where NamE LikE '^report.*$'"),
+        (3, f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE NAMe In ('project', 'media')"),
     ]
 
     query_conditions_test_params = [

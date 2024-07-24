@@ -3,6 +3,12 @@ This module comprises test cases for verifying
 the functionality of search queries in FiSE.
 """
 
+# NOTE:
+# Some of the tests defined within this module don't explicitly verify the
+# extracted search data as it is flexible and subject to change depending
+# on the system and path the tests are executed from.
+
+
 from pathlib import Path
 
 import pytest
@@ -31,9 +37,6 @@ class TestFileSearchQuery:
     ]
 
     individual_fields_test_params = constants.FILE_FIELDS + ("*",)
-
-    # Some of the test don't explicitly verify the extracted data as it is flexible and
-    # subject to change depending on the system and path the tests are executed from.
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
@@ -79,9 +82,6 @@ class TestDirSearchQuery:
     ]
 
     individual_fields_test_params = constants.DIR_FIELDS + ("*",)
-
-    # Some of the test don't explicitly verify the extracted data as it is flexible and
-    # subject to change depending on the system and path the tests are executed from.
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:

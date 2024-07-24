@@ -13,6 +13,7 @@ from fise.common import tools
 
 TEST_DIRECTORY = Path(__file__).parent / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
+TEST_RECORDS_FILE = Path(__file__).parent / "test_tools.hdf"
 
 PANDAS_READ_METHODS_MAP = {
     ".csv": "read_csv", ".xlsx": "read_excel",
@@ -76,8 +77,9 @@ PARSE_QUERY_TEST_RESULTS = [
 
 def read_test_tools_hdf_file(path: str) -> pd.Series | pd.DataFrame:
     """Reads tests data stored at the specified path within `test_tools.hdf` file."""
+    global TEST_RECORDS_FILE
 
-    with pd.HDFStore(str(Path(__file__).parent / "test_tools.hdf")) as store:
+    with pd.HDFStore(str(TEST_RECORDS_FILE)) as store:
         return store[path]
 
 
@@ -85,6 +87,7 @@ def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None
     """
     Verifies whether all the specified paths are present in the specified records.
     """
+    global FILE_DIR_TEST_DIRECTORY
 
     records = records.apply(lambda path_: FILE_DIR_TEST_DIRECTORY / path_).values
 
@@ -127,6 +130,7 @@ def test_file_export_function(
     file: str, data: pd.DataFrame = SAMPLE_EXPORT_FILE_DATA
 ) -> None:
     """Tests the `tools.export_to_file` function with different file formats"""
+    global TEST_DIRECTORY
 
     path: Path = TEST_DIRECTORY / file
 

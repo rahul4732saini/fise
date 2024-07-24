@@ -220,12 +220,6 @@ class TestFileDataQueryParser:
         "filename, filepath FROM ABSOLUTE . WHERE 'test' in data",
     ]
 
-    # The following are test results for the search query tests comprising sub-lists, each with
-    # a variable length where the first element of each of them signifies whether the path is
-    # absolute (True) or relative (False) whereas the last element in it is a list comprising
-    # names of the search fields. All the remaining objects within the list are test specific
-    # and may differ in different tests.
-
     search_query_test_results = [
         [False, list(constants.DATA_FIELDS)],
         [True, ["name", "path", "dataline"]],
@@ -299,12 +293,6 @@ class TestDirectoryQueryParser:
         "FROM RELATIVE . WHERE atime <= '2012-02-17' OR ctime <= '2015-03-23'",
     ]
 
-    # The following are test results for the search query tests comprising sub-lists, each with
-    # a variable length where the first element of each of them signifies whether the path is
-    # absolute (True) or relative (False) whereas the last element in it is a list comprising
-    # names of the search fields. All the remaining objects within the list are test specific
-    # and may differ in different tests.
-
     search_query_test_results = [
         [False, list(constants.DIR_FIELDS)],
         [True, ["name", "path", "parent"]],
@@ -317,10 +305,6 @@ class TestDirectoryQueryParser:
         [False, ["create_time", "access_time"], ["ctime", "atime"]],
         [False, ["modify_time", "create_time"], ["mtime", "ctime"]],
     ]
-
-    # The following are test results for the delete query tests and comprise boolean
-    # objects associated with the delete queries. These boolean objects signify whether
-    # the path type in the query is absolute (True) or relative (False).
 
     delete_query_test_results = [True, False, False]
 

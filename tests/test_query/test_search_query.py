@@ -15,23 +15,14 @@ from typing import Any
 import pytest
 import pandas as pd
 
+import utils
+
 from fise.common import constants
 from fise.query import QueryHandler
 
 TEST_DIRECTORY = Path(__file__).parents[1] / "test_directory"
 FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 TEST_RECORDS_FILE = Path(__file__).parent / "test_search_query.hdf"
-
-
-def read_hdf(path: str) -> pd.DataFrame:
-    """
-    Reads the test records stored at the specified
-    path from the `test_search_query.hdf` file.
-    """
-    global TEST_RECORDS_FILE
-
-    with pd.HDFStore(str(TEST_RECORDS_FILE)) as store:
-        return store[path]
 
 
 def verify_search_query(path: str, data: pd.DataFrame) -> None:
@@ -41,7 +32,7 @@ def verify_search_query(path: str, data: pd.DataFrame) -> None:
     """
     global TEST_RECORDS_FILE
 
-    results: pd.DataFrame = read_hdf(path)
+    results: pd.DataFrame = utils.read_hdf(TEST_RECORDS_FILE, path)
 
     data_set: set[tuple[Any]] = set(tuple(row) for row in data.values)
     results_set: set[tuple[Any]] = set(tuple(row) for row in results.values)

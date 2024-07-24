@@ -33,6 +33,7 @@ from typing import Any
 import pytest
 import pandas as pd
 
+import utils
 import reset_tests
 from fise.common import constants
 from fise.shared import File, Directory, Field, DataLine
@@ -51,20 +52,12 @@ FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 TEST_DIRECTORY_LISTINGS_FILE = TEST_DIRECTORY.parent / "test_directory.hdf"
 TEST_RECORDS_FILE = Path(__file__).parent / "test_operators.hdf"
 
-
-def read_hdf(file: Path, path: str) -> pd.Series | pd.DataFrame:
-    """Reads records stored at the path mentioned from specified HDF5 file."""
-
-    with pd.HDFStore(str(file)) as store:
-        return store[path]
-
-
 # Pandas series comprising path of all the files and directories
 # present within the `file_dir` directory within test directory.
 FILE_DIR_TEST_DIRECTORY_LISTINGS = pd.concat(
     [
-        read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/dirs"),
-        read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/files"),
+        utils.read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/dirs"),
+        utils.read_hdf(TEST_DIRECTORY_LISTINGS_FILE, "/file_dir/files"),
     ],
     ignore_index=True,
 )
@@ -79,7 +72,7 @@ def verify_search_operation(path: str, data: pd.DataFrame) -> None:
 
     assert isinstance(data, pd.DataFrame)
 
-    results: pd.DataFrame = read_hdf(TEST_RECORDS_FILE, path)
+    results: pd.DataFrame = utils.read_hdf(TEST_RECORDS_FILE, path)
 
     data_set: set[tuple[Any]] = set(tuple(row) for row in data.values)
     results_set: set[tuple[Any]] = set(tuple(row) for row in results.values)
@@ -96,7 +89,7 @@ def verify_delete_operation(path: str) -> None:
 
     # File and directories to be exempted during verification as
     # they are meant to be removed during the delete operation.
-    records: pd.Series = read_hdf(TEST_RECORDS_FILE, path)
+    records: pd.Series = utils.read_hdf(TEST_RECORDS_FILE, path)
 
     for i in FILE_DIR_TEST_DIRECTORY_LISTINGS:
         if (FILE_DIR_TEST_DIRECTORY / i).exists() or i in records.values:

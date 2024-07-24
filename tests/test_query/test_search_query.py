@@ -10,6 +10,7 @@ the functionality of search queries in FiSE.
 
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 import pandas as pd
@@ -31,6 +32,21 @@ def read_hdf(path: str) -> pd.DataFrame:
 
     with pd.HDFStore(str(TEST_RECORDS_FILE)) as store:
         return store[path]
+
+
+def verify_search_query(path: str, data: pd.DataFrame) -> None:
+    """
+    Verifies the pandas dataframe extracted from the search operation with the
+    records stored at the specified path in the `test_operators.hdf` file.
+    """
+    global TEST_RECORDS_FILE
+
+    results: pd.DataFrame = read_hdf(path)
+
+    data_set: set[tuple[Any]] = set(tuple(row) for row in data.values)
+    results_set: set[tuple[Any]] = set(tuple(row) for row in results.values)
+
+    assert data_set == results_set
 
 
 def examine_search_query(

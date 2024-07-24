@@ -1,4 +1,7 @@
-"""Tests the `common/tools.py` module."""
+"""
+This module comprises test cases for verifying the utility
+functions defined with the common/tools.py module in FiSE.
+"""
 
 from typing import Generator
 from pathlib import Path
@@ -37,9 +40,7 @@ GET_DIRS_TEST_PARAMS = [
     (3, FILE_DIR_TEST_DIRECTORY / "reports", True),
 ]
 
-EXPORT_FILE_TEST_PARAMS = [
-    "export.csv", "output.xlsx", "records.html", "save.json"
-]
+EXPORT_FILE_TEST_PARAMS = ["export.csv", "output.xlsx", "records.html", "save.json"]
 
 # Sample dataframe for testing `tools.export_to_file` function.
 
@@ -95,7 +96,7 @@ def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None
     ("query", "result"), zip(PARSE_QUERY_TEST_PARAMS, PARSE_QUERY_TEST_RESULTS)
 )
 def test_parse_query_function(query: str, result: list[str]) -> None:
-    """Tests the `tools.parse_query` function."""
+    """Tests the `tools.parse_query` function"""
 
     parsed_query: list[str] = tools.parse_query(query)
     assert parsed_query == result
@@ -103,7 +104,7 @@ def test_parse_query_function(query: str, result: list[str]) -> None:
 
 @pytest.mark.parametrize(("ctr", "path", "recur"), GET_FILES_TEST_PARAMS)
 def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
-    """Tests the `tools.get_files` function."""
+    """Tests the `tools.get_files` function"""
 
     verify_paths(
         tools.get_files(path, recur),
@@ -113,7 +114,7 @@ def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
 
 @pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_TEST_PARAMS)
 def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
-    """Tests the `tools.get_directories` function."""
+    """Tests the `tools.get_directories` function"""
 
     verify_paths(
         tools.get_directories(path, recur),
@@ -125,7 +126,7 @@ def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
 def test_file_export_function(
     file: str, data: pd.DataFrame = SAMPLE_EXPORT_FILE_DATA
 ) -> None:
-    """Tests the `tools.export_to_file` function with different file formats."""
+    """Tests the `tools.export_to_file` function with different file formats"""
 
     path: Path = TEST_DIRECTORY / file
 

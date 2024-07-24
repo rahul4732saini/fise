@@ -56,25 +56,19 @@ class TestFileSearchQuery:
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests the basic file search query syntax."""
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
         """Tests file search queries with all file fields individually."""
 
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:
         """Tests file search queries comprising characters of mixed cases."""
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)
 
 
 class TestDirSearchQuery:
@@ -97,22 +91,16 @@ class TestDirSearchQuery:
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests the basic directory search query syntax."""
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
         """Tests individual fields in directory search queries."""
 
         query: str = f"SELECT[TYPE DIR] {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:
         """Tests directory search queries comprising characters of mixed cases."""
-
-        data: pd.DataFrame = QueryHandler(query).handle()
-        assert isinstance(data, pd.DataFrame)
+        examine_search_query(query)

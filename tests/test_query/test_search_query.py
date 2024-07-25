@@ -55,6 +55,12 @@ class TestFileSearchQuery:
         f"SELECT path, mtime FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}' WHERE type != None",
     ]
 
+    query_conditions_test_params = [
+        f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None",
+        f"SELECT atime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name in ('REAME.md', 'TODO')",
+        f"R SELECT path FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1' AND size[b] = 0",
+    ]
+
     mixed_case_query_test_params = [
         f"r Select * FroM '{FILE_DIR_TEST_DIRECTORY}'",
         f"sELect[TYPE FILE] Name, FileType From '{FILE_DIR_TEST_DIRECTORY}'",
@@ -75,14 +81,19 @@ class TestFileSearchQuery:
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
 
+    @pytest.mark.parametrize("query", recursive_command_test_params)
+    def test_recursive_command(self, query: str) -> None:
+        """Tests file search queries with the recursive command"""
+        examine_search_query(query)
+
     @pytest.mark.parametrize("query", path_types_test_params)
     def test_path_types(self, query: str) -> None:
         """Tests file search queries with different path types"""
         examine_search_query(query)
 
-    @pytest.mark.parametrize("query", recursive_command_test_params)
-    def test_recursive_command(self, query: str) -> None:
-        """Tests file search queries with the recursive command"""
+    @pytest.mark.parametrize("query", query_conditions_test_params)
+    def test_query_conditions(self, query: str) -> None:
+        """Tests file search query conditions"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)

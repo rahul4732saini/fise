@@ -30,9 +30,7 @@ class ConditionParser:
 
     # This regex pattern only matches date and datetime formats, and does
     # not explicitly verify the validity of the date and time values.
-    _datetime_pattern = re.compile(
-        r"['\"]\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?['\"]$"
-    )
+    _datetime_pattern = re.compile(r"\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?$")
 
     _fields: dict[str, tuple[str, ...]] = {
         "file": constants.FILE_FIELDS,
@@ -46,24 +44,26 @@ class ConditionParser:
         "data": constants.DATA_FIELD_ALIASES,
     }
 
-    def __init__(self, subquery: list[str], operation_target: str) -> None:
+    def __init__(self, subquery: list[str], operand: str) -> None:
         """
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
         - subquery (list[str]): Subquery comprising the conditions.
-        - operation_target (str): Targeted operand in the operation (file/data/directory).
+        - operand (str): Targeted operand in the operation (file | data | directory).
         """
         self._query = subquery
 
-        self._lookup_fields = set(self._fields[operation_target])
-        self._field_aliases = self._aliases[operation_target]
+        self._lookup_fields = set(self._fields[operand])
+        self._field_aliases = self._aliases[operand]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
         Parses date/datetime from the specified operand if it
         matches the corresponding pattern, else returns None.
         """
+
+        print(operand)
 
         if not self._datetime_pattern.match(operand):
             return None
@@ -81,7 +81,7 @@ class ConditionParser:
 
         except ValueError:
             raise QueryParseError(
-                f"Invalid datetime format around {' '.join(self._query)!r}"
+                f"Invalid datetime specifications {operand!r} in query conditions."
             )
 
     def _parse_field(self, field: str) -> Field | Size:
@@ -114,7 +114,7 @@ class ConditionParser:
             operand = operand[1:-1]
             timedate: datetime | None = self._parse_datetime(operand)
 
-            return timedate if timedate else operand
+            return timedate or operand
 
         elif self._float_pattern.match(operand):
             return float(operand)

@@ -44,9 +44,9 @@ class TestFileSearchQuery:
     ]
 
     recursive_command_test_params = [
-        f"R SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'",
-        f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None",
-        f"RECURSIVE SELECT filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
+        f"R SELECT name, atime, mtime FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'",
+        f"R SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None",
+        f"RECURSIVE SELECT path, ctime FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
     mixed_case_query_test_params = [

@@ -81,58 +81,31 @@ class TestFileDeleteQuery:
 
     basic_query_syntax_test_params = [
         (1, f"DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
-        (
-            2,
-            f"DELETE[TYPE FILE] FROM '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp3'",
-        ),
-        (
-            3,
-            rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE name LIKE '.*\.py'",
-        ),
+        (2,f"DELETE[TYPE FILE] FROM '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp3'"),
+        (3, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}' WHERE name LIKE '.*\.py'"),
     ]
 
     recursive_command_test_params = [
-        (
-            1,
-            f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q4.txt'",
-        ),
+        (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q4.txt'"),
         (2, f"RECURSIVE DELETE FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
     ]
 
     path_types_test_params = [
-        (
-            1,
-            f"R DELETE FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q2.txt'",
-        ),
+        (1, f"R DELETE FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name = 'Q2.txt'"),
         (2, f"DELETE FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
-        (
-            3,
-            f"DELETE FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp4'",
-        ),
+        (3, f"DELETE FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'media'}' WHERE type = '.mp4'"),
     ]
 
     mixed_case_query_test_params = [
         (1, f"DeLeTE FRoM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
-        (
-            2,
-            f"DelETE[TYPE FiLE] FrOM '{FILE_DIR_TEST_DIRECTORY / 'media'}' Where TypE = '.mp3'",
-        ),
-        (
-            3,
-            rf"r dELETe FrOM '{FILE_DIR_TEST_DIRECTORY / 'project'}' wHERe NaMe liKe '.*\.py'",
-        ),
+        (2, f"DelETE[TYPE FiLE] FrOM '{FILE_DIR_TEST_DIRECTORY / 'media'}' Where TypE = '.mp3'"),
+        (3, rf"r dELETe FrOM '{FILE_DIR_TEST_DIRECTORY / 'project'}' wHERe NaMe liKe '.*\.py'"),
     ]
 
     query_conditions_test_params = [
         (1, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1.txt'"),
-        (
-            2,
-            rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt$'",
-        ),
-        (
-            3,
-            f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type IN ('.mp4', '.avi') OR type='.mp3'",
-        ),
+        (2, rf"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type='.txt' AND name LIKE '^IN.*\.txt$'"),
+        (3, f"R DELETE FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE type IN ('.mp4', '.avi') OR type='.mp3'"),
     ]
 
     nested_conditions_test_params = [
@@ -193,26 +166,14 @@ class TestDirDeleteQuery:
 
     basic_query_syntax_test_params = [
         (1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
-        (
-            2,
-            f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name LIKE '^report.*$'",
-        ),
-        (
-            3,
-            f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')",
-        ),
+        (2, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name LIKE '^report.*$'"),
+        (3, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('project', 'media')"),
     ]
 
     recursive_command_test_params = [
         (1, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
-        (
-            2,
-            f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name='report-2023'",
-        ),
-        (
-            3,
-            f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('media', 'orders')",
-        ),
+        (2, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' WHERE name='report-2023'"),
+        (3, f"R DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('media', 'orders')"),
     ]
 
     path_types_test_params = [
@@ -223,18 +184,15 @@ class TestDirDeleteQuery:
 
     mixed_case_query_test_params = [
         (1, f"DeLEtE[TYPe DIR] froM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
-        (
-            2,
-            f"DElEtE[tYPE DiR] From '{FILE_DIR_TEST_DIRECTORY / 'reports'}' Where NamE LikE '^report.*$'",
-        ),
-        (
-            3,
-            f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE NAMe In ('project', 'media')",
-        ),
+        (2, f"DElEtE[tYPE DiR] From '{FILE_DIR_TEST_DIRECTORY / 'reports'}' Where NamE LikE '^report.*$'"),
+        (3, f"Delete[Type diR] FroM '{FILE_DIR_TEST_DIRECTORY}' WheRE NAMe In ('project', 'media')"),
     ]
 
     query_conditions_test_params = [
-        (1, f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'media'"),
+        (
+            1,
+            f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'media'"
+        ),
         (
             2,
             f"DELETE[TYPE DIR] FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "

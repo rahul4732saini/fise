@@ -95,6 +95,12 @@ class TestDirSearchQuery:
         f"RECURSIVE SELECT[TYPE DIR] path, mtime FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
+    path_types_test_params = [
+        f"SELECT[TYPE DIR] path, atime FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}'",
+        f"R SELECT[TYPE DIR] name, ctime FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'docs'}'",
+        f"SELECT[TYPE DIR] name FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}'",
+    ]
+
     mixed_case_query_test_params = [
         f"r SELECT[Type DiR] * fROm '{FILE_DIR_TEST_DIRECTORY}'",
         f"Recursive sEleCt[typE dIr] name, parent, ctime FroM '{FILE_DIR_TEST_DIRECTORY}'",
@@ -118,6 +124,11 @@ class TestDirSearchQuery:
     @pytest.mark.parametrize("query", recursive_command_test_params)
     def test_recursive_command(self, query: str) -> None:
         """Tests directory search queries with the recursive command"""
+        examine_search_query(query)
+
+    @pytest.mark.parametrize("query", path_types_test_params)
+    def test_path_types(self, query: str) -> None:
+        """Tests directory search queries with different path types"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)

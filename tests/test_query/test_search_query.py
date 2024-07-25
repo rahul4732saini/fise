@@ -49,6 +49,12 @@ class TestFileSearchQuery:
         f"RECURSIVE SELECT path, ctime FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
+    path_types_test_params = [
+        f"SELECT name, filetype FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
+        f"R SELECT name, atime, ctime FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY}'",
+        f"SELECT path, mtime FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}' WHERE type != None",
+    ]
+
     mixed_case_query_test_params = [
         f"r Select * FroM '{FILE_DIR_TEST_DIRECTORY}'",
         f"sELect[TYPE FILE] Name, FileType From '{FILE_DIR_TEST_DIRECTORY}'",
@@ -67,6 +73,11 @@ class TestFileSearchQuery:
         """Tests file search queries with all file fields individually"""
 
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
+        examine_search_query(query)
+
+    @pytest.mark.parametrize("query", path_types_test_params)
+    def test_path_types(self, query: str) -> None:
+        """Tests file search queries with different path types"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", recursive_command_test_params)

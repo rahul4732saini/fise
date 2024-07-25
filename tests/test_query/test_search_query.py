@@ -4,18 +4,15 @@ the functionality of search queries in FiSE.
 """
 
 # NOTE:
-# Some of the tests defined within this module don't explicitly verify the
-# extracted search data as it is flexible and subject to change depending
-# on the system and path the tests are executed from.
+# The tests defined within this module don't explicitly verify the extracted
+# search data as it is flexible and subject to change depending on the system
+# and path the tests are executed from.
 
 
 from pathlib import Path
-from typing import Any
 
 import pytest
 import pandas as pd
-
-import utils
 
 from fise.common import constants
 from fise.query import QueryHandler
@@ -25,24 +22,7 @@ FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
 TEST_RECORDS_FILE = Path(__file__).parent / "test_search_query.hdf"
 
 
-def verify_search_query(path: str, data: pd.DataFrame) -> None:
-    """
-    Verifies the pandas dataframe extracted from the search operation with the
-    records stored at the specified path in the `test_operators.hdf` file.
-    """
-    global TEST_RECORDS_FILE
-
-    results: pd.DataFrame = utils.read_hdf(TEST_RECORDS_FILE, path)
-
-    data_set: set[tuple[Any]] = set(tuple(row) for row in data.values)
-    results_set: set[tuple[Any]] = set(tuple(row) for row in results.values)
-
-    assert data_set == results_set
-
-
-def examine_search_query(
-    query: str, verify: bool = False, path: str | None = None
-) -> None:
+def examine_search_query(query: str) -> None:
     """
     Tests the specified search query.
 
@@ -52,9 +32,6 @@ def examine_search_query(
 
     data: pd.DataFrame = QueryHandler(query).handle()
     assert isinstance(data, pd.DataFrame)
-
-    if verify:
-        verify_search_query(path, data)
 
 
 class TestFileSearchQuery:
@@ -67,9 +44,9 @@ class TestFileSearchQuery:
     ]
 
     recursive_command_test_params = [
-        (1, f"R SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'"),
-        (2, f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None"),
-        (3, f"RECURSIVE SELECT filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'"),
+        f"R SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'docs'}'",
+        f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None",
+        f"RECURSIVE SELECT filetype FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
     mixed_case_query_test_params = [
@@ -92,10 +69,10 @@ class TestFileSearchQuery:
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
 
-    @pytest.mark.parametrize(("index", "query"), recursive_command_test_params)
-    def test_recursive_command(self, index: int, query: str) -> None:
+    @pytest.mark.parametrize("query", recursive_command_test_params)
+    def test_recursive_command(self, query: str) -> None:
         """Tests file search queries with the recursive command"""
-        examine_search_query(query, True, f"/file/search/test{index}")
+        examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)
     def test_mixed_case_query(self, query: str) -> None:

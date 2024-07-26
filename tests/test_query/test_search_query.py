@@ -76,7 +76,7 @@ class TestFileSearchQuery:
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
-        """Tests file search queries with all file fields individually"""
+        """Tests file search queries with all fields individually"""
 
         query: str = f"SELECT {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)
@@ -146,7 +146,7 @@ class TestDirSearchQuery:
 
     @pytest.mark.parametrize("field", individual_fields_test_params)
     def test_individual_fields(self, field: str) -> None:
-        """Tests file search queries with all directory fields individually"""
+        """Tests directory search queries with all fields individually"""
 
         query: str = f"SELECT[TYPE DIR] {field} FROM '{FILE_DIR_TEST_DIRECTORY}'"
         examine_search_query(query)

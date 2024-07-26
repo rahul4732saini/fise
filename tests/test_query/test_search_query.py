@@ -56,8 +56,9 @@ class TestFileSearchQuery:
     ]
 
     query_conditions_test_params = [
-        f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE filetype = None",
-        f"SELECT atime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name in ('REAME.md', 'TODO')",
+        f"R SELECT name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+        "filetype = None AND name IN ('Dockerfile', 'LICENSE', 'TODO')",
+        f"SELECT atime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('REAME.md', 'TODO')",
         f"R SELECT path FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1' AND size[b] = 0",
     ]
 

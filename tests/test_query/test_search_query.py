@@ -70,6 +70,15 @@ class TestFileSearchQuery:
         f"R SELECT path FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1' AND size[b] = 0",
     ]
 
+    nested_query_conditions_test_params = [
+        f"SELECT name, filetype FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+        "(filetype = '.txt' OR filetype = None) AND mtime > '2024-03-17'",
+        f"SELECT name, atime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+        "NAME LIKE '.*' AND ((ctime > '2024-01-01'))",
+        f"R SELECT path, ctime FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'docs'}' "
+        "WHERE (filetype = '.md') OR atime >= '2024-02-25'",
+    ]
+
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests basic syntax for file search queries"""
@@ -92,14 +101,19 @@ class TestFileSearchQuery:
         """Tests file search queries with different path types"""
         examine_search_query(query)
 
+    @pytest.mark.parametrize("query", mixed_case_query_test_params)
+    def test_mixed_case_query(self, query: str) -> None:
+        """Tests file search queries comprising mixed case characters"""
+        examine_search_query(query)
+
     @pytest.mark.parametrize("query", query_conditions_test_params)
     def test_query_conditions(self, query: str) -> None:
         """Tests file search query conditions"""
         examine_search_query(query)
 
-    @pytest.mark.parametrize("query", mixed_case_query_test_params)
-    def test_mixed_case_query(self, query: str) -> None:
-        """Tests file search queries comprising mixed case characters"""
+    @pytest.mark.parametrize("query", nested_query_conditions_test_params)
+    def test_nested_query_conditions(self, query: str) -> None:
+        """Tests file nested search query conditions"""
         examine_search_query(query)
 
 

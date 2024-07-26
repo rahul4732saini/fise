@@ -154,6 +154,14 @@ class TestDirSearchQuery:
         "atime < '2024-01-01' OR ctime >= '2024-01-01' AND ctime = mtime",
     ]
 
+    nested_query_conditions_test_params = [
+        f"SELECT[TYPE DIR] name, atime FROM '{FILE_DIR_TEST_DIRECTORY / 'reports'}' "
+        "WHERE name LIKE 'report*' AND (ctime > '2024-02-01')",
+        f"SELECT[TYPE DIR] path FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE ((atime >= '2023-05-28'))",
+        f"R SELECT[TYPE DIR] name, ctime, mtime FROM '{FILE_DIR_TEST_DIRECTORY}' "
+        "WHERE (ctime >= '2024-04-01' OR name IN ('src', 'media', 'docs'))",
+    ]
+
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
         """Tests basic syntax for directory search queries"""
@@ -176,12 +184,17 @@ class TestDirSearchQuery:
         """Tests directory search queries with different path types"""
         examine_search_query(query)
 
+    @pytest.mark.parametrize("query", mixed_case_query_test_params)
+    def test_mixed_case_query(self, query: str) -> None:
+        """Tests directory search queries comprising mixed case characters."""
+        examine_search_query(query)
+
     @pytest.mark.parametrize("query", query_conditions_test_params)
     def test_query_conditions(self, query: str) -> None:
         """Tests directory search query conditions"""
         examine_search_query(query)
 
-    @pytest.mark.parametrize("query", mixed_case_query_test_params)
-    def test_mixed_case_query(self, query: str) -> None:
-        """Tests directory search queries comprising mixed case characters."""
+    @pytest.mark.parametrize("query", nested_query_conditions_test_params)
+    def test_nested_query_conditions(self, query: str) -> None:
+        """Tests directory nested search query conditions"""
         examine_search_query(query)

@@ -123,6 +123,14 @@ class TestDirSearchQuery:
         f"SELECT[TYPE DIR] name FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}'",
     ]
 
+    query_conditions_test_params = [
+        f"SELECT[TYPE DIR] path, ctime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+        "ctime >= '2022-02-14' AND name IN ('docs', 'reports', 'media')",
+        f"R SELECT[TYPE DIR] name, mtime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name LIKE '.*'",
+        f"SELECT[TYPE DIR] name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
+        "atime < '2024-01-01' OR ctime >= '2024-01-01' AND ctime = mtime",
+    ]
+
     mixed_case_query_test_params = [
         f"r SELECT[Type DiR] * fROm '{FILE_DIR_TEST_DIRECTORY}'",
         f"Recursive sEleCt[typE dIr] name, parent, ctime FroM '{FILE_DIR_TEST_DIRECTORY}'",
@@ -151,6 +159,11 @@ class TestDirSearchQuery:
     @pytest.mark.parametrize("query", path_types_test_params)
     def test_path_types(self, query: str) -> None:
         """Tests directory search queries with different path types"""
+        examine_search_query(query)
+
+    @pytest.mark.parametrize("query", query_conditions_test_params)
+    def test_query_conditions(self, query: str) -> None:
+        """Tests directory search query conditions"""
         examine_search_query(query)
 
     @pytest.mark.parametrize("query", mixed_case_query_test_params)

@@ -80,12 +80,12 @@ class BaseEntity:
     @property
     @safe_extract_field
     def path(self) -> str:
-        return str(self._path)
+        return self._path.as_posix()
 
     @property
     @safe_extract_field
     def parent(self) -> str:
-        return str(self._path.parent)
+        return self._path.parent.as_posix()
 
     @property
     @safe_extract_field

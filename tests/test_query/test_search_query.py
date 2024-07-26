@@ -49,6 +49,14 @@ class TestFileSearchQuery:
         f"RECURSIVE SELECT path, ctime FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
+    mixed_case_query_test_params = [
+        f"r Select * FroM '{FILE_DIR_TEST_DIRECTORY}'",
+        f"sELect[TYPE FILE] Name, FileType From '{FILE_DIR_TEST_DIRECTORY}'",
+        f"RecURSive sELECt * From '{FILE_DIR_TEST_DIRECTORY}' wHErE FilETypE = '.py'",
+    ]
+
+    individual_fields_test_params = constants.FILE_FIELDS + ("*",)
+
     path_types_test_params = [
         f"SELECT name, filetype FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
         f"R SELECT name, atime, ctime FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY}'",
@@ -61,14 +69,6 @@ class TestFileSearchQuery:
         f"SELECT atime FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name IN ('REAME.md', 'TODO')",
         f"R SELECT path FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE name = 'Q1' AND size[b] = 0",
     ]
-
-    mixed_case_query_test_params = [
-        f"r Select * FroM '{FILE_DIR_TEST_DIRECTORY}'",
-        f"sELect[TYPE FILE] Name, FileType From '{FILE_DIR_TEST_DIRECTORY}'",
-        f"RecURSive sELECt * From '{FILE_DIR_TEST_DIRECTORY}' wHErE FilETypE = '.py'",
-    ]
-
-    individual_fields_test_params = constants.FILE_FIELDS + ("*",)
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:
@@ -118,6 +118,14 @@ class TestDirSearchQuery:
         f"RECURSIVE SELECT[TYPE DIR] path, mtime FROM '{FILE_DIR_TEST_DIRECTORY / 'project'}'",
     ]
 
+    mixed_case_query_test_params = [
+        f"r SELECT[Type DiR] * fROm '{FILE_DIR_TEST_DIRECTORY}'",
+        f"Recursive sEleCt[typE dIr] name, parent, ctime FroM '{FILE_DIR_TEST_DIRECTORY}'",
+        f"Select[TYPE DIR] * From '{FILE_DIR_TEST_DIRECTORY}' Where name In ('orders', 'reports')",
+    ]
+
+    individual_fields_test_params = constants.DIR_FIELDS + ("*",)
+
     path_types_test_params = [
         f"SELECT[TYPE DIR] path, atime FROM ABSOLUTE '{FILE_DIR_TEST_DIRECTORY}'",
         f"R SELECT[TYPE DIR] name, ctime FROM RELATIVE '{FILE_DIR_TEST_DIRECTORY / 'docs'}'",
@@ -131,14 +139,6 @@ class TestDirSearchQuery:
         f"SELECT[TYPE DIR] name FROM '{FILE_DIR_TEST_DIRECTORY}' WHERE "
         "atime < '2024-01-01' OR ctime >= '2024-01-01' AND ctime = mtime",
     ]
-
-    mixed_case_query_test_params = [
-        f"r SELECT[Type DiR] * fROm '{FILE_DIR_TEST_DIRECTORY}'",
-        f"Recursive sEleCt[typE dIr] name, parent, ctime FroM '{FILE_DIR_TEST_DIRECTORY}'",
-        f"Select[TYPE DIR] * From '{FILE_DIR_TEST_DIRECTORY}' Where name In ('orders', 'reports')",
-    ]
-
-    individual_fields_test_params = constants.DIR_FIELDS + ("*",)
 
     @pytest.mark.parametrize("query", basic_query_syntax_test_params)
     def test_basic_query_syntax(self, query: str) -> None:

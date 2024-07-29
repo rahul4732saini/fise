@@ -32,14 +32,14 @@ def parse_query(query: str) -> list[str]:
 
     delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
     conflicting: set[str] = {"'", '"'}
-    tokens: list = []
+    tokens: list[str] = []
 
     # Temporarily stores the current token.
     token = ""
 
     # Stores an array of current starting delimiters in the specified
     # query which are not yet terminated during iteration.
-    cur: list = []
+    cur: list[str] = []
 
     # Adds a whitespace at the end of the query to avoid
     # parsing the last token separately after iteration.

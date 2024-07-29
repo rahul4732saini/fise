@@ -63,7 +63,6 @@ def parse_query(query: str) -> list[str]:
                 tokens.append(token)
                 token = ""
 
-        # For all other characters.
         else:
             token += char
 
@@ -153,7 +152,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     if export_method == "to_json":
         kwargs["indent"] = 4
 
-    # Exports search records to the specified file with a suitable method.
+    # Exports search records to the specified file with the specified method.
     getattr(data, export_method)(file, **kwargs)
 
 
@@ -216,7 +215,7 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
         # Prompts for replacement if the specified table already exists in the database.
         if table in metadata:
             force: str = input(
-                "The specified table already exist, would you like to alter it? (Y/N) "
+                "The specified table already exists, would you like to alter it? (Y/N) "
             )
 
             if force.lower() != "y":

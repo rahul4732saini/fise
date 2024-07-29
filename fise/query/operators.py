@@ -2,9 +2,9 @@
 Operators Module
 ----------------
 
-This module defines classes for processing user queries and conducting file
-and directory search and delete operations within directories. It also
-includes classes for performing search operations within files.
+This module defines classes tailored for processing user queries and executing file and
+directory search or delete operations. Additionally, it includes specialized classes for
+performing search operations within file contents.
 """
 
 from typing import Generator, Callable, Any
@@ -21,7 +21,8 @@ from shared import File, Directory, DataLine, Field, Size
 
 class FileQueryOperator:
     """
-    FileQueryOperator defines methods for performing file search and delete operations.
+    FileQueryOperator defines methods for performing
+    file search and delete operations.
     """
 
     __slots__ = "_directory", "_recursive"
@@ -61,8 +62,8 @@ class FileQueryOperator:
         condition: Callable[[File], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the search records of all the
-        files matching the specified condition present within the directory.
+        Returns a pandas DataFrame comprising search records of all the files
+        present within the directory which match the specified condition.
 
         #### Params:
         - fields (list[Field]): List of desired file metadata `Field` objects.
@@ -94,7 +95,7 @@ class FileQueryOperator:
 
         #### Params:
         - condition (Callable): Function for filtering search records.
-        - skip_err (bool): When to supress permission errors during operation.
+        - skip_err (bool): Whether to supress permission errors during operation.
         """
 
         # `ctr` counts the number of files removed whereas `skipped` counts
@@ -121,7 +122,7 @@ class FileQueryOperator:
 
         Message(f"Successfully removed {ctr} files from '{self._directory}'.")
 
-        # Prints the skipped files message only is `skipped` is not 0.
+        # Prints the skipped files message only is `skipped` is not zero.
         if skipped:
             Alert(
                 f"Skipped {skipped} files from '{self._directory}' due to permission errors."
@@ -143,7 +144,7 @@ class FileDataQueryOperator:
         Creates an instance of the `FileDataQueryOperator` class.
 
         #### Params:
-        - path (pathlib.Path): Path to the file/directory.
+        - path (pathlib.Path): Path to the file or directory.
         - recursive (bool): Whether to include files from subdirectories.
         - filemode (str): Desired filemode to read files.
         """
@@ -180,8 +181,8 @@ class FileDataQueryOperator:
 
     def _search_datalines(self) -> Generator[DataLine, None, None]:
         """
-        Iterates through the files and their corresponding data-lines,
-        yielding `DataLine` objects comprising the dataline and its metadata.
+        Iterates through the files and their corresponding data-lines, and
+        yields `DataLine` objects comprising the dataline and its metadata.
         """
 
         for file, data in self._get_filedata():
@@ -265,11 +266,12 @@ class DirectoryQueryOperator:
         condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the search records of
+        Returns a pandas DataFrame comprising search records of
         all the subdirectories matching the specified condition.
 
         #### Params:
-        - fields (list[str]): List of desired directory metadata fields.
+        - fields (list[Field]): List of desired directory metadata `Field` objects.
+        - columns (list[str]): List of columns names for the specified fields.
         - condition (Callable): Function for filtering search records.
         """
 
@@ -297,7 +299,7 @@ class DirectoryQueryOperator:
 
         #### Params:
         - condition (Callable): Function for filtering directory records.
-        - skip_err (bool): When to supress permission errors during operation.
+        - skip_err (bool): Whether to supress permission errors during operation.
         """
 
         # `ctr` counts the number of directories removed whereas `skipped` counts
@@ -325,7 +327,7 @@ class DirectoryQueryOperator:
 
         Message(f"Successfully removed {ctr} directories from '{self._directory}'.")
 
-        # Prints the skipped files message only is `skipped` is not 0.
+        # Prints the skipped files message only is `skipped` is not zero.
         if skipped:
             Alert(
                 f"Skipped {skipped} directories from '{self._directory}' due to permission errors."

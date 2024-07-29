@@ -146,7 +146,7 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     # Converts datetime objects present in datetime columns into
     # string objects for better representation in Excel files.
     if export_method == "to_excel":
-        for col in data.dtypes.index[data.dtypes == np.dtype("<M8[ns]")]:
+        for col in data.columns[data.dtypes == np.dtype("<M8[ns]")]:
             data[col] = data[col].map(str)
 
     # Adds parameters for additional formatting if the export is to a json file.

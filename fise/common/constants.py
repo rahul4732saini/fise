@@ -6,6 +6,7 @@ This module comprises constants designed to assist various
 classes and functions defined within the project.
 """
 
+import re
 import sys
 from typing import Literal
 
@@ -36,6 +37,8 @@ SIZE_UNITS = Literal[
     "b", "B", "Kb", "KB", "Kib", "KiB", "Mb", "MB", "Mib",
     "MiB", "Gb", "GB", "Gib", "GiB", "Tb", "TB", "Tib", "TiB"
 ]
+
+STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
 
 # Mapping of storage unit string labels mapped with corresponding divisors
 # for storage size conversion into specified units.

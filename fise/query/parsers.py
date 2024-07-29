@@ -22,17 +22,25 @@ def _parse_path(subquery: list[str]) -> tuple[Path, int]:
     relative to the specified subquery.
     """
 
+    path_type: str = "relative"
+    path_specs_index: str = 0
+
     if subquery[0].lower() in constants.PATH_TYPES:
+        path_type = subquery[0].lower()
+        path_specs_index = 1
 
-        path_type: str = subquery[0].lower()
-        path: Path = Path(subquery[1].strip("'\""))
+    raw_path: str = subquery[path_specs_index]
 
-        if path_type == "absolute":
-            path = path.resolve()
+    # Removes the leading and trailing quotes if explicitly specified within the path.
+    if constants.STRING_PATTERN.match(raw_path):
+        raw_path = raw_path[1:-1]
 
-        return path, 1
+    path: Path = Path(raw_path)
 
-    return Path(subquery[0].strip("'\"")), 0
+    if path_type == "absolute":
+        path = path.resolve()
+
+    return path, path_specs_index
 
 
 def _get_from_keyword_index(subquery: list[str]) -> int:

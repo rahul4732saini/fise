@@ -148,8 +148,8 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
         for col in data.columns[data.dtypes == np.dtype("<M8[ns]")]:
             data[col] = data[col].map(str)
 
-    # Adds parameters for additional formatting if the export is to a json file.
-    if export_method == "to_json":
+    # Adds parameters for additional formatting if the export is to a JSON file.
+    elif export_method == "to_json":
         kwargs["indent"] = 4
 
     # Exports search records to the specified file with the specified method.
@@ -160,7 +160,7 @@ def _connect_sqlite() -> Engine:
     """
     Connects to a SQLite database file.
     """
-    database: Path = Path(input("Enter the path to database file: "))
+    database: Path = Path(input("Enter the path to the database file: "))
     return sqlalchemy.create_engine(f"sqlite:///{database}")
 
 

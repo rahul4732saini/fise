@@ -75,18 +75,15 @@ class FileQueryOperator:
             File(file) for file in tools.get_files(self._directory, self._recursive)
         )
 
-        # Creates a pandas DataFrame out of a Generator object
-        # comprising search records of the specified fields.
-        records = pd.DataFrame(
-            (
-                [self._get_field(field, file) for field in fields]
-                for file in files
-                if condition(file)
-            ),
-            columns=columns,
+        # Generator object comprising search records of
+        # the files matching the specified condition.
+        records: Generator[list[Any], None, None] = (
+            [self._get_field(field, file) for field in fields]
+            for file in files
+            if condition(file)
         )
 
-        return records
+        return pd.DataFrame(records, columns=columns)
 
     def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """
@@ -216,16 +213,15 @@ class FileDataQueryOperator:
         - condition (Callable): Function for filtering search records.
         """
 
-        # Returns a pandas DataFrame out of a Generator object
-        # comprising search records of the specified fields.
-        return pd.DataFrame(
-            (
-                [self._get_field(field, data) for field in fields]
-                for data in self._search_datalines()
-                if condition(data)
-            ),
-            columns=columns,
+        # Generator object comprising search records of
+        # the files matching the specified condition.
+        records: Generator[list[Any], None, None] = (
+            [self._get_field(field, data) for field in fields]
+            for data in self._search_datalines()
+            if condition(data)
         )
+
+        return pd.DataFrame(records, columns=columns)
 
 
 class DirectoryQueryOperator:
@@ -280,16 +276,15 @@ class DirectoryQueryOperator:
             for directory in tools.get_directories(self._directory, self._recursive)
         )
 
-        # Creates a pandas DataFrame out of a Generator object
-        # comprising search records of the specified fields.
-        return pd.DataFrame(
-            (
-                [self._get_field(field, directory) for field in fields]
-                for directory in directories
-                if condition(directory)
-            ),
-            columns=columns,
+        # Generator object comprising search records of
+        # the files matching the specified condition.
+        records: Generator[list[Any], None, None] = (
+            [self._get_field(field, directory) for field in fields]
+            for directory in directories
+            if condition(directory)
         )
+
+        return pd.DataFrame(records, columns=columns)
 
     def remove_directories(
         self, condition: Callable[[Directory], bool], skip_err: bool

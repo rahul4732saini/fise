@@ -2,8 +2,8 @@
 Shared Module
 -------------
 
-This module comprises classes shared across the project
-assisting various classes and functions defined within it.
+This module comprises data-classes shared across the project
+assisting various other classes and functions defined within it.
 """
 
 import re
@@ -24,8 +24,8 @@ else:
 
 class File(Entity):
     """
-    File class serves as a unified class for accessing all attributes
-    related to a file `pathlib.Path` and `os.stat_result` object.
+    File class serves as a unified class for
+    accessing all file metadata attributes.
     """
 
     __slots__ = "_path", "_stats"
@@ -43,8 +43,8 @@ class File(Entity):
 
 class DataLine:
     """
-    DataLine class serves as a unified class for accessing
-    all attributes related to the metadata of a dataline.
+    DataLine class serves as a unified class for
+    accessing all dataline metadata attributes.
     """
 
     __slots__ = "_file", "_data", "_lineno"
@@ -91,8 +91,8 @@ class DataLine:
 
 class Directory(Entity):
     """
-    Directory class serves as a unified class for accessing all attributes
-    related to a directory `pathlib.Path` and `os.stat_result` object.
+    Directory class serves as a unified class for
+    accessing all directory metadata attributes.
     """
 
     __slots__ = "_path", "_stats"
@@ -101,11 +101,11 @@ class Directory(Entity):
 @dataclass(slots=True, frozen=True, eq=False)
 class Size:
     """
-    Size class stores the size unit of the size field
-    and defines a mechanism for parsing the field.
+    Size class stores the size unit of the file size
+    field and defines a mechanism for parsing the field.
     """
 
-    # Regex pattern for matching size field.
+    # Regex pattern for matching size field specifications.
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(rf"^size(\[.*])?$")
 
     unit: str
@@ -113,7 +113,8 @@ class Size:
     @classmethod
     def from_string(cls, field: str):
         """
-        Creates an instance of `Size` object from the specified size field string.
+        Creates an instance of `Size` object from
+        the specified size field specifications.
         """
 
         if not cls._size_field_pattern.match(field.lower()):
@@ -151,7 +152,7 @@ class BaseQuery:
 @dataclass(slots=True, frozen=True, eq=False)
 class SearchQuery(BaseQuery):
     """
-    SearchQuery class stores attributes related to search queries.
+    SearchQuery class stores search query attributes.
     """
 
     fields: list[Field | Size]
@@ -160,14 +161,14 @@ class SearchQuery(BaseQuery):
 
 class DeleteQuery(BaseQuery):
     """
-    DeleteQuery class stores attributes related to delete queries.
+    DeleteQuery class stores delete query attributes.
     """
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
     """
-    ExportData class stores export data related attributes.
+    ExportData class stores export data attributes.
     """
 
     type_: Literal["file", "database"]
@@ -177,7 +178,7 @@ class ExportData:
 @dataclass(slots=True, frozen=True, eq=False)
 class OperationData:
     """
-    OperationData class stores attributes related to the query operation.
+    OperationData class stores query operation attributes.
     """
 
     operation: constants.OPERATIONS
@@ -204,7 +205,7 @@ class QueryInitials:
 @dataclass(slots=True, frozen=True, eq=False)
 class Condition:
     """
-    Condition class stores attributes related to individual query conditions.
+    Condition class stores individual query condition attributes.
     """
 
     operand1: Any

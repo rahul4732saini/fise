@@ -13,7 +13,7 @@ from typing import Generator, Any
 import numpy as np
 import pandas as pd
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.engine.base import Engine
+from sqlalchemy import Engine, URL
 import sqlalchemy
 
 from . import constants
@@ -177,14 +177,16 @@ def _connect_database(database: str) -> Engine:
     passkey: str = getpass.getpass("Password: ")
     host: str = input("Host [localhost]: ") or "localhost"
     port: str = input("Port: ")
-    db: str = input("Database: ")
+    database: str = input("Database: ")
 
     if not port:
         raise QueryHandleError(f"Invalid port number: {port!r}")
 
-    return sqlalchemy.create_engine(
-        f"{constants.DATABASE_URL_DIALECTS[database]}{user}:{passkey}@{host}:{port}/{db}"
+    url = URL.create(
+        constants.DATABASE_URL_DIALECTS[database], user, passkey, host, port, database
     )
+
+    return sqlalchemy.create_engine(url)
 
 
 def export_to_sql(data: pd.DataFrame, database: str) -> None:

@@ -13,7 +13,7 @@ from typing import Generator, Any
 import numpy as np
 import pandas as pd
 from sqlalchemy.exc import OperationalError
-from sqlalchemy import Engine, URL
+from sqlalchemy.engine import Engine, URL, Connection
 import sqlalchemy
 
 from . import constants
@@ -199,7 +199,7 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
     """
 
     # Creates an `sqlalchemy.Engine` object of the specified SQL database.
-    conn: Engine = (
+    engine: Engine = (
         _connect_sqlite() if database == "sqlite" else _connect_database(database)
     )
 
@@ -207,8 +207,8 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
     metadata = sqlalchemy.MetaData()
 
     try:
-        metadata.reflect(bind=conn)
-        conn.connect()
+        metadata.reflect(bind=engine)
+        conn: Connection = engine.connect()
 
     except OperationalError:
         raise OperationError(f"Unable to connect to {database!r} database.")

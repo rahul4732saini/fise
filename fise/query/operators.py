@@ -152,12 +152,12 @@ class FileDataQueryOperator:
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """
-        Yields the file(s) `pathlib.Path` object and a list of strings/bytes
-        corresponding to individual lines of text/byte in the file(s).
+        Yields the file paths along with a list comprising datalines
+        of the corresponding file in the form of strings or bytes.
         """
 
-        # Generator object of `pathlib.Path` objects of all the files present within
-        # the directory if the specified path is a directory else a tuple comprising
+        # The following variable stores a Generator object of all the files present within
+        # the directory if the specified path is a directory or creates a tuple comprising
         # the `pathlib.Path` object of the specified file.
         files: tuple[Path] | Generator[Path, None, None] = (
             (self._path,)

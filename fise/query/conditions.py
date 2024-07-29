@@ -24,7 +24,6 @@ class ConditionParser:
     __slots__ = "_query", "_method_map", "_lookup_fields", "_field_aliases"
 
     # Regular expression patterns for matching fields in query conditions.
-    _string_pattern = re.compile(r"^['\"].*['\"]$")
     _tuple_pattern = re.compile(r"^\(.*\)$")
     _float_pattern = re.compile(r"^-?\d+\.\d+$")
 
@@ -109,7 +108,7 @@ class ConditionParser:
         - operand (str): Operand to be parsed.
         """
 
-        if self._string_pattern.match(operand):
+        if constants.STRING_PATTERN.match(operand):
             # Strips the leading and trailing quotes in the string.
             operand = operand[1:-1]
             timedate: datetime | None = self._parse_datetime(operand)
@@ -176,7 +175,7 @@ class ConditionParser:
         # The operand is parsed using the following
         # mechanism in case of a `LIKE` operation.
 
-        elif not self._string_pattern.match(operand):
+        elif not constants.STRING_PATTERN.match(operand):
             raise QueryParseError(
                 f"Invalid query pattern around {' '.join(self._query)!r}"
             )

@@ -82,9 +82,7 @@ class QueryHandler:
             tools.export_to_sql(data, initials.export.target)
 
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
-        """
-        Parses and handles the specified file search/delete query.
-        """
+        """Parses and handles the specified file search or delete query"""
 
         parser = FileQueryParser(self._query[self._ctr:], initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
@@ -97,9 +95,7 @@ class QueryHandler:
         operator.remove_files(query.condition, initials.operation.skip_err)
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
-        """
-        Parses and handles the specified data search query.
-        """
+        """Parses and handles the specified data search query"""
 
         if (
             initials.export
@@ -107,7 +103,7 @@ class QueryHandler:
             and initials.export.type_ == "database"
         ):
             raise QueryParseError(
-                "Exporting binary data to SQL databases is currently unsupported."
+                "Exporting binary data to SQL databases is currently unsupported"
             )
 
         parser = FileDataQueryParser(self._query[self._ctr:])
@@ -260,7 +256,9 @@ class QueryHandler:
         )
 
         if operation not in constants.OPERATION_ALIASES:
-            raise QueryParseError(f"Invalid operation specified: {operation!r}")
+            raise QueryParseError(
+                f"Invalid operation {operation!r} specified in the query"
+            )
 
         # Verifying operation parameters syntax.
         if not self._operation_params_pattern.match(oparams):

@@ -62,8 +62,6 @@ class ConditionParser:
         matches the corresponding pattern, else returns None.
         """
 
-        print(operand)
-
         if not self._datetime_pattern.match(operand):
             return None
 
@@ -84,9 +82,7 @@ class ConditionParser:
             )
 
     def _parse_field(self, field: str) -> Field | Size:
-        """
-        Parses the specified string formatted field.
-        """
+        """Parses the specified string formatted field"""
 
         if field.lower().startswith("size"):
             return Size.from_string(field)
@@ -352,23 +348,11 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        if isinstance(field, Field):
-            try:
-                field = getattr(obj, field.field)
+        if isinstance(field, Size):
+            field = field.get_size(obj)
 
-            except AttributeError:
-                raise QueryParseError(
-                    f"Invalid field {field.field!r} specified in query conditions."
-                )
-
-            # Converts `bytes` object into a string for
-            # better compatibility in condition evaluation.
-            if isinstance(field, bytes):
-                field = str(field)[2:-1]
-
-        elif isinstance(field, Size):
-            # Extracts the size and converts it into the specified unit.
-            field = obj.size / constants.SIZE_CONVERSION_MAP[field.unit]
+        else:
+            field = getattr(obj, field.field)
 
         return field
 
@@ -398,15 +382,13 @@ class ConditionHandler:
         return operand
 
     def _eval_condition(
-        self,
-        condition: Condition | list[str | Condition],
-        obj: File | DataLine | Directory,
+        self, condition: Condition | list, obj: File | DataLine | Directory
     ) -> bool:
         """
         Evaluates the specified condition.
 
         #### Params:
-        - condition (Condition): Condition to be evaluated.
+        - condition (Condition | list): Condition(s) to be evaluated.
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
@@ -500,7 +482,7 @@ class ConditionHandler:
 
     def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
         """
-        Evaluates the query conditions.
+        Evaluates the query conditions
 
         #### Params:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.

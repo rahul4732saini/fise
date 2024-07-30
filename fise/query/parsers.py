@@ -6,6 +6,11 @@ This module comprises classes and functions for parsing user queries
 extracting relevant data for further processing and evaluation.
 """
 
+# NOTE
+# The parser classes defined within this module only parse the search fields
+# (explicilty for search operation), path, path-type and the conditions defined
+# within the query. The initials are parsed beforehand.
+
 from pathlib import Path
 from typing import Callable
 
@@ -54,19 +59,19 @@ def _get_from_keyword_index(subquery: list[str]) -> int:
 
 
 def _get_condition_handler(
-    subquery: list[str], operation_target: str
+    subquery: list[str], operand: str
 ) -> Callable[[File | DataLine | Directory], bool]:
     """
     Parses the conditions defined in the specified subquery
-    and returns a function for filtering records.
+    and returns a function for filtering data records.
 
     #### Params:
     - subquery (list): Subquery comprising the query conditions.
-    - operation_target (str): Targeted operand in the query operation.
+    - operand (str): Targeted operand in the query operation.
     """
 
-    # Returns a lambda function returning `True` by default to include all the records
-    # during processing in no conditions are explicitly defined in the query.
+    # Returns a lambda function hardcoded to return `True` to include all the records
+    # during evaluation if no conditions are explicitly defined within the query.
     if not subquery:
         return lambda _: True
 
@@ -74,7 +79,7 @@ def _get_condition_handler(
         raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
     conditions: list[str] = subquery[1:]
-    handler = ConditionHandler(conditions, operation_target)
+    handler = ConditionHandler(conditions, operand)
 
     # Returns the evaluation method for filtering records.
     return handler.eval_conditions
@@ -91,10 +96,6 @@ class FileQueryParser:
     _file_fields = set(constants.FILE_FIELDS) | constants.FILE_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
-
-        # This parser class accepts the subquery and parses only the fields, path-type,
-        # path, and conditions defined within the query. The initials are parsed beforehand.
-
         self._query = subquery
         self._operation = operation
 
@@ -210,10 +211,6 @@ class FileDataQueryParser:
     _data_fields = set(constants.DATA_FIELDS) | constants.DATA_FIELD_ALIASES.keys()
 
     def __init__(self, subquery: list[str]) -> None:
-
-        # This parser class accepts the subquery and parses only the fields, path-type,
-        # path, and conditions defined within the query. The initials are parsed beforehand.
-
         self._query = subquery
 
         # Stores the index of the `FROM` keyword in the specified subquery.

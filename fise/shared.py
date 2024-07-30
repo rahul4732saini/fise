@@ -128,6 +128,13 @@ class Size:
 
         # Initializes with "B" -> bytes unit if not explicitly specified.
         return cls(unit or "B")
+    
+    def get_size(self, file: File) -> float:
+        """
+        Extracts the size from the specified `File` object and
+        converts it in accordance with the stored size unit.
+        """
+        return round(file.size / constants.SIZE_CONVERSION_MAP.get(self.unit), 5)
 
 
 @dataclass(slots=True, frozen=True, eq=False)

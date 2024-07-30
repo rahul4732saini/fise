@@ -50,9 +50,8 @@ class FileQueryOperator:
         """
 
         if isinstance(field, Size):
-            # Extracts the size in bytes and converts into the parsed size unit.
-            return round(file.size / constants.SIZE_CONVERSION_MAP.get(field.unit), 5)
-
+            return field.get_size(file)
+        
         return getattr(file, field.field)
 
     def get_dataframe(

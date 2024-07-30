@@ -67,7 +67,7 @@ class FileQueryOperator:
         #### Params:
         - fields (list[Field]): List of desired file metadata `Field` objects.
         - columns (list[str]): List of columns names for the specified fields.
-        - condition (Callable): Function for filtering search records.
+        - condition (Callable): Function for filtering data records.
         """
 
         files: Generator[File, None, None] = (
@@ -90,7 +90,7 @@ class FileQueryOperator:
         directory matching the specified condition.
 
         #### Params:
-        - condition (Callable): Function for filtering search records.
+        - condition (Callable): Function for filtering data records.
         - skip_err (bool): Whether to supress permission errors during operation.
         """
 
@@ -209,7 +209,7 @@ class FileDataQueryOperator:
 
         #### Params:
         - fields (list[str]): List of the desired metadata fields.
-        - condition (Callable): Function for filtering search records.
+        - condition (Callable): Function for filtering data records.
         """
 
         # Generator object comprising search records of
@@ -267,7 +267,7 @@ class DirectoryQueryOperator:
         #### Params:
         - fields (list[Field]): List of desired directory metadata `Field` objects.
         - columns (list[str]): List of columns names for the specified fields.
-        - condition (Callable): Function for filtering search records.
+        - condition (Callable): Function for filtering data records.
         """
 
         directories: Generator[Directory, None, None] = (
@@ -292,7 +292,7 @@ class DirectoryQueryOperator:
         Removes all the subdirectories matching the specified condition.
 
         #### Params:
-        - condition (Callable): Function for filtering directory records.
+        - condition (Callable): Function for filtering data records.
         - skip_err (bool): Whether to supress permission errors during operation.
         """
 

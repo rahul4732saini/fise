@@ -159,9 +159,9 @@ class FileDataQueryOperator:
         # the directory if the specified path is a directory or creates a tuple comprising
         # the `pathlib.Path` object of the specified file.
         files: tuple[Path] | Generator[Path, None, None] = (
-            (self._path,)
-            if self._path.is_file()
-            else tools.get_files(self._path, self._recursive)
+            (self._path,) if self._path.is_file() else tools.get_files(
+                self._path, self._recursive
+            )
         )
 
         for i in files:

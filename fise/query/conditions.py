@@ -84,10 +84,9 @@ class ConditionParser:
     def _parse_field(self, field: str) -> Field | Size:
         """Parses the specified string formatted field"""
 
-        if field.lower().startswith("size"):
+        if field.startswith("size"):
             return Size.from_string(field)
 
-        field = field.lower()
         field = self._field_aliases.get(field, field)
 
         if field not in self._lookup_fields:
@@ -117,7 +116,11 @@ class ConditionParser:
         elif operand.isdigit():
             return int(operand)
 
-        if operand.lower() == "none":
+        # Converts the operand to lowercase as the character case of
+        # the operand does not matter for the following statements.
+        operand = operand.lower()
+
+        if operand == "none":
             return None
 
         # If none of the above conditions are matched, the operand is assumed
@@ -169,11 +172,11 @@ class ConditionParser:
             return self._parse_collective_operand(operand, operator)
 
         # The operand is parsed using the following
-        # mechanism in case of a `LIKE` operation.
+        # mechanism in case of the `LIKE` operation.
 
         elif not constants.STRING_PATTERN.match(operand):
             raise QueryParseError(
-                f"Invalid query pattern around {' '.join(self._query)!r}"
+                f"Invalid Regex pattern {operand} specified in query conditions"
             )
 
         try:

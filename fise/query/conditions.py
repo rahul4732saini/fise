@@ -87,6 +87,7 @@ class ConditionParser:
         if field.startswith("size"):
             return Size.from_string(field)
 
+        field = field.lower()
         field = self._field_aliases.get(field, field)
 
         if field not in self._lookup_fields:
@@ -116,11 +117,7 @@ class ConditionParser:
         elif operand.isdigit():
             return int(operand)
 
-        # Converts the operand to lowercase as the character case of
-        # the operand does not matter for the following statements.
-        operand = operand.lower()
-
-        if operand == "none":
+        if operand.lower() == "none":
             return None
 
         # If none of the above conditions are matched, the operand is assumed
@@ -460,7 +457,7 @@ class ConditionHandler:
 
         # Evaluates conditions separated by `and` operator.
         for _ in range(len(segments) // 2):
-            segment: list[Any] = segments[ctr: ctr + 3]
+            segment: list[Any] = segments[ctr : ctr + 3]
 
             if segment[1] == "or":
                 # Increments the counter by 1 to skip the
@@ -468,7 +465,7 @@ class ConditionHandler:
                 ctr += 2
 
             else:
-                segments[ctr: ctr + 3] = [self._eval_condition_segments(segment, obj)]
+                segments[ctr : ctr + 3] = [self._eval_condition_segments(segment, obj)]
 
         # Evaluates conditions separated by `or` operator.
         for _ in range(len(segments) // 2):

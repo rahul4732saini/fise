@@ -29,7 +29,7 @@ def _field_extraction_alert() -> None:
         "recorded files/directories. These fields are being assigned as 'None'."
     )
 
-    # Sets `field_alert` attribute to `True` to avoid repeating the alert.
+    # Sets `field_alert` attribute to `True` to avoid alert repetition.
     BaseEntity.field_alert = True
 
 
@@ -45,7 +45,6 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
 
         except Exception:
             _field_extraction_alert()
-            return None
 
     return wrapper
 

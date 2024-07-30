@@ -39,7 +39,7 @@ def reset_file_dir_test_directory(
         (directory / direc).mkdir()
 
     for file in file_listings:
-        (directory / file).mkdir()
+        (directory / file).touch()
 
 
 if __name__ == "__main__":

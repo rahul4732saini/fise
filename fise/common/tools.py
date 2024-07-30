@@ -227,3 +227,7 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
                 raise QueryHandleError
 
         data.to_sql(table, conn, if_exists="replace", index=False)
+
+    finally:
+        conn.close()
+        engine.dispose(close=True)

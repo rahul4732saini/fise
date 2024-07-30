@@ -1,6 +1,6 @@
 """
 This module comprises test cases for verifying the utility
-functions defined with the common/tools.py module in FiSE.
+functions defined within the common/tools.py module in FiSE.
 """
 
 from typing import Generator
@@ -76,7 +76,9 @@ PARSE_QUERY_TEST_RESULTS = [
 
 
 def read_test_tools_hdf_file(path: str) -> pd.Series | pd.DataFrame:
-    """Reads tests data stored at the specified path within `test_tools.hdf` file."""
+    """
+    Reads test records stored at the specified path within `test_tools.hdf` file.
+    """
     global TEST_RECORDS_FILE
 
     with pd.HDFStore(str(TEST_RECORDS_FILE)) as store:

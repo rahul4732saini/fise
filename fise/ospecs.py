@@ -49,6 +49,11 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
     return wrapper
 
 
+def get_datetime(timestamp: float) -> datetime:
+    """Converts a Unix timestamp into a `datetime` object"""
+    return datetime.fromtimestamp(timestamp).replace(microsecond=0)
+
+
 class BaseEntity:
     """
     BaseEntity class serves as the base class for accessing all methods and attributes
@@ -89,17 +94,17 @@ class BaseEntity:
     @property
     @safe_extract_field
     def access_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_atime).replace(microsecond=0)
+        return get_datetime(self._stats.st_atime)
 
     @property
     @safe_extract_field
     def create_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_ctime).replace(microsecond=0)
+        return get_datetime(self._stats.st_ctime)
 
     @property
     @safe_extract_field
     def modify_time(self) -> datetime:
-        return datetime.fromtimestamp(self._stats.st_mtime).replace(microsecond=0)
+        return get_datetime(self._stats.st_mtime)
 
 
 class WindowsEntity(BaseEntity):

@@ -19,6 +19,17 @@ from common import tools, constants
 from shared import File, Directory, DataLine, Field, Size
 
 
+def get_field(field: Field, obj: File | DataLine | Directory) -> Any:
+    """
+    Extracts the specified field from the specified metadata object.
+
+    #### Params:
+    - field (Field): `Field` object comprising the field to be extracted.
+    - obj (File | DataLine | Directory): metadata object for data extraction.
+    """
+    return getattr(obj, field.field)
+
+
 class FileQueryOperator:
     """
     FileQueryOperator defines methods for performing
@@ -51,8 +62,8 @@ class FileQueryOperator:
 
         if isinstance(field, Size):
             return field.get_size(file)
-        
-        return getattr(file, field.field)
+
+        return get_field(field, file)
 
     def get_dataframe(
         self,
@@ -159,9 +170,9 @@ class FileDataQueryOperator:
         # the directory if the specified path is a directory or creates a tuple comprising
         # the `pathlib.Path` object of the specified file.
         files: tuple[Path] | Generator[Path, None, None] = (
-            (self._path,) if self._path.is_file() else tools.get_files(
-                self._path, self._recursive
-            )
+            (self._path,)
+            if self._path.is_file()
+            else tools.get_files(self._path, self._recursive)
         )
 
         for i in files:
@@ -186,17 +197,6 @@ class FileDataQueryOperator:
                 DataLine(file, line, index + 1) for index, line in enumerate(data)
             )
 
-    @staticmethod
-    def _get_field(field: Field, data: DataLine) -> Any:
-        """
-        Extracts the specified field from the specified `DataLine` object.
-
-        #### Params:
-        - field (Field): `Field` object comprising the field to be extracted.
-        - data (DataLine): `DataLine` object to extract data from.
-        """
-        return getattr(data, field.field)
-
     def get_dataframe(
         self,
         fields: list[Field],
@@ -215,7 +215,7 @@ class FileDataQueryOperator:
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [self._get_field(field, data) for field in fields]
+            [get_field(field, data) for field in fields]
             for data in self._search_datalines()
             if condition(data)
         )
@@ -243,17 +243,6 @@ class DirectoryQueryOperator:
         self._directory = directory
         self._recursive = recursive
 
-    @staticmethod
-    def _get_field(field: Field, directory: Directory) -> Any:
-        """
-        Extracts the specified field from the specified `Directory` object.
-
-        #### Params:
-        - field (Field): `Field` object comprising the field to be extracted.
-        - directory (Directory): `Directory` object to extract data from.
-        """
-        return getattr(directory, field.field)
-
     def get_dataframe(
         self,
         fields: list[Field],
@@ -278,7 +267,7 @@ class DirectoryQueryOperator:
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [self._get_field(field, directory) for field in fields]
+            [get_field(field, directory) for field in fields]
             for directory in directories
             if condition(directory)
         )

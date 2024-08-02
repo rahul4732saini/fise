@@ -103,13 +103,13 @@ class FileQueryParser:
         self._from_index = _get_from_keyword_index(subquery)
 
     def _parse_fields(
-        self, attrs: str | list[str]
+        self, attrs: list[str]
     ) -> tuple[list[Field | Size], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
         #### Params:
-        - attrs (str | list[str]): String or a list of strings of query fields.
+        - attrs (list[str]): List of strings of query fields.
         """
 
         fields: list[Field | Size] = []
@@ -286,12 +286,12 @@ class DirectoryQueryParser(FileQueryParser):
     _operand = "dir"
     _dir_fields = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
 
-    def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
+    def _parse_fields(self, attrs: list[str]) -> tuple[list[Field], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
         #### Params:
-        - attrs (str | list[str]): String or a list of strings of query fields to be parsed.
+        - attrs (list[str]): List of strings of query fields.
         """
 
         fields: list[Field] = []

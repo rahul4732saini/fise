@@ -7,3 +7,4 @@ six==1.16.0
 SQLAlchemy==2.0.30
 typing_extensions==4.12.1
 tzdata==2024.1
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability

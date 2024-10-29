@@ -2,18 +2,18 @@
 Constants Module
 ----------------
 
-This module comprises constants designed to assist various
-classes and functions defined within the project.
+This module comprises constants designed for assisting operations
+within the various classes and functions defined in the project.
 """
 
 import re
 import sys
 from typing import Literal
 
-# Additional fields for Posix-based operating systems.
+# Additional query fields for POSIX-based operating systems.
+# Evaluates to an empty tuple for other operating systems.
 POSIX_FIELDS = ("owner", "group", "permissions") if sys.platform != "win32" else ()
 
-# Search query fields for various query types.
 DIR_FIELDS = (
     "name", "path", "parent", "access_time", "create_time", "modify_time"
 ) + POSIX_FIELDS
@@ -40,16 +40,15 @@ SIZE_UNITS = Literal[
 
 STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
 
-# Mapping of storage unit string labels mapped with corresponding divisors
-# for storage size conversion into specified units.
+# Maps storage unit string lables with their corresponding
+# divisors relative to 1 Byte for storage size conversions.
 SIZE_CONVERSION_MAP = {
     "b": 0.125, "B": 1, "Kb": 125, "KB": 1e3, "Kib": 128, "KiB": 1024, "Mb": 1.25e5,
     "MB": 1e6, "Mib": 131_072, "MiB": 1024**2, "Gb": 1.25e8, "GB": 1e9, "Gib": 134_217_728,
     "GiB": 1024**3, "Tb": 1.25e11, "TB": 1e12, "Tib": 137_438_953_472, "TiB": 1024**4
 }
 
-# Mapping of file suffixes mapped with corresponding
-# `pandas.DataFrame`  methods for exporting data.
+# Maps file suffixes with corresponding `pandas.DataFrame` methods for data exports.
 DATA_EXPORT_TYPES_MAP = {
     ".csv": "to_csv",
     ".json": "to_json",

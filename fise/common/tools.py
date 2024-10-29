@@ -70,12 +70,13 @@ def parse_query(query: str) -> list[str]:
 
 def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     """
-    Returns a `typing.Generator` object of all files present within the specified directory.
-    Files present within subdirectories are also extracted if `recursive` is set to `True`.
+    Returns a generator of all files present within the specified directory.
+    Files present within subdirectories are also extracted if `recursive` is
+    set to `True`.
 
     #### Params:
     - directory (pathlib.Path): Path to the directory.
-    - recursive (bool): Whether to include files from subdirectories.
+    - recurisve (bool): Whether to include files from subdirectories.
     """
 
     try:
@@ -97,14 +98,18 @@ def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
 
 def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     """
-    Returns a `typing.Generator` object of all subdirectories present within the specified
-    directory. Directories present within subdirectories are also extracted if `recursive`
-    is set to `True`.
+    Returns a generator of all subdirectories present within the specified
+    directory. Directories peresent within subdirectories are also extracted
+    if `recursive` is set to True.
 
     #### Params:
     - directory (pathlib.Path): Path to the directory.
     - recursive (bool): Whether to include files from subdirectories.
     """
+
+    # Explicitly extracts the sub-directories first to maintain compatability
+    # in the delete operation and delete sub-directories prior to the parents
+    # avoiding look up errors.
 
     try:
         for path in directory.iterdir():

@@ -107,9 +107,8 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
     - recursive (bool): Whether to include files from subdirectories.
     """
 
-    # Explicitly extracts the sub-directories first to maintain compatability
-    # in the delete operation and delete sub-directories prior to the parents
-    # avoiding look up errors.
+    # Extracts subdirectories first to ensure compatibility in the delete
+    # operation, deleting them before their parents to avoid lookup errors.
 
     try:
         for path in directory.iterdir():
@@ -131,7 +130,8 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
 
 def export_to_file(data: pd.DataFrame, file: Path) -> None:
     """
-    Exports search data to the specified file in a suitable format.
+    Exports search data to the specified file in the format associated
+    with the type of the file.
 
     #### Params:
     - data (pd.DataFrame): pandas DataFrame comprising search records.

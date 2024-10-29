@@ -2,8 +2,8 @@
 Common package
 --------------
 
-This packages comprises constants and utility functions designed
-for assisting others classes and functions throughout the project.
+This package comprises constants and utility functions designed for
+assisting other classes and functions defined within the project.
 """
 
 __all__ = "constants", "tools"

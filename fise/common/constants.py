@@ -48,14 +48,6 @@ SIZE_CONVERSION_MAP = {
     "GiB": 1024**3, "Tb": 1.25e11, "TB": 1e12, "Tib": 137_438_953_472, "TiB": 1024**4
 }
 
-# Maps file suffixes with corresponding `pandas.DataFrame` methods for data exports.
-DATA_EXPORT_TYPES_MAP = {
-    ".csv": "to_csv",
-    ".json": "to_json",
-    ".html": "to_html",
-    ".xlsx": "to_excel",
-}
-
 # Additional field aliases for Posix-based operating systems.
 POSIX_FIELD_ALIASES = {"perms": "permissions"} if sys.platform != "win32" else {}
 

@@ -128,6 +128,30 @@ def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, N
         yield from ()
 
 
+def _export_to_json(data: pd.DataFrame, file: Path) -> None:
+    """Exports search data to the specified JSON file."""
+    data.to_json(file, indent=4)
+
+
+def _export_to_html(data: pd.DataFrame, file: Path) -> None:
+    """Exports search data to the specified HTML file."""
+    data.to_html(file)
+
+
+def _export_to_csv(data: pd.DataFrame, file: Path) -> None:
+    """Exports search data to the specified CSV file."""
+    data.to_csv(file)
+
+
+def _export_to_xlsx(data: pd.DataFrame, file: Path) -> None:
+    """Exports search data to the specified XLSX file."""
+
+    for col in data.columns[data.dtypes == np.dtype("<M8[ns]")]:
+        data[col] = data[col].astype(str)
+
+    data.to_excel(file)
+
+
 def export_to_file(data: pd.DataFrame, file: Path) -> None:
     """
     Exports search data to the specified file in the format associated

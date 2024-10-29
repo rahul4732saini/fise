@@ -8,7 +8,7 @@ other classes and functions defined within the project.
 
 import getpass
 from pathlib import Path
-from typing import Generator, Any
+from typing import Generator, Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -162,23 +162,15 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     - file (Path): Path to the file.
     """
 
-    kwargs: dict[str, Any] = {}
+    export_methods: dict[str, Callable[[pd.DataFrame, Path], None]] = {
+        ".json": _export_to_json,
+        ".xlsx": _export_to_xlsx,
+        ".csv": _export_to_csv,
+        ".html": _export_to_html,
+    }
 
-    # String representation of the export method for exporting search records.
-    export_method: str = constants.DATA_EXPORT_TYPES_MAP[file.suffix]
-
-    # Converts datetime objects present in datetime columns into
-    # string objects for better representation in Excel files.
-    if export_method == "to_excel":
-        for col in data.columns[data.dtypes == np.dtype("<M8[ns]")]:
-            data[col] = data[col].map(str)
-
-    # Adds parameters for additional formatting if the export is to a JSON file.
-    elif export_method == "to_json":
-        kwargs["indent"] = 4
-
-    # Exports search records to the specified file with the specified method.
-    getattr(data, export_method)(file, **kwargs)
+    # Exports data using a method suitable for the associated file type.
+    export_methods[file.suffix](data, file)
 
 
 def _connect_sqlite() -> Engine:

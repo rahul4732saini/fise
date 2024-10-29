@@ -2,8 +2,8 @@
 Tools module
 ------------
 
-This module comprises utility functions supporting
-other classes and functions throughout the project.
+This module comprises utility functions desgined for assigned
+other classes and functions defined within the project.
 """
 
 import getpass

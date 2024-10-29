@@ -174,10 +174,9 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
 
 
 def _connect_sqlite() -> Engine:
-    """
-    Connects to a SQLite database file.
-    """
-    database: Path = Path(input("Enter the path to the database file: "))
+    """Connects to a SQLite database file."""
+
+    database: str = input("Enter the path to the database file: ")
     return sqlalchemy.create_engine(f"sqlite:///{database}")
 
 
@@ -228,19 +227,22 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
         conn: Connection = engine.connect()
 
     except OperationalError:
-        raise OperationError(f"Unable to connect to {database!r} database.")
+        raise OperationError(
+            f"Unable to connect to the specified {database!r} database."
+        )
 
     else:
         # Prompts for replacement if the specified table already exists in the database.
         if table in metadata:
             force: str = input(
-                "The specified table already exists, would you like to alter it? (Y/N) "
+                "The specified table already exists, would you like to alter it? (y/n) "
             )
 
             if force.lower() != "y":
                 print("Export cancelled!")
 
-                # Raises `QueryHandleError` without any message to terminate the current query.
+                # Raises an error without any message to terminate
+                # the current query.
                 raise QueryHandleError
 
         data.to_sql(table, conn, if_exists="replace", index=False)

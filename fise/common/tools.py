@@ -32,42 +32,38 @@ def parse_query(query: str) -> list[str]:
 
     delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
     conflicting: set[str] = {"'", '"'}
+
     tokens: list[str] = []
+    token: list[str] = []
 
-    # Temporarily stores the current token.
-    token = ""
-
-    # Stores an array of current starting delimiters in the specified
-    # query which are not yet terminated during iteration.
+    # Stores starting delimiters in the query during iteration.
     cur: list[str] = []
 
     # Adds a whitespace at the end of the query to avoid
     # parsing the last token separately after iteration.
     for char in query + " ":
-        # Only executes the conditional block if the character is a starting
-        # delimiter and not nested inside or in the conflicting delimiters.
+
+        # Adds current token to the tokens list if the current character
+        # is a top-level whitespace and the token is not an empty string.
+        if not cur and char.isspace():
+            if token:
+                tokens.append("".join(token))
+                token.clear()
+            continue
+
+        token.append(char)
+
+        # Only adds top-level conflicting delimiters into the list.
         if char in delimiters and (not cur or char not in conflicting):
             cur.append(char)
-            token += char
 
-        # Adds the current character to the list if it is a terminating delimiter
-        # and also pops up its corresponding starting delimiter in the `cur` list.
         elif cur and char == delimiters.get(cur[-1]):
             cur.pop()
-            token += char
 
-        # Adds to list if the character is a top-level whitespace
-        # and `token` is not nested or an empty string.
-        elif not cur and char.isspace():
-            if token:
-                tokens.append(token)
-                token = ""
-
-        else:
-            token += char
-
+    # Raises an error is delimiters are mismatched in the query
+    # and a token is left unparsed indicating invalid syntax.
     if token:
-        raise QueryParseError(f"Invalid query syntax around {token[:-1]!r}")
+        raise QueryParseError(f"Invalid query syntax around {"".join(token[:-1])!r}")
 
     return tokens
 

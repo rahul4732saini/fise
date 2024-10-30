@@ -142,7 +142,7 @@ class Field(AbstractField):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class Size:
+class Size(AbstractField):
     """
     Size class stores the size unit of the file size
     field and defines a mechanism for parsing the field.

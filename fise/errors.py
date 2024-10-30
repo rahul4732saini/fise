@@ -2,8 +2,8 @@
 Errors Module
 -------------
 
-This module defines error classes used throughout the
-FiSE project to handle various exceptional scenarios.
+This module defined error classes for handling the
+various exceptional scenarios within the project.
 """
 
 import sys
@@ -11,7 +11,8 @@ import sys
 
 class QueryHandleError(Exception):
     """
-    Exception raised when there is an error in handling the query.
+    This exception is raised when there
+    is an error in handling the query.
     """
 
     _error: str = "QueryHandleError: There is an error in handling the query."
@@ -28,7 +29,8 @@ class QueryHandleError(Exception):
 
 class QueryParseError(QueryHandleError):
     """
-    Exception raised when there is an error in parsing the query.
+    This exception is raised when there
+    is an error in parsing the query.
     """
 
     _error = "QueryParseError: There is an error in parsing the query."
@@ -36,7 +38,8 @@ class QueryParseError(QueryHandleError):
 
 class OperationError(QueryHandleError):
     """
-    Exception raised when there is an error in processing the query.
+    This exception is raised when there
+    is an error in processing the query.
     """
 
     _error = "OperationError: There is an error in processing the query."

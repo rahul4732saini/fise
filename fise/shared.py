@@ -58,6 +58,12 @@ class DataLine:
         - data (str | bytes): Dataline to be stored.
         - lineno (int): Line number of the dataline.
         """
+
+        # Strips the leading binary notation and quotes
+        # if the specified data is a bytes object.
+        if isinstance(data, bytes):
+            data = str(data)[2:-1]
+
         self._file = file
         self._data = data
         self._lineno = lineno
@@ -75,8 +81,7 @@ class DataLine:
     @property
     @ospecs.safe_extract_field
     def dataline(self) -> str:
-        # Strips the leading binary notation and quotes if the dataline is a bytes object.
-        return str(self._data)[2:-1] if isinstance(self._data, bytes) else self._data
+        return self._data
 
     @property
     @ospecs.safe_extract_field
@@ -128,7 +133,7 @@ class Size:
 
         # Initializes with "B" -> bytes unit if not explicitly specified.
         return cls(unit or "B")
-    
+
     def get_size(self, file: File) -> float:
         """
         Extracts the size from the specified `File` object and

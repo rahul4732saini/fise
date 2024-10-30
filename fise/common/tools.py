@@ -173,6 +173,23 @@ def export_to_file(data: pd.DataFrame, file: Path) -> None:
     export_methods[file.suffix](data, file)
 
 
+def _parse_port(port: str) -> int:
+    """
+    Validates the specified port and converts
+    it into an integer for further usage.
+    """
+
+    if not port.isnumeric():
+        raise QueryHandleError(f"Invalid port number: {port!r}")
+
+    port_num = int(port)
+
+    if port_num not in range(65536):
+        raise QueryHandleError("The specified port number is out of range!")
+
+    return port_num
+
+
 def _connect_sqlite() -> Engine:
     """Connects to a SQLite database file."""
 

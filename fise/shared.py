@@ -113,7 +113,6 @@ class Size:
     # Regex pattern for matching size field specifications.
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
 
-    unit: str
     divisor: int
 
     @classmethod

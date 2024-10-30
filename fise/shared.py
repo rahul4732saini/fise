@@ -128,7 +128,6 @@ class Size:
         # Assigns "B" -> bytes unit is not explicitly specified.
         unit: str = field[5:-1] or "B"
 
-        # Only verifies the size unit if explicitly specified.
         if unit not in constants.SIZE_CONVERSION_MAP:
             raise QueryParseError(f"Invalid unit {unit!r} specified for 'size' field.")
 

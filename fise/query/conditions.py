@@ -85,7 +85,7 @@ class ConditionParser:
         """Parses the specified string formatted field"""
 
         if field.startswith("size"):
-            return Size.from_string(field)
+            return Size.parse(field)
 
         field = field.lower()
         field = self._field_aliases.get(field, field)
@@ -349,7 +349,7 @@ class ConditionHandler:
         """
 
         if isinstance(field, Size):
-            field = field.get_size(obj)
+            field = field.evaluate(obj)
 
         else:
             field = getattr(obj, field.field)

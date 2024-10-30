@@ -50,7 +50,7 @@ class FileQueryOperator:
         """
 
         if isinstance(field, Size):
-            return field.get_size(file)
+            return field.evaluate(file)
 
         return field.evaluate(file)
 

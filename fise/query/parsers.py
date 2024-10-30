@@ -102,9 +102,7 @@ class FileQueryParser:
         # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = _get_from_keyword_index(subquery)
 
-    def _parse_fields(
-        self, attrs: list[str]
-    ) -> tuple[list[Field | Size], list[str]]:
+    def _parse_fields(self, attrs: list[str]) -> tuple[list[Field | Size], list[str]]:
         """
         Parses the search query fields and returns an array of parsed fields and columns.
 
@@ -128,7 +126,7 @@ class FileQueryParser:
 
             elif col.startswith("size"):
                 # Parses size from the string and adds it to the `fields` list.
-                fields.append(Size.from_string(field))
+                fields.append(Size.parse(field))
                 columns.append(field)
 
             elif col in self._file_fields:
@@ -146,7 +144,7 @@ class FileQueryParser:
         """
         Parses the directory path and its metadata.
         """
-        path, index = _parse_path(self._query[self._from_index + 1:])
+        path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not path.is_dir():
             raise QueryParseError("The specified path for lookup must be a directory.")
@@ -166,7 +164,7 @@ class FileQueryParser:
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
             _get_condition_handler(
-                self._query[self._from_index + index + 2:], self._operand
+                self._query[self._from_index + index + 2 :], self._operand
             )
         )
 
@@ -183,7 +181,7 @@ class FileQueryParser:
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
             _get_condition_handler(
-                self._query[self._from_index + index + 2:], self._operand
+                self._query[self._from_index + index + 2 :], self._operand
             )
         )
 
@@ -249,7 +247,7 @@ class FileDataQueryParser:
         Parses the file/directory path and its metadata.
         """
 
-        path, index = _parse_path(self._query[self._from_index + 1:])
+        path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not (path.is_dir() or path.is_file()):
             raise QueryParseError(
@@ -269,7 +267,7 @@ class FileDataQueryParser:
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
             _get_condition_handler(
-                self._query[self._from_index + index + 2:], self._operand
+                self._query[self._from_index + index + 2 :], self._operand
             )
         )
 

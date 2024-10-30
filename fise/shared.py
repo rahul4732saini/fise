@@ -203,6 +203,6 @@ class QueryInitials:
 class Condition:
     """Condition class stores individual query condition attributes."""
 
-    operator1: Any
+    operand1: Any
     operator: str
-    operator2: Any
+    operand2: Any

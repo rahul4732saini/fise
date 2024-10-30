@@ -111,7 +111,7 @@ class Size:
     """
 
     # Regex pattern for matching size field specifications.
-    _size_field_pattern: ClassVar[re.Pattern] = re.compile(rf"^size(\[.*])?$")
+    _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
 
     unit: str
 
@@ -125,14 +125,14 @@ class Size:
         if not cls._size_field_pattern.match(field.lower()):
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
-        unit: str = field[5:-1]
+        # Assigns "B" -> bytes unit is not explicitly specified.
+        unit: str = field[5:-1] or "B"
 
         # Only verifies the size unit if explicitly specified.
-        if unit and unit not in constants.SIZE_CONVERSION_MAP:
+        if unit not in constants.SIZE_CONVERSION_MAP:
             raise QueryParseError(f"Invalid unit {unit!r} specified for 'size' field.")
 
-        # Initializes with "B" -> bytes unit if not explicitly specified.
-        return cls(unit or "B")
+        return cls(unit)
 
     def get_size(self, file: File) -> float:
         """

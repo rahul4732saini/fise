@@ -15,24 +15,6 @@ from datetime import datetime
 from notify import Alert
 
 
-def _field_extraction_alert() -> None:
-    """
-    Raises an alert indicating an error in metadata fields
-    extraction from the recorded files/directories.
-    """
-
-    if BaseEntity.field_alert:
-        return
-
-    Alert(
-        "ExtractionError: Unable to access specific metadata fields from the "
-        "recorded files/directories. These fields are being assigned as 'None'."
-    )
-
-    # Sets `field_alert` attribute to `True` to avoid alert repetition.
-    BaseEntity.field_alert = True
-
-
 def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
     """
     Safely executes the specified field extraction

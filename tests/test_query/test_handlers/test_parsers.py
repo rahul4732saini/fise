@@ -119,9 +119,9 @@ class TestFileQueryParser:
     ]
 
     search_query_with_size_fields_test_results = [
-        [False, ["B", "B"], ["size", "size[B]"]],
-        [True, ["b", "B", "TiB"], ["size[b]", "size", "size[TiB]"]],
-        [False, ["MB", "GB", "B"], ["size[MB]", "size[GB]", "size[B]"]],
+        [False, [1, 1], ["size", "size[B]"]],
+        [True, [0.125, 1, 1024**4], ["size[b]", "size", "size[TiB]"]],
+        [False, [1e6, 1e9, 1], ["size[MB]", "size[GB]", "size[B]"]],
     ]
 
     search_query_with_field_aliases_test_results = [
@@ -165,9 +165,9 @@ class TestFileQueryParser:
         parser = FileQueryParser(query, "search")
 
         search_query: SearchQuery = examine_search_query(parser, results)
-        units: list[str] = results[1]
+        divisors: list[int | float] = results[1]
 
-        assert [field.unit for field in search_query.fields] == units
+        assert [field.divisor for field in search_query.fields] == divisors
 
     @pytest.mark.parametrize(
         ("subquery", "results"),

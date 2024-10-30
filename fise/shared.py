@@ -117,6 +117,31 @@ class AbstractField(ABC):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
+class Field(AbstractField):
+    """
+    Field class stores individual query fields and
+    defines methods for parsing and evaluating them.
+    """
+
+    field: str
+
+    @classmethod
+    def parse(cls, field: str):
+        """
+        Parses the specified field and returns
+        an instance of the `Field` class.
+        """
+        return cls(field)
+
+    def evaluate(self, entity: File | DataLine | Directory) -> Any:
+        """
+        Evaluates the stored field object based on associated
+        attributes within the specified entity object.
+        """
+        return getattr(entity, self.field)
+
+
+@dataclass(slots=True, frozen=True, eq=False)
 class Size:
     """
     Size class stores the size unit of the file size
@@ -159,13 +184,6 @@ class Size:
             return None
 
         return round(file.size / self.divisor, 5)
-
-
-@dataclass(slots=True, frozen=True, eq=False)
-class Field:
-    """Field class stores individual search query fields."""
-
-    field: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)

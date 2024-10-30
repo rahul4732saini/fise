@@ -19,17 +19,6 @@ from common import tools, constants
 from shared import File, Directory, DataLine, Field, Size
 
 
-def get_field(field: Field, obj: File | DataLine | Directory) -> Any:
-    """
-    Extracts the specified field from the specified metadata object.
-
-    #### Params:
-    - field (Field): `Field` object comprising the field to be extracted.
-    - obj (File | DataLine | Directory): metadata object for data extraction.
-    """
-    return getattr(obj, field.field)
-
-
 class FileQueryOperator:
     """
     FileQueryOperator defines methods for performing

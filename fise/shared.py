@@ -154,10 +154,10 @@ class Size:
     divisor: int
 
     @classmethod
-    def from_string(cls, field: str):
+    def parse(cls, field: str):
         """
-        Creates an instance of `Size` object from
-        the specified size field specifications.
+        Parses the specified field specifications
+        and creates an instance of the `Size` class.
         """
 
         if not cls._size_field_pattern.match(field.lower()):
@@ -174,10 +174,10 @@ class Size:
 
         return cls(divisor)
 
-    def get_size(self, file: File) -> float | None:
+    def evaluate(self, file: File) -> float | None:
         """
         Extracts the size from the specified `File` object and
-        converts it in accordance with the stored size unit.
+        converts it in accordance with the stored size divisor.
         """
 
         if file.size is None:

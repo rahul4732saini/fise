@@ -36,15 +36,29 @@ def _field_extraction_alert() -> None:
 def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
     """
     Safely executes the specified field extraction
-    function and returns None in case of an Exception.
+    method and returns None in case of an exception.
     """
 
+    alert: bool = True
+
     def wrapper(self) -> Any:
+        nonlocal alert
+
         try:
             return func(self)
 
         except Exception:
-            _field_extraction_alert()
+            if not alert:
+                return
+
+            Alert(
+                "Warning: Unable to access specific metadata fields of the"
+                "recorded files/directories. The fileds are being assigned"
+                "explicitly as 'None'."
+            )
+
+            # Sets alert to False to avoid redundant alerts.
+            alert = False
 
     return wrapper
 

@@ -8,6 +8,7 @@ assisting various other classes and functions defined within it.
 
 import re
 import sys
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar, Callable, Literal, Any
 from pathlib import Path
@@ -101,6 +102,18 @@ class Directory(Entity):
     """
 
     __slots__ = "_path", "_stats"
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class AbstractField(ABC):
+    """AbstractField serves as the abstract class for all field classes."""
+
+    @classmethod
+    @abstractmethod
+    def parse(cls): ...
+
+    @abstractmethod
+    def evaluate(self, entity: File | DataLine | Directory) -> Any: ...
 
 
 @dataclass(slots=True, frozen=True, eq=False)

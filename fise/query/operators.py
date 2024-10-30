@@ -77,7 +77,7 @@ class FileQueryOperator:
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [self._get_field(field, file) for field in fields]
+            [field.evaluate(file) for field in fields]
             for file in files
             if condition(file)
         )

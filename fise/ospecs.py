@@ -56,10 +56,6 @@ class BaseEntity:
     related to a file/directory `pathlib.Path` and `os.stat_result` object.
     """
 
-    # Boolean value to specify whether a field extraction alert has already
-    # been encountered to only alert the user once during the operation.
-    field_alert = False
-
     __slots__ = "_path", "_stats"
 
     def __init__(self, path: Path) -> None:

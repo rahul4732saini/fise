@@ -63,7 +63,7 @@ class FileQueryOperator:
         if isinstance(field, Size):
             return field.get_size(file)
 
-        return get_field(field, file)
+        return field.evaluate(file)
 
     def get_dataframe(
         self,
@@ -215,7 +215,7 @@ class FileDataQueryOperator:
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [get_field(field, data) for field in fields]
+            [field.evaluate(data) for field in fields]
             for data in self._search_datalines()
             if condition(data)
         )
@@ -267,7 +267,7 @@ class DirectoryQueryOperator:
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [get_field(field, directory) for field in fields]
+            [field.evaluate(directory) for field in fields]
             for directory in directories
             if condition(directory)
         )

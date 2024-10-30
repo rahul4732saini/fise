@@ -46,14 +46,14 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any] | None:
 
 
 def get_datetime(timestamp: float) -> datetime:
-    """Converts a Unix timestamp into a `datetime` object"""
+    """Converts a Unix timestamp into a `datetime.datetime` object."""
     return datetime.fromtimestamp(timestamp).replace(microsecond=0)
 
 
 class BaseEntity:
     """
-    BaseEntity class serves as the base class for accessing all methods and attributes
-    related to a file/directory `pathlib.Path` and `os.stat_result` object.
+    BaseEntity class serves as the base class
+    for all File and Directory Entity classes.
     """
 
     __slots__ = "_path", "_stats"
@@ -101,9 +101,8 @@ class BaseEntity:
 
 class WindowsEntity(BaseEntity):
     """
-    WindowsEntity class serves as a unified class for accessing
-    all methods and attributes related to a Windows file/directory
-    `pathlib.Path` and `os.stat_result` object.
+    WindowsEntity serves as a unified class for accessing all
+    metadata fields associated with a Windows file or directory.
     """
 
     __slots__ = "_path", "_stats"
@@ -111,9 +110,8 @@ class WindowsEntity(BaseEntity):
 
 class PosixEntity(BaseEntity):
     """
-    PosixEntity class serves as a unified class for accessing
-    all methods and attributes related to a Posix file/directory
-    `pathlib.Path` and `os.stat_result` object.
+    PosixEntity serves as a unified class for accessing all
+    metadata fields associated with a POSIX file or directory.
     """
 
     __slots__ = "_path", "_stats"

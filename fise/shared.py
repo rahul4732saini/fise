@@ -144,18 +144,14 @@ class Size:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class Field:
-    """
-    Field class stores individual search query fields.
-    """
+    """Field class stores individual search query fields."""
 
     field: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class BaseQuery:
-    """
-    Base class for all query data classes.
-    """
+    """Base class for all query data-classes."""
 
     path: Path
     condition: Callable[[File | DataLine | Directory], bool]
@@ -163,25 +159,19 @@ class BaseQuery:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class SearchQuery(BaseQuery):
-    """
-    SearchQuery class stores search query attributes.
-    """
+    """SearchQuery class stores search query attributes."""
 
     fields: list[Field | Size]
     columns: list[str]
 
 
 class DeleteQuery(BaseQuery):
-    """
-    DeleteQuery class stores delete query attributes.
-    """
+    """DeleteQuery class stores delete query attributes."""
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class ExportData:
-    """
-    ExportData class stores export data attributes.
-    """
+    """ExportData class stores export data attributes."""
 
     type_: Literal["file", "database"]
     target: str | Path
@@ -189,25 +179,21 @@ class ExportData:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class OperationData:
-    """
-    OperationData class stores query operation attributes.
-    """
+    """OperationData class stores query operation attributes."""
 
     operation: constants.OPERATIONS
     operand: constants.OPERANDS
 
-    # The following attributes are optional and are only used for some specific
-    # operations. `filemode` attribute is only used with a data search operation
-    # and `skip_err` attribute is only used in file/directory deletion operation.
+    # The following attributes are optional and are only used for specific
+    # operations. The `filemode` attribute is only used with data search
+    # operations and the `skip_err` attributes is only used in delete operations.
     filemode: constants.FILE_MODES | None = None
     skip_err: bool = False
 
 
 @dataclass(slots=True, frozen=True, eq=False)
 class QueryInitials:
-    """
-    QueryInitials class stores attributes related to query initials.
-    """
+    """QueryInitials class stores attributes related to query initials."""
 
     operation: OperationData
     recursive: bool
@@ -216,10 +202,8 @@ class QueryInitials:
 
 @dataclass(slots=True, frozen=True, eq=False)
 class Condition:
-    """
-    Condition class stores individual query condition attributes.
-    """
+    """Condition class stores individual query condition attributes."""
 
-    operand1: Any
+    operator1: Any
     operator: str
-    operand2: Any
+    operator2: Any

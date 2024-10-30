@@ -81,13 +81,13 @@ class FileQueryOperator:
         - condition (Callable): Function for filtering data records.
         """
 
-        files: Generator[File] = (
+        files: Generator[File, None, None] = (
             File(file) for file in tools.get_files(self._directory, self._recursive)
         )
 
         # Generator object comprising search records of
         # the files matching the specified condition.
-        records: Generator[list[Any]] = (
+        records: Generator[list[Any], None, None] = (
             [self._get_field(field, file) for field in fields]
             for file in files
             if condition(file)
@@ -160,7 +160,7 @@ class FileDataQueryOperator:
         self._recursive = recursive
         self._filemode = constants.FILE_MODES_MAP[filemode]
 
-    def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]]]:
+    def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """
         Yields the file paths along with a list comprising datalines
         of the corresponding file in the form of strings or bytes.
@@ -186,7 +186,7 @@ class FileDataQueryOperator:
                         "filemode to 'bytes' to read byte data within files."
                     )
 
-    def _search_datalines(self) -> Generator[DataLine]:
+    def _search_datalines(self) -> Generator[DataLine, None, None]:
         """
         Iterates through the files and their corresponding data-lines, and
         yields `DataLine` objects comprising the dataline and its metadata.
@@ -214,7 +214,7 @@ class FileDataQueryOperator:
 
         # Generator object comprising search records of
         # the files matching the specified condition.
-        records: Generator[list[Any]] = (
+        records: Generator[list[Any], None, None] = (
             [get_field(field, data) for field in fields]
             for data in self._search_datalines()
             if condition(data)
@@ -259,14 +259,14 @@ class DirectoryQueryOperator:
         - condition (Callable): Function for filtering data records.
         """
 
-        directories: Generator[Directory] = (
+        directories: Generator[Directory, None, None] = (
             Directory(directory)
             for directory in tools.get_directories(self._directory, self._recursive)
         )
 
         # Generator object comprising search records of
         # the files matching the specified condition.
-        records: Generator[list[Any]] = (
+        records: Generator[list[Any], None, None] = (
             [get_field(field, directory) for field in fields]
             for directory in directories
             if condition(directory)

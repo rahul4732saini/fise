@@ -128,11 +128,14 @@ class Size:
 
         # Assigns "B" -> bytes unit is not explicitly specified.
         unit: str = field[5:-1] or "B"
+        divisor: int | None = constants.SIZE_CONVERSION_MAP.get(unit)
 
-        if unit not in constants.SIZE_CONVERSION_MAP:
-            raise QueryParseError(f"Invalid unit {unit!r} specified for 'size' field.")
+        if divisor is None:
+            raise QueryParseError(
+                f"Invalid unit {unit!r} specified for the 'size' field."
+            )
 
-        return cls(unit)
+        return cls(divisor)
 
     def get_size(self, file: File) -> float | None:
         """
@@ -143,7 +146,7 @@ class Size:
         if file.size is None:
             return None
 
-        return round(file.size / constants.SIZE_CONVERSION_MAP[self.unit], 5)
+        return round(file.size / self.divisor, 5)
 
 
 @dataclass(slots=True, frozen=True, eq=False)

@@ -114,6 +114,7 @@ class Size:
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
 
     unit: str
+    divisor: int
 
     @classmethod
     def from_string(cls, field: str):

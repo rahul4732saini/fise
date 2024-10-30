@@ -38,6 +38,7 @@ SIZE_UNITS = Literal[
     "MiB", "Gb", "GB", "Gib", "GiB", "Tb", "TB", "Tib", "TiB"
 ]
 
+FIELD_PATTERN = re.compile(r"^[a-zA-Z]+(\[.+])?$")
 STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
 
 # Maps storage unit string lables with their corresponding

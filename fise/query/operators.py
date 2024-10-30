@@ -39,21 +39,6 @@ class FileQueryOperator:
         self._directory = directory
         self._recursive = recursive
 
-    @staticmethod
-    def _get_field(field: Field | Size, file: File) -> Any:
-        """
-        Extracts the specified field from the specified `File` object.
-
-        #### Params:
-        - field (Field): `Field` object comprising the field to be extracted.
-        - file (File): `File` object to extract data from.
-        """
-
-        if isinstance(field, Size):
-            return field.evaluate(file)
-
-        return field.evaluate(file)
-
     def get_dataframe(
         self,
         fields: list[Field | Size],

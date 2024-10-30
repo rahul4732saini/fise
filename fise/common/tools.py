@@ -180,12 +180,12 @@ def _connect_sqlite() -> Engine:
     return sqlalchemy.create_engine(f"sqlite:///{database}")
 
 
-def _connect_database(database: str) -> Engine:
+def _connect_database(dbms: str) -> Engine:
     """
-    Connects to the specified SQL database server.
+    Connects to the specified SQL Database Management System.
 
     #### Params:
-    - database (str): The name of the database to connect.
+    - dbms (str): The name of the Database Management System.
     """
 
     # Inputs database credentials.
@@ -199,25 +199,23 @@ def _connect_database(database: str) -> Engine:
         raise QueryHandleError(f"Invalid port number: {port!r}")
 
     url = URL.create(
-        constants.DATABASE_URL_DIALECTS[database], user, passkey, host, port, database
+        constants.DATABASE_URL_DIALECTS[dbms], user, passkey, host, port, database
     )
 
     return sqlalchemy.create_engine(url)
 
 
-def export_to_sql(data: pd.DataFrame, database: str) -> None:
+def export_to_sql(data: pd.DataFrame, dbms: str) -> None:
     """
-    Exports search records to the specified database.
+    Exports search records to the specified Database Management System.
 
     #### Params:
     - data (pd.DataFrame): pandas DataFrame comprising search records.
-    - database (str): The name of the database to connect.
+    - dbms (str): The name of the Database Management System.
     """
 
     # Creates an `sqlalchemy.Engine` object of the specified SQL database.
-    engine: Engine = (
-        _connect_sqlite() if database == "sqlite" else _connect_database(database)
-    )
+    engine: Engine = _connect_sqlite() if dbms == "sqlite" else _connect_database(dbms)
 
     table: str = input("Table name: ")
     metadata = sqlalchemy.MetaData()
@@ -227,9 +225,7 @@ def export_to_sql(data: pd.DataFrame, database: str) -> None:
         conn: Connection = engine.connect()
 
     except OperationalError:
-        raise OperationError(
-            f"Unable to connect to the specified {database!r} database."
-        )
+        raise OperationError(f"Unable to connect to the specified {dbms!r} database.")
 
     else:
         # Prompts for replacement if the specified table already exists in the database.

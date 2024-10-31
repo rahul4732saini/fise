@@ -7,101 +7,14 @@ assisting various other classes and functions defined within it.
 """
 
 import re
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar, Callable, Literal, Any
 from pathlib import Path
 
-import ospecs
 from common import constants
 from errors import QueryParseError
-
-if sys.platform == "win32":
-    from ospecs import WindowsEntity as Entity
-else:
-    from ospecs import PosixEntity as Entity
-
-
-class File(Entity):
-    """
-    File class serves as a unified class for
-    accessing all file metadata attributes.
-    """
-
-    __slots__ = "_path", "_stats"
-
-    @property
-    @ospecs.safe_extract_field
-    def filetype(self) -> str | None:
-        return self._path.suffix or None
-
-    @property
-    @ospecs.safe_extract_field
-    def size(self) -> int | float:
-        return self._stats.st_size
-
-
-class DataLine:
-    """
-    DataLine class serves as a unified class for
-    accessing all dataline metadata attributes.
-    """
-
-    __slots__ = "_file", "_data", "_lineno"
-
-    def __init__(self, file: Path, data: str | bytes, lineno: int) -> None:
-        """
-        Creates an instance of the `DataLine` class.
-
-        #### Params:
-        - file (pathlib.Path): Path to the file.
-        - data (str | bytes): Dataline to be stored.
-        - lineno (int): Line number of the dataline.
-        """
-
-        # Strips the leading binary notation and quotes
-        # if the specified data is a bytes object.
-        if isinstance(data, bytes):
-            data = str(data)[2:-1]
-
-        self._file = file
-        self._data = data
-        self._lineno = lineno
-
-    @property
-    @ospecs.safe_extract_field
-    def path(self) -> str:
-        return str(self._file)
-
-    @property
-    @ospecs.safe_extract_field
-    def name(self) -> str:
-        return self._file.name
-
-    @property
-    @ospecs.safe_extract_field
-    def dataline(self) -> str:
-        return self._data
-
-    @property
-    @ospecs.safe_extract_field
-    def lineno(self) -> int:
-        return self._lineno
-
-    @property
-    @ospecs.safe_extract_field
-    def filetype(self) -> str | None:
-        return self._file.suffix or None
-
-
-class Directory(Entity):
-    """
-    Directory class serves as a unified class for
-    accessing all directory metadata attributes.
-    """
-
-    __slots__ = "_path", "_stats"
+from entities import BaseEntity, File
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -113,7 +26,7 @@ class AbstractField(ABC):
     def parse(cls): ...
 
     @abstractmethod
-    def evaluate(self, entity: File | DataLine | Directory) -> Any: ...
+    def evaluate(self, entity: BaseEntity) -> Any: ...
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -133,7 +46,7 @@ class Field(AbstractField):
         """
         return cls(field)
 
-    def evaluate(self, entity: File | DataLine | Directory) -> Any:
+    def evaluate(self, entity: BaseEntity) -> Any:
         """
         Evaluates the stored field object based on associated
         attributes within the specified entity object.
@@ -191,7 +104,7 @@ class BaseQuery:
     """Base class for all query data-classes."""
 
     path: Path
-    condition: Callable[[File | DataLine | Directory], bool]
+    condition: Callable[[BaseEntity], bool]
 
 
 @dataclass(slots=True, frozen=True, eq=False)

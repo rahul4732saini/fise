@@ -6,9 +6,14 @@ This module comprises comprises classes and functions
 for storing and handling file system metadata fields.
 """
 
+import re
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import Self, Any
+from typing import Self, ClassVar, Any
+
+from shared import File, Directory, DataLine
+from common import constants
+from errors import QueryParseError
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -21,3 +26,73 @@ class BaseField(ABC):
 
     @abstractmethod
     def evaluate(self, field) -> Any: ...
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class Field(BaseField):
+    """
+    Field class stores individual query fields and
+    defines methods for parsing and evaluating them.
+    """
+
+    field: str
+
+    @classmethod
+    def parse(cls, field: str):
+        """
+        Parses the specified field and returns
+        an instance of the `Field` class.
+        """
+        return cls(field)
+
+    def evaluate(self, entity: File | DataLine | Directory) -> Any:
+        """
+        Evaluates the stored field object based on associated
+        attributes within the specified entity object.
+        """
+        return getattr(entity, self.field)
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class Size(BaseField):
+    """
+    Size class stores the size conversion divisor for converting
+    file sizes and defines methods for parsing and evaluating them.
+    """
+
+    # Regex pattern for matching size field specifications.
+    _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
+
+    divisor: int
+
+    @classmethod
+    def parse(cls, field: str):
+        """
+        Parses the specified field specifications
+        and creates an instance of the `Size` class.
+        """
+
+        if not cls._size_field_pattern.match(field.lower()):
+            raise QueryParseError(f"Found an invalid field {field!r} in the query.")
+
+        # Assigns "B" -> bytes unit is not explicitly specified.
+        unit: str = field[5:-1] or "B"
+        divisor: int | None = constants.SIZE_CONVERSION_MAP.get(unit)
+
+        if divisor is None:
+            raise QueryParseError(
+                f"Invalid unit {unit!r} specified for the 'size' field."
+            )
+
+        return cls(divisor)
+
+    def evaluate(self, file: File) -> float | None:
+        """
+        Extracts the size from the specified `File` object and
+        converts it in accordance with the stored size divisor.
+        """
+
+        if file.size is None:
+            return None
+
+        return round(file.size / self.divisor, 5)

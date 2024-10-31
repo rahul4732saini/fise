@@ -106,3 +106,27 @@ class WindowsEntity(FileSystemEntity):
     """
 
     __slots__ = "_path", "_stats"
+
+
+class PosixEntity(FileSystemEntity):
+    """
+    PosixEntity serves as a unified class for accessing all
+    metadata fields associated with a POSIX file or directory.
+    """
+
+    __slots__ = "_path", "_stats"
+
+    @property
+    @safe_extract_field
+    def owner(self) -> str:
+        return self._path.owner()
+
+    @property
+    @safe_extract_field
+    def group(self) -> str:
+        return self._path.group()
+
+    @property
+    @safe_extract_field
+    def permissions(self) -> int:
+        return self._stats.st_mode

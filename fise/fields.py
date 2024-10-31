@@ -63,7 +63,7 @@ class Size(BaseField):
     # Regex pattern for matching size field specifications.
     _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
 
-    divisor: int
+    divisor: int | float
 
     @classmethod
     def parse(cls, field: str):
@@ -77,7 +77,7 @@ class Size(BaseField):
 
         # Assigns "B" -> bytes unit is not explicitly specified.
         unit: str = field[5:-1] or "B"
-        divisor: int | None = constants.SIZE_CONVERSION_MAP.get(unit)
+        divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(unit)
 
         if divisor is None:
             raise QueryParseError(

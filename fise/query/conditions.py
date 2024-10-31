@@ -12,7 +12,8 @@ from typing import Generator, Callable, Any
 
 from common import constants, tools
 from errors import QueryParseError, OperationError
-from shared import File, DataLine, Directory, Field, Condition, Size
+from shared import File, DataLine, Directory, Condition
+from fields import Field, Size
 
 
 class ConditionParser:

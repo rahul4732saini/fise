@@ -17,7 +17,8 @@ from typing import Callable
 from errors import QueryParseError
 from common import constants
 from .conditions import ConditionHandler
-from shared import DeleteQuery, SearchQuery, Directory, DataLine, Field, File, Size
+from shared import DeleteQuery, SearchQuery, Directory, DataLine, File
+from fields import Field, Size
 
 
 def _parse_path(subquery: list[str]) -> tuple[Path, int]:

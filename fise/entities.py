@@ -7,8 +7,9 @@ storing and handling file system metadata fields.
 """
 
 import os
-from typing import Callable, Any
+import sys
 from pathlib import Path
+from typing import Callable, Any
 from datetime import datetime
 
 from notify import Alert
@@ -130,3 +131,13 @@ class PosixEntity(FileSystemEntity):
     @safe_extract_field
     def permissions(self) -> int:
         return self._stats.st_mode
+
+
+class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):
+    """
+    Entity serves as the unified class for accessing all metadata
+    fields associated with a file of directory based on the current
+    operating system.
+    """
+
+    __slots__ = "_path", "_stats"

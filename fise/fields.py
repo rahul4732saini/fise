@@ -2,8 +2,8 @@
 Fields Module
 -------------
 
-This module comprises comprises classes and functions
-for storing and handling file system metadata fields.
+This module comprises classes and functions
+for storing and handling query fields.
 """
 
 import re

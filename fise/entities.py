@@ -160,3 +160,12 @@ class File(Entity):
     @safe_extract_field
     def size(self) -> int | float:
         return self._stats.st_size
+
+
+class Directory(Entity):
+    """
+    Directory class serves as a unified class for
+    accessing all directory metadata attributes.
+    """
+
+    __slots__ = "_path", "_stats"

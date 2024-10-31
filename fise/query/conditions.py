@@ -12,7 +12,8 @@ from typing import Generator, Callable, Any
 
 from common import constants, tools
 from errors import QueryParseError, OperationError
-from shared import File, DataLine, Directory, Condition
+from shared import Condition
+from entities import File, Directory, DataLine
 from fields import Field, Size
 
 

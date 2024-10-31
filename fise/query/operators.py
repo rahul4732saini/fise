@@ -17,7 +17,7 @@ from errors import OperationError
 from notify import Message, Alert
 from common import tools, constants
 from fields import Field, Size
-from shared import File, Directory, DataLine
+from entities import File, Directory, DataLine
 
 
 class FileQueryOperator:

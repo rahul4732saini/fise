@@ -17,7 +17,8 @@ from typing import Callable
 from errors import QueryParseError
 from common import constants
 from .conditions import ConditionHandler
-from shared import DeleteQuery, SearchQuery, Directory, DataLine, File
+from shared import DeleteQuery, SearchQuery
+from entities import File, Directory, DataLine
 from fields import Field, Size
 
 

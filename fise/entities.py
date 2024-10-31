@@ -97,3 +97,12 @@ class FileSystemEntity(BaseEntity):
     @safe_extract_field
     def modify_time(self) -> datetime:
         return get_datetime(self._stats.st_mtime)
+
+
+class WindowsEntity(FileSystemEntity):
+    """
+    WindowsEntity serves as a unified class for accessing all
+    metadata fields associated with a Windows file or directory.
+    """
+
+    __slots__ = "_path", "_stats"

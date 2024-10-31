@@ -169,3 +169,48 @@ class Directory(Entity):
     """
 
     __slots__ = "_path", "_stats"
+
+
+class DataLine:
+    """
+    DataLine class serves as a unified class for
+    accessing all dataline metadata attributes.
+    """
+
+    __slots__ = "_file", "_data", "_lineno"
+
+    def __init__(self, file: Path, data: str | bytes, lineno: int) -> None:
+
+        # Strips the leading binary notation and quotes
+        # if the specified data is a bytes object.
+        if isinstance(data, bytes):
+            data = str(data)[2:-1]
+
+        self._file = file
+        self._data = data
+        self._lineno = lineno
+
+    @property
+    @safe_extract_field
+    def path(self) -> str:
+        return str(self._file)
+
+    @property
+    @safe_extract_field
+    def name(self) -> str:
+        return self._file.name
+
+    @property
+    @safe_extract_field
+    def dataline(self) -> str:
+        return self._data
+
+    @property
+    @safe_extract_field
+    def lineno(self) -> int:
+        return self._lineno
+
+    @property
+    @safe_extract_field
+    def filetype(self) -> str | None:
+        return self._file.suffix or None

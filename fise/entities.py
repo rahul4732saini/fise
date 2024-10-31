@@ -53,12 +53,16 @@ def get_datetime(timestamp: float) -> datetime:
 class BaseEntity:
     """BaseEntity serves as the base class for all other entity classes."""
 
+    __slots__ = ()
+
 
 class FileSystemEntity(BaseEntity):
     """
     FileSystemEntity serves as the base class
     for all file system entity classes.
     """
+
+    __slots__ = "_path", "_stats"
 
     def __init__(self, path: Path) -> None:
         self._path: Path = path

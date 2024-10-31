@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import Self, ClassVar, Any
 
-from shared import File, Directory, DataLine
+from entities import BaseEntity, File
 from common import constants
 from errors import QueryParseError
 
@@ -25,7 +25,7 @@ class BaseField(ABC):
     def parse(cls, descriptor: str) -> Self: ...
 
     @abstractmethod
-    def evaluate(self, field) -> Any: ...
+    def evaluate(self, entity) -> Any: ...
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -45,7 +45,7 @@ class Field(BaseField):
         """
         return cls(field)
 
-    def evaluate(self, entity: File | DataLine | Directory) -> Any:
+    def evaluate(self, entity: BaseEntity) -> Any:
         """
         Evaluates the stored field object based on associated
         attributes within the specified entity object.

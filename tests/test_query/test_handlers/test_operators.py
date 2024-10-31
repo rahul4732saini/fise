@@ -36,7 +36,8 @@ import pandas as pd
 import utils
 import reset_tests
 from fise.common import constants
-from fise.shared import File, Directory, Field, DataLine
+from fise.entities import File, Directory, DataLine
+from fise.fields import Field
 from fise.query.operators import (
     FileDataQueryOperator,
     FileQueryOperator,

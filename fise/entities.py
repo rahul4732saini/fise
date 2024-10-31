@@ -141,3 +141,22 @@ class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):
     """
 
     __slots__ = "_path", "_stats"
+
+
+class File(Entity):
+    """
+    File class serves as a unified class for
+    accessing all file metadata fields.
+    """
+
+    __slots__ = "_path", "_stats"
+
+    @property
+    @safe_extract_field
+    def filetype(self) -> str | None:
+        return self._path.suffix or None
+
+    @property
+    @safe_extract_field
+    def size(self) -> int | float:
+        return self._stats.st_size

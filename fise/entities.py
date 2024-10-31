@@ -39,3 +39,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
             alert = False
 
     return wrapper
+
+
+class BaseEntity:
+    """BaseEntity serves as the base class for all other entity classes."""

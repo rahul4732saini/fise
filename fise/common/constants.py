@@ -10,9 +10,14 @@ import re
 import sys
 from typing import Literal
 
-# Additional query fields for POSIX-based operating systems.
-# Evaluates to an empty tuple for other operating systems.
-POSIX_FIELDS = ("owner", "group", "permissions") if sys.platform != "win32" else ()
+# Additional query fields and aliases for POSIX-based operating systems.
+if sys.platform != "win32":
+    POSIX_FIELDS = "owner", "group", "permissions"
+    POSIX_FIELD_ALIASES = {"perms": "permissions"}
+
+else:
+    POSIX_FIELDS = ()
+    POSIX_FIELD_ALIASES = {}
 
 DIR_FIELDS = (
     "name", "path", "parent", "access_time", "create_time", "modify_time"
@@ -20,6 +25,38 @@ DIR_FIELDS = (
 
 DATA_FIELDS = "name", "path", "lineno", "dataline", "filetype"
 FILE_FIELDS = DIR_FIELDS + ("size", "filetype")
+
+DIR_FIELD_ALIASES = POSIX_FIELD_ALIASES | {
+    "ctime": "create_time",
+    "mtime": "modify_time",
+    "atime": "access_time",
+}
+
+FILE_FIELD_ALIASES = DIR_FIELD_ALIASES | {
+    "filepath": "path",
+    "filename": "name",
+    "type": "filetype",
+}
+
+DATA_FIELD_ALIASES = {
+    "filename": "name",
+    "filepath": "path",
+    "data": "dataline",
+    "line": "dataline",
+    "type": "filetype",
+}
+
+FIELDS = {
+    "file": set(FILE_FIELDS),
+    "dir": set(DIR_FIELDS),
+    "data": set(DATA_FIELDS),
+}
+
+ALIASES = {
+    "file": FILE_FIELD_ALIASES,
+    "dir": DIR_FIELD_ALIASES,
+    "data": DATA_FIELD_ALIASES,
+}
 
 OPERATIONS = Literal["search", "remove"]
 OPERANDS = Literal["file", "data", "dir"]
@@ -49,29 +86,6 @@ SIZE_CONVERSION_MAP = {
     "GiB": 1024**3, "Tb": 1.25e11, "TB": 1e12, "Tib": 137_438_953_472, "TiB": 1024**4
 }
 
-# Additional field aliases for Posix-based operating systems.
-POSIX_FIELD_ALIASES = {"perms": "permissions"} if sys.platform != "win32" else {}
-
-DIR_FIELD_ALIASES = POSIX_FIELD_ALIASES | {
-    "ctime": "create_time",
-    "mtime": "modify_time",
-    "atime": "access_time",
-}
-
-FILE_FIELD_ALIASES = DIR_FIELD_ALIASES | {
-    "filepath": "path",
-    "filename": "name",
-    "type": "filetype",
-}
-
-DATA_FIELD_ALIASES = {
-    "filename": "name",
-    "filepath": "path",
-    "data": "dataline",
-    "line": "dataline",
-    "type": "filetype",
-}
-
 PATH_TYPES = {"absolute", "relative"}
 
 # Supported databases for exporting search records.
@@ -80,16 +94,4 @@ DATABASES = {"postgresql", "mysql", "sqlite"}
 DATABASE_URL_DIALECTS = {
     "postgresql": "postgresql://",
     "mysql": "mysql+pymysql://",
-}
-
-FIELDS: dict[str, tuple[str, ...]] = {
-    "file": set(FILE_FIELDS),
-    "dir": set(DIR_FIELDS),
-    "data": set(DATA_FIELDS),
-}
-
-ALIASES: dict[str, dict[str, str]] = {
-    "file": FILE_FIELD_ALIASES,
-    "dir": DIR_FIELD_ALIASES,
-    "data": DATA_FIELD_ALIASES,
 }

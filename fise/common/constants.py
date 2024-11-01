@@ -81,3 +81,15 @@ DATABASE_URL_DIALECTS = {
     "postgresql": "postgresql://",
     "mysql": "mysql+pymysql://",
 }
+
+FIELDS: dict[str, tuple[str, ...]] = {
+    "file": set(FILE_FIELDS),
+    "dir": set(DIR_FIELDS),
+    "data": set(DATA_FIELDS),
+}
+
+ALIASES: dict[str, dict[str, str]] = {
+    "file": FILE_FIELD_ALIASES,
+    "dir": DIR_FIELD_ALIASES,
+    "data": DATA_FIELD_ALIASES,
+}

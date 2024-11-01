@@ -6,13 +6,12 @@ This module comprises classes and functions
 for storing and handling query fields.
 """
 
-import re
-from dataclasses import dataclass
+from typing import Self, Any
 from abc import ABC, abstractmethod
-from typing import Self, ClassVar, Any
+from dataclasses import dataclass
 
-from entities import BaseEntity, File
 from common import constants
+from entities import BaseEntity, File
 from errors import QueryParseError
 
 
@@ -59,9 +58,6 @@ class Size(BaseField):
     Size class stores the size conversion divisor for converting
     file sizes and defines methods for parsing and evaluating them.
     """
-
-    # Regex pattern for matching size field specifications.
-    _size_field_pattern: ClassVar[re.Pattern] = re.compile(r"^size(\[.*])?$")
 
     divisor: int | float
 

@@ -66,23 +66,18 @@ class Size(BaseField):
     divisor: int | float
 
     @classmethod
-    def parse(cls, field: str):
+    def parse(cls, unit: str):
         """
-        Parses the specified field specifications
+        Parses the specified size unit specifications
         and creates an instance of the `Size` class.
         """
 
-        if not cls._size_field_pattern.match(field.lower()):
-            raise QueryParseError(f"Found an invalid field {field!r} in the query.")
+        if unit not in constants.SIZE_CONVERSION_MAP:
+            raise QueryParseError(f"{unit!r} is not a valid unit for the 'size' field.")
 
         # Assigns "B" -> bytes unit is not explicitly specified.
-        unit: str = field[5:-1] or "B"
-        divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(unit)
-
-        if divisor is None:
-            raise QueryParseError(
-                f"Invalid unit {unit!r} specified for the 'size' field."
-            )
+        unit = unit or "B"
+        divisor: int | float | None = constants.SIZE_CONVERSION_MAP[unit]
 
         return cls(divisor)
 

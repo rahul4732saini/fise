@@ -16,22 +16,22 @@ from fields import BaseField
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class BaseQuery:
-    """Base class for all query data-classes."""
+class Query:
+    """Query serves as the base class for all query data-classes."""
 
     path: Path
     condition: Callable[[BaseEntity], bool]
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class SearchQuery(BaseQuery):
+class SearchQuery(Query):
     """SearchQuery class stores search query attributes."""
 
     fields: list[BaseField]
     columns: list[str]
 
 
-class DeleteQuery(BaseQuery):
+class DeleteQuery(Query):
     """DeleteQuery class stores delete query attributes."""
 
 

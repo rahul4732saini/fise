@@ -68,12 +68,12 @@ class Size(BaseField):
         and creates an instance of the `Size` class.
         """
 
-        if unit not in constants.SIZE_CONVERSION_MAP:
-            raise QueryParseError(f"{unit!r} is not a valid unit for the 'size' field.")
-
         # Assigns "B" -> bytes unit is not explicitly specified.
         unit = unit or "B"
-        divisor: int | float | None = constants.SIZE_CONVERSION_MAP[unit]
+        divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(unit)
+
+        if divisor is None:
+            raise QueryParseError(f"{unit!r} is not valid unit for the 'size' field.")
 
         return cls(divisor)
 
@@ -103,7 +103,7 @@ def parse_field(
     label = args = ""
 
     for i in range(len(field)):
-        if i != "[":
+        if field[i] != "[":
             continue
 
         label, args = field[:i].lower(), field[i + 1 : -1]

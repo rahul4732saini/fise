@@ -33,18 +33,6 @@ class ConditionParser:
     # not explicitly verify the validity of the date and time values.
     _datetime_pattern = re.compile(r"\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?$")
 
-    _fields: dict[str, tuple[str, ...]] = {
-        "file": constants.FILE_FIELDS,
-        "dir": constants.DIR_FIELDS,
-        "data": constants.DATA_FIELDS,
-    }
-
-    _aliases: dict[str, dict[str, str]] = {
-        "file": constants.FILE_FIELD_ALIASES,
-        "dir": constants.DIR_FIELD_ALIASES,
-        "data": constants.DATA_FIELD_ALIASES,
-    }
-
     def __init__(self, subquery: list[str], operand: str) -> None:
         """
         Creates an instance of the `ConditionParser` class.
@@ -55,8 +43,8 @@ class ConditionParser:
         """
         self._query = subquery
 
-        self._lookup_fields = set(self._fields[operand])
-        self._field_aliases = self._aliases[operand]
+        self._lookup_fields = constants.FIELDS[operand]
+        self._field_aliases = constants.ALIASES[operand]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
         """

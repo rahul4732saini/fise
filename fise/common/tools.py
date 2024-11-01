@@ -8,7 +8,7 @@ other classes and functions defined within the project.
 
 import getpass
 from pathlib import Path
-from typing import Generator, Any, Callable
+from typing import Generator, Callable
 
 import numpy as np
 import pandas as pd

@@ -11,13 +11,14 @@ extracting relevant data for further processing and evaluation.
 # (explicilty for search operation), path, path-type and the conditions defined
 # within the query. The initials are parsed beforehand.
 
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Callable
 
 from errors import QueryParseError
 from common import constants
 from .conditions import ConditionHandler
-from shared import DeleteQuery, SearchQuery
+from shared import Query, DeleteQuery, SearchQuery
 from entities import File, Directory, DataLine
 from fields import Field, Size
 
@@ -87,7 +88,17 @@ def _get_condition_handler(
     return handler.eval_conditions
 
 
-class FileQueryParser:
+class BaseQueryParser(ABC):
+    """
+    BaseQueryParser serves as the base
+    class for all query parser classes.
+    """
+
+    @abstractmethod
+    def parse_query(self) -> Query: ...
+
+
+class FileQueryParser(BaseQueryParser):
     """
     FileQueryParser defines methods for parsing file search and delete queries.
     """
@@ -200,7 +211,7 @@ class FileQueryParser:
         )
 
 
-class FileDataQueryParser:
+class FileDataQueryParser(BaseQueryParser):
     """
     FileDataQueryParser defines methods for parsing file data search queries.
     """

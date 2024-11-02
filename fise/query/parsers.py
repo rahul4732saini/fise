@@ -20,7 +20,7 @@ from common import constants
 from .conditions import ConditionHandler
 from shared import Query, DeleteQuery, SearchQuery
 from entities import File, Directory, DataLine
-from fields import Field, Size
+from fields import BaseField, parse_field
 
 
 def _parse_path(subquery: list[str]) -> tuple[Path, int]:
@@ -94,8 +94,34 @@ class BaseQueryParser(ABC):
     class for all query parser classes.
     """
 
+    _operand: str
+    _fields: tuple[str, ...]
+
     @abstractmethod
     def parse_query(self) -> Query: ...
+
+    def _parse_fields(self, attrs: list[str]) -> tuple[list[BaseField], list[str]]:
+        """
+        Parses the search query fields and returns an
+        tuple of the parsed fields and column labels.
+
+        #### Params:
+        - attrs (list[str]): List of query fields.
+        """
+
+        fields: list[BaseField] = []
+        columns: list[str] = []
+
+        for field in "".join(attrs).split(","):
+            if field == "*":
+                fields += (parse_field(i, self._operand) for i in self._fields)
+                columns += self._fields
+
+            else:
+                fields.append(parse_field(field, self._operand))
+                columns.append(field)
+
+        return fields, columns
 
 
 class FileQueryParser(BaseQueryParser):
@@ -106,7 +132,7 @@ class FileQueryParser(BaseQueryParser):
     __slots__ = "_query", "_operation", "_from_index"
 
     _operand = "file"
-    _file_fields = set(constants.FILE_FIELDS) | constants.FILE_FIELD_ALIASES.keys()
+    _fields = constants.FILE_FIELDS
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
         self._query = subquery
@@ -114,44 +140,6 @@ class FileQueryParser(BaseQueryParser):
 
         # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = _get_from_keyword_index(subquery)
-
-    def _parse_fields(self, attrs: list[str]) -> tuple[list[Field | Size], list[str]]:
-        """
-        Parses the search query fields and returns an array of parsed fields and columns.
-
-        #### Params:
-        - attrs (list[str]): List of strings of query fields.
-        """
-
-        fields: list[Field | Size] = []
-        columns: list[str] = []
-
-        # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).split(","):
-
-            # Keep a separate copy of the lowered string to avoid affecting
-            # the case of the field string when adding it to the columns.
-            col: str = field.lower()
-
-            if field == "*":
-                fields += (Field(i) for i in constants.FILE_FIELDS)
-                columns += constants.FILE_FIELDS
-
-            elif col.startswith("size"):
-                # Parses size from the string and adds it to the `fields` list.
-                fields.append(Size.parse(field))
-                columns.append(field)
-
-            elif col in self._file_fields:
-                fields.append(Field(constants.FILE_FIELD_ALIASES.get(col, col)))
-                columns.append(field)
-
-            else:
-                raise QueryParseError(
-                    f"Found an invalid field {field!r} in the search query."
-                )
-
-        return fields, columns
 
     def _parse_directory(self) -> tuple[Path, int]:
         """
@@ -219,41 +207,13 @@ class FileDataQueryParser(BaseQueryParser):
     __slots__ = "_query", "_from_index"
 
     _operand = "data"
-    _data_fields = set(constants.DATA_FIELDS) | constants.DATA_FIELD_ALIASES.keys()
+    _fields = constants.DATA_FIELDS
 
     def __init__(self, subquery: list[str]) -> None:
         self._query = subquery
 
         # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = _get_from_keyword_index(subquery)
-
-    def _parse_fields(self, attrs: list[str] | str) -> tuple[list[Field], list[str]]:
-        """
-        Parses the search query fields and returns an array of parsed fields and columns.
-
-        #### Params:
-        - attrs (str | list[str]): String or a list of strings of query fields.
-        """
-
-        fields: list[Field] = []
-        columns: list[str] = []
-
-        # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).lower().split(","):
-            if field == "*":
-                fields += (Field(i) for i in constants.DATA_FIELDS)
-                columns += constants.DATA_FIELDS
-
-            elif field in self._data_fields:
-                fields.append(Field(constants.DATA_FIELD_ALIASES.get(field, field)))
-                columns.append(field)
-
-            else:
-                raise QueryParseError(
-                    f"Found an invalid field {field!r} in the search query."
-                )
-
-        return fields, columns
 
     def _parse_path(self) -> tuple[Path, int]:
         """
@@ -295,32 +255,4 @@ class DirectoryQueryParser(FileQueryParser):
     __slots__ = "_query", "_operation", "_from_index"
 
     _operand = "dir"
-    _dir_fields = constants.DIR_FIELDS | constants.DIR_FIELD_ALIASES.keys()
-
-    def _parse_fields(self, attrs: list[str]) -> tuple[list[Field], list[str]]:
-        """
-        Parses the search query fields and returns an array of parsed fields and columns.
-
-        #### Params:
-        - attrs (list[str]): List of strings of query fields.
-        """
-
-        fields: list[Field] = []
-        columns: list[str] = []
-
-        # Iterates through the specified tokens, parses and stores them in the `fields` list.
-        for field in "".join(attrs).lower().split(","):
-            if field == "*":
-                fields += (Field(i) for i in constants.DIR_FIELDS)
-                columns += constants.DIR_FIELDS
-
-            elif field in self._dir_fields:
-                fields.append(Field(constants.DIR_FIELD_ALIASES.get(field, field)))
-                columns.append(field)
-
-            else:
-                raise QueryParseError(
-                    f"Found an invalid field {field!r} in the search query."
-                )
-
-        return fields, columns
+    _fields = constants.DIR_FIELDS

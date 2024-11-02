@@ -14,7 +14,7 @@ from common import constants, tools
 from errors import QueryParseError, OperationError
 from shared import Condition
 from entities import File, Directory, DataLine
-from fields import Field, Size
+from fields import Field, Size, parse_field
 
 
 class ConditionParser:
@@ -23,20 +23,22 @@ class ConditionParser:
     conditions for search and delete operations.
     """
 
-    __slots__ = "_query", "_method_map", "_lookup_fields", "_field_aliases"
+    __slots__ = "_query", "_method_map", "_entity", "_lookup_fields", "_field_aliases"
 
-    def __init__(self, subquery: list[str], operand: str) -> None:
+    def __init__(self, subquery: list[str], entity: int) -> None:
         """
         Creates an instance of the `ConditionParser` class.
 
         #### Params:
-        - subquery (list[str]): Subquery comprising the conditions.
-        - operand (str): Targeted operand in the operation (file | data | directory).
+        - subquery (list[str]): Subquery comprising the query conditions.
+        - entity (int): Entity being operated upon.
         """
-        self._query = subquery
 
-        self._lookup_fields = constants.FIELDS[operand]
-        self._field_aliases = constants.ALIASES[operand]
+        self._query = subquery
+        self._entity = entity
+
+        self._lookup_fields = constants.FIELDS[entity]
+        self._field_aliases = constants.ALIASES[entity]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
@@ -105,7 +107,9 @@ class ConditionParser:
         # If none of the above conditions are matched, the operand is assumed
         # to be a query field and returned as `Field` object or explicitly as
         # a `Size` object for size fields.
-        return self._parse_field(operand)
+        return parse_field(
+            operand,
+        )
 
     def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:
         """

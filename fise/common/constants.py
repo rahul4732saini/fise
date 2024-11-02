@@ -90,6 +90,9 @@ SIZE_CONVERSION_MAP = {
     "GiB": 1024**3, "Tb": 1.25e11, "TB": 1e12, "Tib": 137_438_953_472, "TiB": 1024**4
 }
 
+KEYWORD_FROM = "from"
+KEYWORD_WHERE = "where"
+
 PATH_ABSOLUTE = "absolute"
 PATH_RELATIVE = "relative"
 

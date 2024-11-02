@@ -117,4 +117,4 @@ def parse_field(
     if label not in constants.FIELDS[entity]:
         raise QueryParseError(f"{field!r} is not a valid field!")
 
-    return fields_map[label].parse(args) if label in fields_map else Field.parse(field)
+    return fields_map[label].parse(args) if label in fields_map else Field.parse(label)

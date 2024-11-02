@@ -23,16 +23,6 @@ from entities import BaseEntity, File, Directory, DataLine
 from fields import BaseField, parse_field
 
 
-def _get_from_keyword_index(subquery: list[str]) -> int:
-    """Returns the index of the `FROM` keyword in the specified subquery."""
-
-    for i, kw in enumerate(subquery):
-        if kw.lower() == "from":
-            return i
-
-    raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
-
-
 def _get_condition_handler(
     subquery: list[str], operand: str
 ) -> Callable[[File | DataLine | Directory], bool]:
@@ -126,6 +116,16 @@ class BaseQueryParser(ABC):
 
         return path, path_specs_index
 
+    @staticmethod
+    def _get_from_keyword_index(subquery: list[str]) -> int:
+        """Returns the index of the `FROM` keyword in the specified subquery."""
+
+        for i, kw in enumerate(subquery):
+            if kw.lower() == "from":
+                return i
+
+        raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
+
 
 class FileQueryParser(BaseQueryParser):
     """
@@ -142,7 +142,7 @@ class FileQueryParser(BaseQueryParser):
         self._operation = operation
 
         # Stores the index of the `FROM` keyword in the specified subquery.
-        self._from_index = _get_from_keyword_index(subquery)
+        self._from_index = self._get_from_keyword_index(subquery)
 
     def _parse_directory(self) -> tuple[Path, int]:
         """Parses the directory path and its metadata specifications."""
@@ -209,7 +209,7 @@ class FileDataQueryParser(BaseQueryParser):
         self._query = subquery
 
         # Stores the index of the `FROM` keyword in the specified subquery.
-        self._from_index = _get_from_keyword_index(subquery)
+        self._from_index = self._get_from_keyword_index(subquery)
 
     def _parse_path(self) -> tuple[Path, int]:
         """

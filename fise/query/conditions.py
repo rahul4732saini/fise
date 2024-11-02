@@ -64,8 +64,8 @@ class ConditionParser:
 
     def _parse_comparison_operand(self, operand: str) -> Any:
         """
-        Parses individual operands specified within a comparison
-        operation expression for appropriate data type conversion.
+        Parses individual operands defined within a condition
+        expression and converts them into appropriate data types.
 
         #### Params:
         - operand (str): Operand to be parsed.
@@ -74,9 +74,9 @@ class ConditionParser:
         if constants.STRING_PATTERN.match(operand):
             # Strips the leading and trailing quotes in the string.
             operand = operand[1:-1]
-            timedate: datetime | None = self._parse_datetime(operand)
+            date_time: datetime | None = self._parse_datetime(operand)
 
-            return timedate or operand
+            return date_time or operand
 
         elif constants.FLOAT_PATTERN.match(operand):
             return float(operand)
@@ -84,7 +84,7 @@ class ConditionParser:
         elif operand.isdigit():
             return int(operand)
 
-        if operand.lower() == "none":
+        elif operand.lower() == "none":
             return None
 
         # If none of the above conditions are matched, the operand is

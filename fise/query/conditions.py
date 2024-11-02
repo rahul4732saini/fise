@@ -14,7 +14,7 @@ from common import constants, tools
 from errors import QueryParseError, OperationError
 from shared import Condition
 from entities import File, Directory, DataLine
-from fields import BaseField, Field, Size, parse_field
+from fields import BaseField, parse_field
 
 
 class ConditionParser:

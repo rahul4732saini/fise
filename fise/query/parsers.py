@@ -31,7 +31,7 @@ class BaseQueryParser(ABC):
 
     # The following class attributes are essential for operation
     # and must be explicitly defined by the child classes.
-    _entity: str
+    _entity: int
     _fields: tuple[str, ...]
 
     @abstractmethod
@@ -134,7 +134,7 @@ class FileQueryParser(BaseQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    _entity = "file"
+    _entity = constants.ENTITY_FILE
     _fields = constants.FILE_FIELDS
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
@@ -203,7 +203,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    _entity = "dir"
+    _entity = constants.ENTITY_DIR
     _fields = constants.DIR_FIELDS
 
 
@@ -214,7 +214,7 @@ class FileDataQueryParser(BaseQueryParser):
 
     __slots__ = "_query", "_from_index"
 
-    _entity = "data"
+    _entity = constants.ENTITY_DATA
     _fields = constants.DATA_FIELDS
 
     def __init__(self, subquery: list[str]) -> None:

@@ -112,6 +112,9 @@ class BaseQueryParser(ABC):
         - attrs (list[str]): List of query fields.
         """
 
+        if not attrs:
+            raise QueryParseError("No search fields were specified!")
+
         fields: list[BaseField] = []
         columns: list[str] = []
 

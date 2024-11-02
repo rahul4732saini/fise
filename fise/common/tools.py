@@ -63,7 +63,7 @@ def parse_query(query: str) -> list[str]:
     # Raises an error is delimiters are mismatched in the query
     # and a token is left unparsed indicating invalid syntax.
     if token:
-        raise QueryParseError(f"Invalid query syntax around {"".join(token[:-1])!r}")
+        raise QueryParseError(f"Invalid query syntax around {''.join(token[:-1])!r}")
 
     return tokens
 

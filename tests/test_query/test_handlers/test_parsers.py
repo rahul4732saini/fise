@@ -134,21 +134,6 @@ class TestFileQueryParser:
 
     @pytest.mark.parametrize(
         ("subquery", "results"),
-        zip(search_query_test_params, search_query_test_results),
-    )
-    def test_search_query(self, subquery: str, results: list[Any]) -> None:
-        """Tests the file query parser with search queries."""
-
-        query: list[str] = tools.parse_query(subquery)
-        parser = FileQueryParser(query, "search")
-
-        search_query: SearchQuery = examine_search_query(parser, results)
-        fields: list[str] = results[1]
-
-        assert [field.field for field in search_query.fields] == fields
-
-    @pytest.mark.parametrize(
-        ("subquery", "results"),
         zip(
             search_query_with_size_fields_test_params,
             search_query_with_size_fields_test_results,

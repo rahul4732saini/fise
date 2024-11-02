@@ -23,34 +23,6 @@ from entities import BaseEntity, File, Directory, DataLine
 from fields import BaseField, parse_field
 
 
-def _parse_path(subquery: list[str]) -> tuple[Path, int]:
-    """
-    Parses the file/directory path and its type from the specified sub-query.
-    Also returns the index of the file/directory specification in the query
-    relative to the specified subquery.
-    """
-
-    path_type: str = constants.PATH_RELATIVE
-    path_specs_index: str = 0
-
-    if subquery[0].lower() in constants.PATH_TYPES:
-        path_type = subquery[0].lower()
-        path_specs_index = 1
-
-    raw_path: str = subquery[path_specs_index]
-
-    # Removes the leading and trailing quotes if explicitly specified within the path.
-    if constants.STRING_PATTERN.match(raw_path):
-        raw_path = raw_path[1:-1]
-
-    path: Path = Path(raw_path)
-
-    if path_type == constants.PATH_ABSOLUTE:
-        path = path.resolve()
-
-    return path, path_specs_index
-
-
 def _get_from_keyword_index(subquery: list[str]) -> int:
     """Returns the index of the `FROM` keyword in the specified subquery."""
 
@@ -123,6 +95,37 @@ class BaseQueryParser(ABC):
 
         return fields, columns
 
+    @staticmethod
+    def _parse_path(subquery: list[str]) -> tuple[Path, int]:
+        """
+        Parses the file/directory path and its type from the specified sub-query.
+        Also returns the index of the file/directory specifications in the query.
+
+        NOTE:
+        The index of the path specifications is relative to the specified
+        sub-query, not the overall user query.
+        """
+
+        path_type: str = constants.PATH_RELATIVE
+        path_specs_index: int = 0
+
+        if subquery[0].lower() in constants.PATH_TYPES:
+            path_type = subquery[0].lower()
+            path_specs_index = 1
+
+        raw_path: str = subquery[path_specs_index]
+
+        # Removes the leading and trailing quotes if explicitly specified within the path.
+        if constants.STRING_PATTERN.match(raw_path):
+            raw_path = raw_path[1:-1]
+
+        path: Path = Path(raw_path)
+
+        if path_type == constants.PATH_ABSOLUTE:
+            path = path.resolve()
+
+        return path, path_specs_index
+
 
 class FileQueryParser(BaseQueryParser):
     """
@@ -144,7 +147,7 @@ class FileQueryParser(BaseQueryParser):
     def _parse_directory(self) -> tuple[Path, int]:
         """Parses the directory path and its metadata specifications."""
 
-        path, index = _parse_path(self._query[self._from_index + 1 :])
+        path, index = self._parse_path(self._query[self._from_index + 1 :])
 
         if not path.is_dir():
             raise QueryParseError("The specified path for lookup must be a directory.")
@@ -213,7 +216,7 @@ class FileDataQueryParser(BaseQueryParser):
         Parses the file/directory path and its metadata.
         """
 
-        path, index = _parse_path(self._query[self._from_index + 1 :])
+        path, index = self._parse_path(self._query[self._from_index + 1 :])
 
         if not (path.is_dir() or path.is_file()):
             raise QueryParseError(

@@ -19,7 +19,7 @@ from errors import QueryParseError
 from common import constants
 from .conditions import ConditionHandler
 from shared import Query, DeleteQuery, SearchQuery
-from entities import File, Directory, DataLine
+from entities import BaseEntity, File, Directory, DataLine
 from fields import BaseField, parse_field
 
 
@@ -142,9 +142,8 @@ class FileQueryParser(BaseQueryParser):
         self._from_index = _get_from_keyword_index(subquery)
 
     def _parse_directory(self) -> tuple[Path, int]:
-        """
-        Parses the directory path and its metadata.
-        """
+        """Parses the directory path and its metadata specifications."""
+
         path, index = _parse_path(self._query[self._from_index + 1 :])
 
         if not path.is_dir():
@@ -153,9 +152,7 @@ class FileQueryParser(BaseQueryParser):
         return path, index
 
     def _parse_remove_query(self) -> DeleteQuery:
-        """
-        Parses the delete query.
-        """
+        """Parses the delete query."""
 
         if self._from_index:
             raise QueryParseError("Invalid query syntax.")
@@ -163,35 +160,31 @@ class FileQueryParser(BaseQueryParser):
         path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
-        condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(
-                self._query[self._from_index + index + 2 :], self._operand
-            )
+        condition: Callable[[BaseEntity], bool] = _get_condition_handler(
+            self._query[self._from_index + index + 2 :], self._operand
         )
 
         return DeleteQuery(path, condition)
 
     def _parse_search_query(self) -> SearchQuery:
-        """
-        Parses the search query.
-        """
+        """Parses the search query."""
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
         path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
-        condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(
-                self._query[self._from_index + index + 2 :], self._operand
-            )
+        condition: Callable[[BaseEntity], bool] = _get_condition_handler(
+            self._query[self._from_index + index + 2 :], self._operand
         )
 
         return SearchQuery(path, condition, fields, columns)
 
     def parse_query(self) -> SearchQuery | DeleteQuery:
         """
-        Parses the search/delete query.
+        Parses the search or delete query based upon
+        the operation specified during initialization.
         """
+
         return (
             self._parse_search_query()
             if self._operation == "search"

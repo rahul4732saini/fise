@@ -73,7 +73,7 @@ class BaseQueryParser(ABC):
         """Returns the index of the `FROM` keyword in the specified subquery."""
 
         for i, kw in enumerate(subquery):
-            if kw.lower() == "from":
+            if kw.lower() == constants.KEYWORD_FROM:
                 return i
 
         raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
@@ -94,7 +94,7 @@ class BaseQueryParser(ABC):
         if not subquery:
             return lambda _: True
 
-        if subquery[0].lower() != "where":
+        if subquery[0].lower() != constants.KEYWORD_WHERE:
             raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
         conditions: list[str] = subquery[1:]

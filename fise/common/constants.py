@@ -46,16 +46,20 @@ DATA_FIELD_ALIASES = {
     "type": "filetype",
 }
 
+ENTITY_FILE = 0
+ENTITY_DIR = 1
+ENTITY_DATA = 2
+
 FIELDS = {
-    "file": set(FILE_FIELDS),
-    "dir": set(DIR_FIELDS),
-    "data": set(DATA_FIELDS),
+    ENTITY_FILE: set(FILE_FIELDS),
+    ENTITY_DIR: set(DIR_FIELDS),
+    ENTITY_DATA: set(DATA_FIELDS),
 }
 
 ALIASES = {
-    "file": FILE_FIELD_ALIASES,
-    "dir": DIR_FIELD_ALIASES,
-    "data": DATA_FIELD_ALIASES,
+    ENTITY_FILE: FILE_FIELD_ALIASES,
+    ENTITY_DIR: DIR_FIELD_ALIASES,
+    ENTITY_DATA: DATA_FIELD_ALIASES,
 }
 
 OPERATIONS = Literal["search", "remove"]

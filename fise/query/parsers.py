@@ -193,6 +193,17 @@ class FileQueryParser(BaseQueryParser):
         )
 
 
+class DirectoryQueryParser(FileQueryParser):
+    """
+    DirectoryQueryParser defines methods for parsing directory search/delete queries.
+    """
+
+    __slots__ = "_query", "_operation", "_from_index"
+
+    _operand = "dir"
+    _fields = constants.DIR_FIELDS
+
+
 class FileDataQueryParser(BaseQueryParser):
     """
     FileDataQueryParser defines methods for parsing file data search queries.
@@ -237,14 +248,3 @@ class FileDataQueryParser(BaseQueryParser):
         )
 
         return SearchQuery(path, condition, fields, columns)
-
-
-class DirectoryQueryParser(FileQueryParser):
-    """
-    DirectoryQueryParser defines methods for parsing directory search/delete queries.
-    """
-
-    __slots__ = "_query", "_operation", "_from_index"
-
-    _operand = "dir"
-    _fields = constants.DIR_FIELDS

@@ -23,7 +23,7 @@ class ConditionParser:
     conditions for search and delete operations.
     """
 
-    __slots__ = "_query", "_method_map", "_entity", "_lookup_fields", "_field_aliases"
+    __slots__ = "_query", "_method_map", "_entity"
 
     def __init__(self, subquery: list[str], entity: int) -> None:
         """
@@ -36,9 +36,6 @@ class ConditionParser:
 
         self._query = subquery
         self._entity = entity
-
-        self._lookup_fields = constants.FIELDS[entity]
-        self._field_aliases = constants.ALIASES[entity]
 
     def _parse_datetime(self, operand: str) -> datetime | None:
         """
@@ -72,9 +69,9 @@ class ConditionParser:
             return Size.parse(field)
 
         field = field.lower()
-        field = self._field_aliases.get(field, field)
+        field = constants.ALIASES[self._entity].get(field, field)
 
-        if field not in self._lookup_fields:
+        if field not in constants.FIELDS[self._entity]:
             raise QueryParseError(f"Found an invalid field {field!r} in the query.")
 
         return Field(field)

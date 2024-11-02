@@ -25,14 +25,6 @@ class ConditionParser:
 
     __slots__ = "_query", "_method_map", "_lookup_fields", "_field_aliases"
 
-    # Regular expression patterns for matching fields in query conditions.
-    _tuple_pattern = re.compile(r"^\(.*\)$")
-    _float_pattern = re.compile(r"^-?\d+\.\d+$")
-
-    # This regex pattern only matches date and datetime formats, and does
-    # not explicitly verify the validity of the date and time values.
-    _datetime_pattern = re.compile(r"\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?$")
-
     def __init__(self, subquery: list[str], operand: str) -> None:
         """
         Creates an instance of the `ConditionParser` class.
@@ -52,7 +44,7 @@ class ConditionParser:
         matches the corresponding pattern, else returns None.
         """
 
-        if not self._datetime_pattern.match(operand):
+        if not constants.DATETIME_PATTERN.match(operand):
             return None
 
         try:
@@ -101,7 +93,7 @@ class ConditionParser:
 
             return timedate or operand
 
-        elif self._float_pattern.match(operand):
+        elif constants.FLOAT_PATTERN.match(operand):
             return float(operand)
 
         elif operand.isdigit():
@@ -121,7 +113,7 @@ class ConditionParser:
         for an `IN` or `BETWEEN` operation based on the specified operator.
         """
 
-        if not self._tuple_pattern.match(operand):
+        if not constants.TUPLE_PATTERN.match(operand):
 
             # In the context of the `IN` operation, the operand might also be a
             # string or a Field object, the following also handles this situation.
@@ -231,7 +223,7 @@ class ConditionParser:
         - condition (list[str]): Condition to be parsed.
         """
 
-        if len(condition) == 1 and self._tuple_pattern.match(condition[0]):
+        if len(condition) == 1 and constants.TUPLE_PATTERN.match(condition[0]):
             return list(
                 self._parse_conditions(tools.parse_query(condition[0][1:-1])),
             )

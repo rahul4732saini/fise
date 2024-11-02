@@ -16,7 +16,7 @@ import pandas as pd
 from errors import OperationError
 from notify import Message, Alert
 from common import tools, constants
-from fields import Field, Size
+from fields import BaseField
 from entities import File, Directory, DataLine
 
 
@@ -42,7 +42,7 @@ class FileQueryOperator:
 
     def get_dataframe(
         self,
-        fields: list[Field | Size],
+        fields: list[BaseField],
         columns: list[str],
         condition: Callable[[File], bool],
     ) -> pd.DataFrame:
@@ -174,7 +174,7 @@ class FileDataQueryOperator:
 
     def get_dataframe(
         self,
-        fields: list[Field],
+        fields: list[BaseField],
         columns: list[str],
         condition: Callable[[DataLine], bool],
     ) -> pd.DataFrame:
@@ -220,7 +220,7 @@ class DirectoryQueryOperator:
 
     def get_dataframe(
         self,
-        fields: list[Field],
+        fields: list[BaseField],
         columns: list[str],
         condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:

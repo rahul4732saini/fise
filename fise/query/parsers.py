@@ -245,8 +245,8 @@ class FileDataQueryParser(BaseQueryParser):
         path, index = self._parse_path_specs()
 
         # Extracts the function for filtering file records.
-        condition: Callable[[File | DataLine | Directory], bool] = (
-            self._get_condition_handler(self._query[self._from_index + index + 2 :])
+        condition: Callable[[BaseEntity], bool] = self._get_condition_handler(
+            self._query[self._from_index + index + 2 :]
         )
 
         return SearchQuery(path, condition, fields, columns)

@@ -29,7 +29,9 @@ class BaseQueryParser(ABC):
     class for all query parser classes.
     """
 
-    _operand: str
+    # The following class attributes are essential for operation
+    # and must be explicitly defined by the child classes.
+    _entity: str
     _fields: tuple[str, ...]
 
     @abstractmethod
@@ -96,7 +98,7 @@ class BaseQueryParser(ABC):
             raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
 
         conditions: list[str] = subquery[1:]
-        handler = ConditionHandler(conditions, self._operand)
+        handler = ConditionHandler(conditions, self._entity)
 
         # Returns the evaluation method for filtering records.
         return handler.eval_conditions
@@ -115,11 +117,11 @@ class BaseQueryParser(ABC):
 
         for field in "".join(attrs).split(","):
             if field == "*":
-                fields += (parse_field(i, self._operand) for i in self._fields)
+                fields += (parse_field(i, self._entity) for i in self._fields)
                 columns += self._fields
 
             else:
-                fields.append(parse_field(field, self._operand))
+                fields.append(parse_field(field, self._entity))
                 columns.append(field)
 
         return fields, columns
@@ -132,7 +134,7 @@ class FileQueryParser(BaseQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    _operand = "file"
+    _entity = "file"
     _fields = constants.FILE_FIELDS
 
     def __init__(self, subquery: list[str], operation: constants.OPERATIONS) -> None:
@@ -201,7 +203,7 @@ class DirectoryQueryParser(FileQueryParser):
 
     __slots__ = "_query", "_operation", "_from_index"
 
-    _operand = "dir"
+    _entity = "dir"
     _fields = constants.DIR_FIELDS
 
 
@@ -212,7 +214,7 @@ class FileDataQueryParser(BaseQueryParser):
 
     __slots__ = "_query", "_from_index"
 
-    _operand = "data"
+    _entity = "data"
     _fields = constants.DATA_FIELDS
 
     def __init__(self, subquery: list[str]) -> None:

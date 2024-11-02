@@ -14,7 +14,7 @@ from common import constants, tools
 from errors import QueryParseError, OperationError
 from shared import Condition
 from entities import File, Directory, DataLine
-from fields import Field, Size, parse_field
+from fields import BaseField, Field, Size, parse_field
 
 
 class ConditionParser:
@@ -331,8 +331,8 @@ class ConditionHandler:
         - obj (File | DataLine | Directory): Metadata object for extracting field values.
         """
 
-        if isinstance(operand, Field | Size):
-            operand = self._eval_field(operand, obj)
+        if isinstance(operand, BaseField):
+            operand = operand.evaluate(obj)
 
         elif isinstance(operand, list):
 
@@ -340,8 +340,10 @@ class ConditionHandler:
             array: list[Any] = operand.copy()
 
             for index, val in enumerate(array):
-                if isinstance(val, Field | Size):
-                    array[index] = self._eval_field(val, obj)
+                if not isinstance(val, BaseField):
+                    continue
+
+                array[index] = val.evaluate(obj)
 
             return array
 

@@ -144,7 +144,7 @@ class FileQueryParser(BaseQueryParser):
         # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = self._get_from_keyword_index(subquery)
 
-    def _parse_directory(self) -> tuple[Path, int]:
+    def _parse_directory_specs(self) -> tuple[Path, int]:
         """Parses the directory path and its metadata specifications."""
 
         path, index = self._parse_path(self._query[self._from_index + 1 :])
@@ -160,7 +160,7 @@ class FileQueryParser(BaseQueryParser):
         if self._from_index:
             raise QueryParseError("Invalid query syntax.")
 
-        path, index = self._parse_directory()
+        path, index = self._parse_directory_specs()
 
         # Extracts the function for filtering file records.
         condition: Callable[[BaseEntity], bool] = self._get_condition_handler(
@@ -173,7 +173,7 @@ class FileQueryParser(BaseQueryParser):
         """Parses the search query."""
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, index = self._parse_directory()
+        path, index = self._parse_directory_specs()
 
         # Extracts the function for filtering file records.
         condition: Callable[[BaseEntity], bool] = self._get_condition_handler(

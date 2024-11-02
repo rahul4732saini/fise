@@ -223,7 +223,7 @@ class FileDataQueryParser(BaseQueryParser):
         # Stores the index of the `FROM` keyword in the specified subquery.
         self._from_index = self._get_from_keyword_index(subquery)
 
-    def _parse_path(self) -> tuple[Path, int]:
+    def _parse_path_specs(self) -> tuple[Path, int]:
         """
         Parses the file/directory path and its metadata.
         """
@@ -243,7 +243,7 @@ class FileDataQueryParser(BaseQueryParser):
         """
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
-        path, index = self._parse_path()
+        path, index = self._parse_path_specs()
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (

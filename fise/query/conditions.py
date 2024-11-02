@@ -13,7 +13,7 @@ from typing import Generator, Callable, Any
 from common import constants, tools
 from errors import QueryParseError, OperationError
 from shared import Condition
-from entities import File, Directory, DataLine
+from entities import BaseEntity
 from fields import BaseField, parse_field
 
 
@@ -304,13 +304,13 @@ class ConditionHandler:
             ConditionParser(subquery, operation_target).parse_conditions()
         )
 
-    def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
+    def _eval_operand(self, operand: Any, obj: BaseEntity) -> Any:
         """
         Evaluates the specified condition operand.
 
         #### Params:
         - operand (Any): Operand to be processed.
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        - obj (BaseEntity): Metadata object for extracting field values.
         """
 
         if isinstance(operand, BaseField):
@@ -331,15 +331,13 @@ class ConditionHandler:
 
         return operand
 
-    def _eval_condition(
-        self, condition: Condition | list, obj: File | DataLine | Directory
-    ) -> bool:
+    def _eval_condition(self, condition: Condition | list, obj: BaseEntity) -> bool:
         """
         Evaluates the specified condition.
 
         #### Params:
         - condition (Condition | list): Condition(s) to be evaluated.
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        - obj (BaseEntity): Metadata object for extracting field values.
         """
 
         # Recursively evaluates if the condition is nested.
@@ -364,7 +362,7 @@ class ConditionHandler:
     def _eval_condition_segments(
         self,
         segment: list[bool | str | Condition | list],
-        obj: File | DataLine | Directory,
+        obj: BaseEntity,
     ) -> bool:
         """
         Evaluates the specified condition segment comprising
@@ -372,7 +370,7 @@ class ConditionHandler:
 
         #### Params:
         - segment (list): Query condition segment to be evaluated.
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        - obj (BaseEntity): Metadata object for extracting field values.
         """
 
         # Evaluates individual conditions present at the
@@ -390,14 +388,14 @@ class ConditionHandler:
     def _eval_all_conditions(
         self,
         conditions: list[str | Condition | list],
-        obj: File | DataLine | Directory,
+        obj: BaseEntity,
     ) -> bool:
         """
         Evaluates all the query conditions.
 
         #### Params:
         - conditions (list): List comprising the conditions along with their separators.
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        - obj (BaseEntity): Metadata object for extracting field values.
         """
 
         # Adds a `True and` condition at the beginning of the list to avoid
@@ -430,12 +428,12 @@ class ConditionHandler:
 
         return result
 
-    def eval_conditions(self, obj: File | DataLine | Directory) -> bool:
+    def eval_conditions(self, obj: BaseEntity) -> bool:
         """
         Evaluates the query conditions
 
         #### Params:
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
+        - obj (BaseEntity): Metadata object for extracting field values.
         """
         return self._eval_all_conditions(self._conditions, obj)
 

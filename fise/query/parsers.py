@@ -227,9 +227,7 @@ class FileDataQueryParser(BaseQueryParser):
         self._from_index = self._get_from_keyword_index(subquery)
 
     def _parse_path_specs(self) -> tuple[Path, int]:
-        """
-        Parses the file/directory path and its metadata.
-        """
+        """Parses the file or directory path and its metadata specifications."""
 
         path, index = self._parse_path(self._query[self._from_index + 1 :])
 
@@ -241,9 +239,7 @@ class FileDataQueryParser(BaseQueryParser):
         return path, index
 
     def parse_query(self) -> SearchQuery:
-        """
-        Parses the file data search query.
-        """
+        """Parses the file data search query."""
 
         fields, columns = self._parse_fields(self._query[: self._from_index])
         path, index = self._parse_path_specs()

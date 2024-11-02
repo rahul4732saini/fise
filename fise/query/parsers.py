@@ -30,7 +30,7 @@ def _parse_path(subquery: list[str]) -> tuple[Path, int]:
     relative to the specified subquery.
     """
 
-    path_type: str = "relative"
+    path_type: str = constants.PATH_RELATIVE
     path_specs_index: str = 0
 
     if subquery[0].lower() in constants.PATH_TYPES:
@@ -45,7 +45,7 @@ def _parse_path(subquery: list[str]) -> tuple[Path, int]:
 
     path: Path = Path(raw_path)
 
-    if path_type == "absolute":
+    if path_type == constants.PATH_ABSOLUTE:
         path = path.resolve()
 
     return path, path_specs_index

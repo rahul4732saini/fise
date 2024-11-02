@@ -195,7 +195,8 @@ class FileQueryParser(BaseQueryParser):
 
 class DirectoryQueryParser(FileQueryParser):
     """
-    DirectoryQueryParser defines methods for parsing directory search/delete queries.
+    DirectoryQueryParser defines methods for
+    parsing directory search and delete queries.
     """
 
     __slots__ = "_query", "_operation", "_from_index"

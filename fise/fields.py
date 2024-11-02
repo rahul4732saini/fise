@@ -96,7 +96,7 @@ _fields_map: dict[str, BaseField] = {
 
 
 def parse_field(
-    field: str, entity: str, fields_map: dict[str, BaseField] = _fields_map
+    field: str, entity: int, fields_map: dict[str, BaseField] = _fields_map
 ) -> BaseField:
     """Parses the specified field specifications."""
 

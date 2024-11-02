@@ -23,33 +23,6 @@ from entities import BaseEntity, File, Directory, DataLine
 from fields import BaseField, parse_field
 
 
-def _get_condition_handler(
-    subquery: list[str], operand: str
-) -> Callable[[File | DataLine | Directory], bool]:
-    """
-    Parses the conditions defined in the specified subquery
-    and returns a function for filtering data records.
-
-    #### Params:
-    - subquery (list): Subquery comprising the query conditions.
-    - operand (str): Targeted operand in the query operation.
-    """
-
-    # Returns a lambda function hardcoded to return `True` to include all the records
-    # during evaluation if no conditions are explicitly defined within the query.
-    if not subquery:
-        return lambda _: True
-
-    if subquery[0].lower() != "where":
-        raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
-
-    conditions: list[str] = subquery[1:]
-    handler = ConditionHandler(conditions, operand)
-
-    # Returns the evaluation method for filtering records.
-    return handler.eval_conditions
-
-
 class BaseQueryParser(ABC):
     """
     BaseQueryParser serves as the base
@@ -61,29 +34,6 @@ class BaseQueryParser(ABC):
 
     @abstractmethod
     def parse_query(self) -> Query: ...
-
-    def _parse_fields(self, attrs: list[str]) -> tuple[list[BaseField], list[str]]:
-        """
-        Parses the search query fields and returns an
-        tuple of the parsed fields and column labels.
-
-        #### Params:
-        - attrs (list[str]): List of query fields.
-        """
-
-        fields: list[BaseField] = []
-        columns: list[str] = []
-
-        for field in "".join(attrs).split(","):
-            if field == "*":
-                fields += (parse_field(i, self._operand) for i in self._fields)
-                columns += self._fields
-
-            else:
-                fields.append(parse_field(field, self._operand))
-                columns.append(field)
-
-        return fields, columns
 
     @staticmethod
     def _parse_path(subquery: list[str]) -> tuple[Path, int]:
@@ -126,6 +76,54 @@ class BaseQueryParser(ABC):
 
         raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
 
+    def _get_condition_handler(
+        self, subquery: list[str]
+    ) -> Callable[[BaseEntity], bool]:
+        """
+        Parses the conditions defined within the specified
+        subquery and returns a function for evluating them.
+
+        #### Params:
+        - subquery (list): Subquery comprising the query conditions.
+        """
+
+        # Returns a hard-coded lambda function to return 'True' to include all
+        # the records during evaluation if no conditions are explicitly defined.
+        if not subquery:
+            return lambda _: True
+
+        if subquery[0].lower() != "where":
+            raise QueryParseError(f"Invalid query syntax around {' '.join(subquery)!r}")
+
+        conditions: list[str] = subquery[1:]
+        handler = ConditionHandler(conditions, self._operand)
+
+        # Returns the evaluation method for filtering records.
+        return handler.eval_conditions
+
+    def _parse_fields(self, attrs: list[str]) -> tuple[list[BaseField], list[str]]:
+        """
+        Parses the search query fields and returns an
+        tuple of the parsed fields and column labels.
+
+        #### Params:
+        - attrs (list[str]): List of query fields.
+        """
+
+        fields: list[BaseField] = []
+        columns: list[str] = []
+
+        for field in "".join(attrs).split(","):
+            if field == "*":
+                fields += (parse_field(i, self._operand) for i in self._fields)
+                columns += self._fields
+
+            else:
+                fields.append(parse_field(field, self._operand))
+                columns.append(field)
+
+        return fields, columns
+
 
 class FileQueryParser(BaseQueryParser):
     """
@@ -163,8 +161,8 @@ class FileQueryParser(BaseQueryParser):
         path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
-        condition: Callable[[BaseEntity], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :], self._operand
+        condition: Callable[[BaseEntity], bool] = self._get_condition_handler(
+            self._query[self._from_index + index + 2 :]
         )
 
         return DeleteQuery(path, condition)
@@ -176,8 +174,8 @@ class FileQueryParser(BaseQueryParser):
         path, index = self._parse_directory()
 
         # Extracts the function for filtering file records.
-        condition: Callable[[BaseEntity], bool] = _get_condition_handler(
-            self._query[self._from_index + index + 2 :], self._operand
+        condition: Callable[[BaseEntity], bool] = self._get_condition_handler(
+            self._query[self._from_index + index + 2 :]
         )
 
         return SearchQuery(path, condition, fields, columns)
@@ -235,9 +233,7 @@ class FileDataQueryParser(BaseQueryParser):
 
         # Extracts the function for filtering file records.
         condition: Callable[[File | DataLine | Directory], bool] = (
-            _get_condition_handler(
-                self._query[self._from_index + index + 2 :], self._operand
-            )
+            self._get_condition_handler(self._query[self._from_index + index + 2 :])
         )
 
         return SearchQuery(path, condition, fields, columns)

@@ -86,7 +86,13 @@ SIZE_CONVERSION_MAP = {
     "GiB": 1024**3, "Tb": 1.25e11, "TB": 1e12, "Tib": 137_438_953_472, "TiB": 1024**4
 }
 
-PATH_TYPES = {"absolute", "relative"}
+PATH_ABSOLUTE = "absolute"
+PATH_RELATIVE = "relative"
+
+PATH_TYPES = {
+    PATH_ABSOLUTE,
+    PATH_RELATIVE,
+}
 
 # Supported databases for exporting search records.
 DATABASES = {"postgresql", "mysql", "sqlite"}

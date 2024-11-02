@@ -304,24 +304,6 @@ class ConditionHandler:
             ConditionParser(subquery, operation_target).parse_conditions()
         )
 
-    @staticmethod
-    def _eval_field(field: Field | Size, obj: File | DataLine | Directory) -> Any:
-        """
-        Evaluates the specified metadata field.
-
-        #### Params:
-        - operand (Any): Operand to be processed.
-        - obj (File | DataLine | Directory): Metadata object for extracting field values.
-        """
-
-        if isinstance(field, Size):
-            field = field.evaluate(obj)
-
-        else:
-            field = getattr(obj, field.field)
-
-        return field
-
     def _eval_operand(self, operand: Any, obj: File | DataLine | Directory) -> Any:
         """
         Evaluates the specified condition operand.

@@ -62,20 +62,6 @@ class ConditionParser:
                 f"Invalid datetime specifications {operand!r} in query conditions."
             )
 
-    def _parse_field(self, field: str) -> Field | Size:
-        """Parses the specified string formatted field"""
-
-        if field.startswith("size"):
-            return Size.parse(field)
-
-        field = field.lower()
-        field = constants.ALIASES[self._entity].get(field, field)
-
-        if field not in constants.FIELDS[self._entity]:
-            raise QueryParseError(f"Found an invalid field {field!r} in the query.")
-
-        return Field(field)
-
     def _parse_comparison_operand(self, operand: str) -> Any:
         """
         Parses individual operands specified within a comparison
@@ -101,12 +87,9 @@ class ConditionParser:
         if operand.lower() == "none":
             return None
 
-        # If none of the above conditions are matched, the operand is assumed
-        # to be a query field and returned as `Field` object or explicitly as
-        # a `Size` object for size fields.
-        return parse_field(
-            operand,
-        )
+        # If none of the above conditions are matched, the operand is
+        # assumed to be a query field and returned as `BaseField` object.
+        return parse_field(operand, self._entity)
 
     def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:
         """

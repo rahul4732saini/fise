@@ -23,7 +23,7 @@ class ConditionParser:
     conditions for search and delete operations.
     """
 
-    __slots__ = "_query", "_method_map", "_entity"
+    __slots__ = "_query", "_entity"
 
     def __init__(self, subquery: list[str], entity: int) -> None:
         """

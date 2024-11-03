@@ -7,9 +7,10 @@ directory search or delete operations. Additionally, it includes specialized cla
 performing search operations within file contents.
 """
 
-from typing import Generator, Callable, Any
-from pathlib import Path
 import shutil
+from pathlib import Path
+from typing import Generator, Callable, Any
+from abc import ABC, abstractmethod
 
 import pandas as pd
 
@@ -18,6 +19,27 @@ from notify import Message, Alert
 from common import tools, constants
 from fields import BaseField
 from entities import File, Directory, DataLine
+
+
+class BaseOperator(ABC):
+    """BaseOperator serves as the base class for all operator classes."""
+
+    @abstractmethod
+    def get_dataframe(): ...
+
+
+class DataOperator(BaseOperator, ABC):
+    """
+    DataOperator serves as the base class
+    for all file data operator classes.
+    """
+
+
+class FileSystemOperator(ABC):
+    """
+    FileSystemOperator serves as the base class
+    for all file system operator classes.
+    """
 
 
 class FileQueryOperator:

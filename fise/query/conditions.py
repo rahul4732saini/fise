@@ -321,29 +321,30 @@ class ConditionHandler:
 
         return operand
 
-    def _eval_condition(self, condition: Condition | list, obj: BaseEntity) -> bool:
+    def _eval_condition(self, condition: list | Condition, entity: BaseEntity) -> bool:
         """
         Evaluates the specified condition.
 
         #### Params:
-        - condition (Condition | list): Condition(s) to be evaluated.
-        - obj (BaseEntity): Metadata object for extracting field values.
+        - condition (list | Condition): Condition(s) to be evaluated.
+        - entity (BaseEntity): Entity being operated upon.
         """
 
         # Recursively evaluates if the condition is nested.
         if isinstance(condition, list):
-            return self._eval_all_conditions(condition, obj)
+            return self._eval_all_conditions(condition, entity)
 
         # Evaluates the condition operands.
         operand1, operand2 = self._eval_operand(
-            condition.operand1, obj
-        ), self._eval_operand(condition.operand2, obj)
+            condition.operand1, entity
+        ), self._eval_operand(condition.operand2, entity)
 
         try:
             # Evaluates the operation with a method corresponding to the name
-            # of the operator defined in the `_method_map` instance attribute.
+            # of the operator defined in the '_method_map' instance attribute.
             response: bool = self._method_map[condition.operator](operand1, operand2)
-        except (TypeError, ValueError):
+
+        except Exception:
             raise OperationError("Unable to process the query conditions.")
 
         else:

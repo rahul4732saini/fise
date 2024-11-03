@@ -269,13 +269,13 @@ class ConditionHandler:
 
     __slots__ = "_conditions", "_method_map"
 
-    def __init__(self, subquery: list[str], operation_target: str) -> None:
+    def __init__(self, subquery: list[str], entity: int) -> None:
         """
         Creates an instance of the `ConditionHandler` class.
 
         #### Params:
-        - conditions (list): List of parsed query conditions.
-        - operation_target (str): Targeted operand in the operation (file/data/directory).
+        - subquery (list[str]): Subquery comprising the query conditions.
+        - entity (int): Entity being operated upon.
         """
 
         # Maps operator notations with corresponding evaluation methods.
@@ -292,9 +292,7 @@ class ConditionHandler:
         }
 
         # Parses the conditions and stores them in a list.
-        self._conditions = list(
-            ConditionParser(subquery, operation_target).parse_conditions()
-        )
+        self._conditions = list(ConditionParser(subquery, entity).parse_conditions())
 
     def _eval_operand(self, operand: Any, obj: BaseEntity) -> Any:
         """

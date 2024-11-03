@@ -257,11 +257,7 @@ class ConditionParser:
         yield self._parse_condition(condition)
 
     def parse_conditions(self) -> Generator[str | list | Condition, None, None]:
-        """
-        Parses the query conditions and returns a `typing.Generator` object of the parsed
-        conditions as `Condition` objects also including the condition separators `and`
-        and `or` as string objects or a list of all of the above if nested.
-        """
+        """Parses and returns a generator of the query conditions."""
         return self._parse_conditions(self._query)
 
 

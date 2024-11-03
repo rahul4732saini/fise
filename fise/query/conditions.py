@@ -403,6 +403,14 @@ class ConditionHandler:
         return self._eval_conditions(self._conditions, obj)
 
     @staticmethod
+    def _and(x: bool, y: bool, /) -> bool:
+        return x and y
+
+    @staticmethod
+    def _or(x: bool, y: bool, /) -> bool:
+        return x or y
+
+    @staticmethod
     def _gt(x: Any, y: Any, /) -> bool:
         return x > y
 

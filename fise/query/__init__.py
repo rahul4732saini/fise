@@ -84,15 +84,15 @@ class QueryHandler:
     def _handle_file_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """Parses and handles the specified file search or delete query"""
 
-        parser = FileQueryParser(self._query[self._ctr:], initials.operation.operation)
+        parser = FileQueryParser(self._query[self._ctr :], initials.operation.operation)
         query: SearchQuery | DeleteQuery = parser.parse_query()
 
         operator = FileQueryOperator(query.path, initials.recursive)
 
         if initials.operation.operation == "search":
-            return operator.get_dataframe(query.fields, query.columns, query.condition)
+            return operator.search(query.fields, query.columns, query.condition)
 
-        operator.remove_files(query.condition, initials.operation.skip_err)
+        operator.delete(query.condition, initials.operation.skip_err)
 
     def _handle_data_query(self, initials: QueryInitials) -> pd.DataFrame:
         """Parses and handles the specified data search query"""
@@ -106,14 +106,14 @@ class QueryHandler:
                 "Exporting binary data to SQL databases is currently unsupported"
             )
 
-        parser = FileDataQueryParser(self._query[self._ctr:])
+        parser = FileDataQueryParser(self._query[self._ctr :])
         query: SearchQuery = parser.parse_query()
 
         operator = FileDataQueryOperator(
             query.path, initials.recursive, initials.operation.filemode
         )
 
-        return operator.get_dataframe(query.fields, query.columns, query.condition)
+        return operator.search(query.fields, query.columns, query.condition)
 
     def _handle_dir_query(self, initials: QueryInitials) -> pd.DataFrame | None:
         """
@@ -121,16 +121,16 @@ class QueryHandler:
         """
 
         parser = DirectoryQueryParser(
-            self._query[self._ctr:], initials.operation.operation
+            self._query[self._ctr :], initials.operation.operation
         )
 
         query: SearchQuery | DeleteQuery = parser.parse_query()
         operator = DirectoryQueryOperator(query.path, initials.recursive)
 
         if initials.operation.operation == "search":
-            return operator.get_dataframe(query.fields, query.columns, query.condition)
+            return operator.search(query.fields, query.columns, query.condition)
 
-        operator.remove_directories(query.condition, initials.operation.skip_err)
+        operator.delete(query.condition, initials.operation.skip_err)
 
     def _parse_initials(self) -> QueryInitials:
         """

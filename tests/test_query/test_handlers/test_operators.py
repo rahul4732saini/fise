@@ -158,7 +158,7 @@ class TestFileQueryOperator:
         fields: list[Field] = [Field(name) for name in params[2]]
 
         operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/file/search/test{index}", data)
@@ -179,7 +179,7 @@ class TestFileQueryOperator:
         ]
 
         operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/file/search2/test{index}", data)
@@ -189,7 +189,7 @@ class TestFileQueryOperator:
         """Tests file query operation with delete operations."""
 
         operator = FileQueryOperator(FILE_DIR_TEST_DIRECTORY / params[0], params[1])
-        operator.remove_files(params[2], params[3])
+        operator.delete(params[2], params[3])
 
         verify_delete_operation(f"/file/delete/test{index}")
 
@@ -239,7 +239,7 @@ class TestFileDataQueryOperator:
         operator = FileDataQueryOperator(
             DATA_TEST_DIRECTORY / params[0], params[1], "text"
         )
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/data/text/search/test{index}", data)
@@ -257,7 +257,7 @@ class TestFileDataQueryOperator:
         operator = FileDataQueryOperator(
             DATA_TEST_DIRECTORY / params[0], params[1], "bytes"
         )
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/data/bytes/search/test{index}", data)
@@ -313,7 +313,7 @@ class TestDirectoryQueryOperator:
         operator = DirectoryQueryOperator(
             FILE_DIR_TEST_DIRECTORY / params[0], params[1]
         )
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         if verify:
             verify_search_operation(f"/directory/search/test{index}", data)
@@ -335,7 +335,7 @@ class TestDirectoryQueryOperator:
         operator = DirectoryQueryOperator(
             FILE_DIR_TEST_DIRECTORY / params[0], params[1]
         )
-        data: pd.DataFrame = operator.get_dataframe(fields, params[2], params[3])
+        data: pd.DataFrame = operator.search(fields, params[2], params[3])
 
         assert isinstance(data, pd.DataFrame)
 
@@ -346,6 +346,6 @@ class TestDirectoryQueryOperator:
         operator = DirectoryQueryOperator(
             FILE_DIR_TEST_DIRECTORY / params[0], params[1]
         )
-        operator.remove_directories(params[2], params[3])
+        operator.delete(params[2], params[3])
 
         verify_delete_operation(f"/directory/delete/test{index}")

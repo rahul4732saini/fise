@@ -197,9 +197,7 @@ class ConditionParser:
 
         return condition
 
-    def _parse_condition(
-        self, condition: list[str]
-    ) -> Condition | list[str | Condition]:
+    def _parse_condition(self, condition: list[str]) -> list | Condition:
         """
         Parses individual query conditions.
 
@@ -234,7 +232,7 @@ class ConditionParser:
 
     def _parse_conditions(
         self, subquery: list[str]
-    ) -> Generator[Condition | str | list, None, None]:
+    ) -> Generator[str | list | Condition, None, None]:
         """
         Parses the query conditions.
 
@@ -258,7 +256,7 @@ class ConditionParser:
         # Parses the last condition specified in the query.
         yield self._parse_condition(condition)
 
-    def parse_conditions(self) -> Generator[Condition | str | list, None, None]:
+    def parse_conditions(self) -> Generator[str | list | Condition, None, None]:
         """
         Parses the query conditions and returns a `typing.Generator` object of the parsed
         conditions as `Condition` objects also including the condition separators `and`

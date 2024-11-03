@@ -352,6 +352,41 @@ class ConditionHandler:
         else:
             return response
 
+    def _eval_condition_segments(
+        self,
+        conditions: list[bool | str | list | Condition],
+        operator: str,
+        entity: BaseEntity,
+    ) -> list[bool | str | list | Condition]:
+        """
+        Evaluates condition segments seperated by the specified operator.
+
+        #### Params:
+        - conditions (list): List of query conditions.
+        - operator (str): Logical operator which has to be evaluated.
+        - entity (BaseEntity): Entity to be operated upon.
+        """
+
+        cur: str = ""
+        res: list[bool | str | list | Condition] = []
+
+        for token in conditions:
+            if isinstance(token, str) and token in constants.CONDITION_SEPARATORS:
+                res.append(cur := token)
+
+            elif cur == operator:
+                result = self._logical_method_map[res.pop()](
+                    res.pop(), self._eval_condition(token, entity)
+                )
+
+                res.append(result)
+                cur = ""
+
+            else:
+                res.append(self._eval_condition(token, entity))
+
+        return res
+
     def _eval_conditions(
         self,
         conditions: list[str | Condition | list],

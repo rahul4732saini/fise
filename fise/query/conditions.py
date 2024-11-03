@@ -392,20 +392,24 @@ class ConditionHandler:
 
         # Evaluates conditions separated by `and` operator.
         for _ in range(len(segments) // 2):
-            segment: list[Any] = segments[ctr : ctr + 3]
-
-            if segment[1] == "or":
+            if segments[ctr + 1] == constants.OP_DISJUNCTION:
                 # Increments the counter by 1 to skip the
                 # conditions separated by the `or` operator.
                 ctr += 2
+                continue
 
-            else:
-                segments[ctr : ctr + 3] = [self._eval_condition_segments(segment, obj)]
+            segments[ctr : ctr + 3] = [
+                self._eval_condition(segments[ctr], obj)
+                and self._eval_condition(segments[ctr + 2], obj)
+            ]
 
         # Evaluates conditions separated by `or` operator.
         for _ in range(len(segments) // 2):
             # Replaces the conditions with the evaluated boolean value.
-            segments[:3] = [self._eval_condition_segments(segments[:3], obj)]
+            segments[:3] = [
+                self._eval_condition(segments[0], obj)
+                or self._eval_condition(segments[2], obj)
+            ]
 
             if segments[0]:
                 return True

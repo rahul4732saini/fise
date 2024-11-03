@@ -346,32 +346,6 @@ class ConditionHandler:
         else:
             return response
 
-    def _eval_condition_segments(
-        self,
-        segment: list[bool | str | Condition | list],
-        obj: BaseEntity,
-    ) -> bool:
-        """
-        Evaluates the specified condition segment comprising
-        two conditions along with a seperator.
-
-        #### Params:
-        - segment (list): Query condition segment to be evaluated.
-        - obj (BaseEntity): Metadata object for extracting field values.
-        """
-
-        # Evaluates individual conditions present at the
-        # 0th and 2nd position in the list if not done yet.
-        for i in (0, 2):
-            if not isinstance(segment[i], bool):
-                segment[i] = self._eval_condition(segment[i], obj)
-
-        return (
-            segment[0] and segment[2]
-            if segment[1] == constants.OP_CONJUNCTION
-            else segment[0] or segment[2]
-        )
-
     def _eval_all_conditions(
         self,
         conditions: list[str | Condition | list],

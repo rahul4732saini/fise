@@ -312,7 +312,9 @@ class ConditionHandler:
 
         return operand
 
-    def _eval_condition(self, condition: list | Condition, entity: BaseEntity) -> bool:
+    def _eval_condition(
+        self, condition: bool | list | Condition, entity: BaseEntity
+    ) -> bool:
         """
         Evaluates the specified condition.
 
@@ -320,6 +322,9 @@ class ConditionHandler:
         - condition (list | Condition): Condition(s) to be evaluated.
         - entity (BaseEntity): Entity being operated upon.
         """
+
+        if isinstance(condition, bool):
+            return condition
 
         # Recursively evaluates if the condition is nested.
         if isinstance(condition, list):

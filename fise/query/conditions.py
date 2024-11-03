@@ -251,14 +251,12 @@ class ConditionParser:
                 yield token.lower()
 
                 condition.clear()
-
                 continue
 
             condition.append(token)
 
         # Parses the last condition specified in the query.
-        if condition:
-            yield self._parse_condition(condition)
+        yield self._parse_condition(condition)
 
     def parse_conditions(self) -> Generator[Condition | str | list, None, None]:
         """

@@ -50,7 +50,7 @@ class FileSystemOperator(ABC):
     def delete(self, condition: Callable[[BaseEntity], bool], skip_err: bool): ...
 
 
-class FileQueryOperator:
+class FileQueryOperator(FileSystemOperator):
     """
     FileQueryOperator defines methods for performing
     file search and delete operations.
@@ -141,7 +141,7 @@ class FileQueryOperator:
             )
 
 
-class FileDataQueryOperator:
+class FileDataQueryOperator(DataOperator):
     """
     FileDataQueryOperator defines methods for performing
     text and byte search operations within files.
@@ -228,7 +228,7 @@ class FileDataQueryOperator:
         return pd.DataFrame(records, columns=columns)
 
 
-class DirectoryQueryOperator:
+class DirectoryQueryOperator(FileSystemOperator):
     """
     DirectoryQueryOperator defines methods for performing
     directory search and delete operations.

@@ -74,9 +74,10 @@ class ConditionParser:
         if constants.STRING_PATTERN.match(operand):
             # Strips the leading and trailing quotes in the string.
             operand = operand[1:-1]
-            date_time: datetime | None = self._parse_datetime(operand)
 
-            return date_time or operand
+            # Returns a datetime object if it matches the ISO-8601
+            # date & time pattern. Otherwise, returns a string object.
+            return self._parse_datetime(operand) or operand
 
         elif constants.FLOAT_PATTERN.match(operand):
             return float(operand)
@@ -87,8 +88,8 @@ class ConditionParser:
         elif operand.lower() == "none":
             return None
 
-        # If none of the above conditions are matched, the operand is
-        # assumed to be a query field and returned as `BaseField` object.
+        # If none of the above conditions match, the operand
+        # is assumed to be a query field and parse accordingly.
         return parse_field(operand, self._entity)
 
     def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:

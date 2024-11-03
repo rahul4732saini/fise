@@ -18,14 +18,19 @@ from errors import OperationError
 from notify import Message, Alert
 from common import tools, constants
 from fields import BaseField
-from entities import File, Directory, DataLine
+from entities import BaseEntity, File, Directory, DataLine
 
 
 class BaseOperator(ABC):
     """BaseOperator serves as the base class for all operator classes."""
 
     @abstractmethod
-    def get_dataframe(): ...
+    def search(
+        self,
+        fields: list[BaseField],
+        columns: list[str],
+        condition: Callable[[BaseEntity], bool],
+    ): ...
 
 
 class DataOperator(BaseOperator, ABC):
@@ -40,6 +45,9 @@ class FileSystemOperator(ABC):
     FileSystemOperator serves as the base class
     for all file system operator classes.
     """
+
+    @abstractmethod
+    def delete(self, condition: Callable[[BaseEntity], bool], skip_err: bool): ...
 
 
 class FileQueryOperator:

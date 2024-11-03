@@ -362,7 +362,7 @@ class ConditionHandler:
 
         return (
             segment[0] and segment[2]
-            if segment[1] == "and"
+            if segment[1] == constants.OP_CONJUNCTION
             else segment[0] or segment[2]
         )
 
@@ -381,7 +381,7 @@ class ConditionHandler:
 
         # Adds a `True and` condition at the beginning of the list to avoid
         # explicit definition of a mechanism for evaluating a single condition.
-        segments: list[Any] = [True, "and"] + conditions
+        segments: list[Any] = [True, constants.OP_CONJUNCTION] + conditions
         ctr: int = 0
 
         # Evaluates conditions separated by `and` operator.

@@ -171,7 +171,7 @@ class Directory(Entity):
     __slots__ = "_path", "_stats"
 
 
-class DataLine:
+class DataLine(BaseEntity):
     """
     DataLine class serves as a unified class for
     accessing all dataline metadata attributes.

@@ -400,39 +400,17 @@ class ConditionHandler:
         - obj (BaseEntity): Metadata object for extracting field values.
         """
 
-        # Adds a `True and` condition at the beginning of the list to avoid
-        # explicit definition of a mechanism for evaluating a single condition.
-        segments: list[Any] = [True, constants.OP_CONJUNCTION] + conditions
-        ctr: int = 0
+        # Evaluates the conditions seperated by the conjunction operator.
+        conditions = self._eval_condition_segments(
+            conditions, constants.OP_CONJUNCTION, obj
+        )
 
-        # Evaluates conditions separated by `and` operator.
-        for _ in range(len(segments) // 2):
-            if segments[ctr + 1] == constants.OP_DISJUNCTION:
-                # Increments the counter by 1 to skip the
-                # conditions separated by the `or` operator.
-                ctr += 2
-                continue
+        # Evaluates the conditions seperated by the disjunction operator.
+        conditions = self._eval_condition_segments(
+            conditions, constants.OP_DISJUNCTION, obj
+        )
 
-            segments[ctr : ctr + 3] = [
-                self._eval_condition(segments[ctr], obj)
-                and self._eval_condition(segments[ctr + 2], obj)
-            ]
-
-        # Evaluates conditions separated by `or` operator.
-        for _ in range(len(segments) // 2):
-            # Replaces the conditions with the evaluated boolean value.
-            segments[:3] = [
-                self._eval_condition(segments[0], obj)
-                or self._eval_condition(segments[2], obj)
-            ]
-
-            if segments[0]:
-                return True
-
-        # Extracts the singe-most boolean value from the list.
-        result: bool = segments[0]
-
-        return result
+        return conditions[0]
 
     def eval_conditions(self, obj: BaseEntity) -> bool:
         """

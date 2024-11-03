@@ -81,7 +81,7 @@ class FileQueryOperator(FileSystemOperator):
         present within the directory which match the specified condition.
 
         #### Params:
-        - fields (list[Field]): List of desired file metadata `Field` objects.
+        - fields (list[Field]): List of desired metadata field objects.
         - columns (list[str]): List of columns names for the specified fields.
         - condition (Callable): Function for filtering data records.
         """
@@ -102,19 +102,18 @@ class FileQueryOperator(FileSystemOperator):
 
     def delete(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """
-        Removes all the files present within the
-        directory matching the specified condition.
+        Deletes all the files present within the
+        directory matching the specified conditions.
 
         #### Params:
         - condition (Callable): Function for filtering data records.
         - skip_err (bool): Whether to supress permission errors during operation.
         """
 
-        # `ctr` counts the number of files removed whereas `skipped` counts
-        # the number of skipped files if `skip_err` is set to `True`.
+        # 'ctr' counts the number of files removed during the operation.
+        # 'skipped' count the number of files skipped due to exceptions.
         ctr = skipped = 0
 
-        # Iterates through the files and deletes individually if the condition is met.
         for file in tools.get_files(self._directory, self._recursive):
             if not condition(File(file)):
                 continue
@@ -134,10 +133,11 @@ class FileQueryOperator(FileSystemOperator):
 
         Message(f"Successfully removed {ctr} files from '{self._directory}'.")
 
-        # Prints the skipped files message only is `skipped` is not zero.
+        # Prints the skipped files message only is 'skipped' is not zero.
         if skipped:
             Alert(
-                f"Skipped {skipped} files from '{self._directory}' due to permission errors."
+                f"Skipped {skipped} files from '{self._directory}'"
+                "due to permissions errors."
             )
 
 
@@ -158,7 +158,7 @@ class FileDataQueryOperator(DataOperator):
         #### Params:
         - path (pathlib.Path): Path to the file or directory.
         - recursive (bool): Whether to include files from subdirectories.
-        - filemode (str): Desired filemode to read files.
+        - filemode (str): Desired filemode for reading files.
         """
 
         self._path = path

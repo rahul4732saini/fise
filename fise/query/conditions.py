@@ -307,17 +307,7 @@ class ConditionHandler:
             operand = operand.evaluate(obj)
 
         elif isinstance(operand, list):
-
-            # Creates a separate copy of the operand list to avoid mutations in it.
-            array: list[Any] = operand.copy()
-
-            for index, val in enumerate(array):
-                if not isinstance(val, BaseField):
-                    continue
-
-                array[index] = val.evaluate(obj)
-
-            return array
+            return [self._eval_operand(e, obj) for e in operand]
 
         return operand
 

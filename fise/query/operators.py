@@ -62,7 +62,7 @@ class FileQueryOperator:
         self._directory = directory
         self._recursive = recursive
 
-    def get_dataframe(
+    def search(
         self,
         fields: list[BaseField],
         columns: list[str],
@@ -92,7 +92,7 @@ class FileQueryOperator:
 
         return pd.DataFrame(records, columns=columns)
 
-    def remove_files(self, condition: Callable[[File], bool], skip_err: bool) -> None:
+    def delete(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """
         Removes all the files present within the
         directory matching the specified condition.
@@ -194,7 +194,7 @@ class FileDataQueryOperator:
                 DataLine(file, line, index + 1) for index, line in enumerate(data)
             )
 
-    def get_dataframe(
+    def search(
         self,
         fields: list[BaseField],
         columns: list[str],
@@ -240,7 +240,7 @@ class DirectoryQueryOperator:
         self._directory = directory
         self._recursive = recursive
 
-    def get_dataframe(
+    def search(
         self,
         fields: list[BaseField],
         columns: list[str],
@@ -271,9 +271,7 @@ class DirectoryQueryOperator:
 
         return pd.DataFrame(records, columns=columns)
 
-    def remove_directories(
-        self, condition: Callable[[Directory], bool], skip_err: bool
-    ) -> None:
+    def delete(self, condition: Callable[[Directory], bool], skip_err: bool) -> None:
         """
         Removes all the subdirectories matching the specified condition.
 

@@ -70,7 +70,10 @@ OPERATION_ALIASES = {"select", "delete"}
 FILE_MODES = Literal["text", "bytes"]
 FILE_MODES_MAP = {"text": "r", "bytes": "rb"}
 
-CONDITION_SEPARATORS = {"and", "or"}
+OP_CONJUNCTION = "and"
+OP_DISJUNCTION = "or"
+
+CONDITION_SEPARATORS = {OP_CONJUNCTION, OP_DISJUNCTION}
 COMPARISON_OPERATORS = {"<", ">", "<=", ">=", "!=", "="}
 CONDITIONAL_OPERATORS = {"in", "between", "like"}
 

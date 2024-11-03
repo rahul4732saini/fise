@@ -328,7 +328,7 @@ class ConditionHandler:
 
         # Recursively evaluates if the condition is nested.
         if isinstance(condition, list):
-            return self._eval_all_conditions(condition, entity)
+            return self._eval_conditions(condition, entity)
 
         # Evaluates the condition operands.
         operand1, operand2 = self._eval_operand(
@@ -346,7 +346,7 @@ class ConditionHandler:
         else:
             return response
 
-    def _eval_all_conditions(
+    def _eval_conditions(
         self,
         conditions: list[str | Condition | list],
         obj: BaseEntity,
@@ -400,7 +400,7 @@ class ConditionHandler:
         #### Params:
         - obj (BaseEntity): Metadata object for extracting field values.
         """
-        return self._eval_all_conditions(self._conditions, obj)
+        return self._eval_conditions(self._conditions, obj)
 
     @staticmethod
     def _gt(x: Any, y: Any, /) -> bool:

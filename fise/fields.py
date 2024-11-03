@@ -6,7 +6,7 @@ This module comprises classes and functions
 for storing and handling query fields.
 """
 
-from typing import Self, Any
+from typing import Any
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -21,7 +21,7 @@ class BaseField(ABC):
 
     @classmethod
     @abstractmethod
-    def parse(cls, descriptor: str) -> Self: ...
+    def parse(cls, descriptor: str): ...
 
     @abstractmethod
     def evaluate(self, entity) -> Any: ...

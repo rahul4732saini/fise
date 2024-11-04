@@ -1,6 +1,6 @@
 """
-Extractor Module
-----------------
+Extractors Module
+-----------------
 
 This module comprises utitlity functions for
 parsing and extracting attributes and fields.
@@ -104,4 +104,3 @@ def parse_attribute(attr: str, entity: int = -1) -> Any:
     # If none of the above conditions are matched, the attribute
     # is assumed to be a query field and parsed accordingly.
     return parse_field(attr, entity)
- 

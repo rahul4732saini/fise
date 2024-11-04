@@ -38,31 +38,6 @@ class ConditionParser:
         self._query = subquery
         self._entity = entity
 
-    def _parse_datetime(self, operand: str) -> datetime | None:
-        """
-        Parses date/datetime from the specified operand if it
-        matches the corresponding pattern, else returns None.
-        """
-
-        if not constants.DATETIME_PATTERN.match(operand):
-            return None
-
-        try:
-            return datetime.strptime(operand, r"%Y-%m-%d %H:%M:%S")
-
-        except ValueError:
-            # Passes without raising an error if in
-            # case the operand matches the date format.
-            ...
-
-        try:
-            return datetime.strptime(operand, r"%Y-%m-%d")
-
-        except ValueError:
-            raise QueryParseError(
-                f"Invalid datetime specifications {operand!r} in query conditions."
-            )
-
     def _parse_comparison_operand(self, operand: str) -> Any:
         """
         Parses individual operands defined within a condition
@@ -78,7 +53,7 @@ class ConditionParser:
 
             # Returns a datetime object if it matches the ISO-8601
             # date & time pattern. Otherwise, returns a string object.
-            return self._parse_datetime(operand) or operand
+            return extractors.parse_datetime(operand) or operand
 
         elif constants.FLOAT_PATTERN.match(operand):
             return float(operand)

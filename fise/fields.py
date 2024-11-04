@@ -87,34 +87,3 @@ class Size(BaseField):
             return None
 
         return round(file.size / self.divisor, 5)
-
-
-# Maps field names with their corresponding storage and evaluator classes.
-_fields_map: dict[str, BaseField] = {
-    "size": Size,
-}
-
-
-def parse_field(
-    field: str, entity: int, fields_map: dict[str, BaseField] = _fields_map
-) -> BaseField:
-    """Parses the specified field specifications."""
-
-    label = args = ""
-
-    for i in range(len(field)):
-        if field[i] != "[":
-            continue
-
-        label, args = field[:i].lower(), field[i + 1 : -1]
-        break
-
-    else:
-        label = field.lower()
-
-    label = constants.ALIASES[entity].get(label, label)
-
-    if label not in constants.FIELDS[entity]:
-        raise QueryParseError(f"{field!r} is not a valid field!")
-
-    return fields_map[label].parse(args) if label in fields_map else Field.parse(label)

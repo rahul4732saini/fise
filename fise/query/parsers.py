@@ -15,18 +15,17 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Callable
 
+from .. import extractor
 from errors import QueryParseError
 from common import constants
 from entities import BaseEntity
 from .conditions import ConditionHandler
 from shared import Query, DeleteQuery, SearchQuery
-from fields import BaseField, parse_field
-
+from fields import BaseField
 
 class BaseQueryParser(ABC):
     """
-    BaseQueryParser serves as the base
-    class for all query parser classes.
+    BaseQueryParser serves as the base class for all query parser classes.
     """
 
     # The following class attributes are essential for operation
@@ -120,11 +119,11 @@ class BaseQueryParser(ABC):
 
         for field in "".join(attrs).split(","):
             if field == "*":
-                fields += (parse_field(i, self._entity) for i in self._fields)
+                fields += (extractor.parse_field(i, self._entity) for i in self._fields)
                 columns += self._fields
 
             else:
-                fields.append(parse_field(field, self._entity))
+                fields.append(extractor.parse_field(field, self._entity))
                 columns.append(field)
 
         return fields, columns

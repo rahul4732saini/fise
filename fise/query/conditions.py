@@ -245,7 +245,7 @@ class ConditionParser:
         condition: list[str] = []
 
         for token in subquery:
-            if token.lower() in constants.CONDITION_SEPARATORS:
+            if token.lower() in constants.LOGICAL_OPEATORS:
                 yield self._parse_condition(condition)
                 yield token.lower()
 
@@ -371,7 +371,7 @@ class ConditionHandler:
         res: list[bool | str | list | Condition] = []
 
         for token in conditions:
-            if isinstance(token, str) and token in constants.CONDITION_SEPARATORS:
+            if isinstance(token, str) and token in constants.LOGICAL_OPEATORS:
                 res.append(cur := token)
 
             elif cur == operator:

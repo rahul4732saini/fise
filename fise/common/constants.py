@@ -85,7 +85,7 @@ SIZE_UNITS = Literal[
 FIELD_PATTERN = re.compile(r"^[a-zA-Z]+(\[.+])?$")
 STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
 TUPLE_PATTERN = re.compile(r"^\(.*\)$")
-FLOAT_PATTERN = re.compile(r"^-?\d+\.\d+$")
+FLOAT_PATTERN = re.compile(r"^-?\d+(\.\d+)?$")
 DATETIME_PATTERN = re.compile(r"\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?$")
 
 # Maps storage unit string lables with their corresponding

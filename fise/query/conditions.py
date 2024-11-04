@@ -10,7 +10,7 @@ import re
 from datetime import datetime
 from typing import Generator, Callable, Any
 
-from .. import extractor
+from .. import extractors
 from common import constants, tools
 from errors import QueryParseError, OperationError
 from shared import Condition
@@ -91,7 +91,7 @@ class ConditionParser:
 
         # If none of the above conditions match, the operand
         # is assumed to be a query field and parse accordingly.
-        return extractor.parse_field(operand, self._entity)
+        return extractors.parse_field(operand, self._entity)
 
     def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:
         """

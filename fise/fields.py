@@ -46,8 +46,8 @@ class Field(BaseField):
 
     def evaluate(self, entity: BaseEntity) -> Any:
         """
-        Evaluates the stored field object based on associated
-        attributes within the specified entity object.
+        Evaluates the stored field based upon its corresponding
+        attribute within the specified entity object.
         """
         return getattr(entity, self.field)
 

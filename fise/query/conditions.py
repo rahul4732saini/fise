@@ -301,20 +301,20 @@ class ConditionHandler:
         # Parses the conditions and stores them in a list.
         self._conditions = list(ConditionParser(subquery, entity).parse_conditions())
 
-    def _eval_operand(self, operand: Any, obj: BaseEntity) -> Any:
+    def _eval_operand(self, operand: Any, entity: BaseEntity) -> Any:
         """
         Evaluates the specified condition operand.
 
         #### Params:
         - operand (Any): Operand to be processed.
-        - obj (BaseEntity): Metadata object for extracting field values.
+        - entity (BaseEntity): Entity being operated upon.
         """
 
         if isinstance(operand, BaseField):
-            operand = operand.evaluate(obj)
+            operand = operand.evaluate(entity)
 
         elif isinstance(operand, list):
-            return [self._eval_operand(e, obj) for e in operand]
+            return [self._eval_operand(e, entity) for e in operand]
 
         return operand
 
@@ -390,36 +390,36 @@ class ConditionHandler:
     def _eval_conditions(
         self,
         conditions: list[str | Condition | list],
-        obj: BaseEntity,
+        entity: BaseEntity,
     ) -> bool:
         """
         Evaluates all the query conditions.
 
         #### Params:
         - conditions (list): List comprising the conditions along with their separators.
-        - obj (BaseEntity): Metadata object for extracting field values.
+        - entity (BaseEntity): Entity being operated upon.
         """
 
         # Evaluates the conditions seperated by the conjunction operator.
         conditions = self._eval_condition_segments(
-            conditions, constants.OP_CONJUNCTION, obj
+            conditions, constants.OP_CONJUNCTION, entity
         )
 
         # Evaluates the conditions seperated by the disjunction operator.
         conditions = self._eval_condition_segments(
-            conditions, constants.OP_DISJUNCTION, obj
+            conditions, constants.OP_DISJUNCTION, entity
         )
 
         return conditions[0]
 
-    def eval_conditions(self, obj: BaseEntity) -> bool:
+    def eval_conditions(self, entity: BaseEntity) -> bool:
         """
         Evaluates the query conditions
 
         #### Params:
-        - obj (BaseEntity): Metadata object for extracting field values.
+        - entity (BaseEntity): Entity being operated upon.
         """
-        return self._eval_conditions(self._conditions, obj)
+        return self._eval_conditions(self._conditions, entity)
 
     @staticmethod
     def _and(x: bool, y: bool, /) -> bool:

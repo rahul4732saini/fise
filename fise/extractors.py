@@ -7,6 +7,7 @@ parsing and extracting attributes and fields.
 """
 
 from typing import Any
+from datetime import datetime
 
 from common import constants
 from fields import BaseField, Field, Size
@@ -45,6 +46,32 @@ def parse_float(attr: str, /) -> float:
         raise QueryParseError(f"{attr} is not a valid floating point integer!")
 
     return float(attr)
+
+
+def parse_datetime(attr: str) -> datetime | None:
+    """
+    Parses date/datetime from the specified string formatted attribute
+    it matches the corresponding pattern, and returns None otherwise.
+    """
+
+    if not constants.DATETIME_PATTERN.match(attr):
+        return None
+
+    try:
+        return datetime.strptime(attr, r"%Y-%m-%d %H:%M:%S")
+
+    except ValueError:
+        # Passes without raising an error if in case
+        # the attribute matches the date format.
+        ...
+
+    try:
+        return datetime.strptime(attr, r"%Y-%m-%d")
+
+    except ValueError:
+        raise QueryParseError(
+            f"Invalid datetime specifications {attr!r} in query conditions."
+        )
 
 
 def parse_field(

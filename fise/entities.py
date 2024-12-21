@@ -183,21 +183,21 @@ class DataLine(BaseEntity):
     accessing all dataline metadata attributes.
     """
 
-    __slots__ = "_file", "_data", "_lineno"
+    __slots__ = "_path", "_data", "_lineno"
 
-    def __init__(self, file: Path, data: str | bytes, lineno: int) -> None:
+    def __init__(self, path: Path, data: str | bytes, lineno: int) -> None:
 
         # Strips the leading binary notation and quotes
         # if the specified data is a bytes object.
         if isinstance(data, bytes):
             data = str(data)[2:-1]
 
-        self._file = file
+        self._path = path
         self._data = data
         self._lineno = lineno
 
     def __repr__(self) -> str:
-        return f"DataLine(file={self._path}, lineno={self._lineno})"
+        return f"DataLine(path={self._path}, lineno={self._lineno})"
 
     @property
     @safe_extract_field
@@ -212,4 +212,4 @@ class DataLine(BaseEntity):
     @property
     @safe_extract_field
     def filetype(self) -> str | None:
-        return self._file.suffix or None
+        return self._path.suffix or None

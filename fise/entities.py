@@ -58,22 +58,12 @@ def get_datetime(timestamp: float) -> datetime:
 
 
 class BaseEntity:
-    """BaseEntity serves as the base class for all other entity classes."""
+    """BaseEntity serves as the base class for all entity classes."""
 
-    __slots__ = ()
-
-
-class FileSystemEntity(BaseEntity):
-    """
-    FileSystemEntity serves as the base class
-    for all file system entity classes.
-    """
-
-    __slots__ = "_path", "_stats"
+    __slots__ = ("_path",)
 
     def __init__(self, path: Path) -> None:
         self._path: Path = path
-        self._stats: os.stat_result = path.stat()
 
     @property
     @safe_extract_field
@@ -84,6 +74,19 @@ class FileSystemEntity(BaseEntity):
     @safe_extract_field
     def path(self) -> str:
         return self._path.as_posix()
+
+
+class FileSystemEntity(BaseEntity):
+    """
+    FileSystemEntity serves as the base class
+    for all file and directory entity classes.
+    """
+
+    __slots__ = "_path", "_stats"
+
+    def __init__(self, path: Path) -> None:
+        super().__init__(path)
+        self._stats: os.stat_result = path.stat()
 
     @property
     @safe_extract_field

@@ -2,8 +2,8 @@
 Entities Module
 ---------------
 
-This module comprises classes and functions for
-storing and handling file system metadata fields.
+This modules comprises classes and functions for
+extracting metadata fields for file system entities.
 """
 
 import os

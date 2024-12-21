@@ -39,7 +39,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
 
             Alert(
                 "Warning: Unable to access specific metadata fields of the"
-                "recorded files/directories. The fileds are being assigned"
+                "recorded files/directories. The fields are being assigned"
                 "explicitly as 'None'."
             )
 

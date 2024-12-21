@@ -200,7 +200,7 @@ class DataLine(BaseEntity):
         if isinstance(data, bytes):
             data = str(data)[2:-1]
 
-        self._path = path
+        super().__init__(path)
         self._data = data
         self._lineno = lineno
 

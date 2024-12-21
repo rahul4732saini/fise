@@ -2,7 +2,7 @@
 Fields Module
 -------------
 
-This module comprises classes and functions
+This module defines classes and functions
 for storing and handling query fields.
 """
 
@@ -30,8 +30,8 @@ class BaseField(ABC):
 @dataclass(slots=True, frozen=True, eq=False)
 class Field(BaseField):
     """
-    Field class stores individual query fields and
-    defines methods for parsing and evaluating them.
+    Field class implements mechanism for storing,
+    parsing and evaluating generic query fields.
     """
 
     field: str
@@ -39,15 +39,14 @@ class Field(BaseField):
     @classmethod
     def parse(cls, field: str) -> "Field":
         """
-        Parses the specified field and returns
-        an instance of the `Field` class.
+        Initializes the `Field` class based on the specified field name.
         """
         return cls(field)
 
     def evaluate(self, entity: BaseEntity) -> Any:
         """
-        Evaluates the stored field based upon its corresponding
-        attribute within the specified entity object.
+        Extracts the data associated with the field
+        from the specified entity object.
         """
         return getattr(entity, self.field)
 
@@ -55,8 +54,8 @@ class Field(BaseField):
 @dataclass(slots=True, frozen=True, eq=False)
 class Size(BaseField):
     """
-    Size class stores the size conversion divisor for converting
-    file sizes and defines methods for parsing and evaluating them.
+    Size class implements mechanism for parsing and evaluating
+    the size field and stores the size unit conversion divisor.
     """
 
     divisor: int | float
@@ -64,11 +63,10 @@ class Size(BaseField):
     @classmethod
     def parse(cls, unit: str) -> "Size":
         """
-        Parses the specified size unit specifications
-        and creates an instance of the `Size` class.
+        Initializes the `Size` class based on the specified size unit.
         """
 
-        # Assigns "B" -> bytes unit is not explicitly specified.
+        # Assigns "B" -> bytes unit if no unit is not explicitly specified.
         unit = unit or "B"
         divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(unit)
 
@@ -79,8 +77,8 @@ class Size(BaseField):
 
     def evaluate(self, file: File) -> float | None:
         """
-        Extracts the size from the specified `File` object and
-        converts it in accordance with the stored size divisor.
+        Extracts the size from the specified `File` entity object
+        and converts it it accordance with the stored size divisor.
         """
 
         if file.size is None:

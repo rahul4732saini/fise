@@ -17,9 +17,12 @@ from notify import Alert
 
 def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
     """
-    Decorator function for safely executes the specified field
+    Decorator function for safely executing the specified field
     extraction method. Returns None in case of an exception during
-    the field extraction process.
+    the process.
+
+    Displays an alert message on the CLI for the first exception.
+    Subsequent exceptions are ignored to avoid redundant alerts.
     """
 
     alert: bool = True
@@ -47,7 +50,10 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def get_datetime(timestamp: float) -> datetime:
-    """Constructs a `datetime.datetime` object from a POSIX timestamp."""
+    """
+    Constructs a `datetime.datetime` object
+    from the specified UNIX timestamp.
+    """
     return datetime.fromtimestamp(timestamp).replace(microsecond=0)
 
 
@@ -102,8 +108,8 @@ class FileSystemEntity(BaseEntity):
 
 class WindowsEntity(FileSystemEntity):
     """
-    WindowsEntity serves as a unified class for accessing all
-    metadata fields associated with a Windows file or directory.
+    WindowsEntity class serves as the base class
+    for windows file and directory entity classes.
     """
 
     __slots__ = "_path", "_stats"
@@ -111,8 +117,8 @@ class WindowsEntity(FileSystemEntity):
 
 class PosixEntity(FileSystemEntity):
     """
-    PosixEntity serves as a unified class for accessing all
-    metadata fields associated with a POSIX file or directory.
+    PosixEntity class serves as the base class
+    for POSIX file and directory entity classes.
     """
 
     __slots__ = "_path", "_stats"
@@ -135,9 +141,8 @@ class PosixEntity(FileSystemEntity):
 
 class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):
     """
-    Entity serves as the unified class for accessing all metadata
-    fields associated with a file of directory based on the current
-    operating system.
+    Entity class serves as the base class
+    for file and directory entity classes.
     """
 
     __slots__ = "_path", "_stats"
@@ -145,8 +150,8 @@ class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):
 
 class File(Entity):
     """
-    File class serves as a unified class for
-    accessing all file metadata fields.
+    File class for accessing all metadata
+    fields associated with a specific file.
     """
 
     __slots__ = "_path", "_stats"
@@ -167,8 +172,8 @@ class File(Entity):
 
 class Directory(Entity):
     """
-    Directory class serves as a unified class for
-    accessing all directory metadata attributes.
+    Directory class for accessing all metadata
+    fields associated with a specific directory.
     """
 
     __slots__ = "_path", "_stats"
@@ -179,8 +184,8 @@ class Directory(Entity):
 
 class DataLine(BaseEntity):
     """
-    DataLine class serves as a unified class for
-    accessing all dataline metadata attributes.
+    DataLine class for accessing all metadata fields
+    associated with a specific line of data in a file.
     """
 
     __slots__ = "_path", "_data", "_lineno"

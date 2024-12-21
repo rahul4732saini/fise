@@ -21,7 +21,7 @@ class BaseField(ABC):
 
     @classmethod
     @abstractmethod
-    def parse(cls, descriptor: str): ...
+    def parse(cls, descriptor: str) -> "BaseField": ...
 
     @abstractmethod
     def evaluate(self, entity) -> Any: ...
@@ -37,7 +37,7 @@ class Field(BaseField):
     field: str
 
     @classmethod
-    def parse(cls, field: str):
+    def parse(cls, field: str) -> "Field":
         """
         Parses the specified field and returns
         an instance of the `Field` class.
@@ -62,7 +62,7 @@ class Size(BaseField):
     divisor: int | float
 
     @classmethod
-    def parse(cls, unit: str):
+    def parse(cls, unit: str) -> "Size":
         """
         Parses the specified size unit specifications
         and creates an instance of the `Size` class.

@@ -151,6 +151,9 @@ class File(Entity):
 
     __slots__ = "_path", "_stats"
 
+    def __repr__(self) -> str:
+        return f"File(path={self._path.as_posix()})"
+
     @property
     @safe_extract_field
     def filetype(self) -> str | None:
@@ -169,6 +172,9 @@ class Directory(Entity):
     """
 
     __slots__ = "_path", "_stats"
+
+    def __repr__(self) -> str:
+        return f"Directory(path={self._path.as_posix()})"
 
 
 class DataLine(BaseEntity):
@@ -190,15 +196,8 @@ class DataLine(BaseEntity):
         self._data = data
         self._lineno = lineno
 
-    @property
-    @safe_extract_field
-    def path(self) -> str:
-        return str(self._file)
-
-    @property
-    @safe_extract_field
-    def name(self) -> str:
-        return self._file.name
+    def __repr__(self) -> str:
+        return f"DataLine(file={self._path}, lineno={self._lineno})"
 
     @property
     @safe_extract_field

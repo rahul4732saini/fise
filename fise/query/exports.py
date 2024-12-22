@@ -6,9 +6,12 @@ This module defines classes and functions for parsing
 and handling exports to DBMS and external file formats.
 """
 
+from abc import ABC, abstractmethod
 from typing import Callable, ClassVar
 from pathlib import Path
 from dataclasses import dataclass
+
+import pandas as pd
 
 from common import tools, constants
 from errors import QueryParseError, OperationError
@@ -148,3 +151,16 @@ class ExportParser:
             raise QueryParseError(f"{type_!r} is not a valid export type!")
 
         return self._method_map[type_](args)
+
+
+class BaseExportHandler(ABC):
+    """
+    BaseExportHandler serves as the base
+    class for all export handler classes.
+    """
+
+    @abstractmethod
+    def __init__(self, specs: BaseExportData, data: pd.DataFrame) -> None: ...
+
+    @abstractmethod
+    def export(self) -> None: ...

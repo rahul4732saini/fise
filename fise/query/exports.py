@@ -11,6 +11,7 @@ from typing import Callable, ClassVar
 from pathlib import Path
 from dataclasses import dataclass
 
+import numpy as np
 import pandas as pd
 
 from common import tools, constants
@@ -164,3 +165,63 @@ class BaseExportHandler(ABC):
 
     @abstractmethod
     def export(self) -> None: ...
+
+
+class FileExportHandler(BaseExportHandler):
+    """
+    FileExportHandler class defines methods for
+    handling exports to external file formats.
+    """
+
+    __slots__ = "_specs", "_data", "_method_map"
+
+    def __init__(self, specs: FileExportData, data: pd.DataFrame) -> None:
+        """
+        Creates an instance of the FileExportHandler class.
+
+        #### Params:
+        - specs (FileExportData): File export data specifications.
+        - data (pd.DataFrame): pandas Dataframe comprising the search records.
+        """
+
+        self._specs = specs
+        self._data = data
+
+        # Maps file formats with their corresponding export methods.
+        self._method_map: dict[str, Callable[[], None]] = {
+            ".csv": self._to_csv,
+            ".json": self._to_json,
+            ".xlsx": self._to_xlsx,
+            ".html": self._to_html,
+        }
+
+    def _to_json(self) -> None:
+        """Exports search data to a JSON file."""
+        self._data.to_json(self._specs.file, indent=4)
+
+    def _to_html(self) -> None:
+        """Exports search data to an HTML file."""
+        self._data.to_html(self._specs.file)
+
+    def _to_csv(self) -> None:
+        """Exports search data to a CSV file."""
+        self._data.to_csv(self._specs.file)
+
+    def _to_xlsx(self) -> None:
+        """Exports search data to a XLSX file."""
+
+        # Converts 'datetime.datetime' objects into strings in
+        # the dataframe for proper representation in Excel files.
+        for col in self._data.columns[self._data.dtypes == np.dtype("<M8[ns]")]:
+            self._data[col] = self._data[col].astype(str)
+
+        self._data.to_excel(self._specs.file)
+
+    def export(self) -> None:
+        """
+        Exports data using a method suitable for the format associated
+        with the file defined in the export data specifications.
+        """
+
+        # Calls the export method associated with the file format.
+        self._method_map[self._specs.file.suffix]()

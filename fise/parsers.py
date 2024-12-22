@@ -65,3 +65,45 @@ def parse_field(field: str, entity: str) -> BaseField:
         return _fields_map[name].parse(args)
 
     return Field.parse(name)
+
+
+def parse_attribute(source: str, entity: str | None = None) -> Any:
+    """
+    Implements mechanism for parsing all available types of
+    query attirbutes from the specified string specifications.
+
+    #### Params:
+    - source (str): String specifications for query attribute.
+    - entity (str | None): [OPTIONAL] Name of the entity being
+    operated upon. Defaults to None.
+    """
+
+    if constants.TUPLE_PATTERN.match(source):
+
+        # Tokenizes the source string, parses the individual
+        # tokens and returns a list of the parsed attributes.
+        tokens = tools.tokenize(source[1:-1], delimiter=",")
+        return [parse_attribute(token, entity) for token in tokens]
+
+    elif constants.DATETIME_PATTERN.match(source):
+        return parse_datetime(source)
+
+    elif constants.STRING_PATTERN.match(source):
+        return source[1:-1]
+
+    elif source.isdigit():
+        return int(source)
+
+    elif constants.FLOAT_PATTERN.match(source):
+        return float(source)
+
+    elif source.lower() == constants.KEYWORD_NONE:
+        return None
+
+    # If none of the above conditions are matched, the specified
+    # string is parsed for a query field based on wheather an entity
+    # name has been explicitly specified.
+    elif entity:
+        return parse_field(source, entity)
+
+    raise QueryParseError(f"{source!r} is not a valid query attribute!")

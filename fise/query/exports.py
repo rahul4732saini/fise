@@ -200,6 +200,9 @@ class FileExportHandler(BaseExportHandler):
             ".html": self._to_html,
         }
 
+    def __repr__(self) -> str:
+        return f"FileExportHandler(specs={self._specs})"
+
     def _to_json(self) -> None:
         """Exports search data to a JSON file."""
         self._data.to_json(self._specs.file, indent=4)
@@ -258,6 +261,9 @@ class DBMSExportHandler(BaseExportHandler):
             constants.DBMS_POSTGRESQL: self._connect_postgresql,
             constants.DBMS_SQLITE: self._connect_sqlite,
         }
+
+    def __repr__(self) -> str:
+        return f"DBMSExportHandler(specs={self._specs})"
 
     @staticmethod
     def _parse_port(port: str) -> int:

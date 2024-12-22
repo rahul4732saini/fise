@@ -6,7 +6,7 @@ This module comprises utitlity functions for
 parsing and extracting fields and attributes.
 """
 
-from typing import TypeAlias
+from typing import Any, TypeAlias
 from datetime import datetime
 
 from common import tools, constants
@@ -24,6 +24,24 @@ QueryAttribute: TypeAlias = (
 _fields_map: dict[str, BaseField] = {
     "size": Size,
 }
+
+
+def parse_datetime(source: str) -> datetime:
+    """Parses date/datetime object from the specified source string."""
+
+    try:
+        return datetime.strptime(source, constants.DATETIME_FORMAT)
+
+    except ValueError:
+        # Passes without raising an error if in case
+        # the specified string matches the date format.
+        ...
+
+    try:
+        return datetime.strptime(source, constants.DATE_FORMAT)
+
+    except ValueError:
+        raise QueryParseError(f"{source!r} is not a valid datetime specification.")
 
 
 def parse_field(field: str, entity: str) -> BaseField:

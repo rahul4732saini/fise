@@ -2,68 +2,68 @@
 Tools module
 ------------
 
-This module comprises utility functions desgined for assigned
+This module comprises utility function for assisting
 other classes and functions defined within the project.
 """
 
-import getpass
-from pathlib import Path
-from typing import Generator, Callable
-
-import numpy as np
-import pandas as pd
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.engine import Engine, URL, Connection
-import sqlalchemy
+from typing import Generator
 
 from . import constants
-from errors import QueryParseError, OperationError, QueryHandleError
-from notify import Alert
+from errors import QueryParseError
 
 
-def parse_query(query: str) -> list[str]:
+def tokenize(
+    source: str, delimiter: str = " ", skip_empty: bool = False
+) -> Generator[str, None, None]:
     """
-    Parses the specified raw string query and converts into
-    a list of tokens for further parsing and evaluation.
+    Tokenizes the specified source string
+    based on the specified delimiter.
 
     #### Params:
-    - query (str): Query to be parsed.
+    - source (str): String to be tokenized.
+    - delimiter (str): Character for seperating individual
+    tokens in the source string.
+    - skip_empty (bool): Whether to skip empty tokens.
     """
 
-    delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
+    paired_delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
     conflicting: set[str] = {"'", '"'}
 
-    tokens: list[str] = []
+    # Stores the current token as a list of strings.
     token: list[str] = []
 
-    # Stores starting delimiters in the query during iteration.
+    # Stores opening paired delimiters in the source string during iteration.
     cur: list[str] = []
 
-    # Adds a whitespace at the end of the query to avoid
-    # parsing the last token separately after iteration.
-    for char in query + " ":
+    # Adds an instance of the delimiter at the end of the source
+    # to avoid parsing the last token separately after iteration.
+    for char in source + delimiter:
 
-        # Adds current token to the tokens list if the current character
-        # is a top-level whitespace and the token is not an empty string.
-        if not cur and char.isspace():
-            if token:
-                tokens.append("".join(token))
-                token.clear()
+        # Adds the current token to the tokens list if
+        # the current character is a top-level delimiter.
+        if not cur and char == delimiter:
+            if skip_empty and not token:
+                continue
+
+            yield "".join(token).strip(" ")
+
+            token.clear()
             continue
 
         token.append(char)
 
-        # Only adds top-level conflicting delimiters into the list.
-        if char in delimiters and (not cur or char not in conflicting):
+        # Avoids recognizing nested conflicting delimiters in the
+        # source string to maintain consistency in the operation.
+        if char in paired_delimiters and (not cur or char not in conflicting):
             cur.append(char)
 
-        elif cur and char == delimiters.get(cur[-1]):
+        elif cur and char == paired_delimiters.get(cur[-1]):
             cur.pop()
 
-    # Raises an error is delimiters are mismatched in the query
-    # and a token is left unparsed indicating invalid syntax.
+    # Raises an error if delimiters are mismatched in the
+    # source string such that a token is left unparsed.
     if token:
-        raise QueryParseError(f"Invalid query syntax around {''.join(token[:-1])!r}")
+        raise QueryParseError(f"Invalid syntax around {''.join(token[:-1])!r}")
 
     return tokens
 

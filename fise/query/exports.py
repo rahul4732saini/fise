@@ -10,12 +10,17 @@ from abc import ABC, abstractmethod
 from typing import Callable, ClassVar
 from pathlib import Path
 from dataclasses import dataclass
+from getpass import getpass
 
 import numpy as np
 import pandas as pd
+import sqlalchemy
+from sqlalchemy.engine import URL, Engine, Connection, Inspector
+from sqlalchemy.exc import OperationalError
 
 from common import tools, constants
 from errors import QueryParseError, OperationError
+from notify import Message
 from shared import QueryQueue
 
 
@@ -225,3 +230,154 @@ class FileExportHandler(BaseExportHandler):
 
         # Calls the export method associated with the file format.
         self._method_map[self._specs.file.suffix]()
+
+
+class DBMSExportHandler(BaseExportHandler):
+    """
+    DBMSExportHandler class defines methods for
+    handling exports to Database Management Systems.
+    """
+
+    __slots__ = "_specs", "_data", "_method_map"
+
+    def __init__(self, specs: DBMSExportData, data: pd.DataFrame) -> None:
+        """
+        Creates an instance of the DBMSExportHandler class.
+
+        #### Params:
+        - specs (DatabaseExportData): DBMS export data specifications.
+        - data (pd.DataFrame): pandas Dataframe comprising the search records.
+        """
+
+        self._specs = specs
+        self._data = data
+
+        # Maps DBMS names with their corresponding connector methods.
+        self._method_map: dict[str, Callable[[], Engine]] = {
+            constants.DBMS_MYSQL: self._connect_mysql,
+            constants.DBMS_POSTGRESQL: self._connect_postgresql,
+            constants.DBMS_SQLITE: self._connect_sqlite,
+        }
+
+    @staticmethod
+    def _parse_port(port: str) -> int:
+        """
+        Validates the specified port and converts
+        it into an integer for further usage.
+
+        #### Params:
+        - port (str): String formatted port number.
+        """
+
+        if not port.isdigit():
+            raise QueryParseError(f"{port!r} is not a valid port number!")
+
+        port_num = int(port)
+
+        if port_num not in range(65536):
+            raise QueryParseError("The specified port number is out of range!")
+
+        return port_num
+
+    @staticmethod
+    def _table_exists(engine: Engine, table: str) -> bool:
+        """
+        Returns a boolean value signifying the presence of
+        the specified table in the specified DBMS connection.
+
+        #### Params:
+        - engine (Engine): SQLAlchemy Engine instance.
+        - table (str): Name of the table to check for existence.
+        """
+
+        try:
+            inspector = Inspector(engine)
+            tables: list[str] = inspector.get_table_names()
+
+        except OperationalError:
+            engine.dispose(close=True)
+            raise OperationalError("Unable to establish a connection with the DBMS!")
+
+        else:
+            return table in tables
+
+    def _connect_sql_server(self) -> Engine:
+        """Connects to a SQL server."""
+
+        # Inputs database credentials.
+        user: str = input("Username: ")
+        passkey: str = getpass("Password: ")
+        host: str = input("Host [localhost]: ") or "localhost"
+        port: str = input("Port: ")
+        database: str = input("Database: ")
+
+        port_num: int = self._parse_port(port)
+
+        # Creates a URL for initializing a SQLAlchemy Engine.
+        url = URL.create(
+            constants.DBMS_DRIVERNAMES[self._specs.dbms],
+            user,
+            passkey,
+            host,
+            port_num,
+            database,
+        )
+
+        return sqlalchemy.create_engine(url)
+
+    def _connect_sqlite(self) -> Engine:
+        """Connects to a SQLite database file."""
+
+        database: str = input("Enter the path to the database file: ")
+
+        # Creates a URL for initializing a SQLAlchemy Engine.
+        url = URL.create(
+            constants.DBMS_DRIVERNAMES[self._specs.dbms],
+            database=database,
+        )
+
+        return sqlalchemy.create_engine(url)
+
+    def _connect_mysql(self) -> Engine:
+        """Connects to a MySQL Server."""
+        return self._connect_sql_server()
+
+    def _connect_postgresql(self) -> Engine:
+        """Connects to a PostgreSQL Server."""
+        return self._connect_sql_server()
+
+    def export(self) -> None:
+        """
+        Exports search records to the DBMS specified
+        within the DBMS export data specifications.
+        """
+
+        # Connects with the DBMS with a suitable connector method.
+        engine: Engine = self._method_map[self._specs.dbms]()
+        table: str = input("Table name: ")
+
+        # Prompts for replacement if the specified
+        # table already exists in the database.
+        if self._table_exists(engine, table):
+            force: str = input(
+                "The specified table already exists, "
+                "would you like to alter it? (y/n): "
+            )
+
+            if force.lower() != "y":
+                Message("Export cancelled!")
+                return None
+
+        try:
+            conn: Connection = engine.connect()
+
+        except OperationalError:
+            raise OperationError(
+                f"Unable to connect to the specified {self._specs.dbms!r} database."
+            )
+
+        else:
+            self._data.to_sql(table, conn, if_exists="replace", index=False)
+
+        finally:
+            engine.dispose(close=True)

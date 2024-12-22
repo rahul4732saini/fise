@@ -6,11 +6,13 @@ This module defines classes and functions for parsing
 and handling exports to DBMS and external file formats.
 """
 
-from typing import ClassVar
+from typing import Callable, ClassVar
 from pathlib import Path
 from dataclasses import dataclass
 
-from common import constants
+from common import tools, constants
+from errors import QueryParseError, OperationError
+from shared import QueryQueue
 
 
 class BaseExportData:
@@ -44,3 +46,105 @@ class DBMSExportData(BaseExportData):
 
     type_ = constants.EXPORT_DBMS
     dbms: str
+
+
+class ExportParser:
+    """
+    ExportParse class defines methods for parsing export
+    specifications defined in the user-specified query.
+    """
+
+    __slots__ = "_query", "_method_map"
+
+    def __init__(self, query: QueryQueue):
+        """
+        Creates an instance of the ExportParser class.
+
+        #### Params:
+        - query (QueryQueue): `QueryQueue` object comprising the query.
+        """
+
+        self._query = query
+
+        # Maps export types with their corresponding parser methods.
+        self._method_map: dict[str, Callable[[str], BaseExportData]] = {
+            constants.EXPORT_FILE: self._parse_file_export,
+            constants.EXPORT_DBMS: self._parse_dbms_export,
+        }
+
+    @staticmethod
+    def _parse_file_export(args: str) -> FileExportData:
+        """
+        Parse file export specifications
+        based on the specified arguments.
+
+        #### Params:
+        - args (str): String comprising the file export arguments.
+        """
+
+        # Currently, the only argument accepted for file exports is the path to
+        # the external file. Hence, it is directly converted into a Path object.
+
+        file: Path = Path(args)
+
+        if file.exists():
+            raise OperationError(
+                f"The specified path {file.as_posix()!r} for file export"
+                " is already reserved by another file system entity."
+            )
+
+        elif not file.parent.exists():
+            raise OperationError(
+                "The specified directory for file export does not exist."
+            )
+
+        elif file.suffix not in constants.EXPORT_FILE_FORMATS:
+            raise QueryParseError(
+                f"{file.suffix!r} is not a supported format for file exports."
+            )
+
+        return FileExportData(file)
+
+    @staticmethod
+    def _parse_dbms_export(args: str) -> DBMSExportData:
+        """
+        Parses DBMS export specifications
+        based on the specified arguments.
+
+        #### Params:
+        - args (str): String comprising the DBMS export arguments.
+        """
+
+        # Currently, the only argument accepted for DBMS exports
+        # is the name of the DBMS. Hence, it is directly validated
+        # against an array of valid DBMS.
+
+        args = args.lower()
+
+        if args not in constants.DBMS:
+            raise QueryParseError(f"The specified DBMS {args!r} is not supported!")
+
+        return DBMSExportData(args)
+
+    def parse(self) -> BaseExportData:
+        """Parses the export specifications defined within the query."""
+
+        if self._query.seek().lower() != constants.KEYWORD_EXPORT:
+            raise QueryParseError(
+                "Expected the first clause of the query to"
+                f" be {constants.KEYWORD_EXPORT.upper()!r}."
+            )
+
+        # Pops out the `EXPORT` keyword from the query.
+        self._query.pop()
+
+        # Tokenizes the export specifications and extracts
+        # the export type along with the associated arguments.
+        type_, args = tools.tokenize_qualified_clause(
+            self._query.pop(), mandate_args=True
+        )
+
+        if type_ not in constants.EXPORT_TYPES:
+            raise QueryParseError(f"{type_!r} is not a valid export type!")
+
+        return self._method_map[type_](args)

@@ -99,4 +99,4 @@ def tokenize_qualified_clause(
     if mandate_args and not args:
         raise QueryParseError(f"Arguments required for the {clause!r} clause.")
 
-    return label.lower(), args
+    return label.lower(), args.strip(" ")

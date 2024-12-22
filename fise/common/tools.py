@@ -67,203 +67,36 @@ def tokenize(
 
     return tokens
 
-
-def get_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
+def tokenize_qualified_clause(
+    clause: str, mandate_args: bool = False
+) -> tuple[str, str]:
     """
-    Returns a generator of all files present within the specified directory.
-    Files present within subdirectories are also extracted if `recursive` is
-    set to `True`.
+    Tokenizes the specified qualified cluase and returns
+    a tuple comprising the label along with the arguments.
 
     #### Params:
-    - directory (pathlib.Path): Path to the directory.
-    - recurisve (bool): Whether to include files from subdirectories.
+    - clause (str): String comprising the qualified clause.
+    - mandate_args (bool): Whether to mandate the presence
+    of arguments in the clause. Defaults to False.
     """
 
-    try:
-        for path in directory.iterdir():
-            if path.is_file():
-                yield path
+    if constants.QUALIFIED_CLUASE_PATTERN.match(clause) is None:
+        raise QueryParseError(f"{clause!r} is not a valid clause!")
 
-            # Extracts files from sub-directories.
-            elif recursive and path.is_dir():
-                yield from get_files(path, recursive)
+    label = args = ""
 
-    except PermissionError:
-        Alert(f"Permission Error: Skipping directory '{directory}'")
+    # Iterates through the clause and extracts the label and arguments.
+    for i in range(len(clause)):
+        if clause[i] != "[":
+            continue
 
-        # Yields from an empty tuple to not disrupt
-        # the proper functioning of the function.
-        yield from ()
-
-
-def get_directories(directory: Path, recursive: bool) -> Generator[Path, None, None]:
-    """
-    Returns a generator of all subdirectories present within the specified
-    directory. Directories peresent within subdirectories are also extracted
-    if `recursive` is set to True.
-
-    #### Params:
-    - directory (pathlib.Path): Path to the directory.
-    - recursive (bool): Whether to include files from subdirectories.
-    """
-
-    # Extracts subdirectories first to ensure compatibility in the delete
-    # operation, deleting them before their parents to avoid lookup errors.
-
-    try:
-        for path in directory.iterdir():
-            if not path.is_dir():
-                continue
-
-            if recursive:
-                yield from get_directories(path, recursive)
-
-            yield path
-
-    except PermissionError:
-        Alert(f"Permission Error: Skipping directory '{directory}'")
-
-        # Yields from an empty tuple to not disrupt
-        # the proper functioning of the function.
-        yield from ()
-
-
-def _export_to_json(data: pd.DataFrame, file: Path) -> None:
-    """Exports search data to the specified JSON file."""
-    data.to_json(file, indent=4)
-
-
-def _export_to_html(data: pd.DataFrame, file: Path) -> None:
-    """Exports search data to the specified HTML file."""
-    data.to_html(file)
-
-
-def _export_to_csv(data: pd.DataFrame, file: Path) -> None:
-    """Exports search data to the specified CSV file."""
-    data.to_csv(file)
-
-
-def _export_to_xlsx(data: pd.DataFrame, file: Path) -> None:
-    """Exports search data to the specified XLSX file."""
-
-    for col in data.columns[data.dtypes == np.dtype("<M8[ns]")]:
-        data[col] = data[col].astype(str)
-
-    data.to_excel(file)
-
-
-def export_to_file(data: pd.DataFrame, file: Path) -> None:
-    """
-    Exports search data to the specified file in the format associated
-    with the type of the file.
-
-    #### Params:
-    - data (pd.DataFrame): pandas DataFrame comprising search records.
-    - file (Path): Path to the file.
-    """
-
-    export_methods: dict[str, Callable[[pd.DataFrame, Path], None]] = {
-        ".json": _export_to_json,
-        ".xlsx": _export_to_xlsx,
-        ".csv": _export_to_csv,
-        ".html": _export_to_html,
-    }
-
-    # Exports data using a method suitable for the associated file type.
-    export_methods[file.suffix](data, file)
-
-
-def _parse_port(port: str) -> int:
-    """
-    Validates the specified port and converts
-    it into an integer for further usage.
-    """
-
-    if not port.isnumeric():
-        raise QueryHandleError(f"Invalid port number: {port!r}")
-
-    port_num = int(port)
-
-    if port_num not in range(65536):
-        raise QueryHandleError("The specified port number is out of range!")
-
-    return port_num
-
-
-def _connect_sqlite() -> Engine:
-    """Connects to a SQLite database file."""
-
-    database: str = input("Enter the path to the database file: ")
-    return sqlalchemy.create_engine(f"sqlite:///{database}")
-
-
-def _connect_database(dbms: str) -> Engine:
-    """
-    Connects to the specified SQL Database Management System.
-
-    #### Params:
-    - dbms (str): The name of the Database Management System.
-    """
-
-    # Inputs database credentials.
-    user: str = input("Username: ")
-    passkey: str = getpass.getpass("Password: ")
-    host: str = input("Host [localhost]: ") or "localhost"
-    port: str = input("Port: ")
-    database: str = input("Database: ")
-
-    port_num: int = _parse_port(port)
-
-    url = URL.create(
-        constants.DATABASE_URL_DIALECTS[dbms],
-        user,
-        passkey,
-        host,
-        port_num,
-        database,
-    )
-
-    return sqlalchemy.create_engine(url)
-
-
-def export_to_sql(data: pd.DataFrame, dbms: str) -> None:
-    """
-    Exports search records to the specified Database Management System.
-
-    #### Params:
-    - data (pd.DataFrame): pandas DataFrame comprising search records.
-    - dbms (str): The name of the Database Management System.
-    """
-
-    # Creates an `sqlalchemy.Engine` object of the specified SQL database.
-    engine: Engine = _connect_sqlite() if dbms == "sqlite" else _connect_database(dbms)
-
-    table: str = input("Table name: ")
-    metadata = sqlalchemy.MetaData()
-
-    try:
-        metadata.reflect(bind=engine)
-        conn: Connection = engine.connect()
-
-    except OperationalError:
-        raise OperationError(f"Unable to connect to the specified {dbms!r} database.")
+        label, args = clause[:i], clause[i + 1 : -1]
+        break
 
     else:
-        # Prompts for replacement if the specified table already exists in the database.
-        if table in metadata:
-            force: str = input(
-                "The specified table already exists, would you like to alter it? (y/n) "
-            )
+        label = clause
 
-            if force.lower() != "y":
-                print("Export cancelled!")
+    if mandate_args and not args:
+        raise QueryParseError(f"Arguments required for the {clause!r} clause.")
 
-                # Raises an error without any message to terminate
-                # the current query.
-                raise QueryHandleError
-
-        data.to_sql(table, conn, if_exists="replace", index=False)
-
-    finally:
-        conn.close()
-        engine.dispose(close=True)
+    return label.lower(), args

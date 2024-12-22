@@ -220,7 +220,7 @@ class FileExportHandler(BaseExportHandler):
         for col in self._data.columns[self._data.dtypes == np.dtype("<M8[ns]")]:
             self._data[col] = self._data[col].astype(str)
 
-        self._data.to_excel(self._specs.file)
+        self._data.to_excel(self._specs.file, index=False)
 
     def export(self) -> None:
         """

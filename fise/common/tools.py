@@ -65,7 +65,6 @@ def tokenize(
     if token:
         raise QueryParseError(f"Invalid syntax around {''.join(token[:-1])!r}")
 
-    return tokens
 
 def tokenize_qualified_clause(
     clause: str, mandate_args: bool = False

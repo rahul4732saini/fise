@@ -64,3 +64,36 @@ class FileQueryPath(BaseQueryPath):
         """
 
         yield from tools.enumerate_files(self._path, recursive)
+
+
+class DirectoryQueryPath(BaseQueryPath):
+    """
+    DirectoryQueryPath class defines mechanism for storing the directory
+    path specified within the query and enumerating over sub-directories
+    within the same.
+    """
+
+    __slots__ = ("_path",)
+
+    def __repr__(self) -> str:
+        return f"DirectoryQueryPath(path={self._path.as_posix()!r})"
+
+    def _validate_path(self, path: Path) -> None:
+        """Validates the specified path for a directory query."""
+
+        if not path.is_dir():
+            raise QueryParseError(
+                f"The specified path {self!r} does not lead to a directory!"
+            )
+
+    def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
+        """
+        Enumerates over the sub-directories within the specified directory.
+        Directories within sub-directories are also included if `recursive`
+        is set to true.
+
+        #### Params:
+        - recursive (bool): Whether to include directories from sub-directories.
+        """
+
+        yield from tools.enumerate_directories(self._path, recursive)

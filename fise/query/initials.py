@@ -62,3 +62,14 @@ class DataOperationData(BaseOperationData):
 
     entity = constants.ENTITY_DATA
     mode: str = constants.READ_MODE_TEXT
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class QueryInitials:
+    """
+    QueryInitials class encapsulates
+    the initial query specifications.
+    """
+
+    operation: BaseOperationData
+    recursive: bool

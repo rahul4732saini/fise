@@ -127,3 +127,37 @@ def enumerate_files(directory: Path, recursive: bool) -> Generator[Path, None, N
         # Yields from an empty tuple to not disrupt
         # the proper functioning of the function.
         yield from ()
+
+
+def enumerate_directories(
+    directory: Path, recursive: bool
+) -> Generator[Path, None, None]:
+    """
+    Enumerates over the sub-directories in the specified directory. Directories
+    within sub-directories are also included if `recursive` is set to True.
+
+    #### Params:
+    - directory (Path): Path to the directory.
+    - recursive (bool): Whether to include directories within sub-directories.
+    """
+
+    # Yields sub-directories prior to the base directory during iteration to
+    # maintain compatibility with the delete operation, deleting sub-directories
+    # prior the parent directory to avoid lookup errors.
+
+    try:
+        for path in directory.iterdir():
+            if not path.is_dir():
+                continue
+
+            elif recursive:
+                yield from enumerate_directories(path, recursive)
+
+            yield path
+
+    except PermissionError:
+        Alert(f"Permission Error: Skipping directory {path.as_posix()!r}")
+
+        # Yields from an empty tuple to not disrupt
+        # the proper functioning of the function.
+        yield from ()

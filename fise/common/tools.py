@@ -7,9 +7,11 @@ other classes and functions defined within the project.
 """
 
 from typing import Generator
+from pathlib import Path
 
 from . import constants
 from errors import QueryParseError
+from notify import Alert
 
 
 def tokenize(
@@ -99,3 +101,29 @@ def tokenize_qualified_clause(
         raise QueryParseError(f"Arguments required for the {clause!r} clause.")
 
     return label.lower(), args.strip(" ")
+
+
+def enumerate_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
+    """
+    Enumerates over the files in the specified directory. Files within
+    sub-directories are also included if `recursive` is set to True.
+
+    #### Params:
+    - directory (Path): Path to the directory.
+    - recursive (bool): Whether to include files from sub-directories.
+    """
+
+    try:
+        for path in directory.iterdir():
+            if path.is_file():
+                yield path
+
+            elif recursive and path.is_dir():
+                yield from enumerate_files(path, recursive)
+
+    except PermissionError:
+        Alert(f"Permission Error: Skipping directory {path.as_posix()!r}")
+
+        # Yields from an empty tuple to not disrupt
+        # the proper functioning of the function.
+        yield from ()

@@ -7,7 +7,7 @@ assisting various other classes and functions defined within it.
 """
 
 from dataclasses import dataclass
-from typing import Callable, Literal, Any
+from typing import Iterable, Optional, Generator
 from pathlib import Path
 
 from common import constants
@@ -15,12 +15,16 @@ from entities import BaseEntity
 from fields import BaseField
 
 
-@dataclass(slots=True, frozen=True, eq=False)
-class Query:
-    """Query serves as the base class for all query data-classes."""
+@dataclass(slots=True)
+class QueueNode:
+    """
+    QueueNode class represents individual node in the query queue.
+    Each node stores a query token as its value and a reference to
+    the next node in the queue.
+    """
 
-    path: Path
-    condition: Callable[[BaseEntity], bool]
+    val: str
+    next: Optional["QueueNode"] = None
 
 
 @dataclass(slots=True, frozen=True, eq=False)

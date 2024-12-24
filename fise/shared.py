@@ -94,9 +94,6 @@ class QueryQueue:
         """Returns the token at the start of the queue."""
         return self._head.val
 
-@dataclass(slots=True, frozen=True, eq=False)
-class ExportData:
-    """ExportData class stores export data attributes."""
 
     type_: Literal["file", "database"]
     target: str | Path

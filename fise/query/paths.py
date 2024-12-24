@@ -6,11 +6,12 @@ This modules defines classes and functions for storing, parsing and
 handling file/directory paths defined within user-specified queries.
 """
 
-from typing import Generator
+from typing import Type, Generator
 from pathlib import Path
 from abc import ABC, abstractmethod
 
-from common import tools
+from common import tools, constants
+from shared import QueryQueue
 from errors import QueryParseError
 
 
@@ -97,3 +98,39 @@ class DirectoryQueryPath(BaseQueryPath):
         """
 
         yield from tools.enumerate_directories(self._path, recursive)
+
+
+class DataQueryPath(BaseQueryPath):
+    """
+    DataQueryPath class defines mechanism for storing the file or
+    directory path specified within the query and enumerating over
+    the targeted file(s).
+    """
+
+    __slots__ = ("_path",)
+
+    def __repr__(self) -> str:
+        return f"DataQueryPath(path={self._path.as_posix()!r})"
+
+    def _validate_path(self, path: Path) -> None:
+        """Validates the specified path for a data query."""
+
+        if not (path.is_file() or path.is_dir()):
+            raise QueryParseError(
+                f"The specified path {self!r} does not lead to a file or directory."
+            )
+
+    def enumerate(self, recursive: bool = False) -> Generator[Path, None, None]:
+        """
+        Enumerates over the files within the specified directory
+        or yields the specified file if the path leads to the same.
+
+        #### Params:
+        - recursive (bool): Whether to include files from sub-directories.
+        Only applicable if the specified path leads to a directory.
+        """
+
+        if self._path.is_file():
+            yield self._path
+
+        yield from tools.enumerate_files(self._path, recursive)

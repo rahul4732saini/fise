@@ -2,8 +2,9 @@
 Shared Module
 -------------
 
-This module comprises data-classes shared across the project
-assisting various other classes and functions defined within it.
+This modules comprises classes shared across the project
+assisting various other classes and functions within its
+definition.
 """
 
 from dataclasses import dataclass
@@ -95,37 +96,46 @@ class QueryQueue:
         return self._head.val
 
 
-    type_: Literal["file", "database"]
-    target: str | Path
+class FileIterator:
+    """
+    FileIterator class defines methods for iterating through
+    the data lines of a files in the text or bytes filemode.
+    """
 
+    __slots__ = "_path", "_filemode"
 
-@dataclass(slots=True, frozen=True, eq=False)
-class OperationData:
-    """OperationData class stores query operation attributes."""
+    def __init__(self, path: Path, filemode: str) -> None:
+        """
+        Creates an instance of the FileIterator class.
 
-    operation: constants.OPERATIONS
-    operand: constants.OPERANDS
+        #### Params:
+        - path (Path): Path to the file to be iterated.
+        - filemode (str): Filemode for reading the file.
+        """
 
-    # The following attributes are optional and are only used for specific
-    # operations. The `filemode` attribute is only used with data search
-    # operations and the `skip_err` attributes is only used in delete operations.
-    filemode: constants.FILE_MODES | None = None
-    skip_err: bool = False
+        self._path = path
+        self._filemode = filemode
 
+    @property
+    def path(self) -> str:
+        return self._path.as_posix()
 
-@dataclass(slots=True, frozen=True, eq=False)
-class QueryInitials:
-    """QueryInitials class stores attributes related to query initials."""
+    def _iterate(self) -> Generator[tuple[int, str | bytes], None, None]:
+        """
+        Iterates through the data lines of
+        the file in the specified filemode.
+        """
 
-    operation: OperationData
-    recursive: bool
-    export: ExportData | None = None
+        # line stores the data line read from the file and ctr
+        # stores the associated line number during iteration.
+        line: str | bytes
+        ctr: int = 0
 
+        with self._path.open(self._filemode) as file:
 
-@dataclass(slots=True, frozen=True, eq=False)
-class Condition:
-    """Condition class stores individual query condition attributes."""
+            while line := file.readline():
+                ctr += 1
+                yield ctr, line
 
-    operand1: Any
-    operator: str
-    operand2: Any
+    def __iter__(self) -> Generator[tuple[int, str | bytes], None, None]:
+        return self._iterate()

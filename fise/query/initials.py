@@ -116,3 +116,105 @@ class BaseOperationParser(ABC):
 
     @abstractmethod
     def parse(self) -> BaseOperationData: ...
+
+
+class FileSystemOperationParser(BaseOperationParser):
+    """
+    FileSystemOperationParser serves as the base class
+    for all file system operation parser classes.
+    """
+
+    def __init__(self, operation: str, args: dict[str, str]) -> None:
+        super().__init__(operation, args)
+
+        # Maps argument names with their corresponding parser methods.
+        self._parser_map: dict[str, Callable[[str], Any]] = {
+            "skip_err": self._parse_skip_err,
+        }
+
+    def _parse_skip_err(self, skip_err: str) -> bool:
+        """
+        Parses the `skip_err` operation argument
+        for file and directory delete queries.
+        """
+
+        if self._operation != constants.OPERATION_DELETE:
+            raise QueryParseError(
+                "'skip_err' argument is only valid for delete operations."
+            )
+
+        skip_err = skip_err.lower()
+
+        if skip_err not in constants.BOOLEANS:
+            raise QueryParseError(
+                f"{skip_err!r} is not a valid argument "
+                "for the 'skip_err' operation parameter."
+            )
+
+        return skip_err == constants.BOOLEAN_TRUE
+
+
+class FileOperationParser(FileSystemOperationParser):
+    """
+    FileOperationParser class defines methods
+    for parsing file operation specifications.
+    """
+
+    def parse(self) -> FileOperationData:
+        """Parses operation arguments for file queries."""
+
+        args = self._parse_arguments()
+        return FileOperationData(self._operation, **args)
+
+
+class DirectoryOperationParser(FileSystemOperationParser):
+    """
+    DirectoryOperationParser class defines methods
+    for parsing directory operation specifications.
+    """
+
+    def parse(self) -> DirectoryOperationData:
+        """Parses operation arguments for directory queries."""
+
+        args = self._parse_arguments()
+        return DirectoryOperationData(self._operation, **args)
+
+
+class DataOperationParser(BaseOperationParser):
+    """
+    DataOperationParser class defines methods
+    for parsing data operation specifications.
+    """
+
+    def __init__(self, operation: str, args: dict[str, str]) -> None:
+        if operation == constants.OPERATION_DELETE:
+            raise QueryParseError(
+                "Delete operation is not compatible with data queries."
+            )
+
+        super().__init__(operation, args)
+
+        # Maps argument names with their corresponding parser methods.
+        self._parser_map: dict[str, Callable[[str], Any]] = {
+            "mode": self._parse_mode,
+        }
+
+    @staticmethod
+    def _parse_mode(mode: str) -> str:
+        """Parses the `mode` operation argument for data search queries."""
+
+        filemode: str | None = constants.READ_MODES_MAP.get(mode.lower())
+
+        if filemode is None:
+            raise QueryParseError(
+                f"{mode!r} is not a valid argument "
+                "for the 'mode' operation parameter."
+            )
+
+        return filemode
+
+    def parse(self) -> DataOperationData:
+        """Parses operation arguments for data queries."""
+
+        args = self._parse_arguments()
+        return DataOperationData(self._operation, **args)

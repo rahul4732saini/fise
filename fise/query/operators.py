@@ -18,6 +18,7 @@ from notify import Message, Alert
 from common import tools, constants
 from fields import BaseField
 from entities import BaseEntity, File, Directory, DataLine
+from .projections import Projection
 
 
 class BaseOperator(ABC):
@@ -26,8 +27,7 @@ class BaseOperator(ABC):
     @abstractmethod
     def search(
         self,
-        fields: list[BaseField],
-        columns: list[str],
+        projections: list[Projection],
         condition: Callable[[BaseEntity], bool],
     ): ...
 

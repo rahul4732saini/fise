@@ -68,34 +68,30 @@ class FileQueryOperator(FileSystemOperator):
         self._recursive = recursive
 
     def search(
-        self,
-        fields: list[BaseField],
-        columns: list[str],
-        condition: Callable[[File], bool],
+        self, projections: list[Projection], condition: Callable[[File], bool]
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising search records of all the files
-        present within the directory which match the specified condition.
+        Returns a pandas DataFrame comprising search records of all the
+        files within the directory that satisfy the specified condition.
 
         #### Params:
-        - fields (list[Field]): List of desired metadata field objects.
-        - columns (list[str]): List of columns names for the specified fields.
+        - projections (list[Projection]): List comprising the search projections.
         - condition (Callable): Function for filtering data records.
         """
 
         files: Generator[File, None, None] = (
-            File(file) for file in tools.get_files(self._directory, self._recursive)
+            File(file) for file in self._path.enumerate(self._recursive)
         )
 
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [field.evaluate(file) for field in fields]
+            [proj.evaluate(file) for proj in projections]
             for file in files
             if condition(file)
         )
 
-        return pd.DataFrame(records, columns=columns)
+        return pd.DataFrame(records, columns=projections)
 
     @staticmethod
     def _delete_file(file: Path, skip_err: bool) -> bool:

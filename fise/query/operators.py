@@ -32,13 +32,6 @@ class BaseOperator(ABC):
     ): ...
 
 
-class DataOperator(BaseOperator, ABC):
-    """
-    DataOperator serves as the base class
-    for all file data operator classes.
-    """
-
-
 class FileSystemOperator(ABC):
     """
     FileSystemOperator serves as the base class
@@ -140,7 +133,7 @@ class FileQueryOperator(FileSystemOperator):
             )
 
 
-class FileDataQueryOperator(DataOperator):
+class DataQueryOperator(BaseOperator):
     """
     FileDataQueryOperator defines methods for performing
     text and byte search operations within files.

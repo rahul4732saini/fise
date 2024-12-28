@@ -2,9 +2,8 @@
 Operators Module
 ----------------
 
-This module defines classes tailored for processing user queries and executing file and
-directory search or delete operations. Additionally, it includes specialized classes for
-performing search operations within file contents.
+This module defines query operator classes for processing
+user queries and performing search or delete operations.
 """
 
 import shutil

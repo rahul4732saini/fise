@@ -189,29 +189,26 @@ class DataQueryOperator(BaseOperator):
                 yield DataLine(iterator.path, data, line_no)
 
     def search(
-        self,
-        fields: list[BaseField],
-        columns: list[str],
-        condition: Callable[[DataLine], bool],
+        self, projections: list[Projection], condition: Callable[[DataLine], bool]
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising the search records of all the
-        datalines matching the specified condition present within the file(s).
+        Return a pandas DataFrame comprising search records of
+        all the datalines that satisfy the specified condition.
 
         #### Params:
-        - fields (list[str]): List of the desired metadata fields.
+        - projections (list[Projections]): List comprising the search projections.
         - condition (Callable): Function for filtering data records.
         """
 
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [field.evaluate(data) for field in fields]
-            for data in self._search_datalines()
-            if condition(data)
+            [proj.evaluate(dataline) for proj in projections]
+            for dataline in self._get_datalines()
+            if condition(dataline)
         )
 
-        return pd.DataFrame(records, columns=columns)
+        return pd.DataFrame(records, columns=projections)
 
 
 class DirectoryQueryOperator(FileSystemOperator):

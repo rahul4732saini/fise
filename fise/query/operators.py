@@ -156,21 +156,20 @@ class DataQueryOperator(BaseOperator):
 
     __slots__ = "_path", "_recursive", "_filemode"
 
-    def __init__(
-        self, path: Path, recursive: bool, filemode: constants.FILE_MODES
-    ) -> None:
+    def __init__(self, path: DataQueryPath, recursive: bool, filemode: str) -> None:
         """
-        Creates an instance of the `FileDataQueryOperator` class.
+        Creates an instance of the DataQueryOperator class.
 
         #### Params:
-        - path (pathlib.Path): Path to the file or directory.
+        - path (DataQueryPath): data query path object encapsulating the
+        targeted file or directory path.
         - recursive (bool): Whether to include files from subdirectories.
         - filemode (str): Desired filemode for reading files.
         """
 
         self._path = path
         self._recursive = recursive
-        self._filemode = constants.FILE_MODES_MAP[filemode]
+        self._filemode = filemode
 
     def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
         """

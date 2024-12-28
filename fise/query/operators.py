@@ -217,18 +217,19 @@ class DirectoryQueryOperator(FileSystemOperator):
     directory search and delete operations.
     """
 
-    __slots__ = "_directory", "_recursive"
+    __slots__ = "_path", "_recursive"
 
-    def __init__(self, directory: Path, recursive: bool) -> None:
+    def __init__(self, path: DirectoryQueryPath, recursive: bool) -> None:
         """
-        Creates an instance of the `FileQueryOperator` class.
+        Creates an instance of the DirectoryQueryOperator class.
 
         #### Params:
-        - directory (Path): Path to the directory.
+        - path (DirectoryQueryPath): directory query path object encapsulating
+        the targeted directory path.
         - recursive (bool): Whether to include files from subdirectories.
         """
 
-        self._directory = directory
+        self._path = path
         self._recursive = recursive
 
     def search(

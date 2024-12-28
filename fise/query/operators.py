@@ -39,7 +39,11 @@ class FileSystemOperator(ABC):
     """
 
     @abstractmethod
-    def delete(self, condition: Callable[[BaseEntity], bool], skip_err: bool): ...
+    def delete(
+        self,
+        condition: Callable[[BaseEntity], bool],
+        skip_err: bool,
+    ): ...
 
 
 class FileQueryOperator(FileSystemOperator):

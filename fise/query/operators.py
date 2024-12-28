@@ -15,11 +15,10 @@ import pandas as pd
 
 from errors import OperationError
 from notify import Message, Alert
-from common import tools, constants
-from fields import BaseField
+from shared import FileIterator
 from entities import BaseEntity, File, Directory, DataLine
 from .projections import Projection
-from .paths import FileQueryPath
+from .paths import FileQueryPath, DataQueryPath, DirectoryQueryPath
 
 
 class BaseOperator(ABC):
@@ -97,6 +96,25 @@ class FileQueryOperator(FileSystemOperator):
         )
 
         return pd.DataFrame(records, columns=columns)
+
+    @staticmethod
+    def _delete_file(file: Path, skip_err: bool) -> bool:
+        """
+        Deletes the specified file and returns a boolean
+        object signifying whether the operation was a success.
+        """
+
+        try:
+            file.unlink()
+
+        except PermissionError:
+            if skip_err:
+                return False
+
+            raise OperationError(f"Permission Error: Cannot delete '{file}'")
+
+        else:
+            return True
 
     def delete(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """

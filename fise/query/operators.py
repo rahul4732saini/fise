@@ -118,8 +118,8 @@ class FileQueryOperator(FileSystemOperator):
 
     def delete(self, condition: Callable[[File], bool], skip_err: bool) -> None:
         """
-        Deletes all the files present within the
-        directory matching the specified conditions.
+        Deletes all the files within the directory
+        that satisfy the specified condition.
 
         #### Params:
         - condition (Callable): Function for filtering data records.
@@ -130,30 +130,25 @@ class FileQueryOperator(FileSystemOperator):
         # 'skipped' count the number of files skipped due to exceptions.
         ctr = skipped = 0
 
-        for file in tools.get_files(self._directory, self._recursive):
+        # Indicates whether the file was successfully deleted.
+        success: bool
+
+        for file in self._path.enumerate(self._recursive):
             if not condition(File(file)):
                 continue
 
-            try:
-                file.unlink()
+            success = self._delete_file(file, skip_err)
 
-            except PermissionError:
-                if skip_err:
-                    skipped += 1
-                    continue
+            ctr += success
+            skipped += not success
 
-                raise OperationError(f"Permission Error: Cannot delete '{file}'")
+        Message(f"Successfully removed {ctr} files from '{self._path.path}'.")
 
-            else:
-                ctr += 1
-
-        Message(f"Successfully removed {ctr} files from '{self._directory}'.")
-
-        # Prints the skipped files message only is 'skipped' is not zero.
+        # Prints the skipped files message only is 'skipped' is a non-zero integer.
         if skipped:
             Alert(
-                f"Skipped {skipped} files from '{self._directory}'"
-                "due to permissions errors."
+                f"Skipped {skipped} files from '{self._path.path}'"
+                " due to permissions errors."
             )
 
 

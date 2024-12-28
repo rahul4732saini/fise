@@ -171,42 +171,22 @@ class DataQueryOperator(BaseOperator):
         self._recursive = recursive
         self._filemode = filemode
 
-    def _get_filedata(self) -> Generator[tuple[Path, list[str | bytes]], None, None]:
+    def _get_datalines(self) -> Generator[DataLine, None, None]:
         """
-        Yields the file paths along with a list comprising datalines
-        of the corresponding file in the form of strings or bytes.
+        Extracts the datalines within the files present in the
+        directory or within the specific file if the path leads
+        to the same.
         """
 
-        # The following variable stores a Generator object of all the files present within
-        # the directory if the specified path is a directory or creates a tuple comprising
-        # the `pathlib.Path` object of the specified file.
-        files: tuple[Path] | Generator[Path, None, None] = (
-            (self._path,)
-            if self._path.is_file()
-            else tools.get_files(self._path, self._recursive)
+        iterators: Generator[FileIterator, None, None] = (
+            FileIterator(file, self._filemode)
+            for file in self._path.enumerate(self._recursive)
         )
 
-        for i in files:
-            with i.open(self._filemode) as file:
-                try:
-                    yield i, file.readlines()
-
-                except UnicodeDecodeError:
-                    raise OperationError(
-                        "Cannot read bytes with 'text' filemode. Set "
-                        "filemode to 'bytes' to read byte data within files."
-                    )
-
-    def _search_datalines(self) -> Generator[DataLine, None, None]:
-        """
-        Iterates through the files and their corresponding data-lines, and
-        yields `DataLine` objects comprising the dataline and its metadata.
-        """
-
-        for file, data in self._get_filedata():
-            yield from (
-                DataLine(file, line, index + 1) for index, line in enumerate(data)
-            )
+        # Extracts individual datalines from the file iterators.
+        for iterator in iterators:
+            for line_no, data in iterator:
+                yield DataLine(iterator.path, data, line_no)
 
     def search(
         self,

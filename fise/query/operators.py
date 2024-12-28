@@ -19,6 +19,7 @@ from common import tools, constants
 from fields import BaseField
 from entities import BaseEntity, File, Directory, DataLine
 from .projections import Projection
+from .paths import FileQueryPath
 
 
 class BaseOperator(ABC):
@@ -52,18 +53,19 @@ class FileQueryOperator(FileSystemOperator):
     file search and delete operations.
     """
 
-    __slots__ = "_directory", "_recursive"
+    __slots__ = "_path", "_recursive"
 
-    def __init__(self, directory: Path, recursive: bool) -> None:
+    def __init__(self, path: FileQueryPath, recursive: bool) -> None:
         """
-        Creates an instance of the `FileQueryOperator` class.
+        Creates an instance of the FileQueryOperator class.
 
         #### Params:
-        - directory (Path): Path to the directory.
-        - recursive (bool): Whether to include files from subdirectories.
+        - path (FileQueryPath): file query path object encapsulating the
+        targeted directory path.
+        - recursive (bool): Whether to include files from sub-directories.
         """
 
-        self._directory = directory
+        self._path = path
         self._recursive = recursive
 
     def search(

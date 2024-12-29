@@ -79,8 +79,8 @@ class ConditionListNode:
 
 class ConditionParser:
     """
-    ConditionParser defined methods for parsing query
-    conditions for search and delete operations.
+    ConditionParser class defines methods for
+    parsing the user-specified query conditions.
     """
 
     __slots__ = "_query", "_entity"
@@ -299,8 +299,8 @@ class ConditionParser:
 
 class ConditionHandler:
     """
-    ConditionHandler defines methods for handling and evaluating
-    query conditions for search and delete operations.
+    ConditionHandler class defines methods for
+    handling user-specified query conditions.
     """
 
     __slots__ = "_conditions", "_method_map", "_logical_method_map"

@@ -311,21 +311,25 @@ class ConditionHandler:
 
         self._conditions = conditions
 
-        # Maps operator notations with corresponding evaluation methods.
-        self._method_map: dict[str, Callable[[Any, Any], bool]] = {
-            ">=": self._ge,
-            "<=": self._le,
-            "<": self._lt,
-            ">": self._gt,
-            "=": self._eq,
-            "!=": self._ne,
-            "like": self._like,
-            "in": self._contains,
-            "between": self._between,
+        # Maps logical operators with their corresponding
+        # condition segment evaluator methods.
+        self._logical_map: dict[str, Callable[[bool, bool], bool]] = {
+            constants.OP_CONJUNCTION: self._and,
+            constants.OP_DISJUNCTION: self._or,
         }
 
-        # Parses the conditions and stores them in a list.
-        self._conditions = list(ConditionParser(subquery, entity).parse_conditions())
+        # Maps operators with their corresponding condition evaluator methods.
+        self._evaluator_map: dict[str, Callable[[Condition], bool]] = {
+            constants.OP_EQ: self._eq,
+            constants.OP_NE: self._ne,
+            constants.OP_GT: self._gt,
+            constants.OP_GE: self._ge,
+            constants.OP_LT: self._lt,
+            constants.OP_LE: self._le,
+            constants.OP_CONTAINS: self._contains,
+            constants.OP_BETWEEN: self._between,
+            constants.OP_LIKE: self._like,
+        }
 
     def _eval_operand(self, operand: Any, entity: BaseEntity) -> Any:
         """

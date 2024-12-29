@@ -138,43 +138,30 @@ class ConditionParser:
         return condition
 
     def _parse_condition(self, condition: str) -> Condition | ConditionListNode:
-
-        elif operand.lower() == "none":
-            return None
-
-        # If none of the above conditions match, the operand
-        # is assumed to be a query field and parse accordingly.
-        return extractors.parse_field(operand, self._entity)
-
-    def _parse_collective_operand(self, operand: str, operator: str) -> Any | list[str]:
         """
-        Parses the second operand of a query condition as a collective object explicitly
-        for an `IN` or `BETWEEN` operation based on the specified operator.
+        Parses the specified condition specifications.
+
+        #### Params:
+        - condition (str): String comprising the condition specifications.
         """
 
-        if not constants.TUPLE_PATTERN.match(operand):
+        if not condition:
+            raise QueryParseError("Invalid query syntax!")
 
-            # In the context of the `IN` operation, the operand might also be a
-            # string or a Field object, the following also handles this situation.
-            if operator == "in":
-                return self._parse_comparison_operand(operand)
+        elif constants.NESTED_CONDITION_PATTERN.match(condition):
 
-            raise QueryParseError(
-                f"Invalid query pattern around {' '.join(self._query)!r}"
-            )
+            # Recursively parses the condition if nested.
+            query = QueryQueue.from_string(condition[1:-1])
+            return self._parse_conditions(query)
 
-        # Parses and creates a list of individual operands.
-        operands: list[Any] = [
-            self._parse_comparison_operand(i.strip()) for i in operand[1:-1].split(",")
-        ]
+        # Looks up for the operator and parses the condition accordingly.
+        for op in constants.CONDITION_OPERATORS:
+            if op not in condition:
+                continue
 
-        if operator == "between" and len(operands) != 2:
-            raise QueryParseError(
-                "The tuple specified for the `BETWEEN` "
-                "operation must only comprise two elements."
-            )
+            return self._parse_binary_condition(condition, op)
 
-        return operands
+        raise QueryParseError(f"{condition!r} is not a valid query condition.")
 
     def _parse_conditional_operand(
         self, operand: str, operator: str

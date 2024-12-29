@@ -110,30 +110,34 @@ class ConditionParser:
             constants.OP_LIKE: self._like,
         }
 
-    def _tokenize_binary_condition(
+    def _parse_binary_condition(
         self, condition: str, operator: str
     ) -> tuple[str, list[str]]:
         """
-        Parses individual operands defined within a condition
-        expression and converts them into appropriate data types.
+        Parses the specified binary condition based on the specified operator.
 
         #### Params:
-        - operand (str): Operand to be parsed.
+        - condition (str): String comprising the condition specifications.
+        - operator (str): Binary operator present in the specified condition.
         """
 
-        if constants.STRING_PATTERN.match(operand):
-            # Strips the leading and trailing quotes in the string.
-            operand = operand[1:-1]
+        operands: list[str] = condition.split(operator, maxsplit=1)
 
-            # Returns a datetime object if it matches the ISO-8601
-            # date & time pattern. Otherwise, returns a string object.
-            return extractors.parse_datetime(operand) or operand
+        # Raises a parse error if the operator is lexical and there
+        # is no whitespace between it and either of the operands.
+        if operator in constants.LEXICAL_OPERATORS and not (
+            operands[0].startswith(" ") and operands[1].endswith(" ")
+        ):
+            raise QueryParseError(f"{condition!r} is not a valid condition.")
 
-        elif constants.FLOAT_PATTERN.match(operand):
-            return float(operand)
+        operands = [operand.strip(" ") for operand in operands]
 
-        elif operand.isdigit():
-            return int(operand)
+        evaluator = self._parsers_map[operator]
+        condition: Condition = evaluator(*operands)
+
+        return condition
+
+    def _parse_condition(self, condition: str) -> Condition | ConditionListNode:
 
         elif operand.lower() == "none":
             return None

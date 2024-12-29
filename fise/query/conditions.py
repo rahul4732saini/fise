@@ -9,11 +9,11 @@ for parsing and evaluating query conditions.
 import re
 from typing import Callable, Sequence, Optional, Union, TypeAlias
 
-from .. import extractors
-from common import constants, tools
-from errors import QueryParseError, OperationError
-from shared import Condition
-from entities import BaseEntity
+import parsers
+from parsers import QueryAttribute
+from common import constants
+from errors import QueryParseError
+from shared import QueryQueue
 from fields import BaseField
 from entities import BaseEntity
 from dataclasses import dataclass
@@ -83,18 +83,18 @@ class ConditionParser:
     parsing the user-specified query conditions.
     """
 
-    __slots__ = "_query", "_entity"
+    __slots__ = "_query", "_entity", "_parsers_map"
 
-    def __init__(self, subquery: list[str], entity: int) -> None:
+    def __init__(self, query: QueryQueue, entity: str) -> None:
         """
-        Creates an instance of the `ConditionParser` class.
+        Creates an instance of the ConditionParser class.
 
         #### Params:
-        - subquery (list[str]): Subquery comprising the query conditions.
-        - entity (int): Entity being operated upon.
+        - query (QueryQueue): `QueryQueue` object comprising the query.
+        - entity (str): Name of the entity being operated upon.
         """
 
-        self._query = subquery
+        self._query = query
         self._entity = entity
 
     def _parse_comparison_operand(self, operand: str) -> Any:

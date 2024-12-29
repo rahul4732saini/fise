@@ -260,6 +260,24 @@ class DirectoryQueryOperator(FileSystemOperator):
 
         return pd.DataFrame(records, columns=projections)
 
+    @staticmethod
+    def _delete_directory(directory: Path, skip_err: bool) -> bool:
+        """
+        Deletes the specified directory and returns a boolean
+        object signifying whether the operation was a success.
+        """
+
+        try:
+            shutil.rmtree(directory)
+
+        except PermissionError:
+            if skip_err:
+                return False
+
+            raise OperationError(f"Permission Error: Cannot delete '{directory}'")
+
+        return True
+
     def delete(self, condition: Callable[[Directory], bool], skip_err: bool) -> None:
         """
         Removes all the subdirectories matching the specified condition.

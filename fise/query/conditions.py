@@ -16,6 +16,49 @@ from errors import QueryParseError, OperationError
 from shared import Condition
 from entities import BaseEntity
 from fields import BaseField
+from entities import BaseEntity
+from dataclasses import dataclass
+
+
+@dataclass(slots=True, eq=False, frozen=True)
+class Condition:
+    """
+    Condition class encapsulates individual
+    query condition specifications.
+    """
+
+    operator: str
+    left: QueryAttribute
+    right: QueryAttribute
+
+    def _evaluate_operand(
+        self, operand: QueryAttribute, entity: BaseEntity
+    ) -> QueryAttribute:
+        """
+        Evalutes the specified condition operand
+        based on the specified entity object.
+        """
+
+        if isinstance(operand, list):
+            return [self._evaluate_operand(op, entity) for op in operand]
+
+        elif isinstance(operand, BaseField):
+            return operand.evaluate(entity)
+
+        return operand
+
+    def evaluate_operands(
+        self, entity: BaseEntity
+    ) -> tuple[QueryAttribute, QueryAttribute]:
+        """
+        Evaluates the encapsulated condition operands
+        based on the specified entity object.
+        """
+
+        left = self._evaluate_operand(self.left, entity)
+        right = self._evaluate_operand(self.right, entity)
+
+        return left, right
 
 
 class ConditionParser:

@@ -299,22 +299,17 @@ class ConditionHandler:
     handling user-specified query conditions.
     """
 
-    __slots__ = "_conditions", "_method_map", "_logical_method_map"
+    __slots__ = "_conditions", "_evaluator_map", "_logical_map"
 
-    def __init__(self, subquery: list[str], entity: int) -> None:
+    def __init__(self, conditions: ConditionListNode) -> None:
         """
-        Creates an instance of the `ConditionHandler` class.
+        Creates an instance of the ConditionHandler class.
 
         #### Params:
-        - subquery (list[str]): Subquery comprising the query conditions.
-        - entity (int): Entity being operated upon.
+        - conditions (ConditionListNode): List comprising the query conditions.
         """
 
-        # Maps logical operators with corresponding evaluation methods.
-        self._logical_method_map: dict[str, Callable[[bool, bool], bool]] = {
-            "and": self._and,
-            "or": self._or,
-        }
+        self._conditions = conditions
 
         # Maps operator notations with corresponding evaluation methods.
         self._method_map: dict[str, Callable[[Any, Any], bool]] = {

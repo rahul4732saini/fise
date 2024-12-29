@@ -163,38 +163,49 @@ class ConditionParser:
 
         raise QueryParseError(f"{condition!r} is not a valid query condition.")
 
-    def _parse_conditional_operand(
-        self, operand: str, operator: str
-    ) -> Any | list[str] | re.Pattern:
+    def _parse_conditions(self, query: QueryQueue) -> ConditionListNode:
         """
-        Parses the second operand specified within a query
-        condition for an `IN`, `BETWEEN` or `LIKE` operation.
+        Parses the specified query conditions.
+
+        #### Params:
+        - query (QueryQueue): `QueryQueue` object comprising the query.
         """
 
-        # In case of an `IN` or `BETWEEN` operation, the
-        # operand is parsed using the following method.
-        if operator != "like":
-            return self._parse_collective_operand(operand, operator)
+        head = dummy = ConditionListNode(True)
+        condition: list[str] = []
 
-        # The operand is parsed using the following
-        # mechanism in case of the `LIKE` operation.
+        # Stores individual query tokens during iteration.
+        token: str
 
-        elif not constants.STRING_PATTERN.match(operand):
-            raise QueryParseError(
-                f"Invalid Regex pattern {operand} specified in query conditions"
+        while query:
+            token = query.pop()
+
+            if token.lower() not in constants.LOGICAL_OPERATORS:
+                condition.append(token)
+                continue
+
+            # Adds the parsed condition at the end of the conditions list.
+            head.next = ConditionListNode(
+                self._parse_condition(" ".join(condition)),
+                operator=token.lower(),
             )
 
-        try:
-            return re.compile(operand[1:-1])
+            head = head.next
+            condition.clear()
 
-        except re.error:
+        # Appends the last condition to the conditions.
+        head.next = ConditionListNode(self._parse_condition(" ".join(condition)))
+        return dummy.next
+
+    def parse(self) -> ConditionListNode:
+        """Parses the query conditions."""
+
+        if self._query.seek().lower() != constants.KEYWORD_WHERE:
             raise QueryParseError(
-                f"Invalid regex pattern {operand} specified in query conditions"
+                "Could not find the 'WHERE' keyword in "
+                "its anticipated position in the query."
             )
 
-    def _extract_condition_elements(self, condition: list[str]) -> list[str]:
-        """
-        Extracts the individual elements/token present within the specified query condition.
         self._query.pop()
 
         return self._parse_conditions(self._query)

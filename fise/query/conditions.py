@@ -431,16 +431,16 @@ class ConditionHandler:
 
         return node.condition
 
-        return conditions[0]
-
-    def eval_conditions(self, entity: BaseEntity) -> bool:
+    def evaluate(self, entity: BaseEntity) -> bool:
         """
-        Evaluates the query conditions
+        Evaluates the query conditions and returns a boolean
+        value for filtering the search query records.
 
         #### Params:
-        - entity (BaseEntity): Entity being operated upon.
+        - entity (BaseEntity): Entity object for evaluating the query fields.
         """
-        return self._eval_conditions(self._conditions, entity)
+
+        return self._evaluate_conditions(self._conditions, entity)
 
     @staticmethod
     def _and(left: bool, right: bool) -> bool:

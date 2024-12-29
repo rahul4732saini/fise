@@ -7,8 +7,7 @@ for parsing and evaluating query conditions.
 """
 
 import re
-from datetime import datetime
-from typing import Generator, Callable, Any
+from typing import Callable, Sequence, Optional, Union, TypeAlias
 
 from .. import extractors
 from common import constants, tools
@@ -18,6 +17,9 @@ from entities import BaseEntity
 from fields import BaseField
 from entities import BaseEntity
 from dataclasses import dataclass
+
+
+QueryConditionType: TypeAlias = Union[bool, "Condition", "ConditionListNode"]
 
 
 @dataclass(slots=True, eq=False, frozen=True)
@@ -59,6 +61,20 @@ class Condition:
         right = self._evaluate_operand(self.right, entity)
 
         return left, right
+
+
+@dataclass(slots=True)
+class ConditionListNode:
+    """
+    ConditionListNode class represents an individual
+    node in the query conditions linked list.
+    """
+
+    condition: QueryConditionType
+
+    # Stores the operator immediately adjacent to the condition.
+    operator: str | None = None
+    next: Optional["ConditionListNode"] = None
 
 
 class ConditionParser:

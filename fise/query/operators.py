@@ -280,40 +280,35 @@ class DirectoryQueryOperator(FileSystemOperator):
 
     def delete(self, condition: Callable[[Directory], bool], skip_err: bool) -> None:
         """
-        Removes all the subdirectories matching the specified condition.
+        Deletes all the sub-directories within the
+        directory that satisfy the specified condition.
 
         #### Params:
         - condition (Callable): Function for filtering data records.
         - skip_err (bool): Whether to supress permission errors during operation.
         """
 
-        # `ctr` counts the number of directories removed whereas `skipped` counts
-        # the number of skipped directories if `skip_err` is set to `True`.
+        # 'ctr' counts the number of directories removed during the operation.
+        # 'skipped' count the number of directories skipped due to exceptions.
         ctr = skipped = 0
 
-        # Iterates through the subdirectories and deletes
-        # individual directory tree(s) if the condition is met.
-        for subdir in tools.get_directories(self._directory, self._recursive):
-            if not condition(Directory(subdir)):
+        # Indicates whether the file was successfully deleted.
+        success: bool
+
+        for directory in self._path.enumerate(self._recursive):
+            if not condition(Directory(directory)):
                 continue
 
-            try:
-                shutil.rmtree(subdir)
+            success = self._delete_directory(directory, skip_err)
 
-            except PermissionError:
-                if skip_err:
-                    skipped += 1
-                    continue
+            ctr += success
+            skip_err += not success
 
-                raise OperationError(f"Permission Error: Cannot delete '{subdir}'")
+        Message(f"Successfully removed {ctr} directories from '{self._path.path}'.")
 
-            else:
-                ctr += 1
-
-        Message(f"Successfully removed {ctr} directories from '{self._directory}'.")
-
-        # Prints the skipped files message only is `skipped` is not zero.
+        # Prints the skipped files message only is `skipped` is a non-zero integer.
         if skipped:
             Alert(
-                f"Skipped {skipped} directories from '{self._directory}' due to permission errors."
+                f"Skipped {skipped} directories from '{self._path.path}'"
+                " due to permission errors."
             )

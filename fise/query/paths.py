@@ -52,7 +52,8 @@ class FileQueryPath(BaseQueryPath):
 
         if not path.is_dir():
             raise QueryParseError(
-                f"The specified path {self!r} does not lead to a directory!"
+                f"The specified path {path.as_posix()!r}"
+                " does not lead to a directory."
             )
 
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
@@ -84,7 +85,8 @@ class DirectoryQueryPath(BaseQueryPath):
 
         if not path.is_dir():
             raise QueryParseError(
-                f"The specified path {self!r} does not lead to a directory!"
+                f"The specified path {path.as_posix()!r}"
+                " does not lead to a directory."
             )
 
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
@@ -117,7 +119,8 @@ class DataQueryPath(BaseQueryPath):
 
         if not (path.is_file() or path.is_dir()):
             raise QueryParseError(
-                f"The specified path {self!r} does not lead to a file or directory."
+                f"The specified path {path.as_posix()!r}"
+                " does not lead to a file or directory."
             )
 
     def enumerate(self, recursive: bool = False) -> Generator[Path, None, None]:

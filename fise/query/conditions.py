@@ -97,7 +97,22 @@ class ConditionParser:
         self._query = query
         self._entity = entity
 
-    def _parse_comparison_operand(self, operand: str) -> Any:
+        # Maps operators with their corresponding condition parser methods.
+        self._parsers_map: dict[str, Callable[[str, str], Condition]] = {
+            constants.OP_EQ: self._eq,
+            constants.OP_NE: self._ne,
+            constants.OP_GT: self._gt,
+            constants.OP_GE: self._ge,
+            constants.OP_LT: self._lt,
+            constants.OP_LE: self._le,
+            constants.OP_CONTAINS: self._contains,
+            constants.OP_BETWEEN: self._between,
+            constants.OP_LIKE: self._like,
+        }
+
+    def _tokenize_binary_condition(
+        self, condition: str, operator: str
+    ) -> tuple[str, list[str]]:
         """
         Parses individual operands defined within a condition
         expression and converts them into appropriate data types.
@@ -189,112 +204,91 @@ class ConditionParser:
     def _extract_condition_elements(self, condition: list[str]) -> list[str]:
         """
         Extracts the individual elements/token present within the specified query condition.
-        """
+        self._query.pop()
 
-        if len(condition) == 3:
-
-            # The operator is defined at the 1st index and is lowered in
-            # case it is a conditional operator and is typed in uppercase.
-            condition[1] = condition[1].lower()
-
-            if condition[1] not in (
-                constants.COMPARISON_OPERATORS | constants.CONDITIONAL_OPERATORS
-            ):
-                raise QueryParseError(
-                    f"Invalid query syntax around {' '.join(self._query)!r}"
-                )
-
-            return condition
-
-        # The condition is parsed using differently if all the
-        # tokens are not already separated as individual strings.
-
-        # In such case, the condition is only looked up for comparison operators
-        # for partitioning it into individual tokens as conditional operators
-        # require whitespaces around them which are already parsed beforehand
-        # using the `tools.parse_query` function.
-        for i in constants.COMPARISON_OPERATORS:
-            if i not in condition[0]:
-                continue
-
-            # If the operator is present within the condition, all the
-            # individual tokens are partitioned into individual strings.
-            condition[:] = condition[0].partition(i)
-            break
-
-        else:
-            raise QueryParseError(
-                f"Invalid query syntax around {' '.join(condition)!r}"
-            )
-
-        # Strips out redundant whitespaces around the tokens.
-        for index, value in enumerate(condition):
-            condition[index] = value.strip()
-
-        return condition
-
-    def _parse_condition(self, condition: list[str]) -> list | Condition:
-        """
-        Parses individual query conditions.
-
-        #### Params:
-        - condition (list[str]): Condition to be parsed.
-        """
-
-        if len(condition) == 1 and constants.TUPLE_PATTERN.match(condition[0]):
-            return list(
-                self._parse_conditions(tools.parse_query(condition[0][1:-1])),
-            )
-
-        # All individual strings are combined into a single string to parse them
-        # differently if the length of the list is not 3, i.e., the tokens are
-        # not already separated into individual strings.
-        if len(condition) != 3:
-            condition = ["".join(condition)]
-
-        condition[:] = self._extract_condition_elements(condition)
-
-        operator = condition[1]
-        operand1: Any = self._parse_comparison_operand(condition[0])
-
-        # Parses the second operand accordingly based on the specified operator.
-        operand2: Any = (
-            self._parse_comparison_operand(condition[2])
-            if operator in constants.COMPARISON_OPERATORS
-            else self._parse_conditional_operand(condition[2], operator)
-        )
-
-        return Condition(operand1, operator, operand2)
-
-    def _parse_conditions(
-        self, subquery: list[str]
-    ) -> Generator[str | list | Condition, None, None]:
-        """
-        Parses the query conditions.
-
-        #### Params:
-        - subquery (list): Subquery comprising the query conditions.
-        """
-
-        # Stores individual conditions during iteration.
-        condition: list[str] = []
-
-        for token in subquery:
-            if token.lower() in constants.LOGICAL_OPEATORS:
-                yield self._parse_condition(condition)
-                yield token.lower()
-
-                condition.clear()
-                continue
-
-            condition.append(token)
-
-        # Parses the last condition specified in the query.
-        yield self._parse_condition(condition)
-
-    def parse_conditions(self) -> Generator[str | list | Condition, None, None]:
-        """Parses and returns a generator of the query conditions."""
         return self._parse_conditions(self._query)
+
+    def _parse_operands(
+        self, left: str, right: str
+    ) -> tuple[QueryAttribute, QueryAttribute]:
+        """
+        Parses the specified condition operands
+        and returns a tuple comprising the same.
+        """
+
+        op_left = parsers.parse_attribute(left, self._entity)
+        op_right = parsers.parse_attribute(right, self._entity)
+
+        return op_left, op_right
+
+    def _parse_relational(self, operator: str, left: str, right: str) -> Condition:
+        """Parses the query condition comprising a relational operator."""
+
+        op_left, op_right = self._parse_operands(left, right)
+        return Condition(operator, op_left, op_right)
+
+    def _eq(self, left: str, right: str) -> Condition:
+        """Parses the query conditions for the equals operation."""
+        return self._parse_relational(constants.OP_EQ, left, right)
+
+    def _ne(self, left: str, right: str) -> Condition:
+        """Parses the condition for the not equals operation."""
+        return self._parse_relational(constants.OP_NE, left, right)
+
+    def _gt(self, left: str, right: str) -> Condition:
+        """Parses the condition for the greater than operation."""
+        return self._parse_relational(constants.OP_GT, left, right)
+
+    def _ge(self, left: str, right: str) -> Condition:
+        """Parses the condition for the greater than or equals operation"""
+        return self._parse_relational(constants.OP_GE, left, right)
+
+    def _lt(self, left: str, right: str) -> Condition:
+        """Parses the condition for the lower than operation."""
+        return self._parse_relational(constants.OP_LT, left, right)
+
+    def _le(self, left: str, right: str) -> Condition:
+        """Parses the condition for the lower than or equals operation."""
+        return self._parse_relational(constants.OP_LE, left, right)
+
+    def _contains(self, left: str, right: str) -> Condition:
+        """Parses the condition for the contains operation."""
+
+        op_left, op_right = self._parse_operands(left, right)
+
+        if not isinstance(op_right, Sequence):
+            raise QueryParseError(
+                f"{right!r} is not a valid operand for "
+                f"the {constants.OP_CONTAINS!r} operation."
+            )
+
+        return Condition(constants.OP_CONTAINS, op_left, op_right)
+
+    def _between(self, left: str, right: str) -> Condition:
+        """Parses the condition for the between operation."""
+
+        op_left, op_right = self._parse_operands(left, right)
+
+        # Raises an error if the right operand
+        # is not an array with a length of 2.
+        if not isinstance(op_right, Sequence) or len(op_right) != 2:
+
+            raise QueryParseError(
+                f"{right!r} is not a valid operand for "
+                f"the {constants.OP_BETWEEN!r} operation."
+            )
+
+        return Condition(constants.OP_BETWEEN, op_left, op_right)
+
+    def _like(self, left: str, right: str) -> Condition:
+        """Parses the condition for the like operation."""
+
+        op_left, op_right = self._parse_operands(left, right)
+
+        if not (isinstance(op_left, str | BaseField) and isinstance(op_right, str)):
+            raise QueryParseError("Invalid query conditions syntax.")
+
+        return Condition(constants.OP_LIKE, op_left, op_right)
 
 
 class ConditionHandler:

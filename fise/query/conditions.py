@@ -415,28 +415,21 @@ class ConditionHandler:
 
         return root
 
-    def _eval_conditions(
-        self,
-        conditions: list[str | Condition | list],
-        entity: BaseEntity,
-    ) -> bool:
+    def _evaluate_conditions(self, node: ConditionListNode, entity: BaseEntity) -> bool:
         """
-        Evaluates all the query conditions.
+        Evaluates the specified query conditions based on
+        the specified entity object and returns a boolean
+        value for filtering the query records.
 
         #### Params:
-        - conditions (list): List comprising the conditions along with their separators.
-        - entity (BaseEntity): Entity being operated upon.
+        - node (ConditionListNode): Conditions to be evaluated.
+        - entity (BaseEntity): Entity object being operated on.
         """
 
-        # Evaluates the conditions seperated by the conjunction operator.
-        conditions = self._eval_condition_segments(
-            conditions, constants.OP_CONJUNCTION, entity
-        )
+        node = self._evaluate_condition_segments(node, constants.OP_CONJUNCTION, entity)
+        node = self._evaluate_condition_segments(node, constants.OP_DISJUNCTION, entity)
 
-        # Evaluates the conditions seperated by the disjunction operator.
-        conditions = self._eval_condition_segments(
-            conditions, constants.OP_DISJUNCTION, entity
-        )
+        return node.condition
 
         return conditions[0]
 

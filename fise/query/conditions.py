@@ -453,45 +453,47 @@ class ConditionHandler:
         return self._eval_conditions(self._conditions, entity)
 
     @staticmethod
-    def _and(x: bool, y: bool, /) -> bool:
-        return x and y
+    def _and(left: bool, right: bool) -> bool:
+        return left and right
 
     @staticmethod
-    def _or(x: bool, y: bool, /) -> bool:
-        return x or y
+    def _or(left: bool, right: bool) -> bool:
+        return left or right
 
     @staticmethod
-    def _gt(x: Any, y: Any, /) -> bool:
-        return x > y
+    def _eq(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left == right
 
     @staticmethod
-    def _ge(x: Any, y: Any, /) -> bool:
-        return x >= y
+    def _ne(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left != right
 
     @staticmethod
-    def _lt(x: Any, y: Any, /) -> bool:
-        return x < y
+    def _gt(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left > right
 
     @staticmethod
-    def _le(x: Any, y: Any, /) -> bool:
-        return x <= y
+    def _ge(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left >= right
 
     @staticmethod
-    def _eq(x: Any, y: Any, /) -> bool:
-        return x == y
+    def _lt(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left < right
 
     @staticmethod
-    def _ne(x: Any, y: Any, /) -> bool:
-        return x != y
+    def _le(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left <= right
 
     @staticmethod
-    def _contains(x: Any, y: list[Any], /) -> bool:
-        return x in y
+    def _contains(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return left in right
 
     @staticmethod
-    def _between(x: Any, y: tuple[Any, Any], /) -> bool:
-        return y[0] <= x <= y[1]
+    def _between(left: QueryAttribute, right: QueryAttribute) -> bool:
+        return right[0] <= left <= right[1]
 
     @staticmethod
-    def _like(string: str, pattern: re.Pattern) -> bool:
-        return bool(pattern.match(string))
+    def _like(left: QueryAttribute, right: QueryAttribute) -> bool:
+
+        pattern: re.Pattern = re.compile(right)
+        return bool(pattern.match(left))

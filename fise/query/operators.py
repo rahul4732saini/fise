@@ -234,34 +234,31 @@ class DirectoryQueryOperator(FileSystemOperator):
 
     def search(
         self,
-        fields: list[BaseField],
-        columns: list[str],
+        projections: list[Projection],
         condition: Callable[[Directory], bool],
     ) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame comprising search records of
-        all the subdirectories matching the specified condition.
+        Returns a pandas DataFrame comprising search records of all
+        the sub-directories all satisfy the specified condition.
 
         #### Params:
-        - fields (list[Field]): List of desired directory metadata `Field` objects.
-        - columns (list[str]): List of columns names for the specified fields.
+        - projections (list[Projection]): List comprising the search projections.
         - condition (Callable): Function for filtering data records.
         """
 
         directories: Generator[Directory, None, None] = (
-            Directory(directory)
-            for directory in tools.get_directories(self._directory, self._recursive)
+            Directory(directory) for directory in self._path.enumerate(self._recursive)
         )
 
         # Generator object comprising search records of
-        # the files matching the specified condition.
+        # the directories matching the specified condition.
         records: Generator[list[Any], None, None] = (
-            [field.evaluate(directory) for field in fields]
+            [proj.evaluate(directory) for proj in projections]
             for directory in directories
             if condition(directory)
         )
 
-        return pd.DataFrame(records, columns=columns)
+        return pd.DataFrame(records, columns=projections)
 
     def delete(self, condition: Callable[[Directory], bool], skip_err: bool) -> None:
         """

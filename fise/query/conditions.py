@@ -331,50 +331,32 @@ class ConditionHandler:
             constants.OP_LIKE: self._like,
         }
 
-    def _eval_operand(self, operand: Any, entity: BaseEntity) -> Any:
-        """
-        Evaluates the specified condition operand.
-
-        #### Params:
-        - operand (Any): Operand to be processed.
-        - entity (BaseEntity): Entity being operated upon.
-        """
-
-        if isinstance(operand, BaseField):
-            operand = operand.evaluate(entity)
-
-        elif isinstance(operand, list):
-            return [self._eval_operand(e, entity) for e in operand]
-
-        return operand
-
-    def _eval_condition(
-        self, condition: bool | list | Condition, entity: BaseEntity
+    def _evaluate_condition(
+        self, condition: QueryConditionType, entity: BaseEntity
     ) -> bool:
         """
-        Evaluates the specified condition.
+        Evaluates the specified condition or conditions if nested.
 
         #### Params:
-        - condition (list | Condition): Condition(s) to be evaluated.
-        - entity (BaseEntity): Entity being operated upon.
+        - condition (QueryConditionType): Condition to be evaluated.
+        - entity (BaseEntity): Entity object being operated upon.
         """
 
-        if isinstance(condition, bool):
+        if isinstance(condition, ConditionListNode):
+
+            # Recursively evaluates if the specified condition
+            # holds reference to a nested query conditions list.
+            return self._evaluate_conditions(condition, entity)
+
+        elif isinstance(condition, bool):
             return condition
 
-        # Recursively evaluates if the condition is nested.
-        if isinstance(condition, list):
-            return self._eval_conditions(condition, entity)
+        left, right = condition.evaluate_operands(entity)
 
-        # Evaluates the condition operands.
-        operand1, operand2 = self._eval_operand(
-            condition.operand1, entity
-        ), self._eval_operand(condition.operand2, entity)
+        evaluator = self._evaluator_map[condition.operator]
+        result: bool = evaluator(left, right)
 
-        try:
-            # Evaluates the operation with a method corresponding to the name
-            # of the operator defined in the '_method_map' instance attribute.
-            response: bool = self._method_map[condition.operator](operand1, operand2)
+        return result
 
         except Exception:
             raise OperationError("Unable to process the query conditions.")

@@ -358,20 +358,32 @@ class ConditionHandler:
 
         return result
 
-        except Exception:
-            raise OperationError("Unable to process the query conditions.")
-
-        else:
-            return response
-
-    def _eval_condition_segments(
-        self,
-        conditions: list[bool | str | list | Condition],
-        operator: str,
-        entity: BaseEntity,
-    ) -> list[bool | str | list | Condition]:
+    def _evaluate_condition_segment(
+        self, node: ConditionListNode, operator: str, entity: BaseEntity
+    ) -> ConditionListNode:
         """
-        Evaluates condition segments seperated by the specified operator.
+        Evaluates the condition segment present in the begining of the
+        specified conditions list based on the specified entity object.
+
+        #### Params:
+        - node (ConditionListNode): Conditions list comprising the segment
+        to be evaluated.
+        - operator (str): Operator to operate on.
+        - entity (BaseEntity): Entity object being operated upon.
+        """
+
+        left = self._evaluate_condition(node.condition, entity)
+        right = self._evaluate_condition(node.next.condition, entity)
+
+        evaluator = self._logical_map[operator]
+
+        # Stores the evaluated condition in the current node, copies
+        # the operator of the next node and removes it from the list.
+        node.condition = evaluator(left, right)
+        node.operator = node.next.operator
+        node.next = node.next.next
+
+        return node
 
         #### Params:
         - conditions (list): List of query conditions.

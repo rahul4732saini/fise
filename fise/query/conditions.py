@@ -385,31 +385,35 @@ class ConditionHandler:
 
         return node
 
+    def _evaluate_condition_segments(
+        self, node: ConditionListNode, operator: str, entity: BaseEntity
+    ) -> ConditionListNode:
+        """
+        Evaluates individual condition segments present in the specified
+        conditions list seperated by the specified logical operator based
+        on the specified entity object.
+
         #### Params:
-        - conditions (list): List of query conditions.
-        - operator (str): Logical operator which has to be evaluated.
-        - entity (BaseEntity): Entity to be operated upon.
+        - node (ConditionListNode): Condition segments to be evaluated.
+        - operator (str): Operator to operate on.
+        - entity (BaseEntity): Entity object being operated upon.
         """
 
-        cur: str = ""
-        res: list[bool | str | list | Condition] = []
+        # Adds a truthy preceding node for the conjunction operator
+        # or a falsy preceding node for the disjunction operator to
+        # ensure consistency in case of a single query condition.
+        root = head = ConditionListNode(
+            operator == constants.OP_CONJUNCTION, operator, node
+        )
 
-        for token in conditions:
-            if isinstance(token, str) and token in constants.LOGICAL_OPEATORS:
-                res.append(cur := token)
+        while head and head.next:
+            if head.operator != operator:
+                head = head.next
+                continue
 
-            elif cur == operator:
-                result = self._logical_method_map[res.pop()](
-                    res.pop(), self._eval_condition(token, entity)
-                )
+            self._evaluate_condition_segment(head, operator, entity)
 
-                res.append(result)
-                cur = ""
-
-            else:
-                res.append(self._eval_condition(token, entity))
-
-        return res
+        return root
 
     def _eval_conditions(
         self,

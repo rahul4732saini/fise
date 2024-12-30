@@ -43,7 +43,7 @@ DBMS_DRIVERNAMES = {
     DBMS_SQLITE: "sqlite",
 }
 
-EXPORT_DBMS = {DBMS_MYSQL, DBMS_POSTGRESQL, DBMS_SQLITE}
+DBMS = {DBMS_MYSQL, DBMS_POSTGRESQL, DBMS_SQLITE}
 EXPORT_FILE_FORMATS = {".csv", ".json", ".html", ".xlsx"}
 
 # Entities available for usage in query operation.

@@ -331,6 +331,17 @@ class ConditionHandler:
             constants.OP_LIKE: self._like,
         }
 
+    def __call__(self, entity: BaseEntity) -> bool:
+        """
+        Evaluates the query conditions and returns
+        a boolean value for filtering query records.
+
+        #### Params:
+        - entity (BaseEntity): Entity object for evaluating the query fields.
+        """
+
+        return self._evaluate_conditions(self._conditions, entity)
+
     def _evaluate_condition(
         self, condition: QueryConditionType, entity: BaseEntity
     ) -> bool:
@@ -430,17 +441,6 @@ class ConditionHandler:
         node = self._evaluate_condition_segments(node, constants.OP_DISJUNCTION, entity)
 
         return node.condition
-
-    def evaluate(self, entity: BaseEntity) -> bool:
-        """
-        Evaluates the query conditions and returns a boolean
-        value for filtering the search query records.
-
-        #### Params:
-        - entity (BaseEntity): Entity object for evaluating the query fields.
-        """
-
-        return self._evaluate_conditions(self._conditions, entity)
 
     @staticmethod
     def _and(left: bool, right: bool) -> bool:

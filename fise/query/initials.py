@@ -64,7 +64,7 @@ class DataOperationData(BaseOperationData):
     """
 
     entity = constants.ENTITY_DATA
-    mode: str = constants.READ_MODE_TEXT
+    mode: str = constants.READ_MODES_MAP[constants.READ_MODE_TEXT]
 
 
 @dataclass(slots=True, frozen=True, eq=False)

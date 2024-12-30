@@ -301,12 +301,13 @@ class ConditionHandler:
 
     __slots__ = "_conditions", "_evaluator_map", "_logical_map"
 
-    def __init__(self, conditions: ConditionListNode) -> None:
+    def __init__(self, conditions: ConditionListNode | None) -> None:
         """
         Creates an instance of the ConditionHandler class.
 
         #### Params:
-        - conditions (ConditionListNode): List comprising the query conditions.
+        - conditions (ConditionListNode | None): List comprising the
+        query conditions or None if no conditions are to be applied.
         """
 
         self._conditions = conditions
@@ -339,6 +340,11 @@ class ConditionHandler:
         #### Params:
         - entity (BaseEntity): Entity object for evaluating the query fields.
         """
+
+        # Returns ture if not conditions were specified at
+        # initialization to include all the query records.
+        if self._conditions is None:
+            return True
 
         return self._evaluate_conditions(self._conditions, entity)
 

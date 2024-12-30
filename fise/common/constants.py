@@ -9,7 +9,11 @@ within the various classes and functions defined in the project.
 import re
 import sys
 
+# CLI commands available to the user.
+CMD_EXIT = {"exit", "quit"}
+CMD_CLEAR = {"\c", "clear"}
 
+# Keywords reserved for different query operations.
 KEYWORD_EXPORT = "export"
 KEYWORD_RECURSIVE = "recursive"
 KEYWORD_RECURSIVE_SHORT = "r"

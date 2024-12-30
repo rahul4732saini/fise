@@ -130,7 +130,7 @@ class ExportParser:
 
         args = args.lower()
 
-        if args not in constants.DBMS:
+        if args not in constants.EXPORT_DBMS:
             raise QueryParseError(f"The specified DBMS {args!r} is not supported!")
 
         return DBMSExportData(args)

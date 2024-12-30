@@ -81,7 +81,7 @@ def tokenize_qualified_clause(
     of arguments in the clause. Defaults to False.
     """
 
-    if constants.QUALIFIED_CLUASE_PATTERN.match(clause) is None:
+    if constants.QUALIFIED_CLAUSE_PATTERN.match(clause) is None:
         raise QueryParseError(f"{clause!r} is not a valid clause!")
 
     label = args = ""

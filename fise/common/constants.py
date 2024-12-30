@@ -56,7 +56,7 @@ DEFAULT_OPERATION_ENTITY = ENTITY_FILE
 
 ENTITIES = {ENTITY_FILE, ENTITY_DIR, ENTITY_DATA}
 
-# Available modes for reading file conents.
+# Available modes for reading file contents.
 
 READ_MODE_TEXT = "text"
 READ_MODE_BYTES = "bytes"
@@ -151,7 +151,7 @@ NESTED_CONDITION_PATTERN = re.compile(r"^\(.*\)$")
 FLOAT_PATTERN = re.compile(r"^-?\d+(\.\d+)?$")
 DATETIME_PATTERN = re.compile(r"^\d{4}-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?$")
 
-# Logical operators for seperating query condition segments.
+# Logical operators for separating query condition segments.
 OP_CONJUNCTION = "and"
 OP_DISJUNCTION = "or"
 
@@ -177,7 +177,7 @@ LEXICAL_OPERATORS = OP_CONTAINS, OP_BETWEEN, OP_LIKE
 CONDITION_OPERATORS = LEXICAL_OPERATORS + SYMBOLIC_OPERATORS
 LOGICAL_OPERATORS = OP_CONJUNCTION, OP_DISJUNCTION
 
-# Maps storage unit string lables with their corresponding
+# Maps storage unit string labels with their corresponding
 # divisors relative to 1 Byte for storage size conversions.
 SIZE_CONVERSION_MAP = {
     "b": 0.125,

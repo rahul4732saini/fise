@@ -117,8 +117,8 @@ class FileIterator:
         self._filemode = filemode
 
     @property
-    def path(self) -> str:
-        return self._path.as_posix()
+    def path(self) -> Path:
+        return self._path
 
     def _iterate(self) -> Generator[tuple[int, str | bytes], None, None]:
         """

@@ -160,3 +160,110 @@ class QueryParser:
             )
 
         return self._parse_delete_query(initials)
+
+
+class QueryHandler:
+    """
+    QueryHandler class implements mechanism for handling
+    and evaluating the user-specified query.
+    """
+
+    __slots__ = "_query", "_operator_map"
+
+    # Maps export types with their corresponding export handler classes.
+    _export_handler_map: dict[str, Type[BaseExportHandler]] = {
+        constants.EXPORT_FILE: FileExportHandler,
+        constants.EXPORT_DBMS: DBMSExportHandler,
+    }
+
+    def __init__(self, query: SearchQuery | DeleteQuery) -> None:
+        """
+        Creates an instance of the QueryHandler class.
+
+        #### Params:
+        - query (SearchQuery | DeleteQuery): Query specifications.
+        """
+
+        self._query = query
+
+        # Maps entity names with their corresponding operator extractor methods.
+        self._operator_map: dict[str, Callable[[], BaseOperator]] = {
+            constants.ENTITY_FILE: self._get_file_operator,
+            constants.ENTITY_DIR: self._get_dir_operator,
+            constants.ENTITY_DATA: self._get_data_operator,
+        }
+
+    def _get_file_operator(self) -> FileQueryOperator:
+        """Returns an instance of the FileQueryOperator class."""
+
+        return FileQueryOperator(
+            self._query.path,
+            self._query.initials.recursive,
+        )
+
+    def _get_data_operator(self) -> DataQueryOperator:
+        """Returns an instance of the DataQueryOperator class."""
+
+        return DataQueryOperator(
+            self._query.path,
+            self._query.initials.recursive,
+            self._query.initials.operation.mode,
+        )
+
+    def _get_dir_operator(self) -> DirectoryQueryOperator:
+        """Returns an instance of the DirectoryQueryOperator class."""
+
+        return DirectoryQueryOperator(
+            self._query.path,
+            self._query.initials.recursive,
+        )
+
+    def _export_data(self, data: pd.DataFrame) -> None:
+        """
+        Exports the specified dataframe to a file or DBMS
+        based on the encapsulated export specifications.
+
+        #### Params:
+        - data (pd.DataFrame): Dataframe comprising the search records.
+        """
+
+        handler_cls = self._export_handler_map[self._query.export.type_]
+        handler = handler_cls(self._query.export, data)
+
+        handler.export()
+
+    def _evaluate_search_query(self) -> pd.DataFrame | None:
+        """Evaluates the encapsulated query for the search operation."""
+
+        condition = ConditionHandler(self._query.conditions)
+
+        entity: str = self._query.initials.operation.entity
+        operator = self._operator_map[entity]()
+
+        data: pd.DataFrame = operator.search(self._query.projections, condition)
+
+        if self._query.export is None:
+            return data
+
+        self._export_data(data)
+
+    def _evaluate_delete_query(self) -> None:
+        """Evaluatse the encapsulated query for the delete operation."""
+
+        condition = ConditionHandler(self._query.conditions)
+
+        entity: str = self._query.initials.operation.entity
+        operator = self._operator_map[entity]()
+
+        return operator.delete(condition, self._query.initials.operation.skip_err)
+
+    def evaluate(self) -> pd.DataFrame | None:
+        """Evaluates the encapsulated query."""
+
+        operation: str = self._query.initials.operation.operation
+
+        return (
+            self._evaluate_search_query()
+            if operation == constants.OPERATION_SEARCH
+            else self._evaluate_delete_query()
+        )

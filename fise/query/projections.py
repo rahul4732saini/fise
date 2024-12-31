@@ -129,4 +129,7 @@ class ProjectionsParser:
         while self._query.seek().lower() != constants.KEYWORD_FROM:
             tokens.append(self._query.pop())
 
+            if not self._query:
+                raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
+
         return self._parse_projections("".join(tokens))

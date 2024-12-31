@@ -126,7 +126,7 @@ class ConditionParser:
         # Raises a parse error if the operator is lexical and there
         # is no whitespace between it and either of the operands.
         if operator in constants.LEXICAL_OPERATORS and not (
-            operands[0].startswith(" ") and operands[1].endswith(" ")
+            operands[0].endswith(" ") and operands[1].startswith(" ")
         ):
             raise QueryParseError(f"{condition!r} is not a valid condition.")
 

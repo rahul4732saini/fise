@@ -384,6 +384,7 @@ class DBMSExportHandler(BaseExportHandler):
 
         else:
             self._data.to_sql(table, conn, if_exists="replace", index=False)
+            conn.close()
 
         finally:
             engine.dispose(close=True)

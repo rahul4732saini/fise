@@ -15,14 +15,12 @@ import time
 
 import pandas as pd
 
+from query import handle_query
 from version import version
+from common import constants
 from notify import Message, Alert
-from query import QueryHandler
 from errors import QueryHandleError
-
-
-EXIT = {"exit", "quit"}
-CLEAR = {r"\c", "clear"}
+from shared import QueryQueue
 
 
 def enable_readline() -> None:
@@ -37,10 +35,7 @@ def enable_readline() -> None:
 
 
 def evaluate_query() -> None:
-    """
-    Inputs and evaluates the user specified query.
-    """
-    global EXIT, CLEAR
+    """Inputs and evaluates the user-specified query."""
 
     query: str = input("FiSE> ")
     start_time: float = time.perf_counter()
@@ -48,27 +43,26 @@ def evaluate_query() -> None:
     if not query:
         return
 
-    elif query.lower() in EXIT:
+    elif query.lower() in constants.CMD_EXIT:
         sys.exit(0)
 
-    elif query.lower() in CLEAR:
+    elif query.lower() in constants.CMD_CLEAR:
         return print("\033c", end="")
 
     # If none of the above conditions are matched, the input
     # is assumed to be a query and evaluated accordingly.
 
-    handler = QueryHandler(query)
-    data: pd.DataFrame | None = handler.handle()
+    query_queue = QueryQueue.from_string(query)
+    result = handle_query(query_queue)
 
-    if data is not None:
-
-        if data.shape[0] > 30:
+    if result is not None:
+        if result.shape[0] > 30:
             Alert(
                 "Displaying a compressed output of the dataset. "
                 "Export the records to get a more detailed view."
             )
 
-        print(data if not data.empty else "Empty Dataset")
+        print(result if not result.empty else "Empty Dataset")
 
     elapsed: float = time.perf_counter() - start_time
     Message(f"Completed in {elapsed:.2f} seconds")

@@ -4,7 +4,7 @@ Main Module
 
 This script serves as the entry point for the FiSE (File Search Engine) 
 application. It provides a command-line interface for users to perform
-search and delete queries.
+search and delete queries on file system entities.
 
 Author: rahul4732saini (github.com/rahul4732saini)
 License: MIT
@@ -27,8 +27,10 @@ CLEAR = {r"\c", "clear"}
 
 def enable_readline() -> None:
     """
-    Enables readline functionality for enhanced input handling in Linux/Mac terminal.
+    Enables readline functionality for enhanced
+    input handling in POSIX-based OS terminals.
     """
+
     import readline
 
     readline.parse_and_bind("tab: complete")
@@ -63,7 +65,7 @@ def evaluate_query() -> None:
         if data.shape[0] > 30:
             Alert(
                 "Displaying a compressed output of the dataset. "
-                "Export the records for a more detailed view."
+                "Export the records to get a more detailed view."
             )
 
         print(data if not data.empty else "Empty Dataset")
@@ -97,13 +99,13 @@ if __name__ == "__main__":
     # Sets an upper limit for max rows to be displayed in the dataframe.
     pd.options.display.max_rows = 30
 
+    print(f"Welcome to FiSE(v{version})")
     print(
-        f"Welcome to FiSE(v{version})",
-        r"Type '\c' or 'clear' to clear the terminal window. Type 'exit' or 'quit' to quit.",
-        sep="\n",
+        r"Type '\c' or 'clear' to clear the terminal"
+        r" window. Type 'exit' or 'quit' to quit."
     )
 
-    # Enables readline feature if the current operating system is not windows.
+    # Enables readline feature if the OS is a POSIX-based.
     if sys.platform != "win32":
         enable_readline()
 

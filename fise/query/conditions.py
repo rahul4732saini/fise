@@ -110,9 +110,7 @@ class ConditionParser:
             constants.OP_LIKE: self._like,
         }
 
-    def _parse_binary_condition(
-        self, condition: str, operator: str
-    ) -> tuple[str, list[str]]:
+    def _parse_binary_condition(self, condition: str, operator: str) -> Condition:
         """
         Parses the specified binary condition based on the specified operator.
 

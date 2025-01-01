@@ -145,7 +145,12 @@ class ConditionParser:
         """
 
         # Extracts the starting and ending indices of the operator.
-        start, end = tools.find_base_string(condition, constants.CONDITION_OPERATORS)
+        indices = tools.find_base_string(condition, constants.CONDITION_OPERATORS)
+
+        if indices is None:
+            raise QueryParseError(f"{condition!r} is not a valid condition.")
+
+        start, end = indices
 
         operator = condition[start:end].lower()
         operands = condition[:start], condition[end:]

@@ -135,6 +135,23 @@ class ConditionParser:
 
         return condition
 
+    def _tokenize_condition(self, condition: str) -> list[str]:
+        """
+        Tokenizes the specified condition and returns a tuple
+        comprising the operator and the associated operands.
+
+        #### Params:
+        - condition (str): String comprising the condition specifications.
+        """
+
+        # Extracts the starting and ending indices of the operator.
+        start, end = tools.find_base_string(condition, constants.CONDITION_OPERATORS)
+
+        operator = condition[start:end].lower()
+        operands = condition[:start], condition[end:]
+
+        return operator, [operand for operand in operands if operand]
+
     def _parse_condition(self, condition: str) -> Condition | ConditionListNode:
         """
         Parses the specified condition specifications.

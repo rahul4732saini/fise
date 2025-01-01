@@ -112,11 +112,12 @@ class ConditionParser:
 
     def _parse_binary_condition(self, operator: str, operands: list[str]) -> Condition:
         """
-        Parses the specified binary condition based on the specified operator.
+        Parses the associated binary query condition
+        based on the specified operator and operands.
 
         #### Params:
-        - condition (str): String comprising the condition specifications.
-        - operator (str): Binary operator present in the specified condition.
+        - operator (str): Binary operator associated with query condition.
+        - operands (list[str]): List comprising the condition operands.
         """
 
         # Raises a parse error if the operator is lexical and there
@@ -172,14 +173,8 @@ class ConditionParser:
             query = QueryQueue.from_string(condition[1:-1])
             return self._parse_conditions(query)
 
-        # Looks up for the operator and parses the condition accordingly.
-        for op in constants.CONDITION_OPERATORS:
-            if op not in condition:
-                continue
-
-            return self._parse_binary_condition(condition, op)
-
-        raise QueryParseError(f"{condition!r} is not a valid query condition.")
+        operator, operands = self._tokenize_condition(condition)
+        return self._parse_binary_condition(operator, operands)
 
     def _parse_conditions(self, query: QueryQueue) -> ConditionListNode:
         """

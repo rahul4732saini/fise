@@ -103,6 +103,45 @@ def tokenize_qualified_clause(
     return label.lower(), args.strip(" ")
 
 
+def find_base_string(source: str, strings: tuple[str]) -> tuple[int, int] | None:
+    """
+    Searches for the specified substrings in the specified source string
+    at the base level and returns the starting and ending indices of the
+    found substring.
+
+    #### Params:
+    - source (str): Source string to search within.
+    - strings (tuple[str]): Tuple of strings to search for.
+    """
+
+    paired_delimiters = {"[": "]", "(": ")", "'": "'", '"': '"'}
+    conflicting = {"'", '"'}
+
+    # Stores opening paired delimiters in the source string during iteration.
+    cur: list[str] = []
+
+    for i in range(len(source)):
+        token = source[i]
+
+        # Avoids recognizing nested conflicting delimiters in the
+        # source string to maintain consistency in the operation.
+        if token in paired_delimiters and (not cur or token not in conflicting):
+            cur.append(token)
+
+        elif cur and token == paired_delimiters.get(cur[-1]):
+            cur.pop()
+
+        elif cur:
+            continue
+
+        # Looks for the specified strings at each index if at the base level.
+        for string in strings:
+            if string != source[i : i + len(string)].lower():
+                continue
+
+            return i, i + len(string)
+
+
 def enumerate_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:
     """
     Enumerates over the files in the specified directory. Files within

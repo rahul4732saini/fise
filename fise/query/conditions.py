@@ -110,7 +110,7 @@ class ConditionParser:
             constants.OP_LIKE: self._like,
         }
 
-    def _parse_binary_condition(self, condition: str, operator: str) -> Condition:
+    def _parse_binary_condition(self, operator: str, operands: list[str]) -> Condition:
         """
         Parses the specified binary condition based on the specified operator.
 
@@ -118,8 +118,6 @@ class ConditionParser:
         - condition (str): String comprising the condition specifications.
         - operator (str): Binary operator present in the specified condition.
         """
-
-        operands: list[str] = condition.split(operator, maxsplit=1)
 
         # Raises a parse error if the operator is lexical and there
         # is no whitespace between it and either of the operands.

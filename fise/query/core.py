@@ -35,7 +35,7 @@ from .operators import (
 )
 
 
-@dataclass
+@dataclass(slots=True, eq=False, frozen=True)
 class SearchQuery:
     """
     SearchQuery class encapsulates the search query specifications.

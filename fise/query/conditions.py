@@ -125,7 +125,7 @@ class ConditionParser:
         if operator in constants.LEXICAL_OPERATORS and not (
             operands[0].endswith(" ") and operands[1].startswith(" ")
         ):
-            raise QueryParseError(f"{condition!r} is not a valid condition.")
+            raise QueryParseError(f"Invalid query syntax.")
 
         operands = [operand.strip(" ") for operand in operands]
 

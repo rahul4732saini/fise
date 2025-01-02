@@ -138,7 +138,7 @@ class FileQueryOperator(FileSystemOperator):
             ctr += success
             skipped += not success
 
-        Message(f"Successfully removed {ctr} files from '{self._path.path}'.")
+        Message(f"Successfully removed {ctr} files from {self._path.path}/")
 
         # Prints the skipped files message only is 'skipped' is a non-zero integer.
         if skipped:
@@ -304,7 +304,7 @@ class DirectoryQueryOperator(FileSystemOperator):
             ctr += success
             skip_err += not success
 
-        Message(f"Successfully removed {ctr} directories from '{self._path.path}'.")
+        Message(f"Successfully removed {ctr} directories from {self._path.path}/")
 
         # Prints the skipped files message only is `skipped` is a non-zero integer.
         if skipped:

@@ -48,6 +48,7 @@ class SearchQuery:
     conditions: ConditionListNode | None
 
 
+@dataclass(slots=True, eq=False, frozen=True)
 class DeleteQuery:
     """
     DeleteQuery class encapsulates the delete query specifications.

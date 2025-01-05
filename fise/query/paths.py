@@ -171,7 +171,7 @@ class QueryPathParser:
 
         is_absolute: bool = False
 
-        if self._query.seek() in constants.PATH_TYPES:
+        if self._query.seek().lower() in constants.PATH_TYPES:
             is_absolute = self._query.pop() == constants.PATH_ABSOLUTE
 
         raw_path: str = self._query.pop()

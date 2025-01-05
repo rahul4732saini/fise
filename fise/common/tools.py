@@ -160,11 +160,15 @@ def enumerate_files(directory: Path, recursive: bool) -> Generator[Path, None, N
             elif recursive and path.is_dir():
                 yield from enumerate_files(path, recursive)
 
+    # Yields from an empty tuple in case of an exception to
+    # not disrupt the proper functioning of the operation.
+
     except PermissionError:
         Alert(f"Permission Error: Skipping directory {directory.as_posix()!r}")
-
-        # Yields from an empty tuple to not disrupt
-        # the proper functioning of the function.
+        yield from ()
+    
+    except FileNotFoundError:
+        Alert(f"Path Not Found: Skipping directory {directory.as_posix()!r}")
         yield from ()
 
 
@@ -193,10 +197,14 @@ def enumerate_directories(
                 yield from enumerate_directories(path, recursive)
 
             yield path
+    
+    # Yields from an empty tuple in case of an exception to
+    # not disrupt the proper functioning of the operation.
 
     except PermissionError:
         Alert(f"Permission Error: Skipping directory {directory.as_posix()!r}")
-
-        # Yields from an empty tuple to not disrupt
-        # the proper functioning of the function.
+        yield from ()
+    
+    except FileNotFoundError:
+        Alert(f"Path Not Found: Skipping directory {directory.as_posix()!r}")
         yield from ()

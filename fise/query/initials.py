@@ -305,6 +305,9 @@ class QueryInitialsParser:
         """Parses the operation specifications in the query."""
 
         operation, args = self._get_operation_specifications()
+
+        # Pops out the type parameter from the arguments dictionary
+        # for determining the operation entity for further parsing. 
         entity: str = args.pop("type", constants.DEFAULT_OPERATION_ENTITY).lower()
 
         if entity not in constants.ENTITIES:

@@ -301,7 +301,10 @@ class DBMSExportHandler(BaseExportHandler):
 
         except OperationalError:
             engine.dispose(close=True)
-            raise OperationalError("Unable to establish a connection with the DBMS!")
+
+            raise OperationalError(
+                "Unable to establish a connection with the specified DBMS!"
+            )
 
         else:
             return table in tables
@@ -378,7 +381,7 @@ class DBMSExportHandler(BaseExportHandler):
 
         except OperationalError:
             raise OperationError(
-                f"Unable to connect to the specified {self._specs.dbms!r} database."
+                "Unable to establish a connection with the specified DBMS!"
             )
 
         else:

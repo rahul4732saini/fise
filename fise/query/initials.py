@@ -135,13 +135,13 @@ class FileSystemOperationParser(BaseOperationParser):
 
     def _parse_skip_err(self, skip_err: str) -> bool:
         """
-        Parses the `skip_err` operation argument
+        Parses the `skip_err` operation parameter
         for file and directory delete queries.
         """
 
         if self._operation != constants.OPERATION_DELETE:
             raise QueryParseError(
-                "'skip_err' argument is only valid for delete operations."
+                "'skip_err' parameter is only valid for delete operations."
             )
 
         skip_err = skip_err.lower()
@@ -202,7 +202,7 @@ class DataOperationParser(BaseOperationParser):
 
     @staticmethod
     def _parse_mode(mode: str) -> str:
-        """Parses the `mode` operation argument for data search queries."""
+        """Parses the `mode` operation parameter for data search queries."""
 
         filemode: str | None = constants.READ_MODES_MAP.get(mode.lower())
 

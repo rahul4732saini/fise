@@ -280,10 +280,12 @@ class QueryInitialsParser:
         args_map: dict[str, str] = {}
 
         # Populates the arguments mapping based on the extracted tokens.
-        pair: list[str]
         for token in tokens:
-
             pair = token.split(" ", maxsplit=1)
+
+            if len(pair) != 2:
+                raise QueryParseError(f"Invalid query syntax!")
+
             args_map[pair[0].lower()] = pair[1].lstrip(" ")
 
         return args_map
@@ -307,7 +309,7 @@ class QueryInitialsParser:
         operation, args = self._get_operation_specifications()
 
         # Pops out the type parameter from the arguments dictionary
-        # for determining the operation entity for further parsing. 
+        # for determining the operation entity for further parsing.
         entity: str = args.pop("type", constants.DEFAULT_OPERATION_ENTITY).lower()
 
         if entity not in constants.ENTITIES:

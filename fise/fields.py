@@ -38,9 +38,7 @@ class Field(BaseField):
 
     @classmethod
     def parse(cls, field: str) -> "Field":
-        """
-        Initializes the `Field` class based on the specified field name.
-        """
+        """Initializes the Field class based on the specified field name."""
         return cls(field)
 
     def evaluate(self, entity: BaseEntity) -> Any:
@@ -62,9 +60,7 @@ class Size(BaseField):
 
     @classmethod
     def parse(cls, unit: str) -> "Size":
-        """
-        Initializes the `Size` class based on the specified size unit.
-        """
+        """Initializes the Size class based on the specified size unit."""
 
         # Assigns "B" -> bytes unit if no unit is not explicitly specified.
         unit = unit or "B"

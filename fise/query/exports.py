@@ -128,12 +128,12 @@ class ExportParser:
         # is the name of the DBMS. Hence, it is directly validated
         # against an array of valid DBMS.
 
-        args = args.lower()
+        dbms = args.lower()
 
-        if args not in constants.DBMS:
-            raise QueryParseError(f"The specified DBMS {args!r} is not supported!")
+        if dbms not in constants.DBMS:
+            raise QueryParseError(f"The specified DBMS {dbms!r} is not supported!")
 
-        return DBMSExportData(args)
+        return DBMSExportData(dbms)
 
     def parse(self) -> BaseExportData:
         """Parses the export specifications defined within the query."""

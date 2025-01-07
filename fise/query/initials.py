@@ -293,7 +293,6 @@ class QueryInitialsParser:
 
         # Extracts the name of the operation and the associated arguments.
         operation, args = tools.tokenize_qualified_clause(self._query.pop())
-        operation = operation.lower()
 
         if operation not in constants.OPERATIONS:
             raise QueryParseError(f"{operation!r} is not a valid operation!")

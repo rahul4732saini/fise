@@ -61,6 +61,8 @@ def parse_field(field: str, entity: str) -> BaseField:
     if name not in constants.FIELDS[entity]:
         raise QueryParseError(f"{field!r} is not a valid field!")
 
+    # Parses the field using a matching class from the
+    # fields map or as a generic field if no match exists.
     if name in _fields_map:
         return _fields_map[name].parse(args)
 

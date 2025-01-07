@@ -2,7 +2,7 @@
 Errors Module
 -------------
 
-This module defined error classes for handling the
+This module defines error classes for handling the
 various exceptional scenarios within the project.
 """
 
@@ -12,7 +12,7 @@ import sys
 class QueryHandleError(Exception):
     """
     This exception is raised when there
-    is an error in handling the query.
+    is an error while handling the query.
     """
 
     _error: str = "QueryHandleError: There is an error in handling the query."
@@ -35,16 +35,16 @@ class QueryHandleError(Exception):
 class QueryParseError(QueryHandleError):
     """
     This exception is raised when there
-    is an error in parsing the query.
+    is an error while parsing the query.
     """
 
-    _error = "QueryParseError: There is an error in parsing the query."
+    _error = "QueryParseError: An error occured while parsing the query."
 
 
 class OperationError(QueryHandleError):
     """
     This exception is raised when there
-    is an error in processing the query.
+    is an error while processing the query.
     """
 
-    _error = "OperationError: There is an error in processing the query."
+    _error = "OperationError: An error occured while processing the query."

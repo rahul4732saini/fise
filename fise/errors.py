@@ -23,7 +23,12 @@ class QueryHandleError(Exception):
         if description:
             description = "\nDescription: " + description
 
-        print(f"\033[31m{self._error}{description}\033[0m", file=sys.stderr)
+        print(
+            f"\033[31m{self._error}{description}\033[0m",
+            flush=True,
+            file=sys.stderr,
+        )
+
         super().__init__()
 
 

@@ -279,6 +279,7 @@ class QueryInitialsParser:
         tokens = tools.tokenize(args, delimiter=",")
         args_map: dict[str, str] = {}
 
+        # Populates the arguments mapping based on the extracted tokens.
         pair: list[str]
         for token in tokens:
 
@@ -290,6 +291,7 @@ class QueryInitialsParser:
     def _get_operation_specifications(self) -> tuple[str, dict[str, str]]:
         """Extracts operation specifications from the query."""
 
+        # Extracts the name of the operation and the associated arguments.
         operation, args = tools.tokenize_qualified_clause(self._query.pop())
         operation = operation.lower()
 

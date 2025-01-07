@@ -217,12 +217,6 @@ class FileExportHandler(BaseExportHandler):
 
     def _to_xlsx(self) -> None:
         """Exports search data to a XLSX file."""
-
-        # Converts 'datetime.datetime' objects into strings in
-        # the dataframe for proper representation in Excel files.
-        for col in self._data.columns[self._data.dtypes == np.dtype("<M8[ns]")]:
-            self._data[col] = self._data[col].astype(str)
-
         self._data.to_excel(self._specs.file, index=False)
 
     def export(self) -> None:
@@ -230,6 +224,11 @@ class FileExportHandler(BaseExportHandler):
         Exports data using a method suitable for the format associated
         with the file defined in the export data specifications.
         """
+
+        # Converts the 'datetime.datetime' objects into strings
+        # for consistent representation across all file formats.
+        for col in self._data.columns[self._data.dtypes == np.dtype("<M8[ns]")]:
+            self._data[col] = self._data[col].astype(str)
 
         # Calls the export method associated with the file format.
         self._method_map[self._specs.file.suffix]()

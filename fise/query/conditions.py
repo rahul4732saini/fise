@@ -272,13 +272,17 @@ class ConditionParser:
 
         op_left, op_right = self._parse_operands(left, right)
 
-        if not isinstance(op_right, Sequence):
-            raise QueryParseError(
-                f"{right!r} is not a valid operand for "
-                f"the {constants.OP_CONTAINS!r} operation."
-            )
+        # Validates whether the right operand is an iterable
+        # query attribute and raises a parse error is not so.
+        if (
+            isinstance(op_right, BaseField) and issubclass(op_right.dtype, Sequence)
+        ) or isinstance(op_right, Sequence):
+            return Condition(constants.OP_CONTAINS, op_left, op_right)
 
-        return Condition(constants.OP_CONTAINS, op_left, op_right)
+        raise QueryParseError(
+            f"{right!r} is not a valid operand for "
+            f"the {constants.OP_CONTAINS!r} operation."
+        )
 
     def _between(self, left: str, right: str) -> Condition:
         """Parses the condition for the between operation."""

@@ -8,6 +8,7 @@ within the various classes and functions defined in the project.
 
 import re
 import sys
+from datetime import datetime
 
 # CLI commands available to the user.
 CMD_EXIT = {"exit", "quit"}
@@ -96,6 +97,23 @@ DIR_FIELDS = (
 
 DATA_FIELDS = "name", "path", "lineno", "dataline", "filetype"
 FILE_FIELDS = DIR_FIELDS + ("size", "filetype")
+
+# Maps field names with their corresponding data types.
+FIELD_TYPES = {
+    "name": str,
+    "path": str,
+    "parent": str,
+    "owner": str,
+    "group": str,
+    "permissions": int,
+    "lineno": int,
+    "dataline": str,
+    "filetype": str,
+    "size": int | float,
+    "access_time": datetime,
+    "access_time": datetime,
+    "access_time": datetime,
+}
 
 # Aliases associated with file, directory and data query fields.
 

@@ -72,7 +72,8 @@ class ConditionListNode:
 
     condition: QueryConditionType
 
-    # Stores the operator immediately adjacent to the condition.
+    # Stores the operator immediately adjacent
+    # on the right side of the query condition.
     operator: str | None = None
     next: Optional["ConditionListNode"] = None
 
@@ -167,9 +168,9 @@ class ConditionParser:
         if not condition:
             raise QueryParseError("Invalid query syntax!")
 
+        # Recursively parses the condition if nested.
         elif constants.NESTED_CONDITION_PATTERN.match(condition):
 
-            # Recursively parses the condition if nested.
             query = QueryQueue.from_string(condition[1:-1])
             return self._parse_conditions(query)
 

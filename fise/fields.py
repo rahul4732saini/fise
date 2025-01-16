@@ -40,6 +40,10 @@ class Field(BaseField):
 
     field: str
 
+    @property
+    def dtype(self) -> Type:
+        return constants.FIELD_TYPES[self.field]
+
     @classmethod
     def parse(cls, field: str) -> "Field":
         """Initializes the Field class based on the specified field name."""
@@ -61,6 +65,10 @@ class Size(BaseField):
     """
 
     divisor: int | float
+
+    @property
+    def dtype(self) -> Type:
+        return constants.FIELD_TYPES["size"]
 
     @classmethod
     def parse(cls, unit: str) -> "Size":

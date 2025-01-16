@@ -6,7 +6,7 @@ This module defines classes and functions
 for storing and handling query fields.
 """
 
-from typing import Any
+from typing import Any, Type
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -18,6 +18,10 @@ from errors import QueryParseError
 @dataclass(slots=True, frozen=True, eq=False)
 class BaseField(ABC):
     """BaseField serves as the base class for all field class."""
+
+    @property
+    @abstractmethod
+    def dtype(self) -> Type: ...
 
     @classmethod
     @abstractmethod

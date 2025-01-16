@@ -135,7 +135,7 @@ class ConditionParser:
 
         return condition
 
-    def _tokenize_condition(self, condition: str) -> list[str]:
+    def _tokenize_condition(self, condition: str) -> tuple[str, list[str]]:
         """
         Tokenizes the specified condition and returns a tuple
         comprising the operator and the associated operands.

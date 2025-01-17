@@ -23,6 +23,9 @@ class BaseField(ABC):
     @abstractmethod
     def dtype(self) -> Type: ...
 
+    @abstractmethod
+    def __str__(self) -> str: ...
+
     @classmethod
     @abstractmethod
     def parse(cls, descriptor: str) -> "BaseField": ...

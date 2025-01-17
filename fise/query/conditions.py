@@ -288,17 +288,19 @@ class ConditionParser:
 
         op_left, op_right = self._parse_operands(left, right)
 
-        # Validates whether the right operand is an iterable
-        # query attribute and raises a parse error is not so.
-        if (
-            isinstance(op_right, BaseField) and issubclass(op_right.dtype, Sequence)
-        ) or isinstance(op_right, Sequence):
-            return Condition(constants.OP_CONTAINS, op_left, op_right)
+        # Raises a parse error if the right operand
+        # is not an iterable query attribute.
+        if not (
+            isinstance(op_right, Sequence)
+            or isinstance(op_right, BaseField)
+            and issubclass(op_right.dtype, Sequence)
+        ):
+            raise QueryParseError(
+                f"{right!r} is not a valid operand for "
+                f"the {constants.OP_CONTAINS!r} operation."
+            )
 
-        raise QueryParseError(
-            f"{right!r} is not a valid operand for "
-            f"the {constants.OP_CONTAINS!r} operation."
-        )
+        return Condition(constants.OP_CONTAINS, op_left, op_right)
 
     def _between(self, left: str, right: str) -> Condition:
         """Parses the condition for the between operation."""
@@ -307,8 +309,7 @@ class ConditionParser:
 
         # Raises an error if the right operand
         # is not an array with a length of 2.
-        if not isinstance(op_right, Sequence) or len(op_right) != 2:
-
+        if not (isinstance(op_right, Sequence) and len(op_right) == 2):
             raise QueryParseError(
                 f"{right!r} is not a valid operand for "
                 f"the {constants.OP_BETWEEN!r} operation."
@@ -322,7 +323,7 @@ class ConditionParser:
         op_left, op_right = self._parse_operands(left, right)
         op_left_dtype = op_left.dtype if isinstance(BaseField) else type(op_left)
 
-        if op_left_dtype != str or isinstance(op_right, str):
+        if not (issubclass(op_left_dtype, str) and isinstance(op_right, str)):
             raise QueryParseError("Invalid condition operands for the 'like' operator.")
 
         return Condition(constants.OP_LIKE, op_left, op_right)

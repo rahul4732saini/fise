@@ -377,8 +377,8 @@ class ConditionHandler:
         - entity (BaseEntity): Entity object for evaluating the query fields.
         """
 
-        # Returns ture if not conditions were specified at
-        # initialization to include all the query records.
+        # Returns ture if no conditions were specified at
+        # initialization, to include all the query records.
         if self._conditions is None:
             return True
 

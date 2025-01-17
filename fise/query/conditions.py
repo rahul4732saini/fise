@@ -320,9 +320,10 @@ class ConditionParser:
         """Parses the condition for the like operation."""
 
         op_left, op_right = self._parse_operands(left, right)
+        op_left_dtype = op_left.dtype if isinstance(BaseField) else type(op_left)
 
-        if not (isinstance(op_left, str | BaseField) and isinstance(op_right, str)):
-            raise QueryParseError("Invalid query conditions syntax.")
+        if op_left_dtype != str or isinstance(op_right, str):
+            raise QueryParseError("Invalid condition operands for the 'like' operator.")
 
         return Condition(constants.OP_LIKE, op_left, op_right)
 

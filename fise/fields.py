@@ -47,6 +47,9 @@ class Field(BaseField):
     def dtype(self) -> Type:
         return constants.FIELD_TYPES[self.field]
 
+    def __str__(self) -> str:
+        return self.field
+
     @classmethod
     def parse(cls, field: str) -> "Field":
         """Initializes the Field class based on the specified field name."""
@@ -72,6 +75,9 @@ class Size(BaseField):
     @property
     def dtype(self) -> Type:
         return constants.FIELD_TYPES["size"]
+
+    def __str__(self) -> str:
+        return "size"
 
     @classmethod
     def parse(cls, unit: str) -> "Size":

@@ -110,9 +110,9 @@ FIELD_TYPES = {
     "dataline": str,
     "filetype": str,
     "size": int | float,
+    "create_time": datetime,
     "access_time": datetime,
-    "access_time": datetime,
-    "access_time": datetime,
+    "modify_time": datetime,
 }
 
 # Aliases associated with file, directory and data query fields.

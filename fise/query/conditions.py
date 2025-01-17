@@ -321,7 +321,9 @@ class ConditionParser:
         """Parses the condition for the like operation."""
 
         op_left, op_right = self._parse_operands(left, right)
-        op_left_dtype = op_left.dtype if isinstance(BaseField) else type(op_left)
+        op_left_dtype = (
+            op_left.dtype if isinstance(op_left, BaseField) else type(op_left)
+        )
 
         if not (issubclass(op_left_dtype, str) and isinstance(op_right, str)):
             raise QueryParseError("Invalid condition operands for the 'like' operator.")

@@ -241,6 +241,22 @@ class ConditionParser:
         """Parses the query condition comprising a relational operator."""
 
         op_left, op_right = self._parse_operands(left, right)
+
+        op_left_dtype, op_right_dtype = (
+            op_left.dtype if isinstance(op_left, BaseField) else type(op_left),
+            op_right.dtype if isinstance(op_right, BaseField) else type(op_right),
+        )
+
+        # This relational operator is only allowed for operands with the
+        # same datatype. The following conditional  statement leads to a
+        # parse error if the operands do not share a single datatype.
+
+        if op_left_dtype != op_right_dtype:
+            raise QueryParseError(
+                f"{op_left} and {op_right} cannot be "
+                "compared with a relational operator."
+            )
+
         return Condition(operator, op_left, op_right)
 
     def _eq(self, left: str, right: str) -> Condition:

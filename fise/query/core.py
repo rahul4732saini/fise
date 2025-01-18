@@ -157,7 +157,7 @@ class QueryParser:
 
         elif export is not None:
             raise QueryParseError(
-                "Export operation is not compatible with the delete operation."
+                "Export operation is not compatible with deletion queries."
             )
 
         return self._parse_delete_query(initials)

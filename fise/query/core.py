@@ -152,7 +152,7 @@ class QueryParser:
         export = self._parse_export_specs()
         initials = self._parse_query_initials()
 
-        if initials.operation.operation == constants.OPERATION_SEARCH:
+        if initials.operation.type_ == constants.OPERATION_SEARCH:
             return self._parse_search_query(export, initials)
 
         elif export is not None:
@@ -261,7 +261,7 @@ class QueryHandler:
     def evaluate(self) -> pd.DataFrame | None:
         """Evaluates the encapsulated query."""
 
-        operation: str = self._query.initials.operation.operation
+        operation: str = self._query.initials.operation.type_
 
         return (
             self._evaluate_search_query()

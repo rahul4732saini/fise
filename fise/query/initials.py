@@ -23,7 +23,7 @@ class BaseOperationData:
     """
 
     entity: ClassVar[str]
-    operation: str
+    type_: str
 
 
 @dataclass(slots=True, frozen=True, eq=False)

@@ -301,7 +301,7 @@ class DirectoryQueryOperator(FileSystemOperator):
             success = self._delete_directory(directory, skip_err)
 
             ctr += success
-            skip_err += not success
+            skipped += not success
 
         Message(f"Successfully removed {ctr} directories from {self._path.path}/")
 

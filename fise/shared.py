@@ -12,6 +12,7 @@ from typing import Iterable, Optional, Generator
 from pathlib import Path
 
 from common import tools
+from errors import QueryParseError
 
 
 @dataclass(slots=True)
@@ -81,9 +82,9 @@ class QueryQueue:
         """Pops out the token at the start of the queue."""
 
         if self._head is None:
-            raise RuntimeError("Query queue is empty.")
+            raise QueryParseError("Query terminated unexpectedly!")
 
-        val: str = self._head.val
+        val: str = self._head.val   
         self._head = self._head.next
 
         if self._head is None:

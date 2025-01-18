@@ -84,7 +84,7 @@ class QueryQueue:
         if self._head is None:
             raise QueryParseError("Query terminated unexpectedly!")
 
-        val: str = self._head.val   
+        val: str = self._head.val
         self._head = self._head.next
 
         if self._head is None:
@@ -94,6 +94,10 @@ class QueryQueue:
 
     def seek(self) -> str:
         """Returns the token at the start of the queue."""
+
+        if self._head is None:
+            raise QueryParseError("Query terminated unexpectedly!")
+
         return self._head.val
 
 

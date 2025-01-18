@@ -126,7 +126,7 @@ class ProjectionsParser:
 
         # Extracts tokens from the query until
         # the `FROM` keyword is encountered.
-        while self._query.seek().lower() != constants.KEYWORD_FROM:
+        while self._query.peek().lower() != constants.KEYWORD_FROM:
             tokens.append(self._query.pop())
 
             if not self._query:

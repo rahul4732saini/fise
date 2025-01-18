@@ -253,7 +253,7 @@ class QueryInitialsParser:
         keyword was explicitly specified in the query.
         """
 
-        token: str = self._query.seek().lower()
+        token: str = self._query.peek().lower()
 
         if (
             token == constants.KEYWORD_RECURSIVE

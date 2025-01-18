@@ -214,7 +214,7 @@ class ConditionParser:
     def parse(self) -> ConditionListNode:
         """Parses the query conditions."""
 
-        if self._query.seek().lower() != constants.KEYWORD_WHERE:
+        if self._query.peek().lower() != constants.KEYWORD_WHERE:
             raise QueryParseError(
                 "Could not find the 'WHERE' keyword in "
                 "its anticipated position in the query."

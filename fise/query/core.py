@@ -83,7 +83,7 @@ class QueryParser:
         or returns None if no export specifications are explicitly defined.
         """
 
-        if self._query.seek().lower() != constants.KEYWORD_EXPORT:
+        if self._query.peek().lower() != constants.KEYWORD_EXPORT:
             return None
 
         parser = ExportParser(self._query)

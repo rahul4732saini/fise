@@ -139,12 +139,12 @@ class FileQueryOperator(FileSystemOperator):
             ctr += success
             skipped += not success
 
-        Message(f"Successfully removed {ctr} files from {self._path.path}/")
+        Message(f"Successfully removed {ctr} files from {self._path.path.as_posix()!r}")
 
-        # Prints the skipped files message only is 'skipped' is a non-zero integer.
+        # Prints the skipped files message only if 'skipped' is a non-zero integer.
         if skipped:
             Alert(
-                f"Skipped {skipped} files from '{self._path.path}'"
+                f"Skipped {skipped} files from {self._path.path.as_posix()!r}"
                 " due to permissions errors."
             )
 
@@ -303,11 +303,13 @@ class DirectoryQueryOperator(FileSystemOperator):
             ctr += success
             skipped += not success
 
-        Message(f"Successfully removed {ctr} directories from {self._path.path}/")
+        Message(
+            f"Successfully removed {ctr} directories from {self._path.path.as_posix()!r}"
+        )
 
-        # Prints the skipped files message only is `skipped` is a non-zero integer.
+        # Prints the skipped files message only if 'skipped' is a non-zero integer.
         if skipped:
             Alert(
-                f"Skipped {skipped} directories from '{self._path.path}'"
+                f"Skipped {skipped} directories from {self._path.path.as_posix()!r}"
                 " due to permission errors."
             )

@@ -92,7 +92,7 @@ class QueryQueue:
 
         return val
 
-    def seek(self) -> str:
+    def peek(self) -> str:
         """Returns the token at the start of the queue."""
 
         if self._head is None:

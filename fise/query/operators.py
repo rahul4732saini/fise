@@ -19,6 +19,7 @@ from shared import FileIterator
 from entities import BaseEntity, File, Directory, DataLine
 from .projections import Projection
 from .paths import FileQueryPath, DataQueryPath, DirectoryQueryPath
+from .conditions import ConditionHandler
 
 
 class BaseOperator(ABC):
@@ -68,7 +69,7 @@ class FileQueryOperator(FileSystemOperator):
         self._recursive = recursive
 
     def search(
-        self, projections: list[Projection], condition: Callable[[File], bool]
+        self, projections: list[Projection], condition: ConditionHandler
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising search records of all the
@@ -112,7 +113,7 @@ class FileQueryOperator(FileSystemOperator):
         else:
             return True
 
-    def delete(self, condition: Callable[[File], bool], skip_err: bool) -> None:
+    def delete(self, condition: ConditionHandler, skip_err: bool) -> None:
         """
         Deletes all the files within the directory
         that satisfy the specified condition.
@@ -189,7 +190,7 @@ class DataQueryOperator(BaseOperator):
                 yield DataLine(iterator.path, data, line_no)
 
     def search(
-        self, projections: list[Projection], condition: Callable[[DataLine], bool]
+        self, projections: list[Projection], condition: ConditionHandler
     ) -> pd.DataFrame:
         """
         Return a pandas DataFrame comprising search records of
@@ -233,9 +234,7 @@ class DirectoryQueryOperator(FileSystemOperator):
         self._recursive = recursive
 
     def search(
-        self,
-        projections: list[Projection],
-        condition: Callable[[Directory], bool],
+        self, projections: list[Projection], condition: ConditionHandler
     ) -> pd.DataFrame:
         """
         Returns a pandas DataFrame comprising search records of all
@@ -278,7 +277,7 @@ class DirectoryQueryOperator(FileSystemOperator):
 
         return True
 
-    def delete(self, condition: Callable[[Directory], bool], skip_err: bool) -> None:
+    def delete(self, condition: ConditionHandler, skip_err: bool) -> None:
         """
         Deletes all the sub-directories within the
         directory that satisfy the specified condition.

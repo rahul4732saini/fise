@@ -247,11 +247,17 @@ class ConditionParser:
             op_right.dtype if isinstance(op_right, BaseField) else type(op_right),
         )
 
-        # This relational operator is only allowed for operands with the
-        # same datatype. The following conditional  statement leads to a
-        # parse error if the operands do not share a single datatype.
+        # Relational operations are only allowed for operands with the same
+        # datatype with an exception of the operator being Equals (==) or
+        # Not Equals (!=) and one of the operand being None. The following
+        # condition statement raises a parse error if none of the specified
+        # conditions are met.
 
-        if op_left_dtype != op_right_dtype:
+        if (
+            operator not in (constants.OP_EQ, constants.OP_NE)
+            and op_left_dtype != op_right_dtype
+            or not (op_left is None or op_right is None)
+        ):
             raise QueryParseError(
                 f"{op_left} and {op_right} cannot be "
                 "compared with a relational operator."

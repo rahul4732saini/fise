@@ -12,7 +12,7 @@ from datetime import datetime
 
 # CLI commands available to the user.
 CMD_EXIT = {"exit", "quit"}
-CMD_CLEAR = {"\c", "clear"}
+CMD_CLEAR = {r"\c", "clear"}
 
 # Keywords reserved for different query operations.
 KEYWORD_EXPORT = "export"

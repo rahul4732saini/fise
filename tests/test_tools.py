@@ -3,140 +3,89 @@ This module comprises test cases for verifying the utility
 functions defined within the common/tools.py module in FiSE.
 """
 
-from typing import Generator
-from pathlib import Path
-
-import pandas as pd
 import pytest
+from fise.common import tools, constants
 
-from fise.common import tools
 
-TEST_DIRECTORY = Path(__file__).parent / "test_directory"
-FILE_DIR_TEST_DIRECTORY = TEST_DIRECTORY / "file_dir"
-TEST_RECORDS_FILE = Path(__file__).parent / "test_tools.hdf"
+# The following block comprises constants used
+# by the test functions for smoother opeation.
 
-PANDAS_READ_METHODS_MAP = {
-    ".csv": "read_csv", ".xlsx": "read_excel",
-    ".html": "read_html", ".json": "read_json",
-}
 
-# Test parameters for individual functions defined below
-
-PARSE_QUERY_TEST_PARAMS = [
-    r"SELECT[TYPE FILE] * FROM . WHERE name LIKE '^.*\.py$' AND ctime BETWEEN ('2020-01-01', '2022-01-01')",
-    "DELETE[TYPE DIR] FROM '/home/user/Projects 2020' WHERE 'temp' IN name",
-    "SELECT[TYPE DATA, MODE BYTES] lineno, dataline FROM ./fise/main.py WHERE '#TODO' IN dataline",
-    "SELECT path, size FROM . WHERE filetype='.docx' AND (ctime < '2022-01-01' OR ctime > '2023-12-31')",
+TOKENIZE_FUNC_ARGS = [
+    ("select * from .", " ", True),
+    ("select[TYPE data, MODE bytes] name, atime FROM .", " ", True),
+    ("name, parent, ctime, atime", ",", False),
+    ("ctime < 2020-01-01 AND ( name = 'hello.py' OR parent = 'dir' )", " ", True),
+]
+TOKENIZE_FUNC_RESULTS = [
+    ("select", "*", "from", "."),
+    ("select[TYPE data, MODE bytes]", "name,", "atime", "FROM", "."),
+    ("name", "parent", "ctime", "atime"),
+    ("ctime", "<", "2020-01-01", "AND", "( name = 'hello.py' OR parent = 'dir' )"),
 ]
 
-GET_FILES_TEST_PARAMS = [
-    (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
-    (2, FILE_DIR_TEST_DIRECTORY, False),
-    (3, FILE_DIR_TEST_DIRECTORY / "project", True),
+TOKENIZE_QCLAUSE_FUNC_ARGS = [
+    ("select[TYPE data, MODE bytes]", False),
+    ("File[./hello.xlsx]", True),
+    ("delete", False),
+    ("SIZE[Kb]", True),
+]
+TOKENIZE_QCLAUSE_FUNC_RESULTS = [
+    ("select", "TYPE data, MODE bytes"),
+    ("file", "./hello.xlsx"),
+    ("delete", ""),
+    ("size", "Kb"),
 ]
 
-GET_DIRS_TEST_PARAMS = [
-    (1, FILE_DIR_TEST_DIRECTORY / "docs", True),
-    (2, FILE_DIR_TEST_DIRECTORY, False),
-    (3, FILE_DIR_TEST_DIRECTORY / "reports", True),
+FIND_BASE_STRING_FUNC_ARGS = [
+    ("name AND (atime OR ctime)", constants.LOGICAL_OPERATORS),
+    (r"name Like '^.*\.py$'", constants.CONDITION_OPERATORS),
+    ("(atime > 2020-01-01) OR name = 'hello.py'", constants.SYMBOLIC_OPERATORS),
+    ("(name like 'main.py') AND atime in [2020-01-01]", constants.LEXICAL_OPERATORS),
 ]
-
-EXPORT_FILE_TEST_PARAMS = ["export.csv", "output.xlsx", "records.html", "save.json"]
-
-# Sample dataframe for testing `tools.export_to_file` function.
-
-SAMPLE_EXPORT_FILE_DATA = pd.DataFrame(
-    {2023: [87, 95, 98, 82, 84], 2024: [91, 93, 98, 87, 81]}
-)
-
-# Test results for individual functions defined below
-
-PARSE_QUERY_TEST_RESULTS = [
-    [
-        "SELECT[TYPE FILE]", "*", "FROM", ".", "WHERE",
-        "name", "LIKE", r"'^.*\.py$'", "AND", "ctime",
-        "BETWEEN", "('2020-01-01', '2022-01-01')",
-    ],
-    [
-        "DELETE[TYPE DIR]", "FROM",
-        "'/home/user/Projects 2020'",
-        "WHERE", "'temp'", "IN", "name",
-    ],
-    [
-        "SELECT[TYPE DATA, MODE BYTES]", "lineno,",
-        "dataline", "FROM", "./fise/main.py", "WHERE",
-        "'#TODO'", "IN", "dataline",
-    ],
-    [
-        "SELECT", "path,", "size", "FROM", ".",
-        "WHERE", "filetype='.docx'", "AND",
-        "(ctime < '2022-01-01' OR ctime > '2023-12-31')",
-    ],
+FIND_BASE_STRING_FUNC_RESULTS = [
+    (5, 8),
+    (5, 9),
+    (29, 30),
+    (32, 34),
 ]
 
 
-def read_test_tools_hdf_file(path: str) -> pd.Series | pd.DataFrame:
-    """
-    Reads test records stored at the specified path within `test_tools.hdf` file.
-    """
-    global TEST_RECORDS_FILE
-
-    with pd.HDFStore(str(TEST_RECORDS_FILE)) as store:
-        return store[path]
-
-
-def verify_paths(paths: Generator[Path, None, None], records: pd.Series) -> None:
-    """
-    Verifies whether all the specified paths are present in the specified records.
-    """
-    global FILE_DIR_TEST_DIRECTORY
-
-    records = records.apply(lambda path_: FILE_DIR_TEST_DIRECTORY / path_).values
-
-    for path in paths:
-        assert path in records
+# The following block comprise functions for testing
+# the functions defined within the `tools` module.
 
 
 @pytest.mark.parametrize(
-    ("query", "result"), zip(PARSE_QUERY_TEST_PARAMS, PARSE_QUERY_TEST_RESULTS)
+    ("args", "result"),
+    zip(TOKENIZE_FUNC_ARGS, TOKENIZE_FUNC_RESULTS),
 )
-def test_parse_query_function(query: str, result: list[str]) -> None:
-    """Tests the `tools.parse_query` function"""
+def test_tokenize_func(args: tuple[str, str, bool], result: tuple[str]) -> None:
+    """Tests the `tools.tokenize` function."""
 
-    parsed_query: list[str] = tools.parse_query(query)
-    assert parsed_query == result
-
-
-@pytest.mark.parametrize(("ctr", "path", "recur"), GET_FILES_TEST_PARAMS)
-def test_get_files_function(ctr: int, path: Path, recur: bool) -> None:
-    """Tests the `tools.get_files` function"""
-
-    verify_paths(
-        tools.get_files(path, recur),
-        read_test_tools_hdf_file(f"/function/get_files/test{ctr}"),
-    )
+    parsed = tuple(tools.tokenize(*args))
+    assert result == parsed
 
 
-@pytest.mark.parametrize(("ctr", "path", "recur"), GET_DIRS_TEST_PARAMS)
-def test_get_directories_function(ctr: int, path: Path, recur: bool) -> None:
-    """Tests the `tools.get_directories` function"""
-
-    verify_paths(
-        tools.get_directories(path, recur),
-        read_test_tools_hdf_file(f"/function/get_directories/test{ctr}"),
-    )
-
-
-@pytest.mark.parametrize("file", EXPORT_FILE_TEST_PARAMS)
-def test_file_export_function(
-    file: str, data: pd.DataFrame = SAMPLE_EXPORT_FILE_DATA
+@pytest.mark.parametrize(
+    ("args", "result"), zip(TOKENIZE_QCLAUSE_FUNC_ARGS, TOKENIZE_QCLAUSE_FUNC_RESULTS)
+)
+def test_tokenize_qualified_clause_func(
+    args: tuple[str, bool], result: tuple[str, str]
 ) -> None:
-    """Tests the `tools.export_to_file` function with different file formats"""
-    global TEST_DIRECTORY
+    """Tests the `tools.tokenize_qualified_clause` function."""
 
-    path: Path = TEST_DIRECTORY / file
+    parsed = tools.tokenize_qualified_clause(*args)
+    assert result == parsed
 
-    tools.export_to_file(data, path)
-    assert path.is_file()
 
-    path.unlink()
+@pytest.mark.parametrize(
+    ("args", "result"),
+    zip(FIND_BASE_STRING_FUNC_ARGS, FIND_BASE_STRING_FUNC_RESULTS),
+)
+def test_find_base_string_func(
+    args: tuple[str, tuple[str]], result: tuple[int, int] | None
+) -> None:
+    """Tests the `tools.find_base_string` function."""
+
+    indices = tools.find_base_string(*args)
+    assert result == indices

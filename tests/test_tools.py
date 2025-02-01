@@ -59,6 +59,16 @@ FIND_BASE_STRING_FUNC_RESULTS = [
 ]
 
 
+def read_hdf(key: str) -> pandas.Series | pandas.DataFrame:
+    """
+    Reads the HDF file associated with the test
+    functions defined for the tools module.
+    """
+
+    global TEST_TOOLS_HDF_FILE
+    return pandas.read_hdf(TEST_TOOLS_HDF_FILE, key)
+
+
 # The following block comprise functions for testing
 # the functions defined within the `tools` module.
 

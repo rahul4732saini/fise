@@ -147,3 +147,19 @@ def test_enum_files_func(args: tuple[str, bool], result: str) -> None:
     expected_files = (BASE_DIR / file for file in expected)
 
     assert list(files) == list(expected_files)
+
+
+@pytest.mark.parametrize(
+    ("args", "result"), zip(ENUM_DIRS_FUNC_ARGS, ENUM_DIRS_FUNC_RESULTS)
+)
+def test_enum_dirs_func(args: tuple[str, bool], result: str) -> None:
+    """Tests the `tools.enumerate_directories` function."""
+
+    dirs = tools.enumerate_directories(Path(args[0]), args[1])
+    expected = read_hdf(result)
+
+    # Extracts the absolute path of the directories to check for equality as the
+    # function is also specified with an absolute path to the target directory.
+    expected_dirs = (BASE_DIR / file for file in expected)
+
+    assert list(dirs) == list(expected_dirs)

@@ -80,3 +80,27 @@ class TestQueryQueue:
             queue.pop()
 
         assert not queue
+
+
+class TestFileIterator:
+    """Tests the `FileIterator` class."""
+
+    @pytest.mark.parametrize(("path", "filemode"), FI_TEST_ARGS)
+    def test_iterator(self, path: Path, filemode: str) -> None:
+        """
+        Tests the iterator and validates the iteration process by
+        matching the lines at the corresponding index in the file.
+        """
+
+        iterator = FileIterator(Path(path), filemode)
+        ctr: int = 0
+        lines: list[str] = []
+
+        with open(path, filemode) as file:
+            lines = file.readlines()
+
+        for count, line in iterator:
+            ctr += 1
+
+            assert lines[ctr - 1] == line
+            assert ctr == count

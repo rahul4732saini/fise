@@ -1,5 +1,5 @@
 """
-This module comprises test cases for verifying the utility
+This module comprises test functions for verifying the utility
 functions defined within the common/tools.py module in FiSE.
 """
 

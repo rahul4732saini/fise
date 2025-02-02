@@ -69,6 +69,17 @@ ENUM_FILES_FUNC_RESULTS = [
     "/enum_files/t3",
 ]
 
+ENUM_DIRS_FUNC_ARGS = [
+    (TEST_DIR, True),
+    (TEST_DIR / "reports", False),
+    (TEST_DIR / "docs", True),
+]
+ENUM_DIRS_FUNC_RESULTS = [
+    "/enum_dirs/t1",
+    "/enum_dirs/t2",
+    "/enum_dirs/t3",
+]
+
 
 def read_hdf(key: str) -> pandas.Series | pandas.DataFrame:
     """

@@ -3,8 +3,13 @@ This module comprises test functions for verifying the
 classes defined within the shared.py module in FiSE.
 """
 
+from pathlib import Path
 import pytest
-from fise.shared import QueryQueue
+from fise.shared import QueryQueue, FileIterator
+
+
+BASE_DIR = Path(__file__).parent
+TEST_DATA_DIR = BASE_DIR / "test_directory/data/"
 
 
 # The following block comprises constants
@@ -19,6 +24,12 @@ QUERY_QUEUE_ARGS = [
 
 QQ_OBJ_INIT_FROM_STR_ARGS = [" ".join(source) for source in QUERY_QUEUE_ARGS]
 QQ_OBJ_INIT_FROM_STR_RESULTS = QUERY_QUEUE_ARGS
+
+FI_TEST_ARGS = [
+    (TEST_DATA_DIR / "complaints.txt", "r"),
+    (TEST_DATA_DIR / "reports/report-2020.xlsx", "rb"),
+    (TEST_DATA_DIR / "todo.txt", "r"),
+]
 
 
 # The following block comprise classes for testing

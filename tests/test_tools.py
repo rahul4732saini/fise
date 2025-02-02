@@ -58,6 +58,17 @@ FIND_BASE_STRING_FUNC_RESULTS = [
     (32, 34),
 ]
 
+ENUM_FILES_FUNC_ARGS = [
+    (TEST_DIR, False),
+    (TEST_DIR / "project", False),
+    (TEST_DIR / "docs", True),
+]
+ENUM_FILES_FUNC_RESULTS = [
+    "/enum_files/t1",
+    "/enum_files/t2",
+    "/enum_files/t3",
+]
+
 
 def read_hdf(key: str) -> pandas.Series | pandas.DataFrame:
     """

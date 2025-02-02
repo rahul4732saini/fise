@@ -254,9 +254,9 @@ class ConditionParser:
         # conditions are met.
 
         if (
-            operator not in (constants.OP_EQ, constants.OP_NE)
-            and op_left_dtype != op_right_dtype
-            or not (op_left is None or op_right is None)
+            op_left_dtype != op_right_dtype
+            and operator in (constants.OP_EQ, constants.OP_NE)
+            and not (op_left is None or op_right is None)
         ):
             raise QueryParseError(
                 f"{op_left} and {op_right} cannot be "

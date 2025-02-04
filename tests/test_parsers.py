@@ -5,7 +5,11 @@ functions defined within the `parsers.py` file in FiSE.
 
 from datetime import date, datetime
 import pytest
+
 from fise import parsers
+from fise.parsers import QueryAttribute
+from fise.common import constants
+from fise.fields import Field, Size
 
 
 # The following block comprises constants
@@ -23,6 +27,18 @@ PARSE_DATETIME_FUNC_RESULTS = [
     datetime(2001, 6, 30, 23, 59, 59),
 ]
 
+PARSE_GENERIC_FIELD_FUNC_ARGS = [
+    ("parent", constants.ENTITY_DIR),
+    ("dataline", constants.ENTITY_DATA),
+    ("ctime", constants.ENTITY_FILE),
+    ("type", constants.ENTITY_DATA),
+]
+PARSE_GENERIC_FIELD_FUNC_RESULTS = [
+    "parent",
+    "dataline",
+    "create_time",
+    "filetype",
+]
 
 # The following block comprise classes for testing
 # the classes defined within the `shared` module.
@@ -37,3 +53,14 @@ def test_parse_datetime_func(source: str, result: date | datetime) -> None:
 
     parsed: date | datetime = parsers.parse_datetime(source)
     assert result == parsed
+
+
+@pytest.mark.parametrize(
+    ("args", "result"),
+    zip(PARSE_GENERIC_FIELD_FUNC_ARGS, PARSE_GENERIC_FIELD_FUNC_RESULTS),
+)
+def test_parse_generic_field_func(args: tuple[str, str], result: str) -> None:
+    """Tests the `parsers.parse_field` function with generic fields."""
+
+    parsed: Field = parsers.parse_field(*args)
+    assert result == parsed.field

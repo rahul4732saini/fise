@@ -110,7 +110,7 @@ ENUM_DIRS_FUNC_RESULTS = [
 
 def read_hdf(key: str) -> pandas.Series | pandas.DataFrame:
     """
-    Reads the HDF file associated with the test
+    Reads the HDF5 file associated with the test
     functions defined for the tools module.
     """
 
@@ -134,7 +134,8 @@ def test_tokenize_func(args: tuple[str, str, bool], result: tuple[str]) -> None:
 
 
 @pytest.mark.parametrize(
-    ("args", "result"), zip(TOKENIZE_QCLAUSE_FUNC_ARGS, TOKENIZE_QCLAUSE_FUNC_RESULTS)
+    ("args", "result"),
+    zip(TOKENIZE_QCLAUSE_FUNC_ARGS, TOKENIZE_QCLAUSE_FUNC_RESULTS),
 )
 def test_tokenize_qualified_clause_func(
     args: tuple[str, bool], result: tuple[str, str]
@@ -159,7 +160,8 @@ def test_find_base_string_func(
 
 
 @pytest.mark.parametrize(
-    ("args", "result"), zip(ENUM_FILES_FUNC_ARGS, ENUM_FILES_FUNC_RESULTS)
+    ("args", "result"),
+    zip(ENUM_FILES_FUNC_ARGS, ENUM_FILES_FUNC_RESULTS),
 )
 def test_enum_files_func(args: tuple[str, bool], result: str) -> None:
     """Tests the `tools.enumerate_files` function."""
@@ -175,7 +177,8 @@ def test_enum_files_func(args: tuple[str, bool], result: str) -> None:
 
 
 @pytest.mark.parametrize(
-    ("args", "result"), zip(ENUM_DIRS_FUNC_ARGS, ENUM_DIRS_FUNC_RESULTS)
+    ("args", "result"),
+    zip(ENUM_DIRS_FUNC_ARGS, ENUM_DIRS_FUNC_RESULTS),
 )
 def test_enum_dirs_func(args: tuple[str, bool], result: str) -> None:
     """Tests the `tools.enumerate_directories` function."""

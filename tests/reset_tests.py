@@ -2,9 +2,9 @@
 Reset Tests Module
 ------------------
 
-This module provides utility functions to reset the test directories
-by regenerating them based on the file and directory listings stored
-in the `test_directory.hdf` file.
+This module defines utility functions to reset the test directories
+by regenerating the files and sub-directories present within them based
+on the records of the same stored in the `test_directory.hdf` file.
 """
 
 import shutil
@@ -23,8 +23,9 @@ def reset_file_dir_test_directory(
     """
     Resets the `file_dir` test directory.
 
-    Deletes the existing `file_dir` test directory and recreates it based
-    on the file and directory listings stored in the specified HDF5 file.
+    Regenerates non-existing files and sub-directories present in the
+    `file_dir` test directory based on the records of the same stored
+    in the specified HDF5 file.
     """
 
     if directory.exists():

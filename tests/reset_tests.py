@@ -26,19 +26,28 @@ def reset_file_dir_test_dir(directory: Path, records: Path):
     in the specified HDF5 file.
     """
 
-    if directory.exists():
-        shutil.rmtree(directory)
+    if not directory.exists():
+        directory.mkdir()
 
-    # Extracts and stores the corresponding listings for regeneration.
-    with pd.HDFStore(str(listings)) as store:
-        file_listings: pd.Series[str] = store["/file_dir/files"]
-        dir_listings: pd.Series[str] = store["/file_dir/dirs"]
+    # Extracts and stores the corresponding records for regeneration.
+    with pd.HDFStore(records.as_posix()) as store:
 
-    for direc in dir_listings:
-        (directory / direc).mkdir()
+        file_records: pd.Series[str] = store["/file_dir/files"]
+        dir_records: pd.Series[str] = store["/file_dir/dirs"]
 
-    for file in file_listings:
-        (directory / file).touch()
+    # Regenerates the non-existing sub-directories.
+    for direc in dir_records:
+        path = directory / direc
+
+        if not path.exists():
+            path.mkdir()
+
+    # Regenerates the non-existing files.
+    for file in file_records:
+        path = directory / file
+
+        if not path.exists():
+            path.touch()
 
 
 if __name__ == "__main__":

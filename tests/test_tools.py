@@ -53,12 +53,14 @@ FIND_BASE_STRING_FUNC_ARGS = [
     (r"name Like '^.*\.py$'", constants.CONDITION_OPERATORS),
     ("(atime > 2020-01-01) OR name = 'hello.py'", constants.SYMBOLIC_OPERATORS),
     ("(name like 'main.py') AND atime in [2020-01-01]", constants.LEXICAL_OPERATORS),
+    ("(ctime = atime and atime = mtime)", constants.CONDITION_OPERATORS),
 ]
 FIND_BASE_STRING_FUNC_RESULTS = [
     (5, 8),
     (5, 9),
     (29, 30),
     (32, 34),
+    None,
 ]
 
 ENUM_FILES_FUNC_ARGS = [

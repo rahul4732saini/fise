@@ -99,7 +99,7 @@ def test_parse_datetime_func(source: str, result: date | datetime) -> None:
     zip(PARSE_GENERIC_FIELD_FUNC_ARGS, PARSE_GENERIC_FIELD_FUNC_RESULTS),
 )
 def test_parse_generic_field_func(args: tuple[str, str], result: str) -> None:
-    """Tests the `parsers.parse_field` function with generic fields."""
+    """Tests the `parsers.parse_field` function with generic query fields."""
 
     parsed: Field = parsers.parse_field(*args)
     assert result == parsed.field
@@ -110,7 +110,7 @@ def test_parse_generic_field_func(args: tuple[str, str], result: str) -> None:
     zip(PARSE_SIZE_FIELD_FUNC_ARGS, PARSE_SIZE_FIELD_FUNC_RESULTS),
 )
 def test_parse_size_field_func(source: str, result: str) -> None:
-    """Tests the `parsers.parse_field` function with size fields."""
+    """Tests the `parsers.parse_field` function with size query fields."""
 
     parsed: Size = parsers.parse_field(source, constants.ENTITY_FILE)
     assert result == parsed.divisor

@@ -11,11 +11,13 @@ from pathlib import Path
 import pandas as pd
 
 
+BASE_DIR = Path(__file__).parent
 
-def reset_file_dir_test_directory(
-    directory: Path = FILE_DIR_TEST_DIRECTORY,
-    listings: Path = FILE_DIR_TEST_DIRECTORY_LISTINGS_FILE,
-):
+FILE_DIR_TEST_DIR = BASE_DIR / "test_directory/file_dir"
+FILE_DIR_TEST_DIR_RECORDS = BASE_DIR / "test_directory.hdf"
+
+
+def reset_file_dir_test_dir(directory: Path, records: Path):
     """
     Resets the `file_dir` test directory.
 

@@ -1,6 +1,9 @@
 """
-This module comprises test functions for verifying the
-classes defined within the shared.py module in FiSE.
+Test Shared Module
+------------------
+
+This module defines functions for testing the classes
+defined within the shared.py module in FiSE.
 """
 
 from pathlib import Path

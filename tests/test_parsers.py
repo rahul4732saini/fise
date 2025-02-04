@@ -51,6 +51,21 @@ PARSE_SIZE_FIELD_FUNC_RESULTS = [
     constants.SIZE_CONVERSION_MAP["Tib"],
 ]
 
+PARSE_ATTRIBUTE_FUNC_ARGS = [
+    "1",
+    "'hello'",
+    "5.44",
+    "2022-01-01 02:02:02",
+    "[1, 'select', none, 2021-01-02]",
+]
+PARSE_ATTRIBUTE_FUNC_RESULTS = [
+    1,
+    "hello",
+    5.44,
+    datetime(2022, 1, 1, 2, 2, 2),
+    [1, "select", None, datetime(2021, 1, 2)],
+]
+
 
 # The following block comprise classes for testing
 # the classes defined within the `shared` module.
@@ -87,3 +102,14 @@ def test_parse_size_field_func(source: str, result: str) -> None:
 
     parsed: Size = parsers.parse_field(source, constants.ENTITY_FILE)
     assert result == parsed.divisor
+
+
+@pytest.mark.parametrize(
+    ("source", "result"),
+    zip(PARSE_ATTRIBUTE_FUNC_ARGS, PARSE_ATTRIBUTE_FUNC_RESULTS),
+)
+def test_parse_attrbiute_func(source: str, result: str) -> None:
+    """Tests the `parsers.parse_attribute` function."""
+
+    parsed: QueryAttribute = parsers.parse_attribute(source)
+    assert result == parsed

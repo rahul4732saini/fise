@@ -40,6 +40,18 @@ PARSE_GENERIC_FIELD_FUNC_RESULTS = [
     "filetype",
 ]
 
+PARSE_SIZE_FIELD_FUNC_ARGS = [
+    "size[KB]",
+    "size",
+    "size[Tib]",
+]
+PARSE_SIZE_FIELD_FUNC_RESULTS = [
+    constants.SIZE_CONVERSION_MAP["KB"],
+    constants.SIZE_CONVERSION_MAP["B"],
+    constants.SIZE_CONVERSION_MAP["Tib"],
+]
+
+
 # The following block comprise classes for testing
 # the classes defined within the `shared` module.
 
@@ -64,3 +76,14 @@ def test_parse_generic_field_func(args: tuple[str, str], result: str) -> None:
 
     parsed: Field = parsers.parse_field(*args)
     assert result == parsed.field
+
+
+@pytest.mark.parametrize(
+    ("source", "result"),
+    zip(PARSE_SIZE_FIELD_FUNC_ARGS, PARSE_SIZE_FIELD_FUNC_RESULTS),
+)
+def test_parse_size_field_func(source: str, result: str) -> None:
+    """Tests the `parsers.parse_field` function with size fields."""
+
+    parsed: Size = parsers.parse_field(source, constants.ENTITY_FILE)
+    assert result == parsed.divisor

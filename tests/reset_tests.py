@@ -7,13 +7,9 @@ by regenerating the files and sub-directories present within them based
 on the records of the same stored in the `test_directory.hdf` file.
 """
 
-import shutil
 from pathlib import Path
-
 import pandas as pd
 
-FILE_DIR_TEST_DIRECTORY = Path(__file__).parent / "test_directory" / "file_dir"
-FILE_DIR_TEST_DIRECTORY_LISTINGS_FILE = Path(__file__).parent / "test_directory.hdf"
 
 
 def reset_file_dir_test_directory(

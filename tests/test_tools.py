@@ -86,6 +86,10 @@ ENUM_DIRS_FUNC_RESULTS = [
 ]
 
 
+# The following block comprises utility functions
+# for assisting the test functions defined below.
+
+
 def read_hdf(key: str) -> pandas.Series | pandas.DataFrame:
     """
     Reads the HDF file associated with the test

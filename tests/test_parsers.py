@@ -66,6 +66,18 @@ PARSE_ATTRIBUTE_FUNC_RESULTS = [
     [1, "select", None, datetime(2021, 1, 2)],
 ]
 
+PARSE_FIELD_ATTRIBUTE_FUNC_ARGS = [
+    ("ctime", constants.ENTITY_DIR),
+    ("filepath", constants.ENTITY_FILE),
+    ("type", constants.ENTITY_DATA),
+    ("filename", constants.ENTITY_FILE),
+]
+PARSE_FIELD_ATTRIBUTE_FUNC_RESULTS = [
+    "create_time",
+    "path",
+    "filetype",
+    "name",
+]
 
 # The following block comprise classes for testing
 # the classes defined within the `shared` module.
@@ -113,3 +125,14 @@ def test_parse_attrbiute_func(source: str, result: str) -> None:
 
     parsed: QueryAttribute = parsers.parse_attribute(source)
     assert result == parsed
+
+
+@pytest.mark.parametrize(
+    ("args", "result"),
+    zip(PARSE_FIELD_ATTRIBUTE_FUNC_ARGS, PARSE_FIELD_ATTRIBUTE_FUNC_RESULTS),
+)
+def test_parse_field_attrbiute_func(args: tuple[str, str], result: str) -> None:
+    """Tests the `parsers.parse_attribute` function with query fields."""
+
+    parsed: Field = parsers.parse_attribute(*args)
+    assert result == parsed.field

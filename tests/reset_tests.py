@@ -12,9 +12,10 @@ import pandas as pd
 
 
 BASE_DIR = Path(__file__).parent
+HDF_DIR = BASE_DIR / "hdf"
 
 FILE_DIR_TEST_DIR = BASE_DIR / "test_directory/file_dir"
-FILE_DIR_TEST_DIR_RECORDS = BASE_DIR / "test_directory.hdf"
+FILE_DIR_TEST_DIR_RECORDS = HDF_DIR / "test_directory.hdf"
 
 
 def reset_file_dir_test_dir(directory: Path, records: Path):

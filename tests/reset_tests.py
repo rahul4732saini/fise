@@ -5,6 +5,16 @@ Reset Tests Module
 This module defines utility functions to reset the test directories
 by regenerating the files and sub-directories present within them based
 on the records of the same stored in the `test_directory.hdf` file.
+
+NOTE:
+This module is dependent upon a HDF5 file with the same name located in
+the hdf/ directory comprising records of the files and directories present
+with the test directory to regenerate them whenever required and stores
+the following at the below specified paths:
+
+
+- /file_dir/files: Stores records of file present within the `file_dir` directory.
+- /file_dir/dirs: Stores records of directories present within the `file_dir` directory.
 """
 
 from pathlib import Path

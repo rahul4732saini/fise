@@ -51,4 +51,7 @@ def reset_file_dir_test_dir(directory: Path, records: Path):
 
 
 if __name__ == "__main__":
-    reset_file_dir_test_directory()
+
+    # Resets the `file_dir` test directory.
+    reset_file_dir_test_dir(FILE_DIR_TEST_DIR, FILE_DIR_TEST_DIR_RECORDS)
+    print("Reset Successful!")

@@ -12,9 +12,10 @@ from fise.common import tools, constants
 
 
 BASE_DIR = Path(__file__).parent
+HDF_DIR = BASE_DIR / "hdf"
 
 TEST_DIR = BASE_DIR / "test_directory/file_dir/"
-TEST_TOOLS_HDF_FILE = BASE_DIR / "test_tools.hdf"
+TEST_TOOLS_HDF_FILE = HDF_DIR / "test_tools.hdf"
 
 
 # The following block comprises constants used

@@ -1,5 +1,8 @@
 """
-This module comprises functions for testing the parser
+Test Parsers Module
+-------------------
+
+This module defines functions for testing the parser
 functions defined within the `parsers.py` file in FiSE.
 """
 

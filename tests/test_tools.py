@@ -141,7 +141,7 @@ def test_enum_files_func(args: tuple[str, bool], result: str) -> None:
     """Tests the `tools.enumerate_files` function."""
 
     files = tools.enumerate_files(Path(args[0]), args[1])
-    expected = read_hdf(result)
+    expected: pandas.Series = read_hdf(result)
 
     # Extracts the absolute path of the files to check for equality as the
     # function is also specified with an absolute path to the target directory.
@@ -157,7 +157,7 @@ def test_enum_dirs_func(args: tuple[str, bool], result: str) -> None:
     """Tests the `tools.enumerate_directories` function."""
 
     dirs = tools.enumerate_directories(Path(args[0]), args[1])
-    expected = read_hdf(result)
+    expected: pandas.Series = read_hdf(result)
 
     # Extracts the absolute path of the directories to check for equality as the
     # function is also specified with an absolute path to the target directory.

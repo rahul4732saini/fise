@@ -1,6 +1,24 @@
 """
-This module comprises test functions for verifying the utility
-functions defined within the common/tools.py module in FiSE.
+Test Tools Module
+-----------------
+
+This module defines functions for testing the utility functions defined
+within the common/tools.py module in FiSE.
+
+NOTE:
+This module is dependent upon a HDF5 file with the same name located in
+the hdf/ directory comprising file and directory records for testing the
+`tools.enumerate_files` and `tools.enumerate_directories` function and
+stores the following at the below specified paths:
+
+- /enum_files/t<x>: Stores file records for the
+`tools.enumerate_files` function.
+
+- /enum_directories/t<x>: Stores directory records for the
+`tools.enumerate_directories` function.
+
+where `<x>` denotes the 1-indexed positon of the test case in the associated
+constant comprising the results for testing the function below in the module.
 """
 
 from pathlib import Path

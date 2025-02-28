@@ -20,7 +20,7 @@ from fise.entities import File, Directory, BaseEntity
 
 
 TEST_DIR = Path(__file__).parents[1] / "test_directory"
-FILE_DIR_TEST_DIR = TEST_DIR / "file_dir"
+FD_TEST_DIR = TEST_DIR / "file_dir"
 
 PROJECTION_TEST_ARGS = [
     ("size", Size.parse("B")),
@@ -30,10 +30,10 @@ PROJECTION_TEST_ARGS = [
 ]
 
 PROJECTION_TEST_ENTITIES = [
-    File(FILE_DIR_TEST_DIR / "TODO"),
-    Directory(FILE_DIR_TEST_DIR),
-    File(FILE_DIR_TEST_DIR / "README.md"),
-    Directory(FILE_DIR_TEST_DIR / "media"),
+    File(FD_TEST_DIR / "TODO"),
+    Directory(FD_TEST_DIR),
+    File(FD_TEST_DIR / "README.md"),
+    Directory(FD_TEST_DIR / "media"),
 ]
 
 

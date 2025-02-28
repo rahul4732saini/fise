@@ -239,7 +239,7 @@ class QueryInitialsParser:
 
     def __init__(self, query: QueryQueue) -> None:
         """
-        Creates an instance of the InitialsParser class.
+        Creates an instance of the QueryInitialsParser class.
 
         #### Params:
         - query (QueryQueue): `QueryQueue` object comprising the query.

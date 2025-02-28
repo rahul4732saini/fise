@@ -40,6 +40,8 @@ GENERIC_FIELD_TEST_RESULTS = [
     getattr(entity, field) for field, entity in GENERIC_FIELD_TEST_ARGS
 ]
 
+# Stores the file path instead of the entity object to avoid
+# redundancy as the size field is limited to the file entity.
 SIZE_FIELD_TEST_ARGS = [
     ("B", DATA_TEST_DIR / "todo.txt"),
     ("Gb", DATA_TEST_DIR / "reports/report-2020.xlsx"),
@@ -48,7 +50,6 @@ SIZE_FIELD_TEST_ARGS = [
     ("TiB", DATA_TEST_DIR / "reports/report-2024.xlsx"),
     ("Mib", DATA_TEST_DIR / "roadmap.txt"),
 ]
-
 
 SIZE_FIELD_TEST_RESULTS = [
     round(path.stat().st_size / constants.SIZE_CONVERSION_MAP[unit], 5)

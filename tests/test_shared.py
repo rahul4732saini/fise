@@ -28,6 +28,7 @@ QUERY_QUEUE_ARGS = [
 QQ_OBJ_INIT_FROM_STR_ARGS = [" ".join(source) for source in QUERY_QUEUE_ARGS]
 QQ_OBJ_INIT_FROM_STR_RESULTS = QUERY_QUEUE_ARGS
 
+# Test arguments for initializing the FileIterator class.
 FI_TEST_ARGS = [
     (TEST_DATA_DIR / "complaints.txt", "r"),
     (TEST_DATA_DIR / "reports/report-2020.xlsx", "rb"),
@@ -97,7 +98,8 @@ class TestFileIterator:
 
         iterator = FileIterator(Path(path), filemode)
         ctr: int = 0
-        lines: list[str] = []
+
+        lines: list[str]
 
         with open(path, filemode) as file:
             lines = file.readlines()

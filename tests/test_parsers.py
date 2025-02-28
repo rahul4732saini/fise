@@ -6,7 +6,7 @@ This module defines functions for testing the parser
 functions defined within the `parsers.py` file in FiSE.
 """
 
-from datetime import date, datetime
+from datetime import datetime
 import pytest
 
 from fise import parsers

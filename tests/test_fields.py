@@ -16,7 +16,10 @@ from fise.fields import Field
 
 
 BASE_DIR = Path(__file__).parent
-TEST_DIR = BASE_DIR / "test_directory/file_dir"
+TEST_DIR = BASE_DIR / "test_directory"
+
+DATA_TEST_DIR = TEST_DIR / "data"
+FD_TEST_DIR = TEST_DIR / "file_dir"
 
 
 # The following block comprises constants used by the test functions as
@@ -24,12 +27,12 @@ TEST_DIR = BASE_DIR / "test_directory/file_dir"
 
 
 GENERIC_FIELD_TEST_ARGS = [
-    ("create_time", File(TEST_DIR / "TODO")),
-    ("name", Directory(TEST_DIR)),
-    ("parent", File(TEST_DIR / "media/galaxy.mp3")),
-    ("path", DataLine(TEST_DIR / "project/LICENSE", "", 0)),
-    ("access_time", Directory(TEST_DIR / "media")),
-    ("dataline", DataLine(TEST_DIR / "README.md", "", 0)),
+    ("create_time", File(FD_TEST_DIR / "TODO")),
+    ("name", Directory(FD_TEST_DIR)),
+    ("parent", File(FD_TEST_DIR / "media/galaxy.mp3")),
+    ("path", DataLine(FD_TEST_DIR / "project/LICENSE", "", 0)),
+    ("access_time", Directory(FD_TEST_DIR / "media")),
+    ("dataline", DataLine(FD_TEST_DIR / "README.md", "", 0)),
 ]
 
 GENERIC_FIELD_TEST_RESULTS = [

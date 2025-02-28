@@ -2,9 +2,9 @@
 Test Projections Module
 -----------------------
 
-This module defines functions for testing the classes
-defined within the `query/projections.py` for parsing
-and handling search query projections. 
+This module defines functions for testing the classes defined
+within the `query/projections.py` module for parsing and handling
+search query projections. 
 """
 
 from pathlib import Path
@@ -15,8 +15,8 @@ from fise.fields import BaseField, Field, Size
 from fise.entities import File, Directory, BaseEntity
 
 
-# The following block comprises constants
-# required by the test functions for operation.
+# The following block comprises constants used by the
+# functions for testing the associated functionalities.
 
 
 TEST_DIR = Path(__file__).parents[1] / "test_directory"
@@ -49,7 +49,11 @@ class TestProjection:
         PROJECTION_TEST_ARGS,
     )
     def test_obj_init(self, name: str, field: BaseField) -> None:
-        """"""
+        """
+        Tests the object initialization and verifies the string
+        representation of the class ensuring proper display of the
+        projection names during runtime.
+        """
 
         projection = Projection(name, field)
         assert str(projection) == name
@@ -61,7 +65,11 @@ class TestProjection:
     def test_evaluate_method(
         self, args: tuple[str, BaseField], entity: BaseEntity
     ) -> None:
-        """"""
+        """
+        Tests the `evaluate` method for evaluating the projection and
+        verifies the result by equilating it with the result obtained
+        by evaluating the field itself.
+        """
 
         name, field = args
 

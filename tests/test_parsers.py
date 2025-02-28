@@ -123,7 +123,7 @@ def test_parse_size_field_func(source: str, result: str) -> None:
     ("source", "result"),
     zip(PARSE_ATTRIBUTE_FUNC_ARGS, PARSE_ATTRIBUTE_FUNC_RESULTS),
 )
-def test_parse_attrbiute_func(source: str, result: str) -> None:
+def test_parse_attribute_func(source: str, result: str) -> None:
     """Tests the `parsers.parse_attribute` function."""
 
     parsed: QueryAttribute = parsers.parse_attribute(source)
@@ -134,7 +134,7 @@ def test_parse_attrbiute_func(source: str, result: str) -> None:
     ("args", "result"),
     zip(PARSE_FIELD_ATTRIBUTE_FUNC_ARGS, PARSE_FIELD_ATTRIBUTE_FUNC_RESULTS),
 )
-def test_parse_field_attrbiute_func(args: tuple[str, str], result: str) -> None:
+def test_parse_field_attribute_func(args: tuple[str, str], result: str) -> None:
     """Tests the `parsers.parse_attribute` function with query fields."""
 
     parsed: Field = parsers.parse_attribute(*args)

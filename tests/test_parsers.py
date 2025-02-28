@@ -90,10 +90,10 @@ PARSE_FIELD_ATTRIBUTE_FUNC_RESULTS = [
     ("source", "result"),
     zip(PARSE_DATETIME_FUNC_ARGS, PARSE_DATETIME_FUNC_RESULTS),
 )
-def test_parse_datetime_func(source: str, result: date | datetime) -> None:
+def test_parse_datetime_func(source: str, result: datetime) -> None:
     """Tests the `parsers.parse_datetime` function."""
 
-    parsed: date | datetime = parsers.parse_datetime(source)
+    parsed: datetime = parsers.parse_datetime(source)
     assert result == parsed
 
 

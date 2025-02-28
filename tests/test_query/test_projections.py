@@ -10,8 +10,10 @@ search query projections.
 from pathlib import Path
 import pytest
 
-from fise.query.projections import Projection
+from fise.common import constants
+from fise.shared import QueryQueue
 from fise.fields import BaseField, Field, Size
+from fise.query.projections import Projection, ProjectionsParser
 from fise.entities import File, Directory, BaseEntity
 
 
@@ -34,6 +36,13 @@ PROJECTION_TEST_ENTITIES = [
     Directory(FD_TEST_DIR),
     File(FD_TEST_DIR / "README.md"),
     Directory(FD_TEST_DIR / "media"),
+]
+
+PROJ_PARSER_TEST_ARGS = [
+    (("size[KB]", "parent", "path", "type", "*"), constants.ENTITY_FILE),
+    (("name", "atime", "ctime", "parent"), constants.ENTITY_DIR),
+    (("line", "lineno", "filename", "filepath"), constants.ENTITY_DATA),
+    (("type", "mtime", "size[Tb]", "filepath"), constants.ENTITY_FILE),
 ]
 
 
@@ -75,3 +84,40 @@ class TestProjection:
 
         projection = Projection(name, field)
         projection.evaluate(entity) == field.evaluate(entity)
+
+
+class TestProjectionsParser:
+    """Tests the `ProjectionsParser` class."""
+
+    @pytest.mark.parametrize(("fields", "entity"), PROJ_PARSER_TEST_ARGS)
+    def test_class(self, fields: tuple[str], entity: str) -> None:
+        """
+        Tests the class and the only public method defined within it by
+        initializing it with a `QueryQueue` object comprising the query
+        fields along with the `FROM` keyword for making termination and
+        the entity name associated with them, and finally verifying the
+        parse method by equilating the names of the parsed projections.
+        """
+
+        query = QueryQueue.from_string(",".join(fields))
+        query.add(constants.KEYWORD_FROM)
+
+        parser = ProjectionsParser(query, entity)
+        projections: list[Projection] = parser.parse()
+
+        # Keeps track of the current index in the projections
+        # list during the verification process.
+        ctr = 0
+
+        for field in fields:
+            if field != constants.KEYWORD_ASTERISK:
+                assert str(projections[ctr]) == field
+                ctr += 1
+
+                continue
+
+            for name in constants.FIELDS[entity]:
+                assert str(projections[ctr]) == name
+                ctr += 1
+
+        assert ctr == len(projections)

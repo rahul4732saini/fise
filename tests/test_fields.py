@@ -16,15 +16,14 @@ from fise.entities import BaseEntity, File, DataLine, Directory
 from fise.fields import Field, Size
 
 
-BASE_DIR = Path(__file__).parent
-TEST_DIR = BASE_DIR / "test_directory"
+TEST_DIR = Path(__file__).parent / "test_directory"
 
 DATA_TEST_DIR = TEST_DIR / "data"
 FD_TEST_DIR = TEST_DIR / "file_dir"
 
 
-# The following block comprises constants used by the test functions as
-# a necessary requirement for testing the associated functionalities.
+# The following block comprises constants used by the
+# functions for testing the associated functionalities.
 
 
 GENERIC_FIELD_TEST_ARGS = [

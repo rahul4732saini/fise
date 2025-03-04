@@ -27,6 +27,14 @@ from fise.query.initials import (
 # comparsion is not available.
 OP_DATA_ATTRS = ["type_", "skip_err", "mode"]
 
+FOP_TEST_ARGS = [
+    (constants.OPERATION_SEARCH, {}),
+    (constants.OPERATION_DELETE, {"skip_err": "True"}),
+    (constants.OPERATION_DELETE, {"skip_err": "FalSE"}),
+]
+
+FOP_TEST_RESULTS = [False, True, False]
+
 QIP_TEST_ARGS = [
     "select",
     "r select",

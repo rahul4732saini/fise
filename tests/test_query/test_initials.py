@@ -15,6 +15,7 @@ from fise.query.initials import (
     FileOperationData,
     DataOperationData,
     DirectoryOperationData,
+    FileOperationParser,
     QueryInitialsParser,
 )
 
@@ -56,6 +57,26 @@ QIP_TEST_RESULTS = [
 
 # The following block comprise classes for testing
 # the classes defined within the `initials` module.
+
+
+@pytest.mark.parametrize(
+    ("source", "skip_err"),
+    zip(FOP_TEST_ARGS, FOP_TEST_RESULTS),
+)
+def test_file_operation_parser(
+    source: tuple[str, dict[str, str]], skip_err: bool
+) -> None:
+    """
+    Tests the `FileOperationParser` class and the only public methods defined
+    within it by initializing it with the operation type and arguments, and
+    verifying the parse method by comparing  the attributes encapsulated in
+    the resultant `FileOperationData` object with the specified results.
+    """
+
+    parser = FileOperationParser(*source)
+    data = parser.parse()
+
+    assert data.skip_err == skip_err
 
 
 class TestQueryInitialsParser:

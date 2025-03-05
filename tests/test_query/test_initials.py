@@ -23,18 +23,24 @@ from fise.query.initials import (
 # The following block comprises constants used by the
 # functions for testing the associated functionalities.
 
-# List of all attributes defined within the various operations data
-# classes for indirectly comparing the operation data objects as direct
-# comparsion is not available.
+# List of all attributes defined within the various operations
+# data classes for indirectly comparing the operation data objects
+# as direct comparsion is not available.
 OP_DATA_ATTRS = ["type_", "skip_err", "mode"]
 
-FOP_TEST_ARGS = [
+# Following constants define arguments and results
+# for testing File System Operation Parser classes.
+
+FSOP_TEST_ARGS = [
     (constants.OPERATION_SEARCH, {}),
     (constants.OPERATION_DELETE, {"skip_err": "True"}),
     (constants.OPERATION_DELETE, {"skip_err": "FalSE"}),
 ]
 
-FOP_TEST_RESULTS = [False, True, False]
+FSOP_TEST_RESULTS = [False, True, False]
+
+# Following constants define arguments and results
+# for testing the Query Initials Parser class.
 
 QIP_TEST_ARGS = [
     "select",

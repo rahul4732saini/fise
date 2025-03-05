@@ -17,6 +17,7 @@ from fise.query.initials import (
     DirectoryOperationData,
     FileOperationParser,
     QueryInitialsParser,
+    DirectoryOperationParser,
 )
 
 
@@ -80,6 +81,26 @@ def test_file_operation_parser(
     """
 
     parser = FileOperationParser(*args)
+    data = parser.parse()
+
+    assert data.skip_err == skip_err
+
+
+@pytest.mark.parametrize(
+    ("args", "skip_err"),
+    zip(FSOP_TEST_ARGS, FSOP_TEST_RESULTS),
+)
+def test_directory_operation_parser(
+    args: tuple[str, dict[str, str]], skip_err: bool
+) -> None:
+    """
+    Tests the `DirectoryOperationParser` class and the only public method
+    defined within it by initializing it with the operation type and arguments,
+    and verifying the parse method by comparing  the attributes encapsulated in
+    the resultant `FileOperationData` object with the specified results.
+    """
+
+    parser = DirectoryOperationParser(*args)
     data = parser.parse()
 
     assert data.skip_err == skip_err

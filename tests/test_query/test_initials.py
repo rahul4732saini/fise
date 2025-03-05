@@ -66,11 +66,11 @@ QIP_TEST_RESULTS = [
 
 
 @pytest.mark.parametrize(
-    ("source", "skip_err"),
-    zip(FOP_TEST_ARGS, FOP_TEST_RESULTS),
+    ("args", "skip_err"),
+    zip(FSOP_TEST_ARGS, FSOP_TEST_RESULTS),
 )
 def test_file_operation_parser(
-    source: tuple[str, dict[str, str]], skip_err: bool
+    args: tuple[str, dict[str, str]], skip_err: bool
 ) -> None:
     """
     Tests the `FileOperationParser` class and the only public methods defined
@@ -79,7 +79,7 @@ def test_file_operation_parser(
     the resultant `FileOperationData` object with the specified results.
     """
 
-    parser = FileOperationParser(*source)
+    parser = FileOperationParser(*args)
     data = parser.parse()
 
     assert data.skip_err == skip_err

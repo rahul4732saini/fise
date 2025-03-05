@@ -21,9 +21,6 @@ from fise.query.initials import (
 )
 
 
-# The following block comprises constants used by the
-# functions for testing the associated functionalities.
-
 # List of all attributes defined within the various operations
 # data classes for indirectly comparing the operation data objects
 # as direct comparsion is not available.
@@ -97,7 +94,7 @@ def test_directory_operation_parser(
     Tests the `DirectoryOperationParser` class and the only public method
     defined within it by initializing it with the operation type and arguments,
     and verifying the parse method by comparing  the attributes encapsulated in
-    the resultant `FileOperationData` object with the specified results.
+    the resultant `DirectoryOperationData` object with the specified results.
     """
 
     parser = DirectoryOperationParser(*args)

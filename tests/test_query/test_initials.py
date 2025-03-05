@@ -61,8 +61,8 @@ QIP_TEST_RESULTS = [
 ]
 
 
-# The following block comprise classes for testing
-# the classes defined within the `initials` module.
+# The following block comprise classes and functions for
+# testing the classes defined within the `initials` module.
 
 
 @pytest.mark.parametrize(
@@ -73,7 +73,7 @@ def test_file_operation_parser(
     args: tuple[str, dict[str, str]], skip_err: bool
 ) -> None:
     """
-    Tests the `FileOperationParser` class and the only public methods defined
+    Tests the `FileOperationParser` class and the only public method defined
     within it by initializing it with the operation type and arguments, and
     verifying the parse method by comparing  the attributes encapsulated in
     the resultant `FileOperationData` object with the specified results.

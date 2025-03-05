@@ -16,6 +16,7 @@ from fise.query.initials import (
     DataOperationData,
     DirectoryOperationData,
     FileOperationParser,
+    DataOperationParser,
     QueryInitialsParser,
     DirectoryOperationParser,
 )
@@ -36,6 +37,21 @@ FSOP_TEST_ARGS = [
 ]
 
 FSOP_TEST_RESULTS = [False, True, False]
+
+# Following constants define arguments and results
+# for testing the DataOperationParser class.
+
+DOP_TEST_ARGS = [
+    {"mode": "Text"},
+    {"mode": "ByTes"},
+    {"mode": "text"},
+]
+
+DOP_TEST_RESULTS = [
+    constants.READ_MODE_TEXT,
+    constants.READ_MODE_BYTES,
+    constants.READ_MODE_TEXT,
+]
 
 # Following constants define arguments and results
 # for testing the Query Initials Parser class.
@@ -101,6 +117,24 @@ def test_directory_operation_parser(
     data = parser.parse()
 
     assert data.skip_err == skip_err
+
+
+@pytest.mark.parametrize(
+    ("args", "mode"),
+    zip(DOP_TEST_ARGS, DOP_TEST_RESULTS),
+)
+def test_data_operation_parser(args: dict[str, str], mode: str) -> None:
+    """
+    Tests the `DataOperationParser` class and the only public method defined
+    within it by initializing it with the operation type and arguments, and
+    verifying the parse method by comparing  the attributes encapsulated in
+    the resultant `DataOperationData` object with the specified results.
+    """
+
+    parser = DataOperationParser(constants.OPERATION_SEARCH, args)
+    data = parser.parse()
+
+    assert data.mode == constants.READ_MODES_MAP[mode]
 
 
 class TestQueryInitialsParser:

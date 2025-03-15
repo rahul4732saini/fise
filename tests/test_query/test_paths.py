@@ -10,8 +10,9 @@ paths.
 from pathlib import Path
 import pytest
 
-from fise.common import constants
+from fise.common import tools, constants
 from fise.shared import QueryQueue
+
 from fise.query.paths import (
     FileQueryPath,
     DirectoryQueryPath,
@@ -32,11 +33,12 @@ DATA_TEST_DIR = BASE_DIR / "test_directory/data"
 # The following constants store arguments and results
 # for testing the functionalities associated with them.
 
-# File and Directory Query Paths
-FD_QUERY_PATHS = [
-    FD_TEST_DIR,
-    FD_TEST_DIR / "media",
-    FD_TEST_DIR / "project/src",
+# File and Directory Query Path arguments
+FD_QUERY_PATH_ARGS = [
+    (FD_TEST_DIR, True),
+    (FD_TEST_DIR / "project/", True),
+    (FD_TEST_DIR / "media", False),
+    (FD_TEST_DIR / "reports", True),
 ]
 
 # Data Query Paths
@@ -66,6 +68,22 @@ QPP_INVALID_TEST_ARGS = [
     (f"{FD_TEST_DIR / 'todo.txt'}", constants.ENTITY_DATA),
     (f"rel {FD_TEST_DIR}", constants.ENTITY_DIR),
 ]
+
+
+@pytest.mark.parametrize(("path", "recursive"), FD_QUERY_PATH_ARGS)
+def test_file_query_path(path: Path, recursive: bool) -> None:
+    """
+    Tests the `FileQueryPath` class and the only public method defined within
+    it by initializing it and verifying the enumerate method by comparing the
+    results with the same extracted with the `enumerate_files` function as it
+    has also been tested.
+    """
+
+    # Also validates the path apart from initialization.
+    obj = FileQueryPath(path)
+    data = obj.enumerate(recursive)
+
+    list(data) == list(tools.enumerate_files(path, recursive))
 
 
 class TestQueryPathParser:

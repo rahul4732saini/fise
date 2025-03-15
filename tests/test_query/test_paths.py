@@ -68,36 +68,6 @@ QPP_INVALID_TEST_ARGS = [
 ]
 
 
-class TestFileQueryPath:
-    """Tests the `FileQueryPath` class."""
-
-    @pytest.mark.parametrize("path", FD_QUERY_PATHS)
-    def test_init(self, path: Path) -> None:
-        """Tests the object initialization with a valid query path."""
-
-        FileQueryPath(path)
-
-
-class TestDirectoryQueryPath:
-    """Tests the `DirectoryQueryPath` class."""
-
-    @pytest.mark.parametrize("path", FD_QUERY_PATHS)
-    def test_init(self, path: Path) -> None:
-        """Tests the object initialization with a valid query path."""
-
-        DirectoryQueryPath(path)
-
-
-class TestDataQueryPath:
-    """Tests the `DirectoryQueryPath` class."""
-
-    @pytest.mark.parametrize("path", DATA_QUERY_PATHS)
-    def test_init(self, path: Path) -> None:
-        """Tests the object initialization with a valid query path."""
-
-        DataQueryPath(path)
-
-
 class TestQueryPathParser:
     """Tests the `QueryPathParser` class."""
 

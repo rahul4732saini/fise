@@ -6,7 +6,10 @@ This module defines classes and methods for testing the classes defined
 within the `query/exports.py` module for parsing and handling data exports.
 """
 
+from pathlib import Path
+
 import pytest
+import pandas as pd
 
 from fise.common import constants
 from fise.shared import QueryQueue
@@ -16,6 +19,7 @@ from fise.query.exports import (
     FileExportData,
     DBMSExportData,
     ExportParser,
+    FileExportHandler,
 )
 
 # The following constants store arguments and results
@@ -44,6 +48,11 @@ DBMS_EXPORT_PARSER_RESULTS = [
     "postgresql",
     "sqlite",
 ]
+
+FILE_EXPORT_HANDLER_ARGS = FILE_EXPORT_PARSER_RESULTS
+FILE_EXPORT_HANDLER_DATA = pd.DataFrame(
+    [["1", "0", "1"], [6, 1, 85], [-0.25, None, 67.3454]],
+)
 
 
 class TestExportParser:
@@ -84,3 +93,26 @@ class TestExportParser:
 
         assert result.type_ == constants.EXPORT_DBMS
         assert result.dbms == dbms
+
+
+@pytest.mark.parametrize("path", FILE_EXPORT_HANDLER_ARGS)
+def test_file_export_handler(path: str) -> None:
+    """
+    Tests the `FileExportHandler` class and the only public method
+    defined within it by initializing it  and verifying the export
+    method by verifying the existence of the export file.
+    """
+
+    global FILE_EXPORT_HANDLER_DATA
+
+    specs = FileExportData(Path(path))
+    handler = FileExportHandler(specs, FILE_EXPORT_HANDLER_DATA)
+
+    try:
+        handler.export()
+        assert specs.file.exists()
+
+    # Ensures proper deletion of the export file even if an exception occurs.
+    finally:
+        if specs.file.exists():
+            specs.file.unlink()

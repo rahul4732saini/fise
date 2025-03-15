@@ -135,6 +135,7 @@ class DataQueryPath(BaseQueryPath):
 
         if self._path.is_file():
             yield self._path
+            return
 
         yield from tools.enumerate_files(self._path, recursive)
 

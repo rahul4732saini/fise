@@ -41,11 +41,12 @@ FD_QUERY_PATH_ARGS = [
     (FD_TEST_DIR / "reports", True),
 ]
 
-# Data Query Paths
-DATA_QUERY_PATHS = [
-    DATA_TEST_DIR / "todo.txt",
-    DATA_TEST_DIR / "reports",
-    DATA_TEST_DIR / "specs.txt",
+# Data Query Path arguments
+DATA_QUERY_PATH_ARGS = [
+    (DATA_TEST_DIR, True),
+    (DATA_TEST_DIR / "reports", False),
+    (DATA_TEST_DIR / "todo.txt", False),
+    (DATA_TEST_DIR / "specs.txt", True),
 ]
 
 QPP_VALID_TEST_ARGS = [
@@ -83,7 +84,7 @@ def test_file_query_path(path: Path, recursive: bool) -> None:
     obj = FileQueryPath(path)
     data = obj.enumerate(recursive)
 
-    list(data) == list(tools.enumerate_files(path, recursive))
+    assert list(data) == list(tools.enumerate_files(path, recursive))
 
 
 @pytest.mark.parametrize(("path", "recursive"), FD_QUERY_PATH_ARGS)
@@ -99,7 +100,25 @@ def test_directory_query_path(path: Path, recursive: bool) -> None:
     obj = DirectoryQueryPath(path)
     data = obj.enumerate(recursive)
 
-    list(data) == list(tools.enumerate_directories(path, recursive))
+    assert list(data) == list(tools.enumerate_directories(path, recursive))
+
+
+@pytest.mark.parametrize(("path", "recursive"), DATA_QUERY_PATH_ARGS)
+def test_data_query_path(path: Path, recursive: bool) -> None:
+    """
+    Tests the `DataQueryPath` class and the only public method defined
+    within it by initializing it and verifying the enumerate method by
+    by comparing the results with the same extracted with the `FileIterator`
+    class as it has also been tested.
+    """
+
+    # Also validates the path apart from initialization.
+    obj = DataQueryPath(path)
+    data = obj.enumerate(recursive)
+
+    assert list(data) == (
+        [path] if path.is_file() else list(tools.enumerate_files(path, recursive))
+    )
 
 
 class TestQueryPathParser:

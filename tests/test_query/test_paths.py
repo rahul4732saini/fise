@@ -12,7 +12,7 @@ import pytest
 
 from fise.common import constants
 from fise.shared import QueryQueue
-from fise.query.paths import QueryPathParser
+from fise.query.paths import FileQueryPath, QueryPathParser
 
 
 # Treats the 'test' directory as the base directory for all operations.
@@ -26,6 +26,14 @@ DATA_TEST_DIR = BASE_DIR / "test_directory/data"
 
 # The following constants store arguments and results
 # for testing the functionalities associated with them.
+
+# File and Directory Query Paths
+FD_QUERY_PATHS = [
+    FD_TEST_DIR,
+    FD_TEST_DIR / "media",
+    FD_TEST_DIR / "project/src",
+]
+
 
 QPP_VALID_TEST_ARGS = [
     (f"absolute {FD_TEST_DIR / 'project'}", constants.ENTITY_FILE),
@@ -47,6 +55,16 @@ QPP_INVALID_TEST_ARGS = [
     (f"{FD_TEST_DIR / 'todo.txt'}", constants.ENTITY_DATA),
     (f"rel {FD_TEST_DIR}", constants.ENTITY_DIR),
 ]
+
+
+class TestFileQueryPath:
+    """Tests the `FileQueryPath` class."""
+
+    @pytest.mark.parametrize("path", FD_QUERY_PATHS)
+    def test_init(self, path: Path) -> None:
+        """Tests the object initialization with a valid query path."""
+
+        FileQueryPath(path)
 
 
 class TestQueryPathParser:

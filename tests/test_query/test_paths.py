@@ -73,10 +73,10 @@ QPP_INVALID_TEST_ARGS = [
 @pytest.mark.parametrize(("path", "recursive"), FD_QUERY_PATH_ARGS)
 def test_file_query_path(path: Path, recursive: bool) -> None:
     """
-    Tests the `FileQueryPath` class and the only public method defined within
-    it by initializing it and verifying the enumerate method by comparing the
-    results with the same extracted with the `enumerate_files` function as it
-    has also been tested.
+    Tests the `FileQueryPath` class and the only public method defined
+    within it by initializing it and verifying the enumerate method by
+    comparing the results with the same extracted with the `enumerate_files`
+    function as it has also been tested.
     """
 
     # Also validates the path apart from initialization.
@@ -84,6 +84,22 @@ def test_file_query_path(path: Path, recursive: bool) -> None:
     data = obj.enumerate(recursive)
 
     list(data) == list(tools.enumerate_files(path, recursive))
+
+
+@pytest.mark.parametrize(("path", "recursive"), FD_QUERY_PATH_ARGS)
+def test_directory_query_path(path: Path, recursive: bool) -> None:
+    """
+    Tests the `DirectoryQueryPath` class and the only public method
+    defined within it by initializing it and verifying the enumerate
+    method by comparing the results with the same extracted with the
+    `enumerate_directories` function as it has also been tested.
+    """
+
+    # Also validates the path apart from initialization.
+    obj = DirectoryQueryPath(path)
+    data = obj.enumerate(recursive)
+
+    list(data) == list(tools.enumerate_directories(path, recursive))
 
 
 class TestQueryPathParser:

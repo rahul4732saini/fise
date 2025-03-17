@@ -253,10 +253,9 @@ class ConditionParser:
         # condition statement raises a parse error if none of the specified
         # conditions are met.
 
-        if (
-            op_left_dtype != op_right_dtype
-            and operator in (constants.OP_EQ, constants.OP_NE)
-            and not (op_left is None or op_right is None)
+        if op_left_dtype != op_right_dtype and operator not in (
+            constants.OP_EQ,
+            constants.OP_NE,
         ):
             raise QueryParseError(
                 f"{op_left} and {op_right} cannot be "
@@ -293,14 +292,13 @@ class ConditionParser:
         """Parses the condition for the contains operation."""
 
         op_left, op_right = self._parse_operands(left, right)
+        op_right_dtype = (
+            op_right.dtype if isinstance(op_right, BaseField) else type(op_right)
+        )
 
         # Raises a parse error if the right operand
         # is not an iterable query attribute.
-        if not (
-            isinstance(op_right, Sequence)
-            or isinstance(op_right, BaseField)
-            and issubclass(op_right.dtype, Sequence)
-        ):
+        if not issubclass(op_right_dtype, Sequence):
             raise QueryParseError(
                 f"{right!r} is not a valid operand for "
                 f"the {constants.OP_CONTAINS!r} operation."

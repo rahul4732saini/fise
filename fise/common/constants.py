@@ -109,7 +109,7 @@ FIELD_TYPES = {
     "lineno": int,
     "dataline": str,
     "filetype": str,
-    "size": float,
+    "size": int | float,
     "create_time": datetime,
     "access_time": datetime,
     "modify_time": datetime,

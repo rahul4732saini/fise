@@ -253,7 +253,7 @@ class ConditionParser:
         # condition statement raises a parse error if none of the specified
         # conditions are met.
 
-        if op_left_dtype != op_right_dtype and operator not in (
+        if not tools.dtype_equals(op_left_dtype, op_right_dtype) and operator not in (
             constants.OP_EQ,
             constants.OP_NE,
         ):

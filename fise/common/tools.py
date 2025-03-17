@@ -6,6 +6,9 @@ This module comprises utility function for assisting
 other classes and functions defined within the project.
 """
 
+import typing
+
+from types import UnionType
 from typing import Generator
 from pathlib import Path
 
@@ -140,6 +143,18 @@ def find_base_string(source: str, strings: tuple[str]) -> tuple[int, int] | None
                 continue
 
             return i, i + len(string)
+
+
+def dtype_equals(x: type | UnionType, y: type | UnionType, /) -> bool:
+    """
+    Compares the specified types or union of data types for eqality
+    and returns a boolean value signifying whether the two are equal.
+    """
+
+    t1 = typing.get_args(x) if isinstance(x, UnionType) else (x,)
+    t2 = typing.get_args(y) if isinstance(y, UnionType) else (y,)
+
+    return any(type_ in t2 for type_ in t1)
 
 
 def enumerate_files(directory: Path, recursive: bool) -> Generator[Path, None, None]:

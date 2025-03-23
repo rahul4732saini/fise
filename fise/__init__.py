@@ -8,6 +8,14 @@ the classes defined within the top-level modules to ensure consistency
 between internally used classes and those imported externally for testing.
 """
 
-__all__ = "BaseField", "Field", "Size"
+__all__ = (
+    "BaseField",
+    "Size",
+    "Field",
+    "QueryParseError",
+    "OperationError",
+    "QueryHandleError",
+)
 
 from fields import BaseField, Field, Size
+from errors import QueryParseError, OperationError, QueryHandleError

@@ -111,27 +111,18 @@ class ConditionParser:
             constants.OP_LIKE: self._like,
         }
 
-    def _parse_binary_condition(self, operator: str, operands: list[str]) -> Condition:
+    def _parse_binary_condition(self, operator: str, operands: tuple[str]) -> Condition:
         """
         Parses the associated binary query condition
         based on the specified operator and operands.
 
         #### Params:
         - operator (str): Binary operator associated with query condition.
-        - operands (list[str]): List comprising the condition operands.
+        - operands (tuple[str]): Tuple comprising the condition operands.
         """
 
-        # Raises a parse error if the operator is lexical and there
-        # is no whitespace between it and either of the operands.
-        if operator in constants.LEXICAL_OPERATORS and not (
-            operands[0].endswith(" ") and operands[1].startswith(" ")
-        ):
-            raise QueryParseError(f"Invalid query syntax.")
-
-        operands = [operand.strip(" ") for operand in operands]
-
-        evaluator = self._parsers_map[operator]
-        condition: Condition = evaluator(*operands)
+        parser = self._parsers_map[operator]
+        condition: Condition = parser(*operands)
 
         return condition
 

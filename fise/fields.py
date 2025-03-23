@@ -15,7 +15,7 @@ from entities import BaseEntity, File
 from errors import QueryParseError
 
 
-@dataclass(slots=True, frozen=True, eq=False)
+@dataclass(slots=True, frozen=True)
 class BaseField(ABC):
     """BaseField serves as the base class for all field class."""
 
@@ -34,7 +34,7 @@ class BaseField(ABC):
     def evaluate(self, entity) -> Any: ...
 
 
-@dataclass(slots=True, frozen=True, eq=False)
+@dataclass(slots=True, frozen=True)
 class Field(BaseField):
     """
     Field class implements mechanism for storing,
@@ -63,7 +63,7 @@ class Field(BaseField):
         return getattr(entity, self.field)
 
 
-@dataclass(slots=True, frozen=True, eq=False)
+@dataclass(slots=True, frozen=True)
 class Size(BaseField):
     """
     Size class implements mechanism for parsing and evaluating

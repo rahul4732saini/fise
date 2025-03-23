@@ -22,7 +22,7 @@ from dataclasses import dataclass
 QueryConditionType: TypeAlias = Union[bool, "Condition", "ConditionListNode"]
 
 
-@dataclass(slots=True, eq=False, frozen=True)
+@dataclass(slots=True, frozen=True)
 class Condition:
     """
     Condition class encapsulates individual

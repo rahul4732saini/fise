@@ -10,6 +10,7 @@ paths.
 from pathlib import Path
 import pytest
 
+from fise import QueryParseError
 from fise.common import tools, constants
 from fise.shared import QueryQueue
 
@@ -158,5 +159,5 @@ class TestQueryPathParser:
         # Unable to pass 'QueryParserError' as the error class as it is
         # local to the project. Referencing it from both inside and outside
         # the project directory causes a mismatch, leading to a failure.
-        with pytest.raises(Exception):
+        with pytest.raises(QueryParseError):
             parser.parse()

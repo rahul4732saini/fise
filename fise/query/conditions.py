@@ -135,7 +135,7 @@ class ConditionParser:
 
         return condition
 
-    def _tokenize_condition(self, condition: str) -> tuple[str, list[str]]:
+    def _tokenize_condition(self, condition: str) -> tuple[str, tuple[str]]:
         """
         Tokenizes the specified condition and returns a tuple
         comprising the operator and the associated operands.
@@ -144,8 +144,21 @@ class ConditionParser:
         - condition (str): String comprising the condition specifications.
         """
 
+        condition_lower: str = condition.lower()
+
+        for operator in constants.LEXICAL_OPERATORS:
+            if operator not in condition_lower:
+                continue
+
+            tokens = list(tools.tokenize(condition, skip_empty=True))
+
+            if len(tokens) < 3 or tokens[1].lower() != operator:
+                continue
+
+            return tokens[1].lower(), (tokens[0], tokens[2])
+
         # Extracts the starting and ending indices of the operator.
-        indices = tools.find_base_string(condition, constants.CONDITION_OPERATORS)
+        indices = tools.find_base_string(condition, constants.SYMBOLIC_OPERATORS)
 
         if indices is None:
             raise QueryParseError(f"{condition!r} is not a valid condition.")
@@ -153,9 +166,12 @@ class ConditionParser:
         start, end = indices
 
         operator = condition[start:end].lower()
-        operands = condition[:start], condition[end:]
+        operands = condition[:start].rstrip(" "), condition[end:].lstrip(" ")
 
-        return operator, [operand for operand in operands if operand]
+        if not any(operand for operand in operands):
+            raise QueryParseError("Invalid query syntax!")
+
+        return operator, operands
 
     def _parse_condition(self, condition: str) -> Condition | ConditionListNode:
         """

@@ -7,6 +7,7 @@ within the `query/conditions.py` module for parsing and handling query
 conditions.
 """
 
+from pathlib import Path
 from datetime import datetime
 
 import pytest
@@ -22,7 +23,11 @@ from fise.query.conditions import (
     ConditionHandler,
 )
 
+BASE_DIR = Path(__file__).parents[1]
+TEST_DIR = BASE_DIR / "test_directory"
 
+FD_TEST_DIR = TEST_DIR / "file_dir"
+DATA_TEST_DIR = TEST_DIR / "data"
 
 # The following constants store arguments and results
 # for testing the functionalities associated with them.

@@ -210,3 +210,22 @@ class TestConditionParser:
 
         with pytest.raises(QueryParseError):
             parser.parse()
+
+
+class TestConditionHandler:
+    """Tests the `ConditionHandler` class."""
+
+    @pytest.mark.parametrize(
+        ("condition", "entities"),
+        zip(TRUTHY_CONDITION_HANDLER_CONDITIONS, TRUTHY_CONDITION_HANDLER_ENTITIES),
+    )
+    def test_for_truthiness(
+        self, condition: tuple[str, str], entities: tuple[BaseEntity]
+    ) -> None:
+        """
+        Tests the handler and its evaluator method with entities
+        that hold true with the specified condition specifications.
+        """
+
+        handler = init_handler(*condition)
+        assert all(handler(entity) for entity in entities)

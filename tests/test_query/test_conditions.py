@@ -11,7 +11,7 @@ from datetime import datetime
 
 import pytest
 
-from fise import Field, Size
+from fise import Field, Size, QueryParseError
 from fise.common import constants
 from fise.shared import QueryQueue
 from fise.query.conditions import Condition, ConditionListNode, ConditionParser
@@ -87,6 +87,25 @@ CONDITION_PARSER_RESULTS = [
     ),
 ]
 
+INVALID_CONDITION_PARSER_ARGS = [
+    (
+        "Where Name Like size[KiB] Or name = 'main.py'",
+        constants.ENTITY_FILE,
+    ),
+    (
+        "filetype in ['.txt', '.md', '.docx']",
+        constants.ENTITY_DATA,
+    ),
+    (
+        "where (lineno between [1, 100] or lineno between (200, 201))",
+        constants.ENTITY_DATA,
+    ),
+    (
+        "WHERE atime >= 2022-01-01 and lineno in [1, 10, 100]",
+        constants.ENTITY_FILE,
+    ),
+]
+
 
 class TestConditionParser:
     """Tests the `ConditionParser` class."""
@@ -111,7 +130,7 @@ class TestConditionParser:
         self, args: tuple[str, str], result: ConditionListNode
     ) -> None:
         """
-        Tests the parser with valid condition specifications
+        Tests the parse method with valid conditions specifications
         and verifies it with the specified result.
         """
 
@@ -119,3 +138,15 @@ class TestConditionParser:
         conditions = parser.parse()
 
         assert conditions == result
+
+    @pytest.mark.parametrize("args", INVALID_CONDITION_PARSER_ARGS)
+    def test_parse_with_invalid_conditions(self, args: tuple[str, str]) -> None:
+        """
+        Tests the parse method with invalid condition
+        specifications expecting a query parser error.
+        """
+
+        parser = self.init_parser(*args)
+
+        with pytest.raises(QueryParseError):
+            parser.parse()

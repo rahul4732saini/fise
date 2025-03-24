@@ -14,7 +14,15 @@ import pytest
 from fise import Field, Size, QueryParseError
 from fise.common import constants
 from fise.shared import QueryQueue
-from fise.query.conditions import Condition, ConditionListNode, ConditionParser
+
+from fise.query.conditions import (
+    Condition,
+    ConditionListNode,
+    ConditionParser,
+    ConditionHandler,
+)
+
+
 
 # The following constants store arguments and results
 # for testing the functionalities associated with them.
@@ -121,6 +129,19 @@ def init_parser(query: str, entity: str) -> ConditionParser:
     parser = ConditionParser(queue, entity)
 
     return parser
+
+
+def init_handler(query: str, entity: str) -> ConditionHandler:
+    """
+    Initializes the ConditionHandler class by parsing the
+    specified condition specifications based on the specified
+    entity name.
+    """
+
+    parser = init_parser(query, entity)
+    conditions = parser.parse()
+
+    return ConditionHandler(conditions)
 
 
 class TestConditionParser:

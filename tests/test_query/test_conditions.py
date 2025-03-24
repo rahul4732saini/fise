@@ -110,17 +110,21 @@ INVALID_CONDITION_PARSER_ARGS = [
 class TestConditionParser:
     """Tests the `ConditionParser` class."""
 
-    @staticmethod
-    def init_parser(query: str, entity: str) -> ConditionParser:
-        """
-        Initializes the ConditionParser class
-        with the specified arguments.
-        """
 
-        queue = QueryQueue.from_string(query)
-        parser = ConditionParser(queue, entity)
+def init_parser(query: str, entity: str) -> ConditionParser:
+    """
+    Initializes the ConditionParser class
+    with the specified arguments.
+    """
 
-        return parser
+    queue = QueryQueue.from_string(query)
+    parser = ConditionParser(queue, entity)
+
+    return parser
+
+
+class TestConditionParser:
+    """Tests the `ConditionParser` class."""
 
     @pytest.mark.parametrize(
         ("args", "result"),
@@ -134,7 +138,7 @@ class TestConditionParser:
         and verifies it with the specified result.
         """
 
-        parser = self.init_parser(*args)
+        parser = init_parser(*args)
         conditions = parser.parse()
 
         assert conditions == result
@@ -146,7 +150,7 @@ class TestConditionParser:
         specifications expecting a query parser error.
         """
 
-        parser = self.init_parser(*args)
+        parser = init_parser(*args)
 
         with pytest.raises(QueryParseError):
             parser.parse()

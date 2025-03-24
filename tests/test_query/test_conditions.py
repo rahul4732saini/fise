@@ -14,6 +14,7 @@ import pytest
 
 from fise import Field, Size, QueryParseError
 from fise.common import constants
+from fise.entities import BaseEntity, File, Directory, DataLine
 from fise.shared import QueryQueue
 
 from fise.query.conditions import (
@@ -119,9 +120,38 @@ INVALID_CONDITION_PARSER_ARGS = [
     ),
 ]
 
+TRUTHY_CONDITION_HANDLER_CONDITIONS = [
+    (
+        "where filetype in [None, '.txt', '.md'] and (ctime > 1990-01-01) and size[KB] = 0",
+        constants.ENTITY_FILE,
+    ),
+    (
+        r"where ('test_directory' in parent) and name like '^(docs|report-\d{4})$'",
+        constants.ENTITY_DIR,
+    ),
+    (
+        "where dataline like '^.*!$' and ((lineno between [1, 100] or lineno > 200))",
+        constants.ENTITY_DATA,
+    ),
+]
 
-class TestConditionParser:
-    """Tests the `ConditionParser` class."""
+TRUTHY_CONDITION_HANDLER_ENTITIES = [
+    (
+        File(FD_TEST_DIR / "TODO"),
+        File(FD_TEST_DIR / "roadmap.txt"),
+        File(FD_TEST_DIR / "docs/config/getting-started.md"),
+    ),
+    (
+        Directory(FD_TEST_DIR / "reports/report-2021"),
+        Directory(FD_TEST_DIR / "docs"),
+        Directory(FD_TEST_DIR / "reports/report-2024"),
+    ),
+    (
+        DataLine(DATA_TEST_DIR / "todo.txt", b"Hello there!", 49),
+        DataLine(DATA_TEST_DIR / "specs.txt", "This is an open source software!", 343),
+        DataLine(DATA_TEST_DIR / "todo.txt", "You can use it!", 1),
+    ),
+]
 
 
 def init_parser(query: str, entity: str) -> ConditionParser:

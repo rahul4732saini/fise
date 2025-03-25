@@ -147,6 +147,10 @@ TRUTHY_HANDLER_ENTITIES = [
         Directory(FD_TEST_DIR / "reports/report-2024"),
     ),
     (
+        # The arguments specified to the following DataLine objects are not
+        # associated with any actual file but serve as test placeholders as
+        # the object itself and its associated mechanism do not verify their
+        # validity during operation.
         DataLine(DATA_TEST_DIR / "todo.txt", b"Hello there!", 49),
         DataLine(DATA_TEST_DIR / "specs.txt", "This is an open source software!", 343),
         DataLine(DATA_TEST_DIR / "todo.txt", "You can use it!", 1),

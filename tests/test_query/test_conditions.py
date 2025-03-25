@@ -157,6 +157,28 @@ TRUTHY_HANDLER_ENTITIES = [
     ),
 ]
 
+FALSY_HANDLER_ENTITIES = [
+    (
+        File(FD_TEST_DIR / "media/birthday.avi"),
+        File(FD_TEST_DIR / "project/setup.py"),
+        File(FD_TEST_DIR / "media/galaxy.mp3"),
+    ),
+    (
+        Directory(FD_TEST_DIR),
+        Directory(FD_TEST_DIR / "project"),
+        Directory(FD_TEST_DIR / "media"),
+    ),
+    (
+        # The arguments specified to the following DataLine objects are not
+        # associated with any actual file but serve as test placeholders as
+        # the object itself and its associated mechanism do not verify their
+        # validity during operation.
+        DataLine(DATA_TEST_DIR / "todo.txt", "Who're you?", 10),
+        DataLine(DATA_TEST_DIR / ".py", "Morning!", 200),
+        DataLine(DATA_TEST_DIR / ".txt", "Shut up...", 101),
+    ),
+]
+
 
 def init_parser(query: str, entity: str) -> ConditionParser:
     """
@@ -233,3 +255,18 @@ class TestConditionHandler:
 
         handler = init_handler(*condition)
         assert all(handler(entity) for entity in entities)
+
+    @pytest.mark.parametrize(
+        ("condition", "entities"),
+        zip(HANDLER_CONDITIONS, FALSY_HANDLER_ENTITIES),
+    )
+    def test_for_fasliness(
+        self, condition: tuple[str, str], entities: tuple[BaseEntity]
+    ) -> None:
+        """
+        Tests the handler and its evaluator method with entities
+        that hold false with the specified condition specifications.
+        """
+
+        handler = init_handler(*condition)
+        assert all(not handler(entity) for entity in entities)

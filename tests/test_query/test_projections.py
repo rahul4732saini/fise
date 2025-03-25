@@ -4,13 +4,13 @@ Test Projections Module
 
 This module defines functions for testing the classes defined
 within the `query/projections.py` module for parsing and handling
-search query projections. 
+search query projections.
 """
 
 from pathlib import Path
 import pytest
 
-from fise.common import constants
+from fise.common import tools, constants
 from fise.shared import QueryQueue
 from fise.fields import BaseField, Field, Size
 from fise.query.projections import Projection, ProjectionsParser
@@ -39,10 +39,11 @@ PROJECTION_TEST_ENTITIES = [
 ]
 
 PROJ_PARSER_TEST_ARGS = [
-    (("size[KB]", "parent", "path", "type", "*"), constants.ENTITY_FILE),
-    (("name", "atime", "ctime", "parent"), constants.ENTITY_DIR),
-    (("line", "lineno", "filename", "filepath"), constants.ENTITY_DATA),
-    (("type", "mtime", "size[Tb]", "filepath"), constants.ENTITY_FILE),
+    ("Parent", constants.ENTITY_DIR),
+    ("*,line, LineNo, FILENAME", constants.ENTITY_DATA),
+    ("name, Atime, Create_time,Parent", constants.ENTITY_DIR),
+    ("size[KB], parent", constants.ENTITY_FILE),
+    ("type,Mtime, SIZE[Tb], FilePath", constants.ENTITY_FILE),
 ]
 
 
@@ -89,8 +90,8 @@ class TestProjection:
 class TestProjectionsParser:
     """Tests the `ProjectionsParser` class."""
 
-    @pytest.mark.parametrize(("fields", "entity"), PROJ_PARSER_TEST_ARGS)
-    def test_class(self, fields: tuple[str], entity: str) -> None:
+    @pytest.mark.parametrize(("specs", "entity"), PROJ_PARSER_TEST_ARGS)
+    def test_class(self, specs: str, entity: str) -> None:
         """
         Tests the class and the only public method defined within it by
         initializing it with a `QueryQueue` object comprising the query
@@ -99,7 +100,9 @@ class TestProjectionsParser:
         parse method by equilating the names of the parsed projections.
         """
 
-        query = QueryQueue.from_string(",".join(fields))
+        names = list(tools.tokenize(specs, ","))
+
+        query = QueryQueue.from_string(specs)
         query.add(constants.KEYWORD_FROM)
 
         parser = ProjectionsParser(query, entity)
@@ -109,7 +112,7 @@ class TestProjectionsParser:
         # list during the verification process.
         ctr = 0
 
-        for field in fields:
+        for field in names:
             if field != constants.KEYWORD_ASTERISK:
                 assert str(projections[ctr]) == field
                 ctr += 1

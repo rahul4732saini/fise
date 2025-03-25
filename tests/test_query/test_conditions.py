@@ -246,7 +246,7 @@ class TestConditionHandler:
         zip(HANDLER_CONDITIONS, TRUTHY_HANDLER_ENTITIES),
     )
     def test_for_truthiness(
-        self, condition: tuple[str, str], entities: tuple[BaseEntity]
+        self, condition: tuple[str, str], entities: tuple[BaseEntity, ...]
     ) -> None:
         """
         Tests the handler and its evaluator method with entities
@@ -261,7 +261,7 @@ class TestConditionHandler:
         zip(HANDLER_CONDITIONS, FALSY_HANDLER_ENTITIES),
     )
     def test_for_fasliness(
-        self, condition: tuple[str, str], entities: tuple[BaseEntity]
+        self, condition: tuple[str, str], entities: tuple[BaseEntity, ...]
     ) -> None:
         """
         Tests the handler and its evaluator method with entities

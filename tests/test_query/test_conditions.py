@@ -33,7 +33,7 @@ DATA_TEST_DIR = TEST_DIR / "data"
 # The following constants store arguments and results
 # for testing the functionalities associated with them.
 
-CONDITION_PARSER_VALID_ARGS = [
+VALID_PARSER_ARGS = [
     (
         "where Name = 'main.py' and (ATIME < 2022-01-01 OR mtime < 2022-01-01)",
         constants.ENTITY_DIR,
@@ -52,7 +52,7 @@ CONDITION_PARSER_VALID_ARGS = [
     ),
 ]
 
-CONDITION_PARSER_RESULTS = [
+VALID_PARSER_RESULTS = [
     ConditionListNode(
         Condition("=", Field("name"), "main.py"),
         constants.OP_CONJUNCTION,
@@ -101,7 +101,7 @@ CONDITION_PARSER_RESULTS = [
     ),
 ]
 
-INVALID_CONDITION_PARSER_ARGS = [
+INVALID_PARSER_ARGS = [
     (
         "Where Name Like size[KiB] Or name = 'main.py'",
         constants.ENTITY_FILE,
@@ -120,7 +120,7 @@ INVALID_CONDITION_PARSER_ARGS = [
     ),
 ]
 
-TRUTHY_CONDITION_HANDLER_CONDITIONS = [
+HANDLER_CONDITIONS = [
     (
         "where filetype in [None, '.txt', '.md'] and (ctime > 1990-01-01) and size[KB] = 0",
         constants.ENTITY_FILE,
@@ -135,7 +135,7 @@ TRUTHY_CONDITION_HANDLER_CONDITIONS = [
     ),
 ]
 
-TRUTHY_CONDITION_HANDLER_ENTITIES = [
+TRUTHY_HANDLER_ENTITIES = [
     (
         File(FD_TEST_DIR / "TODO"),
         File(FD_TEST_DIR / "roadmap.txt"),
@@ -184,7 +184,7 @@ class TestConditionParser:
 
     @pytest.mark.parametrize(
         ("args", "result"),
-        zip(CONDITION_PARSER_VALID_ARGS, CONDITION_PARSER_RESULTS),
+        zip(VALID_PARSER_ARGS, VALID_PARSER_RESULTS),
     )
     def test_parse_with_valid_conditions(
         self, args: tuple[str, str], result: ConditionListNode
@@ -199,7 +199,7 @@ class TestConditionParser:
 
         assert conditions == result
 
-    @pytest.mark.parametrize("args", INVALID_CONDITION_PARSER_ARGS)
+    @pytest.mark.parametrize("args", INVALID_PARSER_ARGS)
     def test_parse_with_invalid_conditions(self, args: tuple[str, str]) -> None:
         """
         Tests the parse method with invalid condition
@@ -217,7 +217,7 @@ class TestConditionHandler:
 
     @pytest.mark.parametrize(
         ("condition", "entities"),
-        zip(TRUTHY_CONDITION_HANDLER_CONDITIONS, TRUTHY_CONDITION_HANDLER_ENTITIES),
+        zip(HANDLER_CONDITIONS, TRUTHY_HANDLER_ENTITIES),
     )
     def test_for_truthiness(
         self, condition: tuple[str, str], entities: tuple[BaseEntity]

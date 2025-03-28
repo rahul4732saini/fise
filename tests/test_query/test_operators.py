@@ -18,6 +18,9 @@ the search method in the `FileQueryOperator` class.
 - /dir_search/t<x>: Stores directory search records for testing
 the search method in the `DirectoryQueryOperator` class.
 
+- /data_search/t<x>: Stores data search records for testing
+the search method in the `DataQueryOperator` class.
+
 where `<x>` denotes the 1-indexed positon of the test case in the associated
 constant comprising the results for testing the function below in the module.
 """

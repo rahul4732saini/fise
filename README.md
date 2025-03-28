@@ -154,7 +154,7 @@ R DELETE[TYPE FILE] FROM . WHERE filetype IN [".js", ".cpp"] OR SIZE[b] = 0
 ```
 
 ```SQL
-DELETE[TYPE DIR] FROM . WHERE name IN ("temp", "__pycache__", "test")
+DELETE[TYPE DIR] FROM . WHERE name IN ["temp", "__pycache__", "test"]
 ```
 
 ```SQL

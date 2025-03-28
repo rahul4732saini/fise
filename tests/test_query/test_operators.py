@@ -149,8 +149,8 @@ class TestDirectoryQueryOperator:
     """Tests the DirectoryQueryOperator class."""
 
     @staticmethod
-    def init_operator(path: Path, recursive: bool) -> FileQueryOperator:
-        """Initializes a FileQueryOperator object."""
+    def init_operator(path: Path, recursive: bool) -> DirectoryQueryOperator:
+        """Initializes a DirectoryQueryOperator object."""
 
         path_obj = DirectoryQueryPath(path)
         operator = DirectoryQueryOperator(path_obj, recursive)

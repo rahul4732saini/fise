@@ -5,6 +5,21 @@ Test Operators Module
 This module defines classes and methods for testing the classes defined
 within the `query/operators.py` module for handling file system and data
 search and delete operations.
+
+NOTE:
+This module is dependent upon a HDF5 file with the same name located in
+the hdf/test_query/ directory comprising file and directory search and
+delete records for testing the associated methods in the query operator
+class, and stores the following at the below specified paths:
+
+- /file_search/t<x>: Stores file search records for testing
+the search method in the `FileQueryOperator` class.
+
+- /dir_search/t<x>: Stores directory search records for testing
+the search method in the `DirectoryQueryOperator` class.
+
+where `<x>` denotes the 1-indexed positon of the test case in the associated
+constant comprising the results for testing the function below in the module.
 """
 
 from pathlib import Path

@@ -2,11 +2,11 @@
 
 <h1 align=center>Getting Started</h1>
 
-Welcome to **FiSE (File Search Engine)**! This comprehensive guide will walk you through the steps to install FiSE, set it up, and perform basic operations with it.
+Welcome to **FiSE (File System Search Engine)**! This comprehensive guide will walk you through the steps to install FiSE, set it up, and perform basic operations with it.
 
 <h2 align=center>Introduction</h2>
 
-**FiSE (File Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and delete operations. It empowers users with the ability to perform comprehensive search operations using intuitive SQL-like commands streamlining file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility also allows exporting search records to files and databases in a professional manner. Ideal for developers, data analysts, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for advanced search and delete operations.
+**FiSE (File System Search Engine)** is a powerful cross-platform command line utility designed for performing seamless file, directory, and data search and delete operations. It empowers users with the ability to perform comprehensive search operations using intuitive SQL-like commands streamlining file management tasks, making it simple to locate, query, and modify files and directories with precision and efficiency. Additionally, this utility also allows exporting search records to files and databases in a professional manner. Ideal for developers, data analysts, system administrators, and power users, FiSE enhances productivity by providing a robust and flexible toolset for advanced search and delete operations.
 
 <h2 align=center>Setup</h2>
 
@@ -36,7 +36,7 @@ To install FiSE on your system, follow the steps mentioned below:
 
 2. **Change the current working directory**:
 
-   Change the current directory to the source code directory, i.e., `./fise` to perform the remaining installation:
+   Change the current directory to the source code directory, i.e., `./fise` to perform the remaining installation process:
 
    ```bash
    cd ./fise
@@ -44,13 +44,13 @@ To install FiSE on your system, follow the steps mentioned below:
 
 3. **Install Dependencies**:
 
-   All the base requirements are specified within [requirements.txt](../requirements/requirements.txt) which can be installed using the following command:
+   All the base requirements for running **FiSE** are listed within [requirements.txt](../requirements/requirements.txt) which can be installed using the following command:
 
    ```bash
    python -m pip install -r requirements/requirements.txt --no-cache-dir
    ```
 
-   To utilize the additional features offered by FiSE, including the database export functionality, it is necessary to install the supplementary requirements specified within [requirements-extra.txt](../requirements/requirements-extra.txt). These requirements can be installed using the same procedure as mentioned before:
+   To utilize the additional features offered by **FiSE**, including the database export functionality, it is necessary to install the supplementary requirements listed within [requirements-extra.txt](../requirements/requirements-extra.txt). These requirements can be installed using the same procedure as mentioned before:
 
    ```bash
    python -m pip install -r requirements/requirements-extra.txt --no-cache-dir
@@ -58,21 +58,21 @@ To install FiSE on your system, follow the steps mentioned below:
 
 4. **(Optional) Build Application**:
 
-   To build the application on your current system, follow the steps mentioned under the [Build Guide](./build-executable.md).
+   To build the application into an executable file on your current system, follow the steps mentioned under the [Build Guide](./build-executable.md).
 
 <h2 align=center>Running FiSE</h2>
 
-Once all the steps mentioned above for installation are completed, you can run the program using the following command to run the [main.py](../fise/main.py) file present within the **fise** directory:
+Once all the steps mentioned above for installation are completed, you can run the software using the following command to run the [main.py](../fise/main.py) file present within the **fise** directory:
 
 ```bash
 python fise/main.py
 ```
 
-Running this command opens a command-line interface similar to **SQL**, allowing users to type in queries and view the corresponding output.
+Running this command opens a command-line interface similar to **SQL**, allowing you to type in queries and view the corresponding output.
 
 <h2 align=center>Basic Usage</h2>
 
-FiSE allows you to perform file, directory, and data searches using SQL-like commands. Here are a few basic examples to get you started:
+FiSE allows you to perform file, directory, and data searches using SQL-like commands. Below are a few basic examples to get you started:
 
 ### Example 1: Perform a File Search
 
@@ -82,17 +82,17 @@ FiSE allows you to perform file, directory, and data searches using SQL-like com
    SELECT * FROM . WHERE name LIKE ".*\.py"
    ```
 
-### Example 2: Search for Specific Data
+### Example 2: Search for Specific Data in a File
 
    To search for a specific string `FiSE` within files:
 
    ```SQL
-   SELECT[TYPE DATA, MODE BYTES] * FROM . WHERE LINENO IN (10, 100) AND DATA LIKE ".*FiSE.*"
+   SELECT[TYPE DATA, MODE BYTES] * FROM . WHERE LINENO IN [10, 100] AND "FiSE" in data
    ```
 
 ### Example 3: Delete Files
 
-   To delete all JavaScript files `*.js` from a directory:
+   To delete all JavaScript files `*.js` from the current directory:
 
    ```SQL
    DELETE FROM . WHERE name LIKE ".*\.js"
@@ -100,10 +100,10 @@ FiSE allows you to perform file, directory, and data searches using SQL-like com
 
 ### Example 4: Delete Directories
 
-   To delete all directories which were created before `2020-01-01`:
+   To delete all directories within the current directory which were created before `2020-01-01`:
 
    ```SQL
-   DELETE[TYPE DIR] FROM . WHERE ctime < "2020-01-01"
+   DELETE[TYPE DIR] FROM . WHERE ctime < 2020-01-01
    ```
 
 <h2 align=center>Next Steps</h2>

@@ -2,7 +2,7 @@
 Main Module
 -----------
 
-This script serves as the entry point for the FiSE (File Search Engine) 
+This script serves as the entry point for the FiSE (File Search Engine)
 application. It provides a command-line interface for users to perform
 search and delete queries on file system entities.
 

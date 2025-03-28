@@ -115,6 +115,16 @@ DATA_OPERATOR_SEARCH_ARGS = [
 ]
 
 
+def read_operators_hdf(key: str) -> pd.DataFrame:
+    """
+    Reads the data stored at the specified key in
+    the HDF5 file associated with this module.
+    """
+
+    global TEST_OPERATORS_HDF_FILE
+    return pd.read_hdf(TEST_OPERATORS_HDF_FILE, key)
+
+
 def get_condition_handler(condition_specs: str, entity: str) -> None:
     """
     Initializes a ConditionHandler object based on the

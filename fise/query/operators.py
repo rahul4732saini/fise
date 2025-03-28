@@ -84,6 +84,8 @@ class FileQueryOperator(FileSystemOperator):
             File(file) for file in self._path.enumerate(self._recursive)
         )
 
+        projection_names: list[str] = [str(projection) for projection in projections]
+
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
@@ -92,7 +94,7 @@ class FileQueryOperator(FileSystemOperator):
             if condition(file)
         )
 
-        return pd.DataFrame(records, columns=projections)
+        return pd.DataFrame(records, columns=projection_names)
 
     @staticmethod
     def _delete_file(file: Path, skip_err: bool) -> bool:
@@ -201,6 +203,8 @@ class DataQueryOperator(BaseOperator):
         - condition (Callable): Function for filtering data records.
         """
 
+        projection_names: list[str] = [str(projection) for projection in projections]
+
         # Generator object comprising search records of
         # the files matching the specified condition.
         records: Generator[list[Any], None, None] = (
@@ -209,7 +213,7 @@ class DataQueryOperator(BaseOperator):
             if condition(dataline)
         )
 
-        return pd.DataFrame(records, columns=projections)
+        return pd.DataFrame(records, columns=projection_names)
 
 
 class DirectoryQueryOperator(FileSystemOperator):
@@ -249,6 +253,8 @@ class DirectoryQueryOperator(FileSystemOperator):
             Directory(directory) for directory in self._path.enumerate(self._recursive)
         )
 
+        projection_names: list[str] = [str(projection) for projection in projections]
+
         # Generator object comprising search records of
         # the directories matching the specified condition.
         records: Generator[list[Any], None, None] = (
@@ -257,7 +263,7 @@ class DirectoryQueryOperator(FileSystemOperator):
             if condition(directory)
         )
 
-        return pd.DataFrame(records, columns=projections)
+        return pd.DataFrame(records, columns=projection_names)
 
     @staticmethod
     def _delete_directory(directory: Path, skip_err: bool) -> bool:

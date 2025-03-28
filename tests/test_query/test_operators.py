@@ -29,10 +29,15 @@ import pandas as pd
 
 from fise.shared import QueryQueue
 from fise.common import constants
-from fise.query.paths import FileQueryPath, DirectoryQueryPath
 from fise.query.projections import ProjectionsParser
-from fise.query.operators import BaseOperator, FileQueryOperator, DirectoryQueryOperator
+from fise.query.paths import FileQueryPath, DirectoryQueryPath, DataQueryPath
 from fise.query.conditions import ConditionParser, ConditionHandler
+from fise.query.operators import (
+    BaseOperator,
+    FileQueryOperator,
+    DirectoryQueryOperator,
+    DataQueryOperator,
+)
 
 
 BASE_DIR = Path(__file__).parents[1]
@@ -76,6 +81,36 @@ DIR_OPERATOR_SEARCH_ARGS = [
         (FD_TEST_DIR, True),
         ("name", r"where name like '^report-20\d{2}$'"),
         "dir_search/t2",
+    ),
+]
+
+DATA_OPERATOR_SEARCH_ARGS = [
+    (
+        (
+            DATA_TEST_DIR / "roadmap.txt",
+            False,
+            constants.READ_MODES_MAP[constants.READ_MODE_TEXT],
+        ),
+        ("data, lineno", "where lineno < 20 and 'Feature' in data"),
+        "data_search/t1",
+    ),
+    (
+        (
+            DATA_TEST_DIR,
+            True,
+            constants.READ_MODES_MAP[constants.READ_MODE_BYTES],
+        ),
+        ("name, lineno, data", "where 'report' in name and lineno between [10, 15]"),
+        "data_search/t2",
+    ),
+    (
+        (
+            DATA_TEST_DIR / "complaints.txt",
+            False,
+            constants.READ_MODES_MAP[constants.READ_MODE_TEXT],
+        ),
+        ("data", "where 'Order' in data and lineno < 10"),
+        "data_search/t3",
     ),
 ]
 
@@ -173,6 +208,42 @@ class TestDirectoryQueryOperator:
 
         operator = self.init_operator(*init_args)
         dataframe = get_search_results(operator, *func_args, constants.ENTITY_DIR)
+
+        result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
+        assert dataframe.equals(result_dataframe)
+
+
+class TestDataQueryOperator:
+    """Tests the DataQueryOperator class."""
+
+    @staticmethod
+    def init_operator(path: Path, recursive: bool, filemode: str) -> DataQueryOperator:
+        """Initializes a DataQueryOperator object."""
+
+        path_obj = DataQueryPath(path)
+        operator = DataQueryOperator(path_obj, recursive, filemode)
+
+        return operator
+
+    @pytest.mark.parametrize(
+        ("init_args", "func_args", "result_loc"), DATA_OPERATOR_SEARCH_ARGS
+    )
+    def test_search(
+        self,
+        init_args: tuple[Path, bool, str],
+        func_args: tuple[str, str],
+        result_loc: str,
+    ) -> None:
+        """
+        Tests the search method with the query specifications specified as
+        arguments and verifies the result by comparing it with the data stored
+        in the associated HDF file.
+        """
+
+        global TEST_OPERATORS_HDF_FILE
+
+        operator = self.init_operator(*init_args)
+        dataframe = get_search_results(operator, *func_args, constants.ENTITY_DATA)
 
         result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
         assert dataframe.equals(result_dataframe)

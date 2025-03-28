@@ -50,67 +50,71 @@ FD_TEST_DIR = TEST_DIR / "file_dir"
 TEST_DIRECTORY_HDF_FILE = HDF_DIR / "test_directory.hdf"
 TEST_OPERATORS_HDF_FILE = HDF_DIR / "test_query/test_operators.hdf"
 
+LOC_FILE_SEARCH = "file_search/t%s"
+LOC_DIR_SEARCH = "dir_search/t%s"
+LOC_DATA_SEARCH = "data_search/t%s"
+
 # The following constants store arguments and results
 # for testing the functionalities associated with them.
 
 FILE_OPERATOR_SEARCH_ARGS = [
     (
+        1,
         (FD_TEST_DIR, False),
         ("name, filetype, size[Kb]", "where type in [None, '.md'] and size = 0"),
-        "file_search/t1",
     ),
     (
+        2,
         (FD_TEST_DIR / "project", True),
         ("filename, type", r"where name like '^.*\.py$'"),
-        "file_search/t2",
     ),
     (
+        3,
         (FD_TEST_DIR, True),
         ("name, size[b]", "where filetype in ['.md', '.txt', None]"),
-        "file_search/t3",
     ),
 ]
 
 DIR_OPERATOR_SEARCH_ARGS = [
     (
+        1,
         (FD_TEST_DIR, False),
         ("name", "where name in ['docs', 'orders', 'project']"),
-        "dir_search/t1",
     ),
     (
+        2,
         (FD_TEST_DIR, True),
         ("name", r"where name like '^report-20\d{2}$'"),
-        "dir_search/t2",
     ),
 ]
 
 DATA_OPERATOR_SEARCH_ARGS = [
     (
+        1,
         (
             DATA_TEST_DIR / "roadmap.txt",
             False,
             constants.READ_MODES_MAP[constants.READ_MODE_TEXT],
         ),
         ("data, lineno", "where lineno < 20 and 'Feature' in data"),
-        "data_search/t1",
     ),
     (
+        2,
         (
             DATA_TEST_DIR,
             True,
             constants.READ_MODES_MAP[constants.READ_MODE_BYTES],
         ),
         ("name, lineno, data", "where 'report' in name and lineno between [10, 15]"),
-        "data_search/t2",
     ),
     (
+        3,
         (
             DATA_TEST_DIR / "complaints.txt",
             False,
             constants.READ_MODES_MAP[constants.READ_MODE_TEXT],
         ),
         ("data", "where 'Order' in data and lineno < 10"),
-        "data_search/t3",
     ),
 ]
 
@@ -170,10 +174,10 @@ class TestFileQueryOperator:
         return operator
 
     @pytest.mark.parametrize(
-        ("init_args", "func_args", "result_loc"), FILE_OPERATOR_SEARCH_ARGS
+        ("index", "init_args", "func_args"), FILE_OPERATOR_SEARCH_ARGS
     )
     def test_search(
-        self, init_args: tuple[Path, bool], func_args: tuple[str, str], result_loc: str
+        self, index: int, init_args: tuple[Path, bool], func_args: tuple[str, str]
     ) -> None:
         """
         Tests the search method with the query specifications specified as
@@ -181,12 +185,12 @@ class TestFileQueryOperator:
         in the associated HDF file.
         """
 
-        global TEST_OPERATORS_HDF_FILE
+        global LOC_FILE_SEARCH
 
         operator = self.init_operator(*init_args)
         dataframe = get_search_results(operator, *func_args, constants.ENTITY_FILE)
 
-        result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
+        result_dataframe = read_operators_hdf(LOC_FILE_SEARCH % index)
         assert dataframe.equals(result_dataframe)
 
 
@@ -203,10 +207,10 @@ class TestDirectoryQueryOperator:
         return operator
 
     @pytest.mark.parametrize(
-        ("init_args", "func_args", "result_loc"), DIR_OPERATOR_SEARCH_ARGS
+        ("index", "init_args", "func_args"), DIR_OPERATOR_SEARCH_ARGS
     )
     def test_search(
-        self, init_args: tuple[Path, bool], func_args: tuple[str, str], result_loc: str
+        self, index: int, init_args: tuple[Path, bool], func_args: tuple[str, str]
     ) -> None:
         """
         Tests the search method with the query specifications specified as
@@ -214,12 +218,12 @@ class TestDirectoryQueryOperator:
         in the associated HDF file.
         """
 
-        global TEST_OPERATORS_HDF_FILE
+        global LOC_DIR_SEARCH
 
         operator = self.init_operator(*init_args)
         dataframe = get_search_results(operator, *func_args, constants.ENTITY_DIR)
 
-        result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
+        result_dataframe = read_operators_hdf(LOC_DIR_SEARCH % index)
         assert dataframe.equals(result_dataframe)
 
 
@@ -236,13 +240,10 @@ class TestDataQueryOperator:
         return operator
 
     @pytest.mark.parametrize(
-        ("init_args", "func_args", "result_loc"), DATA_OPERATOR_SEARCH_ARGS
+        ("index", "init_args", "func_args"), DATA_OPERATOR_SEARCH_ARGS
     )
     def test_search(
-        self,
-        init_args: tuple[Path, bool, str],
-        func_args: tuple[str, str],
-        result_loc: str,
+        self, index: int, init_args: tuple[Path, bool, str], func_args: tuple[str, str]
     ) -> None:
         """
         Tests the search method with the query specifications specified as
@@ -250,10 +251,10 @@ class TestDataQueryOperator:
         in the associated HDF file.
         """
 
-        global TEST_OPERATORS_HDF_FILE
+        global LOC_DATA_SEARCH
 
         operator = self.init_operator(*init_args)
         dataframe = get_search_results(operator, *func_args, constants.ENTITY_DATA)
 
-        result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
+        result_dataframe = read_operators_hdf(LOC_DATA_SEARCH % index)
         assert dataframe.equals(result_dataframe)

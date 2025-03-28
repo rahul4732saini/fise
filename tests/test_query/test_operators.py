@@ -14,9 +14,9 @@ import pandas as pd
 
 from fise.shared import QueryQueue
 from fise.common import constants
-from fise.query.paths import FileQueryPath
+from fise.query.paths import FileQueryPath, DirectoryQueryPath
 from fise.query.projections import ProjectionsParser
-from fise.query.operators import BaseOperator, FileQueryOperator
+from fise.query.operators import BaseOperator, FileQueryOperator, DirectoryQueryOperator
 from fise.query.conditions import ConditionParser, ConditionHandler
 
 
@@ -48,6 +48,19 @@ FILE_OPERATOR_SEARCH_ARGS = [
         (FD_TEST_DIR, True),
         ("name, size[b]", "where filetype in ['.md', '.txt', None]"),
         "file_search/t3",
+    ),
+]
+
+DIR_OPERATOR_SEARCH_ARGS = [
+    (
+        (FD_TEST_DIR, False),
+        ("name", "where name in ['docs', 'orders', 'project']"),
+        "dir_search/t1",
+    ),
+    (
+        (FD_TEST_DIR, True),
+        ("name", r"where name like '^report-20\d{2}$'"),
+        "dir_search/t2",
     ),
 ]
 
@@ -112,6 +125,39 @@ class TestFileQueryOperator:
 
         operator = self.init_operator(*init_args)
         dataframe = get_search_results(operator, *func_args, constants.ENTITY_FILE)
+
+        result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
+        assert dataframe.equals(result_dataframe)
+
+
+class TestDirectoryQueryOperator:
+    """Tests the DirectoryQueryOperator class."""
+
+    @staticmethod
+    def init_operator(path: Path, recursive: bool) -> FileQueryOperator:
+        """Initializes a FileQueryOperator object."""
+
+        path_obj = DirectoryQueryPath(path)
+        operator = DirectoryQueryOperator(path_obj, recursive)
+
+        return operator
+
+    @pytest.mark.parametrize(
+        ("init_args", "func_args", "result_loc"), DIR_OPERATOR_SEARCH_ARGS
+    )
+    def test_search(
+        self, init_args: tuple[Path, bool], func_args: tuple[str, str], result_loc: str
+    ) -> None:
+        """
+        Tests the search method with the query specifications specified as
+        arguments and verifies the result by comparing it with the data stored
+        in the associated HDF file.
+        """
+
+        global TEST_OPERATORS_HDF_FILE
+
+        operator = self.init_operator(*init_args)
+        dataframe = get_search_results(operator, *func_args, constants.ENTITY_DIR)
 
         result_dataframe = pd.read_hdf(TEST_OPERATORS_HDF_FILE, result_loc)
         assert dataframe.equals(result_dataframe)

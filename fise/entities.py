@@ -15,6 +15,10 @@ from datetime import datetime
 
 from notify import Alert
 
+# Stores boolean to indicate whether to alert the user
+# upon failure in field extraction.
+_alert: bool = True
+
 
 def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
     """
@@ -26,10 +30,8 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
     Subsequent exceptions are ignored to avoid redundant alerts.
     """
 
-    alert: bool = True
-
     def wrapper(self) -> Any:
-        nonlocal alert
+        global _alert
 
         try:
             return func(self)
@@ -45,7 +47,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
             )
 
             # Sets alert to False to avoid redundant alerts.
-            alert = False
+            _alert = False
 
     return wrapper
 

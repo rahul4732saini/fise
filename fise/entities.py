@@ -8,6 +8,7 @@ extracting metadata fields for file system entities.
 
 import os
 import sys
+import stat
 from pathlib import Path
 from typing import Callable, Any
 from datetime import datetime
@@ -139,7 +140,7 @@ class PosixEntity(FileSystemEntity):
     @property
     @safe_extract_field
     def permissions(self) -> int:
-        return self._stats.st_mode
+        return stat.filemode(self._stats.st_mode)
 
 
 class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):

@@ -156,8 +156,8 @@ class Entity(PosixEntity if sys.platform != "win32" else WindowsEntity):
 
 class File(Entity):
     """
-    File class for accessing all metadata
-    fields associated with a specific file.
+    File class for accessing metadata fields
+    associated with a specific file.
     """
 
     __slots__ = "_path", "_stats"
@@ -178,8 +178,8 @@ class File(Entity):
 
 class Directory(Entity):
     """
-    Directory class for accessing all metadata
-    fields associated with a specific directory.
+    Directory class for accessing metadata fields
+    associated with a specific directory.
     """
 
     __slots__ = "_path", "_stats"
@@ -190,7 +190,7 @@ class Directory(Entity):
 
 class DataLine(BaseEntity):
     """
-    DataLine class for accessing all metadata fields
+    DataLine class for accessing metadata fields
     associated with a specific line of data in a file.
     """
 

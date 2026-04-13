@@ -1,2 +1,2 @@
-pytest==8.2.2
+pytest==9.0.3
 tables==3.9.2

@@ -2,19 +2,19 @@
 Tools module
 ------------
 
-This module comprises utility function for assisting
+This module comprises utility functions for assisting
 other classes and functions defined within the project.
 """
 
 import typing
-
+from pathlib import Path
 from types import UnionType
 from typing import Generator
-from pathlib import Path
 
-from . import constants
 from errors import QueryParseError
 from notify import Alert
+
+from . import constants
 
 
 def tokenize(

@@ -21,12 +21,13 @@ def tokenize(
     source: str, delimiter: str = " ", skip_empty: bool = False
 ) -> Generator[str, None, None]:
     """
-    Tokenizes the specified source string
-    based on the specified delimiter.
+    Tokenizes and normalizes the specified source string using the
+    specified delimiter, while respecting the nested structures defined
+    by paired delimiters including [], (), "", and ''.
 
     #### Params:
     - source (str): String to be tokenized.
-    - delimiter (str): Character for seperating individual
+    - delimiter (str): Character for separating individual
     tokens in the source string.
     - skip_empty (bool): Whether to skip empty tokens.
     """
@@ -34,39 +35,45 @@ def tokenize(
     paired_delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
     conflicting: set[str] = {"'", '"'}
 
-    # Stores the current token as a list of strings.
+    # Stores the current token as a list of characters while iterating
+    # through the source string.
     token: list[str] = []
 
-    # Stores opening paired delimiters in the source string during iteration.
-    cur: list[str] = []
+    # Keeps track of the opening delimiters during iteration.
+    delimiter_stack: list[str] = []
 
     # Adds an instance of the delimiter at the end of the source
     # to avoid parsing the last token separately after iteration.
     for char in source + delimiter:
-
-        # Adds the current token to the tokens list if
-        # the current character is a top-level delimiter.
-        if not cur and char == delimiter:
+        # Yields the current token if the current character is
+        # a top-level delimiter indicating the end of a token.
+        if not delimiter_stack and char == delimiter:
             if skip_empty and not token:
                 continue
 
+            # Normalizes the token before yielding it.
             yield "".join(token).strip(" ")
 
             token.clear()
             continue
 
+        # Appends the character to the current token being parsed.
         token.append(char)
 
-        # Avoids recognizing nested conflicting delimiters in the
-        # source string to maintain consistency in the operation.
-        if char in paired_delimiters and (not cur or char not in conflicting):
-            cur.append(char)
+        # Avoids recognition of nested conflicting delimiters in
+        # the token to avoid ambiguity when parsing delimiters.
+        if char in paired_delimiters and (
+            not delimiter_stack or char not in conflicting
+        ):
+            delimiter_stack.append(char)
 
-        elif cur and char == paired_delimiters.get(cur[-1]):
-            cur.pop()
+        # Removes the inner-most delimiter from the stack when
+        # its corresponding closing delimiter is found.
+        elif delimiter_stack and char == paired_delimiters.get(delimiter_stack[-1]):
+            delimiter_stack.pop()
 
-    # Raises an error if delimiters are mismatched in the
-    # source string such that a token is left unparsed.
+    # Raises an error if delimiters are mismatched in the source
+    # string such that a token is left unparsed in the end.
     if token:
         raise QueryParseError(f"Invalid syntax around {''.join(token[:-1])!r}")
 

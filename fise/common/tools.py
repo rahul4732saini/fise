@@ -82,35 +82,27 @@ def tokenize_qualified_clause(
     clause: str, mandate_args: bool = False
 ) -> tuple[str, str]:
     """
-    Tokenizes the specified qualified cluase and returns
-    a tuple comprising the label along with the arguments.
+    Tokenizes the specified qualified clause and returns a
+    2-tuple comprising the label and the qualifications.
 
     #### Params:
     - clause (str): String comprising the qualified clause.
     - mandate_args (bool): Whether to mandate the presence
-    of arguments in the clause. Defaults to False.
+    of qualifications in the clause. Defaults to False.
     """
 
-    if constants.QUALIFIED_CLAUSE_PATTERN.match(clause) is None:
+    match_ = constants.QUALIFIED_CLAUSE_PATTERN.fullmatch(clause)
+
+    if match_ is None:
         raise QueryParseError(f"{clause!r} is not a valid clause!")
 
-    label = args = ""
+    label, qualifications = match_.group("label"), match_.group("qualifications")
 
-    # Iterates through the clause and extracts the label and arguments.
-    for i in range(len(clause)):
-        if clause[i] != "[":
-            continue
+    # Raises an error if arguments are required but not specified in the clause.
+    if mandate_args and qualifications is None:
+        raise QueryParseError(f"Arguments required for the {label!r} clause.")
 
-        label, args = clause[:i], clause[i + 1 : -1]
-        break
-
-    else:
-        label = clause
-
-    if mandate_args and not args:
-        raise QueryParseError(f"Arguments required for the {clause!r} clause.")
-
-    return label.lower(), args.strip(" ")
+    return label.lower(), (qualifications or "").strip(" ")
 
 
 def find_base_string(source: str, strings: tuple[str]) -> tuple[int, int] | None:

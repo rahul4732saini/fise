@@ -166,7 +166,10 @@ DATETIME_FORMAT = r"%Y-%m-%d %H:%M:%S"
 # The following constants comprise patterns for matching
 # associated query clauses, tokens, fields, and much more.
 
-QUALIFIED_CLAUSE_PATTERN = re.compile(r"^[a-zA-Z_]+(\[.*])?$")
+QUALIFIED_CLAUSE_PATTERN = re.compile(
+    r"^(?P<label>[a-zA-Z_]+)(\[(?P<qualifications>.+)])?$"
+)
+
 STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
 TUPLE_PATTERN = re.compile(r"^\[.*]$")
 NESTED_CONDITION_PATTERN = re.compile(r"^\(.*\)$")

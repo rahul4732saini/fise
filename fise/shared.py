@@ -72,7 +72,7 @@ class QueryQueue:
     def add(self, token: str) -> None:
         """Adds the specified token at the end of the queue."""
 
-        if self._head is None:
+        if self._tail is None:
             self._head = self._tail = QueueNode(token)
             return
 

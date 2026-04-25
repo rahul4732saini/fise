@@ -16,8 +16,8 @@ from typing import Any, Callable
 
 from notify import Alert
 
-# Stores boolean to indicate whether to alert the user
-# upon failure in field extraction.
+# Stores boolean value to indicate whether the user has
+# not been alerted about a failure in field extraction.
 _alert: bool = True
 
 
@@ -48,7 +48,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
                 " explicitly as 'None'."
             )
 
-            # Sets alert to False to avoid redundant alerts.
+            # Sets alert to False to avoid redundant alert messages.
             _alert = False
 
     return wrapper

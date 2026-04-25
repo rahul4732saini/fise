@@ -53,7 +53,9 @@ class QueryQueue:
         return self._head is not None
 
     def __repr__(self) -> str:
-        return f"QueryQueue(head={self._head.val!r})"
+
+        val: str | None = self._head.val if self._head else None
+        return f"QueryQueue(head={val!r})"
 
     @classmethod
     def from_string(cls, query: str) -> "QueryQueue":

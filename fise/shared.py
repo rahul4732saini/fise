@@ -8,14 +8,14 @@ definition.
 """
 
 from dataclasses import dataclass
-from typing import Iterable, Optional, Generator
 from pathlib import Path
+from typing import Generator, Iterable, Optional
 
 from common import tools
 from errors import QueryParseError
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
 class QueueNode:
     """
     QueueNode class represents individual node in the query queue.

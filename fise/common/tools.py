@@ -60,10 +60,13 @@ def tokenize(
         # Appends the character to the current token being parsed.
         token.append(char)
 
-        # Avoids recognition of nested conflicting delimiters in
-        # the token to avoid ambiguity when parsing delimiters.
+        # Avoids recognition of nested conflicting delimiters and nesting
+        # within conflicting delimiters to avoid ambiguity when parsing
+        # nested structures.
         if char in paired_delimiters and (
-            not delimiter_stack or char not in conflicting
+            not delimiter_stack
+            or char not in conflicting
+            and delimiter_stack[-1] not in conflicting
         ):
             delimiter_stack.append(char)
 

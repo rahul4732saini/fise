@@ -59,10 +59,9 @@ class QueryQueue:
 
     @classmethod
     def from_string(cls, query: str) -> "QueryQueue":
-        """Initializes the queue from the specified query string."""
+        """Tokenizes the query string and adds the tokens to the queue."""
 
-        query: Generator[str, None, None] = tools.tokenize(query, skip_empty=True)
-        return cls(query)
+        return cls(tools.tokenize(query, skip_empty=True))
 
     def _from_iterable(self, iterable: Iterable) -> None:
         """Adds the tokens in the specified iterable to the queue."""
@@ -139,7 +138,6 @@ class FileIterator:
         ctr: int = 0
 
         with self._path.open(self._filemode) as file:
-
             while line := file.readline():
                 ctr += 1
                 yield ctr, line

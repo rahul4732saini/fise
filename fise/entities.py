@@ -10,6 +10,7 @@ import os
 import stat
 import sys
 from datetime import datetime
+from functools import wraps
 from pathlib import Path
 from typing import Any, Callable
 
@@ -30,6 +31,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
     Subsequent exceptions are ignored to avoid redundant alerts.
     """
 
+    @wraps(func)
     def wrapper(self) -> Any:
         global _alert
 

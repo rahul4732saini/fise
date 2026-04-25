@@ -7,11 +7,11 @@ extracting metadata fields for file system entities.
 """
 
 import os
-import sys
 import stat
-from pathlib import Path
-from typing import Callable, Any
+import sys
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Callable
 
 from notify import Alert
 
@@ -37,7 +37,7 @@ def safe_extract_field(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(self)
 
         except Exception:
-            if not alert:
+            if not _alert:
                 return
 
             Alert(

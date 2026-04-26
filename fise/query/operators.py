@@ -29,8 +29,8 @@ class BaseOperator(ABC):
     def search(
         self,
         projections: list[Projection],
-        condition: Callable[[BaseEntity], bool],
-    ): ...
+        condition: ConditionHandler,
+    ) -> pd.DataFrame: ...
 
 
 class FileSystemOperator(ABC):
@@ -42,9 +42,9 @@ class FileSystemOperator(ABC):
     @abstractmethod
     def delete(
         self,
-        condition: Callable[[BaseEntity], bool],
+        condition: ConditionHandler,
         skip_err: bool,
-    ): ...
+    ) -> None: ...
 
 
 class FileQueryOperator(FileSystemOperator):

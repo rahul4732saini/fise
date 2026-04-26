@@ -7,19 +7,19 @@ user queries and performing search or delete operations.
 """
 
 import shutil
-from pathlib import Path
-from typing import Generator, Callable, Any
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Any, Generator
 
 import pandas as pd
-
+from entities import DataLine, Directory, File
 from errors import OperationError
-from notify import Message, Alert
+from notify import Alert, Message
 from shared import FileIterator
-from entities import BaseEntity, File, Directory, DataLine
-from .projections import Projection
-from .paths import FileQueryPath, DataQueryPath, DirectoryQueryPath
+
 from .conditions import ConditionHandler
+from .paths import DataQueryPath, DirectoryQueryPath, FileQueryPath
+from .projections import Projection
 
 
 class BaseOperator(ABC):

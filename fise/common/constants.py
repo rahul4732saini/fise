@@ -105,7 +105,7 @@ FIELD_TYPES = {
     "parent": str,
     "owner": str,
     "group": str,
-    "permissions": int,
+    "permissions": str,
     "lineno": int,
     "dataline": str,
     "filetype": str,

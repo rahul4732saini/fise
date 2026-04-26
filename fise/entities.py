@@ -143,7 +143,7 @@ class PosixEntity(FileSystemEntity):
 
     @property
     @safe_extract_field
-    def permissions(self) -> int:
+    def permissions(self) -> str:
         return stat.filemode(self._stats.st_mode)
 
 

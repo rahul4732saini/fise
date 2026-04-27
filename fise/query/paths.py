@@ -2,21 +2,24 @@
 Paths Module
 ------------
 
-This modules defines classes and functions for storing, parsing and
-handling file/directory paths defined within user-specified queries.
+This modules defines classes for storing, parsing and handling
+file/directory paths defined within user-specified queries.
 """
 
-from typing import Type, Generator
-from pathlib import Path
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Generator, Type
 
-from common import tools, constants
-from shared import QueryQueue
+from common import constants, tools
 from errors import QueryParseError
+from shared import QueryQueue
 
 
-class BaseQueryPath(ABC):
-    """BaseQueryPath serves as the base class for all query path classes."""
+class AbstractQueryPath(ABC):
+    """
+    AbstractQueryPath serves as the base class
+    for all query path classes.
+    """
 
     __slots__ = ("_path",)
 
@@ -36,7 +39,7 @@ class BaseQueryPath(ABC):
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]: ...
 
 
-class FileQueryPath(BaseQueryPath):
+class FileQueryPath(AbstractQueryPath):
     """
     FileQueryPath class defines mechanism for storing the directory path
     specified within the query, and enumerating over files within the same.
@@ -52,8 +55,7 @@ class FileQueryPath(BaseQueryPath):
 
         if not path.is_dir():
             raise QueryParseError(
-                f"The specified path {path.as_posix()!r}"
-                " does not lead to a directory."
+                f"The specified path {path.as_posix()!r} does not lead to a directory."
             )
 
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
@@ -68,7 +70,7 @@ class FileQueryPath(BaseQueryPath):
         yield from tools.enumerate_files(self._path, recursive)
 
 
-class DirectoryQueryPath(BaseQueryPath):
+class DirectoryQueryPath(AbstractQueryPath):
     """
     DirectoryQueryPath class defines mechanism for storing the directory
     path specified within the query and enumerating over sub-directories
@@ -85,8 +87,7 @@ class DirectoryQueryPath(BaseQueryPath):
 
         if not path.is_dir():
             raise QueryParseError(
-                f"The specified path {path.as_posix()!r}"
-                " does not lead to a directory."
+                f"The specified path {path.as_posix()!r} does not lead to a directory."
             )
 
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
@@ -102,7 +103,7 @@ class DirectoryQueryPath(BaseQueryPath):
         yield from tools.enumerate_directories(self._path, recursive)
 
 
-class DataQueryPath(BaseQueryPath):
+class DataQueryPath(AbstractQueryPath):
     """
     DataQueryPath class defines mechanism for storing the file or
     directory path specified within the query and enumerating over
@@ -149,7 +150,7 @@ class QueryPathParser:
     __slots__ = "_query", "_entity"
 
     # Maps entity names with their corresponding query path classes.
-    _path_classes: dict[str, Type[BaseQueryPath]] = {
+    _path_classes: dict[str, Type[AbstractQueryPath]] = {
         constants.ENTITY_FILE: FileQueryPath,
         constants.ENTITY_DATA: DataQueryPath,
         constants.ENTITY_DIR: DirectoryQueryPath,
@@ -189,7 +190,7 @@ class QueryPathParser:
 
         return path
 
-    def parse(self) -> BaseQueryPath:
+    def parse(self) -> AbstractQueryPath:
         """
         Parses the path specifications, validates the path
         and returns a query path object for further usage.

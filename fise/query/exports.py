@@ -133,14 +133,11 @@ class ExportParser:
     def parse(self) -> BaseExportData:
         """Parses the export specifications defined within the query."""
 
-        if self._query.peek().lower() != constants.KEYWORD_EXPORT:
+        if self._query.pop().lower() != constants.KEYWORD_EXPORT:
             raise QueryParseError(
                 "Expected the first clause of the query to"
                 f" be {constants.KEYWORD_EXPORT.upper()!r}."
             )
-
-        # Pops out the `EXPORT` keyword from the query.
-        self._query.pop()
 
         # Tokenizes the export specifications and extracts
         # the export type along with the associated arguments.

@@ -90,6 +90,9 @@ class ExportParser:
         # Currently, the only argument accepted for file exports is the path to
         # the external file. Hence, it is directly converted into a Path object.
 
+        if not args:
+            raise QueryParseError("No file path specified for data export!")
+
         file: Path = Path(args)
 
         if file.exists():
@@ -125,8 +128,13 @@ class ExportParser:
 
         dbms = args.lower()
 
+        if not dbms:
+            raise QueryParseError("No database name specified for data export!")
+
         if dbms not in constants.DBMS:
-            raise QueryParseError(f"The specified DBMS {dbms!r} is not supported!")
+            raise QueryParseError(
+                f"The specified DBMS {dbms!r} is not supported for data exports!"
+            )
 
         return DBMSExportData(dbms)
 

@@ -139,11 +139,9 @@ class ExportParser:
                 f" be {constants.KEYWORD_EXPORT.upper()!r}."
             )
 
-        # Tokenizes the export specifications and extracts
-        # the export type along with the associated arguments.
-        type_, args = tools.tokenize_qualified_clause(
-            self._query.pop(), mandate_args=True
-        )
+        # Parses the export specifications and extracts the export
+        # type along with the arguments specified.
+        type_, args = tools.tokenize_qualified_clause(self._query.pop())
 
         if type_ not in constants.EXPORT_TYPES:
             raise QueryParseError(f"{type_!r} is not a valid export type!")

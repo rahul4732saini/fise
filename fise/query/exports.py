@@ -23,15 +23,16 @@ from sqlalchemy.engine import URL, Connection, Engine, Inspector
 from sqlalchemy.exc import OperationalError
 
 
-class BaseExportData:
+class BaseExportData(ABC):
     """
     ExportData serves as the base class for all classes
     responsible for storing export data specifications.
     """
 
-    __slots__ = ()
-
     type_: ClassVar[str]
+
+    @abstractmethod
+    def __init__(self) -> None: ...
 
 
 @dataclass(slots=True, frozen=True, eq=False)

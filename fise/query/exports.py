@@ -2,8 +2,8 @@
 Exports Module
 --------------
 
-This module defines classes and functions for parsing
-and handling exports to DBMS and external file formats.
+This module defines classes for parsing and handling
+exports to DBMS and external file formats.
 """
 
 from abc import ABC, abstractmethod
@@ -37,9 +37,7 @@ class AbstractExportData(ABC):
 
 @dataclass(slots=True, frozen=True, eq=False)
 class FileExportData(AbstractExportData):
-    """
-    Encapsulates file export data specifications.
-    """
+    """Encapsulates file export data specifications."""
 
     type_ = constants.EXPORT_FILE
     file: Path
@@ -55,8 +53,8 @@ class DBMSExportData(AbstractExportData):
 
 class ExportParser:
     """
-    ExportParse class defines methods for parsing export
-    specifications defined in the user-specified query.
+    ExportParser class defines methods for parsing export
+    specifications defined within the user-specified query.
     """
 
     __slots__ = "_query", "_method_map"
@@ -71,7 +69,7 @@ class ExportParser:
 
         self._query = query
 
-        # Maps export types with their corresponding parser methods.
+        # Maps export types to their corresponding parser methods.
         self._method_map: dict[str, Callable[[str], AbstractExportData]] = {
             constants.EXPORT_FILE: self._parse_file_export,
             constants.EXPORT_DBMS: self._parse_dbms_export,
@@ -80,8 +78,7 @@ class ExportParser:
     @staticmethod
     def _parse_file_export(args: str) -> FileExportData:
         """
-        Parse file export specifications
-        based on the specified arguments.
+        Parses the specified file export specifications.
 
         #### Params:
         - args (str): String comprising the file export arguments.
@@ -116,8 +113,7 @@ class ExportParser:
     @staticmethod
     def _parse_dbms_export(args: str) -> DBMSExportData:
         """
-        Parses DBMS export specifications based on
-        the specified arguments.
+        Parses the specified DBMS export specifications.
 
         #### Params:
         - args (str): String comprising the DBMS export arguments.

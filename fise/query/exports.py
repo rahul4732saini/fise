@@ -38,8 +38,7 @@ class BaseExportData:
 @dataclass(slots=True, frozen=True, eq=False)
 class FileExportData(BaseExportData):
     """
-    FileExportData class encapsulates
-    file export data specifications.
+    Encapsulates file export data specifications.
     """
 
     type_ = constants.EXPORT_FILE
@@ -48,10 +47,7 @@ class FileExportData(BaseExportData):
 
 @dataclass(slots=True, frozen=True, eq=False)
 class DBMSExportData(BaseExportData):
-    """
-    DBMSExportData class encapsulates
-    DBMS export data specifications.
-    """
+    """Encapsulates database export data specifications."""
 
     type_ = constants.EXPORT_DBMS
     dbms: str
@@ -117,16 +113,15 @@ class ExportParser:
     @staticmethod
     def _parse_dbms_export(args: str) -> DBMSExportData:
         """
-        Parses DBMS export specifications
-        based on the specified arguments.
+        Parses DBMS export specifications based on
+        the specified arguments.
 
         #### Params:
         - args (str): String comprising the DBMS export arguments.
         """
 
-        # Currently, the only argument accepted for DBMS exports
-        # is the name of the DBMS. Hence, it is directly validated
-        # against an array of valid DBMS.
+        # Currently, the only argument accepted for DBMS exports is the name of
+        # the DBMS. Hence, it is directly validated against an array of valid DBMS.
 
         dbms = args.lower()
 

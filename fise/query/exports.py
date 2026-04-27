@@ -293,7 +293,7 @@ class DBMSExportHandler(BaseExportHandler):
         except OperationalError:
             engine.dispose(close=True)
 
-            raise OperationalError(
+            raise OperationError(
                 "Unable to establish a connection with the specified DBMS!"
             )
 

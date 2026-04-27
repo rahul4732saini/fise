@@ -23,7 +23,7 @@ from sqlalchemy.engine import URL, Connection, Engine, Inspector
 from sqlalchemy.exc import OperationalError
 
 
-class BaseExportData(ABC):
+class AbstractExportData(ABC):
     """
     ExportData serves as the base class for all classes
     responsible for storing export data specifications.
@@ -36,7 +36,7 @@ class BaseExportData(ABC):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class FileExportData(BaseExportData):
+class FileExportData(AbstractExportData):
     """
     Encapsulates file export data specifications.
     """
@@ -46,7 +46,7 @@ class FileExportData(BaseExportData):
 
 
 @dataclass(slots=True, frozen=True, eq=False)
-class DBMSExportData(BaseExportData):
+class DBMSExportData(AbstractExportData):
     """Encapsulates database export data specifications."""
 
     type_ = constants.EXPORT_DBMS
@@ -72,7 +72,7 @@ class ExportParser:
         self._query = query
 
         # Maps export types with their corresponding parser methods.
-        self._method_map: dict[str, Callable[[str], BaseExportData]] = {
+        self._method_map: dict[str, Callable[[str], AbstractExportData]] = {
             constants.EXPORT_FILE: self._parse_file_export,
             constants.EXPORT_DBMS: self._parse_dbms_export,
         }
@@ -130,7 +130,7 @@ class ExportParser:
 
         return DBMSExportData(dbms)
 
-    def parse(self) -> BaseExportData:
+    def parse(self) -> AbstractExportData:
         """Parses the export specifications defined within the query."""
 
         if self._query.pop().lower() != constants.KEYWORD_EXPORT:
@@ -158,7 +158,7 @@ class BaseExportHandler(ABC):
     """
 
     @abstractmethod
-    def __init__(self, specs: BaseExportData, data: pd.DataFrame) -> None: ...
+    def __init__(self, specs: AbstractExportData, data: pd.DataFrame) -> None: ...
 
     @abstractmethod
     def export(self) -> None: ...

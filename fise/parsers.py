@@ -21,7 +21,7 @@ QueryAttribute: TypeAlias = (
 )
 
 # Maps field names with corresponding handler classes.
-_fields_map: dict[str, BaseField] = {
+_fields_map: dict[str, type] = {
     "size": Size,
 }
 

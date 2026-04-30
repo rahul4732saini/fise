@@ -92,27 +92,26 @@ class ProjectionsParser:
         Parses search query projections from the specified source string.
 
         #### Params:
-        - source (str): String comprising the projections.
+        - source (str): String comprising the projections specifications.
         """
 
         projections: list[Projection] = []
         tokens: Generator[str, None, None] = tools.tokenize(source, delimiter=",")
 
         for token in tokens:
-            # Raises a parse error if an empty token is encountered
-            # during iteration suggesting inconsistency in the query
-            # syntax around the projection specifications.
+            # Raises a parse error if an empty token is encountered suggesting
+            # inconsistency in the query syntax around the projection specifications.
             if not token:
                 raise QueryParseError("Invalid query syntax!")
 
             elif token == constants.KEYWORD_ASTERISK:
-                # Parses all the query fields associated with the
-                # entity and extends the projections for the same
-                # to the projections list.
+                # Parses all the query fields associated with the entity and adds
+                # them into the projections list.
                 projections.extend(
                     Projection.from_string(field, self._entity)
                     for field in constants.FIELDS[self._entity]
                 )
+
                 continue
 
             projections.append(Projection.from_string(token, self._entity))

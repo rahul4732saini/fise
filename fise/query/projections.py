@@ -6,14 +6,14 @@ This module comprises classes and functions for parsing
 projections defined within user-specified search queries.
 """
 
-from typing import Generator, Any
+from typing import Any, Generator
 
 import parsers
-from fields import BaseField
+from common import constants, tools
 from entities import BaseEntity
-from common import tools, constants
-from shared import QueryQueue
 from errors import QueryParseError
+from fields import BaseField
+from shared import QueryQueue
 
 
 class Projection:

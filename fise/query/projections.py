@@ -87,18 +87,6 @@ class ProjectionsParser:
         self._query = query
         self._entity = entity
 
-    def _parse_projection(self, source: str) -> Projection:
-        """
-        Parses the specified source string specifications
-        for a search query projection.
-
-        #### Params:
-        - source (str): String comprising the projection specifications.
-        """
-
-        field = parsers.parse_field(source, self._entity)
-        return Projection(source, field)
-
     def _parse_projections(self, source: str) -> list[Projection]:
         """
         Parses search query projections from the specified source string.
@@ -111,7 +99,6 @@ class ProjectionsParser:
         tokens: Generator[str, None, None] = tools.tokenize(source, delimiter=",")
 
         for token in tokens:
-
             # Raises a parse error if an empty token is encountered
             # during iteration suggesting inconsistency in the query
             # syntax around the projection specifications.
@@ -119,17 +106,16 @@ class ProjectionsParser:
                 raise QueryParseError("Invalid query syntax!")
 
             elif token == constants.KEYWORD_ASTERISK:
-
                 # Parses all the query fields associated with the
                 # entity and extends the projections for the same
                 # to the projections list.
                 projections.extend(
-                    self._parse_projection(field)
+                    Projection.from_string(field, self._entity)
                     for field in constants.FIELDS[self._entity]
                 )
                 continue
 
-            projections.append(self._parse_projection(token))
+            projections.append(Projection.from_string(token, self._entity))
 
         return projections
 

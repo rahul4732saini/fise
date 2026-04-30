@@ -180,7 +180,7 @@ class QueryPathParser:
 
         # Strips off the leading and trailing quotes from
         # the path specifications if explicitly specified.
-        if constants.STRING_PATTERN.match(raw_path):
+        if constants.STRING_PATTERN.fullmatch(raw_path):
             raw_path = raw_path[1:-1]
 
         path = Path(raw_path)

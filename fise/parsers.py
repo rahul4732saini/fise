@@ -46,25 +46,30 @@ def parse_datetime(source: str) -> datetime:
 
 def parse_field(field: str, entity: str) -> BaseField:
     """
-    Parses the specified field specifications
-    based on the specified entity name.
+    Parses the specified field specifications based on the
+    specified entity name.
 
     #### Params:
-    - field (str): String formatted field to be parsed.
+    - field (str): String comprising the field specifications.
     - entity (int): Name of the entity being operated upon.
     """
 
     # Extracts the field name and its associated arguments if any.
-    name, args = tools.tokenize_qualified_clause(field, mandate_args=False)
-    name = constants.ALIASES[entity].get(name, name)
+    label, args = tools.tokenize_qualified_clause(field, mandate_args=False)
+    name = constants.ALIASES[entity].get(label, label)
 
     if name not in constants.FIELDS[entity]:
         raise QueryParseError(f"{field!r} is not a valid field!")
 
-    # Parses the field using a matching class from the
-    # fields map or as a generic field if no match exists.
+    # Parses the field using its corresponding class from the fields map
+    # or as a generic field if no such class exists.
     if name in _fields_map:
         return _fields_map[name].parse(args)
+
+    # Raises an error if the specification comprise arguments, as generic
+    # fields do not expect any arguments.
+    if args:
+        raise QueryParseError(f"{label!r} field does not expect any arguments!")
 
     return Field.parse(name)
 

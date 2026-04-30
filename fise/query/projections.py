@@ -43,6 +43,20 @@ class Projection:
     def __repr__(self) -> str:
         return f"Projection(name={self._name!r})"
 
+    @classmethod
+    def from_string(cls, source: str, entity: str) -> "Projection":
+        """
+        Initializes a Projection from the specified source string
+        comprising the query field specifications.
+
+        #### Params:
+        - source (str): String comprising the field specifications.
+        - entity (str): Name of the entity being operated upon.
+        """
+
+        field = parsers.parse_field(source, entity)
+        return cls(source, field)
+
     def evaluate(self, entity: BaseEntity) -> Any:
         """
         Evaluates the field associated with the

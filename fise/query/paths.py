@@ -41,8 +41,8 @@ class AbstractQueryPath(ABC):
 
 class FileQueryPath(AbstractQueryPath):
     """
-    FileQueryPath class defines mechanism for storing the directory path
-    specified within the query, and enumerating over files within the same.
+    FileQueryPath defines mechanism for storage of the directory
+    path for a file query, and enumeration over files within it.
     """
 
     __slots__ = ("_path",)
@@ -51,7 +51,7 @@ class FileQueryPath(AbstractQueryPath):
         return f"FileQueryPath(path={self._path.as_posix()!r})"
 
     def _validate_path(self, path: Path) -> None:
-        """Validates the specified path for a file query."""
+        """Validates whether the specified path leads to a directory."""
 
         if not path.is_dir():
             raise QueryParseError(
@@ -60,11 +60,11 @@ class FileQueryPath(AbstractQueryPath):
 
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
         """
-        Enumerates over the files within the specified directory. Files within
-        sub-directories are also include if `recursive` is set to True.
+        Enumerates over the files within the specified directory.
 
         #### Params:
-        - recursive (bool): Whether to include files from sub-directories.
+        - recursive (bool): Whether to recursively include files from
+        sub-directories.
         """
 
         yield from tools.enumerate_files(self._path, recursive)
@@ -72,9 +72,8 @@ class FileQueryPath(AbstractQueryPath):
 
 class DirectoryQueryPath(AbstractQueryPath):
     """
-    DirectoryQueryPath class defines mechanism for storing the directory
-    path specified within the query and enumerating over sub-directories
-    within the same.
+    DirectoryQueryPath defines mechanism for storage of the directory path
+    for a directory query, and enumeration over sub-directories within it.
     """
 
     __slots__ = ("_path",)
@@ -83,7 +82,7 @@ class DirectoryQueryPath(AbstractQueryPath):
         return f"DirectoryQueryPath(path={self._path.as_posix()!r})"
 
     def _validate_path(self, path: Path) -> None:
-        """Validates the specified path for a directory query."""
+        """Validates whether the specified path leads to a directory."""
 
         if not path.is_dir():
             raise QueryParseError(
@@ -93,11 +92,10 @@ class DirectoryQueryPath(AbstractQueryPath):
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]:
         """
         Enumerates over the sub-directories within the specified directory.
-        Directories within sub-directories are also included if `recursive`
-        is set to true.
 
         #### Params:
-        - recursive (bool): Whether to include directories from sub-directories.
+        - recursive (bool): Whether to recursively include directories from
+        sub-directories.
         """
 
         yield from tools.enumerate_directories(self._path, recursive)
@@ -105,9 +103,9 @@ class DirectoryQueryPath(AbstractQueryPath):
 
 class DataQueryPath(AbstractQueryPath):
     """
-    DataQueryPath class defines mechanism for storing the file or
-    directory path specified within the query and enumerating over
-    the targeted file(s).
+    DataQueryPath defines mechanism for storage of the file or directory
+    path for a file data query, and enumeration over the data-lines present
+    within the targeted file(s).
     """
 
     __slots__ = ("_path",)
@@ -116,7 +114,7 @@ class DataQueryPath(AbstractQueryPath):
         return f"DataQueryPath(path={self._path.as_posix()!r})"
 
     def _validate_path(self, path: Path) -> None:
-        """Validates the specified path for a data query."""
+        """Validates whether the specified path leads to a file or directory."""
 
         if not (path.is_file() or path.is_dir()):
             raise QueryParseError(
@@ -126,11 +124,11 @@ class DataQueryPath(AbstractQueryPath):
 
     def enumerate(self, recursive: bool = False) -> Generator[Path, None, None]:
         """
-        Enumerates over the files within the specified directory
-        or yields the specified file if the path leads to the same.
+        Enumerates over the files if the specified path leads to a directory,
+        or yields the specified file.
 
         #### Params:
-        - recursive (bool): Whether to include files from sub-directories.
+        - recursive (bool): Whether to recursively include files from sub-directories.
         Only applicable if the specified path leads to a directory.
         """
 
@@ -143,13 +141,13 @@ class DataQueryPath(AbstractQueryPath):
 
 class QueryPathParser:
     """
-    QueryPathParser class defines methods for parsing
-    path specifications from the user-specified query.
+    QueryPathParser defines methods for parsing path
+    specifications from the user-specified query.
     """
 
     __slots__ = "_query", "_entity"
 
-    # Maps entity names with their corresponding query path classes.
+    # Maps entity names to their corresponding query path classes.
     _path_classes: dict[str, Type[AbstractQueryPath]] = {
         constants.ENTITY_FILE: FileQueryPath,
         constants.ENTITY_DATA: DataQueryPath,

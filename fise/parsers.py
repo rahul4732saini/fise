@@ -6,13 +6,12 @@ This module comprises utitlity functions for
 parsing and extracting fields and attributes.
 """
 
-from typing import Any, TypeAlias
 from datetime import datetime
+from typing import Any, TypeAlias
 
-from common import tools, constants
-from fields import BaseField, Field, Size
+from common import constants, tools
 from errors import QueryParseError
-
+from fields import BaseField, Field, Size
 
 # Defines all data types which can be used for representing search query
 # projections, condition operands and much more while handling queries.
@@ -86,7 +85,6 @@ def parse_attribute(source: str, entity: str | None = None) -> Any:
     """
 
     if constants.TUPLE_PATTERN.match(source):
-
         # Tokenizes the source string, parses the individual
         # tokens and returns a list of the parsed attributes.
         tokens = tools.tokenize(source[1:-1], delimiter=",")

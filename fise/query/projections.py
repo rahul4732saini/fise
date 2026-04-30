@@ -124,12 +124,9 @@ class ProjectionsParser:
 
         tokens: list[str] = []
 
-        # Extracts tokens from the query until
-        # the `FROM` keyword is encountered.
+        # Extracts tokens from the query until the
+        # FROM keyword is encountered.
         while self._query.peek().lower() != constants.KEYWORD_FROM:
             tokens.append(self._query.pop())
-
-            if not self._query:
-                raise QueryParseError("Cannot find the 'FROM' keyword in the query.")
 
         return self._parse_projections("".join(tokens))

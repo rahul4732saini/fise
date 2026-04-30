@@ -19,9 +19,9 @@ from shared import QueryQueue
 
 class Projection:
     """
-    Projection class defines mechanism for storing the name and
-    field associated with a projection defined in the query, and
-    evaluating the projection for a given entity.
+    Projection class serves storage of the name and field of search query
+    projections, and provides mechanism for evaluation of the field for a
+    given entity.
     """
 
     __slots__ = "_name", "_field"
@@ -60,8 +60,8 @@ class Projection:
 
     def evaluate(self, entity: BaseEntity) -> Any:
         """
-        Evaluates the field associated with the
-        projection based on the specified entity.
+        Evaluates the field associated with the projection based
+        on the specified entity.
         """
 
         return self._field.evaluate(entity)
@@ -70,8 +70,7 @@ class Projection:
 class ProjectionsParser:
     """
     ProjectionsParser class defines methods for parsing
-    projections defined within the user-specified query
-    specifically for the search operation.
+    projections from user-specified search queries.
     """
 
     __slots__ = "_query", "_entity"

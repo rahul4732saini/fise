@@ -6,6 +6,7 @@ This module comprises classes and functions for parsing
 projections defined within user-specified search queries.
 """
 
+from functools import cache
 from typing import Any, Generator
 
 import parsers
@@ -87,6 +88,22 @@ class ProjectionsParser:
         self._query = query
         self._entity = entity
 
+    @staticmethod
+    @cache
+    def _get_all_projections(entity: str) -> list[Projection]:
+        """
+        Returns a list comprising all the projections associated with the specified
+        entity name. This method uses caching to avoid repetitive initialization of
+        projection lists during runtime.
+
+        #### Params:
+        - entity (str): Name of the entity whose fields have to be extracted.
+        """
+
+        return [
+            Projection.from_string(field, entity) for field in constants.FIELDS[entity]
+        ]
+
     def _parse_projections(self, source: str) -> list[Projection]:
         """
         Parses search query projections from the specified source string.
@@ -105,12 +122,9 @@ class ProjectionsParser:
                 raise QueryParseError("Invalid query syntax!")
 
             elif token == constants.KEYWORD_ASTERISK:
-                # Parses all the query fields associated with the entity and adds
-                # them into the projections list.
-                projections.extend(
-                    Projection.from_string(field, self._entity)
-                    for field in constants.FIELDS[self._entity]
-                )
+                # Adds all the projections associated with the entity into
+                # the projections list.
+                projections.extend(self._get_all_projections(self._entity))
 
                 continue
 

@@ -170,7 +170,7 @@ QUALIFIED_CLAUSE_PATTERN = re.compile(
     r"^(?P<label>[a-zA-Z_]+)(\[(?P<qualifications>.+)])?$"
 )
 
-STRING_PATTERN = re.compile(r"^['\"].*['\"]$")
+STRING_PATTERN = re.compile(r"^('.*'|\".*\")$")
 TUPLE_PATTERN = re.compile(r"^\[.*]$")
 NESTED_CONDITION_PATTERN = re.compile(r"^\(.*\)$")
 FLOAT_PATTERN = re.compile(r"^-?\d+(\.\d+)?$")

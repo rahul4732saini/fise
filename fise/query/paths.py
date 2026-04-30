@@ -172,9 +172,11 @@ class QueryPathParser:
         """Parses the path specifications defined within the query."""
 
         is_absolute: bool = False
+        token = self._query.peek().lower()
 
-        if self._query.peek().lower() in constants.PATH_TYPES:
-            is_absolute = self._query.pop().lower() == constants.PATH_ABSOLUTE
+        if token in constants.PATH_TYPES:
+            is_absolute = token == constants.PATH_ABSOLUTE
+            self._query.pop()
 
         raw_path: str = self._query.pop()
 

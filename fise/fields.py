@@ -15,7 +15,6 @@ from entities import BaseEntity, File
 from errors import QueryParseError
 
 
-@dataclass(slots=True, frozen=True)
 class BaseField(ABC):
     """BaseField serves as the base class for all field class."""
 

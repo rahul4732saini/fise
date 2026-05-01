@@ -9,7 +9,7 @@ definition.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Generator, Iterable, Optional
+from typing import Generator, Iterable, Optional, Self
 
 from common import tools
 from errors import QueryParseError
@@ -24,7 +24,7 @@ class QueueNode:
     """
 
     val: str
-    next: Optional["QueueNode"] = None
+    next: Optional[Self] = None
 
 
 class QueryQueue:
@@ -58,7 +58,7 @@ class QueryQueue:
         return f"QueryQueue(head={val!r})"
 
     @classmethod
-    def from_string(cls, query: str) -> "QueryQueue":
+    def from_string(cls, query: str) -> Self:
         """Tokenizes the query string and adds the tokens to the queue."""
 
         return cls(tools.tokenize(query, skip_empty=True))

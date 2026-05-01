@@ -33,7 +33,8 @@ def tokenize(
     """
 
     paired_delimiters: dict[str, str] = {"[": "]", "(": ")", "'": "'", '"': '"'}
-    conflicting: set[str] = {"'", '"'}
+    conflicting_delimiters: set[str] = {"'", '"'}
+    closing_delimiters: set[str] = set(paired_delimiters.values())
 
     # Stores the current token as a list of characters while iterating
     # through the source string.
@@ -65,20 +66,32 @@ def tokenize(
         # nested structures.
         if char in paired_delimiters and (
             not delimiter_stack
-            or char not in conflicting
-            and delimiter_stack[-1] not in conflicting
+            or char not in conflicting_delimiters
+            and delimiter_stack[-1] not in conflicting_delimiters
         ):
             delimiter_stack.append(char)
 
-        # Removes the inner-most delimiter from the stack when
-        # its corresponding closing delimiter is found.
-        elif delimiter_stack and char == paired_delimiters.get(delimiter_stack[-1]):
-            delimiter_stack.pop()
+        # Removes the inner-most delimiter from the stack when its corresponding
+        # closing delimiter is found. Terminates the parsing process if an closing
+        # delimiter is found and the stack is empty suggesting an inconsistency.
+        elif char in closing_delimiters:
+            if not delimiter_stack:
+                break
+
+            if char == paired_delimiters.get(delimiter_stack[-1]):
+                delimiter_stack.pop()
+
+    else:
+        # Removes the delimiter at the end which was explicitly added for simplifying
+        # the parsing proces; only if the token list is non-empty suggesting that the
+        # token was left unparsed and will be used in an error message.
+        if token:
+            token.pop()
 
     # Raises an error if delimiters are mismatched in the source
     # string such that a token is left unparsed in the end.
     if token:
-        raise QueryParseError(f"Invalid syntax around {''.join(token[:-1])!r}")
+        raise QueryParseError(f"Invalid syntax around {''.join(token)!r}")
 
 
 def tokenize_qualified_clause(

@@ -15,9 +15,9 @@ from errors import QueryParseError
 from shared import QueryQueue
 
 
-class AbstractQueryPath(ABC):
+class BaseQueryPath(ABC):
     """
-    AbstractQueryPath serves as the base class
+    BaseQueryPath serves as the base class
     for all query path classes.
     """
 
@@ -39,7 +39,7 @@ class AbstractQueryPath(ABC):
     def enumerate(self, recursive: bool) -> Generator[Path, None, None]: ...
 
 
-class FileQueryPath(AbstractQueryPath):
+class FileQueryPath(BaseQueryPath):
     """
     FileQueryPath defines mechanism for storage of the directory
     path for a file query, and enumeration over files within it.
@@ -70,7 +70,7 @@ class FileQueryPath(AbstractQueryPath):
         yield from tools.enumerate_files(self._path, recursive)
 
 
-class DirectoryQueryPath(AbstractQueryPath):
+class DirectoryQueryPath(BaseQueryPath):
     """
     DirectoryQueryPath defines mechanism for storage of the directory path
     for a directory query, and enumeration over sub-directories within it.
@@ -101,7 +101,7 @@ class DirectoryQueryPath(AbstractQueryPath):
         yield from tools.enumerate_directories(self._path, recursive)
 
 
-class DataQueryPath(AbstractQueryPath):
+class DataQueryPath(BaseQueryPath):
     """
     DataQueryPath defines mechanism for storage of the file or directory
     path for a file data query, and enumeration over the data-lines present
@@ -148,7 +148,7 @@ class QueryPathParser:
     __slots__ = "_query", "_entity"
 
     # Maps entity names to their corresponding query path classes.
-    _path_classes: dict[str, Type[AbstractQueryPath]] = {
+    _path_classes: dict[str, Type[BaseQueryPath]] = {
         constants.ENTITY_FILE: FileQueryPath,
         constants.ENTITY_DATA: DataQueryPath,
         constants.ENTITY_DIR: DirectoryQueryPath,
@@ -190,7 +190,7 @@ class QueryPathParser:
 
         return path
 
-    def parse(self) -> AbstractQueryPath:
+    def parse(self) -> BaseQueryPath:
         """
         Parses the path specifications, validates the path
         and returns a query path object for further usage.

@@ -167,7 +167,7 @@ DATETIME_FORMAT = r"%Y-%m-%d %H:%M:%S"
 # associated query clauses, tokens, fields, and much more.
 
 QUALIFIED_CLAUSE_PATTERN = re.compile(
-    r"^(?P<label>[a-zA-Z_]+)(\[(?P<qualifications>.+)])?$"
+    r"^(?P<label>[a-zA-Z_]+)(\[(?P<qualifications>.*\S.*)])?$"
 )
 
 STRING_PATTERN = re.compile(r"^('.*'|\".*\")$")

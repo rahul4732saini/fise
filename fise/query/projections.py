@@ -19,9 +19,9 @@ from shared import QueryQueue
 
 class Projection:
     """
-    Projection class serves storage of the name and field of search query
-    projections, and provides mechanism for evaluation of the field for a
-    given entity.
+    Projection serves as a storage class for search query projections,
+    and provides mechanism for evaluation of the field associated with
+    it for a given entity.
     """
 
     __slots__ = "_name", "_field"

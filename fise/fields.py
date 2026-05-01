@@ -36,8 +36,8 @@ class BaseField(ABC):
 @dataclass(slots=True, frozen=True)
 class Field(BaseField):
     """
-    Field class implements mechanism for storing,
-    parsing and evaluating generic query fields.
+    Field serves as a storage class for generic query
+    fields, and provides mechanism for their evaluation.
     """
 
     field: str
@@ -71,8 +71,8 @@ class Field(BaseField):
 @dataclass(slots=True, frozen=True)
 class Size(BaseField):
     """
-    Size class implements mechanism for parsing and evaluating
-    the size field and stores the size unit conversion divisor.
+    Size serves as a storage class for size query field, and provides
+    mechanism for the extraction of file sizes in the desired size unit.
     """
 
     divisor: int | float

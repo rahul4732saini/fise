@@ -8,7 +8,7 @@ query fields.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Type
+from typing import Any, Self, Type
 
 from common import constants
 from entities import BaseEntity, File
@@ -27,7 +27,7 @@ class BaseField(ABC):
 
     @classmethod
     @abstractmethod
-    def parse(cls, descriptor: str) -> "BaseField": ...
+    def parse(cls, descriptor: str) -> Self: ...
 
     @abstractmethod
     def evaluate(self, entity) -> Any: ...
@@ -50,7 +50,7 @@ class Field(BaseField):
         return self.field
 
     @classmethod
-    def parse(cls, descriptor: str) -> "Field":
+    def parse(cls, descriptor: str) -> Self:
         """
         Initializes the Field class based on the specified field name.
 
@@ -85,7 +85,7 @@ class Size(BaseField):
         return "size"
 
     @classmethod
-    def parse(cls, descriptor: str) -> "Size":
+    def parse(cls, descriptor: str) -> Self:
         """
         Initializes the Size class based on the specified size unit.
 

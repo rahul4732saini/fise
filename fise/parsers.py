@@ -2,8 +2,8 @@
 Parsers Module
 --------------
 
-This module comprises utitlity functions for
-parsing and extracting fields and attributes.
+This module defines utitlity functions for parsing
+and extracting query fields and attributes.
 """
 
 from datetime import datetime
@@ -27,7 +27,7 @@ _fields_map: dict[str, type] = {
 
 
 def parse_datetime(source: str) -> datetime:
-    """Parses date/datetime object from the specified source string."""
+    """Parses a date/datetime object from the specified source string."""
 
     try:
         return datetime.strptime(source, constants.DATETIME_FORMAT)

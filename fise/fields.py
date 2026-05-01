@@ -2,13 +2,13 @@
 Fields Module
 -------------
 
-This module defines classes and functions
-for storing and handling query fields.
+This module defines classes for storing and handling
+query fields.
 """
 
-from typing import Any, Type
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any, Type
 
 from common import constants
 from entities import BaseEntity, File
@@ -50,9 +50,15 @@ class Field(BaseField):
         return self.field
 
     @classmethod
-    def parse(cls, field: str) -> "Field":
-        """Initializes the Field class based on the specified field name."""
-        return cls(field)
+    def parse(cls, descriptor: str) -> "Field":
+        """
+        Initializes the Field class based on the specified field name.
+
+        #### Params:
+        - descriptor (str): Name of the query field.
+        """
+
+        return cls(descriptor)
 
     def evaluate(self, entity: BaseEntity) -> Any:
         """
@@ -79,11 +85,16 @@ class Size(BaseField):
         return "size"
 
     @classmethod
-    def parse(cls, unit: str) -> "Size":
-        """Initializes the Size class based on the specified size unit."""
+    def parse(cls, descriptor: str) -> "Size":
+        """
+        Initializes the Size class based on the specified size unit.
+
+        #### Params:
+        - descriptor (str): Size unit to be used for evaluations.
+        """
 
         # Assigns "B" -> bytes unit if no unit is not explicitly specified.
-        unit = unit or "B"
+        unit = descriptor or "B"
         divisor: int | float | None = constants.SIZE_CONVERSION_MAP.get(unit)
 
         if divisor is None:
@@ -91,13 +102,13 @@ class Size(BaseField):
 
         return cls(divisor)
 
-    def evaluate(self, file: File) -> float | None:
+    def evaluate(self, entity: File) -> float | None:
         """
         Extracts the size from the specified `File` entity object
-        and converts it it accordance with the stored size divisor.
+        and transforms it based on the stored size unit.
         """
 
-        if file.size is None:
+        if entity.size is None:
             return None
 
-        return round(file.size / self.divisor, 5)
+        return round(entity.size / self.divisor, 5)

@@ -7,6 +7,7 @@ parsing and extracting fields and attributes.
 """
 
 from datetime import datetime
+from pathlib import Path
 from typing import Any, TypeAlias
 
 from common import constants, tools
@@ -41,6 +42,18 @@ def parse_datetime(source: str) -> datetime:
 
     except ValueError:
         raise QueryParseError(f"{source!r} is not a valid datetime specification.")
+
+
+def parse_path(raw_path: str) -> Path:
+    """
+    Parses a Path object from the specified source string comprising
+    a raw path which may also be explicitly enclosed within quotes.
+    """
+
+    if constants.STRING_PATTERN.fullmatch(raw_path):
+        raw_path = raw_path[1:-1]
+
+    return Path(raw_path)
 
 
 def parse_field(field: str, entity: str) -> BaseField:

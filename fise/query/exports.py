@@ -14,8 +14,9 @@ from typing import Callable, ClassVar
 
 import numpy as np
 import pandas as pd
+import parsers
 import sqlalchemy
-from common import constants, tools
+from common import constants
 from errors import OperationError, QueryParseError
 from notify import Message
 from shared import QueryQueue
@@ -68,27 +69,15 @@ class ExportParser:
         self._query = query
 
         # Maps export types to their corresponding parser methods.
-        self._method_map: dict[str, Callable[[str], BaseExportData]] = {
+        self._method_map: dict[str, Callable[[], BaseExportData]] = {
             constants.EXPORT_FILE: self._parse_file_export,
             constants.EXPORT_DBMS: self._parse_dbms_export,
         }
 
-    @staticmethod
-    def _parse_file_export(args: str) -> FileExportData:
-        """
-        Parses the specified file export specifications.
+    def _parse_file_export(self) -> FileExportData:
+        """Parses file export specifications from the query."""
 
-        #### Params:
-        - args (str): String comprising the file export arguments.
-        """
-
-        # Currently, the only argument accepted for file exports is the path to
-        # the external file. Hence, it is directly converted into a Path object.
-
-        if not args:
-            raise QueryParseError("No file path specified for data export!")
-
-        file: Path = Path(args)
+        file: Path = parsers.parse_path(self._query.pop())
 
         if file.exists():
             raise OperationError(
@@ -108,19 +97,10 @@ class ExportParser:
 
         return FileExportData(file)
 
-    @staticmethod
-    def _parse_dbms_export(args: str) -> DBMSExportData:
-        """
-        Parses the specified DBMS export specifications.
+    def _parse_dbms_export(self) -> DBMSExportData:
+        """Parses DBMS export specifications from the query."""
 
-        #### Params:
-        - args (str): String comprising the DBMS export arguments.
-        """
-
-        # Currently, the only argument accepted for DBMS exports is the name of
-        # the DBMS. Hence, it is directly validated against an array of valid DBMS.
-
-        dbms = args.lower()
+        dbms = self._query.pop().lower()
 
         if not dbms:
             raise QueryParseError("No database name specified for data export!")
@@ -141,14 +121,13 @@ class ExportParser:
                 f" be {constants.KEYWORD_EXPORT.upper()!r}."
             )
 
-        # Parses the export specifications and extracts the export
-        # type along with the arguments specified.
-        type_, args = tools.tokenize_qualified_clause(self._query.pop())
+        # Extracts the export type from the query.
+        type_ = self._query.pop()
 
         if type_ not in constants.EXPORT_TYPES:
             raise QueryParseError(f"{type_!r} is not a valid export type!")
 
-        return self._method_map[type_](args)
+        return self._method_map[type_]()
 
 
 class BaseExportHandler(ABC):

@@ -7,12 +7,12 @@ the initial clauses of the user-specified query.
 """
 
 from abc import ABC, abstractmethod
-from typing import Type, Callable, ClassVar, Any
 from dataclasses import dataclass
+from typing import Any, Callable, ClassVar, Type
 
-from common import tools, constants
-from shared import QueryQueue
+from common import constants, tools
 from errors import QueryParseError
+from shared import QueryQueue
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -24,6 +24,18 @@ class BaseOperationData:
 
     entity: ClassVar[str]
     type_: str
+
+
+@dataclass(slots=True, frozen=True, eq=False)
+class OperationData:
+    """
+    OperationData encapsulates the query
+    operation specifications.
+    """
+
+    type_: str
+    recursive: bool
+    arguments: dict[str, Any]
 
 
 @dataclass(slots=True, frozen=True, eq=False)
@@ -208,8 +220,7 @@ class DataOperationParser(BaseOperationParser):
 
         if filemode is None:
             raise QueryParseError(
-                f"{mode!r} is not a valid argument "
-                "for the 'mode' operation parameter."
+                f"{mode!r} is not a valid argument for the 'mode' operation parameter."
             )
 
         return filemode

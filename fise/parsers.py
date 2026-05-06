@@ -8,7 +8,7 @@ and extracting query fields and attributes.
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TypeAlias
+from typing import TypeAlias
 
 from common import constants, tools
 from errors import QueryParseError
@@ -67,7 +67,7 @@ def parse_field(field: str, entity: str) -> BaseField:
     """
 
     # Extracts the field name and its associated arguments if any.
-    label, args = tools.tokenize_qualified_clause(field, mandate_args=False)
+    label, args = tools.tokenize_qualified_clause(field)
     name = constants.ALIASES[entity].get(label, label)
 
     if name not in constants.FIELDS[entity]:
@@ -86,7 +86,7 @@ def parse_field(field: str, entity: str) -> BaseField:
     return Field.parse(name)
 
 
-def parse_attribute(source: str, entity: str | None = None) -> Any:
+def parse_attribute(source: str, entity: str | None = None) -> QueryAttribute:
     """
     Implements mechanism for parsing all available types of
     query attirbutes from the specified string specifications.

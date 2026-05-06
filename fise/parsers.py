@@ -20,7 +20,7 @@ QueryAttribute: TypeAlias = (
     None | bool | str | int | float | datetime | list["QueryAttribute"] | BaseField
 )
 
-# Maps field names with corresponding handler classes.
+# Maps field names to their corresponding handler classes.
 _fields_map: dict[str, type] = {
     "size": Size,
 }
@@ -88,13 +88,12 @@ def parse_field(field: str, entity: str) -> BaseField:
 
 def parse_attribute(source: str, entity: str | None = None) -> QueryAttribute:
     """
-    Implements mechanism for parsing all available types of
-    query attirbutes from the specified string specifications.
+    Parses the specified query attribute specifications.
 
     #### Params:
-    - source (str): String specifications for query attribute.
-    - entity (str | None): [OPTIONAL] Name of the entity being
-    operated upon. Defaults to None.
+    - source (str): String comprising the attribute specifications.
+    - entity (str | None): [OPTIONAL] Name of the entity being operated
+    upon. Defaults to None.
     """
 
     if constants.TUPLE_PATTERN.match(source):

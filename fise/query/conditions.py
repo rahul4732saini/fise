@@ -7,17 +7,16 @@ for parsing and evaluating query conditions.
 """
 
 import re
-from typing import Callable, Sequence, Optional, Union, TypeAlias
+from dataclasses import dataclass
+from typing import Callable, Optional, Sequence, TypeAlias, Union
 
 import parsers
-from parsers import QueryAttribute
 from common import constants, tools
-from errors import QueryParseError
-from shared import QueryQueue
-from fields import BaseField
 from entities import BaseEntity
-from dataclasses import dataclass
-
+from errors import QueryParseError
+from fields import BaseField
+from parsers import QueryAttribute
+from shared import QueryQueue
 
 QueryConditionType: TypeAlias = Union[bool, "Condition", "ConditionListNode"]
 
